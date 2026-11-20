@@ -254,9 +254,9 @@
       const nextRoomMetadata={...roomMetadata,[PENDING_KEY]:nextPending};
       if(new TextEncoder().encode(JSON.stringify(nextRoomMetadata)).length>15000)throw new Error('Los metadatos de la sala están cerca del límite de 16 KB. Elimina asignaciones antiguas antes de continuar.');
       await OBR.room.setMetadata({[PENDING_KEY]:nextPending});
-      await OBR.broadcast.sendMessage(CHANNEL,{type:'assignment-available',targetPlayerId:target.id},{destination:'ALL'});
       unassignedCharacters=unassignedCharacters.filter(x=>x.id!==item.id);
-      localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
+      try{localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));}catch{}
+      try{await OBR.broadcast.sendMessage(CHANNEL,{type:'assignment-available',targetPlayerId:target.id},{destination:'ALL'});}catch{}
       notice='Ficha asignada a '+target.name+'. Se importará automáticamente cuando abra la extensión y reemplazará cualquier personaje anterior.';
     }catch{notice='No se pudo guardar la asignación en la sala. El personaje sigue en la lista de no asignados.';}
   }
