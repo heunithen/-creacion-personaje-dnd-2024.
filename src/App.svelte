@@ -13,6 +13,7 @@
   };
   type Monster = {id:string;name:string;size:string;type:string;ac:string;hp:string;speed:string;traits:string;actions:string;notes:string;rawBlock?:string};
   type RoomCharacter = {playerId:string;playerName:string;character:Character};
+  type UnassignedCharacter = {id:string;rawText:string;name:string;createdAt:string};
   type RollChoice = {label:string;category:string;notation:string;detail:string};
   type RollEntry = {id:string;playerName:string;characterName:string;label:string;notation:string;total?:number;summary?:string;status:string;timestamp:number};
   const KEY='com.heunithen.dnd2024-character-builder/character';
@@ -34,11 +35,13 @@
   }
   let view:'player'|'gm'='player';
   let playerTab:'identity'|'combat'|'abilities'|'proficiencies'|'traits'|'spells'|'equipment'|'rolls'='identity';
-  let gmTab:'characters'|'bestiary'='characters';
+  let gmTab:'characters'|'unassigned'|'bestiary'='unassigned';
   let character=blankCharacter();
   let saved:Character[]=[];
   let monsters:Monster[]=[];
   let roomCharacters:RoomCharacter[]=[];
+  let unassignedCharacters:UnassignedCharacter[]=[];
+  let gmImportText='';
   let connectedPlayers:{id:string;name:string}[]=[];
   let gmCreatingCharacter=false;
   let assignmentPlayerId='';
@@ -139,7 +142,7 @@
     });
   }
   onMount(()=>{
-    try{saved=JSON.parse(localStorage.getItem('forja-characters')||'[]');monsters=JSON.parse(localStorage.getItem('forja-monsters')||'[]');rollLog=JSON.parse(localStorage.getItem('forja-roll-history')||'[]');}
+    try{saved=JSON.parse(localStorage.getItem('forja-characters')||'[]');monsters=JSON.parse(localStorage.getItem('forja-monsters')||'[]');rollLog=JSON.parse(localStorage.getItem('forja-roll-history')||'[]');unassignedCharacters=JSON.parse(localStorage.getItem('forja-unassigned-characters')||'[]');}
     catch{saved=[];monsters=[];rollLog=[];}
     saved=saved.length?[{...saved[saved.length-1],traits:normalizeTraits(saved[saved.length-1])}]:[];
     if(saved.length)character={...blankCharacter(),...saved[0],traits:saved[0].traits,abilities:{...blankCharacter().abilities,...saved[0].abilities}};
@@ -152,8 +155,9 @@
         OBR.party.onChange((players:any[])=>readRoomPlayers(players));
         OBR.broadcast.onMessage(CHANNEL,async(event:any)=>{
           const d=event.data;
-          if(d?.type==='character-assigned'&&d.character&&obrRole==='PLAYER'&&d.targetPlayerId===await OBR.player.getId()){
-            const assigned={...d.character,playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
+          if(d?.type==='character-assigned'&&d.rawText&&obrRole==='PLAYER'&&d.targetPlayerId===await OBR.player.getId()){
+            importText=d.rawText;importCharacter();
+            const assigned={...character,id:crypto.randomUUID(),playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
             character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
             await OBR.player.setMetadata({[KEY]:{character:assigned,playerName:assigned.playerName,updatedAt:assigned.updatedAt}});
             await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId:await OBR.player.getId(),playerName:assigned.playerName,character:assigned},{destination:'ALL'});
@@ -177,31 +181,40 @@
     });
   });
   function saveCharacter(){
-    character={...character,name:character.name.trim(),playerName:editingRoomPlayerId?(roomCharacters.find(x=>x.playerId===editingRoomPlayerId)?.playerName||character.playerName):(playerName||character.playerName),updatedAt:new Date().toISOString()};
+    if(!saved.length){notice='No tienes un personaje asignado. Solicita al GM que te asigne uno.';return;}
+    character={...character,name:character.name.trim(),playerName:playerName||character.playerName,updatedAt:new Date().toISOString()};
     if(!character.name){notice='Escribe el nombre del personaje.';return;}
-    if(gmCreatingCharacter){
-      if(!assignmentPlayerId){notice='Selecciona un jugador conectado para asignarle el personaje.';return;}
-      const target=connectedPlayers.find(p=>p.id===assignmentPlayerId);
-      if(!target){notice='Ese jugador ya no está conectado. Actualiza la sala y vuelve a intentarlo.';return;}
-      const assigned={...character,id:crypto.randomUUID(),playerName:target.name,updatedAt:new Date().toISOString()};
-      OBR.broadcast.sendMessage(CHANNEL,{type:'character-assigned',targetPlayerId:target.id,character:assigned},{destination:'ALL'});
-      roomCharacters=roomCharacters.filter(x=>x.playerId!==target.id);
-      notice='Personaje enviado a '+target.name+'. El jugador debe tener la extensión abierta para recibirlo.';
-      gmCreatingCharacter=false;assignmentPlayerId='';view='gm';gmTab='characters';return;
-    }
     if(editingRoomPlayerId){
       const updated={...character};
       roomCharacters=roomCharacters.map(x=>x.playerId===editingRoomPlayerId?{...x,character:updated}:x);
       OBR.broadcast.sendMessage(CHANNEL,{type:'character-edited',playerId:editingRoomPlayerId,playerName:roomCharacters.find(x=>x.playerId===editingRoomPlayerId)?.playerName||'Jugador',character:updated},{destination:'ALL'});
       notice='Cambios enviados al jugador y a la sala.';return;
     }
-    if(editingId)character={...character,id:editingId};
-    else if(saved.length){character={...character,id:saved[0].id};}
-    else character={...character,id:crypto.randomUUID()};
-    saved=[character];editingId=character.id;persistLocal();publishCharacter(character);notice='Ficha guardada.';
+    character={...character,id:editingId||saved[0].id};
+    saved=[character];persistLocal();publishCharacter(character);notice='Ficha guardada.';
   }
-  function startGmCharacter(){character=blankCharacter();editingId='';editingRoomPlayerId='';gmCreatingCharacter=true;assignmentPlayerId='';view='player';playerTab='identity';}
-  function newCharacter(){gmCreatingCharacter=false;if(saved.length){editCharacter(saved[0]);return;}character=blankCharacter();editingId='';editingRoomPlayerId='';view='player';playerTab='identity';}
+  function importForGm(){
+    const raw=gmImportText.trim();
+    if(!raw){notice='Pega el texto completo de la ficha.';return;}
+    const name=raw.match(/^Name:\\s*(.+)$/mi)?.[1]?.trim()||raw.split('\\n').find(x=>x.trim())?.trim()||'Personaje sin nombre';
+    unassignedCharacters=[...unassignedCharacters,{id:crypto.randomUUID(),rawText:raw,name,createdAt:new Date().toISOString()}];
+    localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
+    gmImportText='';notice='Personaje guardado en Personajes no asignados.';
+  }
+  function assignImportedCharacter(item:UnassignedCharacter,playerId:string){
+    const target=connectedPlayers.find(p=>p.id===playerId);
+    if(!target){notice='El jugador ya no está conectado. Actualiza la lista.';return;}
+    OBR.broadcast.sendMessage(CHANNEL,{type:'character-assigned',targetPlayerId:target.id,rawText:item.rawText,priority:true},{destination:'ALL'});
+    unassignedCharacters=unassignedCharacters.filter(x=>x.id!==item.id);
+    localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
+    notice='Ficha asignada a '+target.name+'. Reemplazará cualquier personaje anterior.';
+  }
+  function deleteUnassigned(id:string){
+    unassignedCharacters=unassignedCharacters.filter(x=>x.id!==id);
+    localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
+  }
+  function startGmCharacter(){gmTab='unassigned';}
+  function newCharacter(){if(saved.length){editCharacter(saved[0]);return;}notice='No tienes un personaje asignado. El GM debe asignártelo.';view='player';}
   function editCharacter(c:Character){gmCreatingCharacter=false;character={...blankCharacter(),...c,traits:normalizeTraits(c),abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='identity';}
   function editRoomCharacter(c:RoomCharacter){gmCreatingCharacter=false;character={...blankCharacter(),...c.character,traits:normalizeTraits(c.character),abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='identity';}
   function deleteCharacter(c:Character){saved=saved.filter(x=>x.id!==c.id);if(editingId===c.id){editingId='';character=blankCharacter();}persistLocal();notice='Ficha eliminada.';}
@@ -301,8 +314,9 @@
     <div class="connection"><span class:connected={obrReady}></span>{syncStatus}<span class:connected={diceReady} class="dice-status">Dice+ {diceReady?'conectado':'no detectado'}</span></div>
     {#if view==='player'}
       <div class="eyebrow">HOJA DE PERSONAJE <span>EDICIÓN MANUAL</span></div>
-      <h1>Forja tu <em>aventurero.</em></h1>
-      <p class="intro">Importa una ficha o edita sus datos. Los valores se conservan tal como los introduces; no se calculan automáticamente.</p>
+      <h1>Tu <em>aventurero.</em></h1>
+      <p class="intro">El GM importa el texto original y te asigna la ficha. Aquí aparece organizada por secciones y puedes editarla.</p>
+      {#if !saved.length}<section class="panel"><h2>Sin personaje asignado</h2><p>El GM todavía no te ha asignado una ficha. No puedes crear una desde aquí.</p></section>{/if}
       <div class="player-tabs character-tabs">
         <button class:active={playerTab==='identity'} on:click={()=>playerTab='identity'}>Identidad</button>
         <button class:active={playerTab==='combat'} on:click={()=>playerTab='combat'}>Combate</button>
@@ -317,8 +331,7 @@
         <section class="panel form-panel">
           <div class="section-heading"><div><div class="eyebrow">IDENTIDAD</div><h2>Datos del aventurero</h2></div><span class="free-tag">Todo editable</span></div>
           {#if gmCreatingCharacter}<p class="hint">Estás creando una ficha como GM. Al guardarla se asignará al jugador conectado que selecciones.</p><label>Asignar a jugador conectado<select bind:value={assignmentPlayerId}><option value="">Seleccionar jugador</option>{#each connectedPlayers as p}<option value={p.id}>{p.name}</option>{/each}</select></label>{:else if editingRoomPlayerId}<p class="hint">Estás editando la ficha de un jugador como director. Al guardar, los cambios se enviarán al jugador y a la sala.</p>{/if}
-          <div class="import-row"><button class="secondary" on:click={()=>importOpen=!importOpen}>Importar personaje</button><span class="hint">La importación distribuye los datos en todas las secciones</span></div>
-          {#if importOpen}<div class="import-box"><label>Pega aquí el texto completo de la ficha<textarea rows="10" bind:value={importText} placeholder="Name: ..."></textarea></label><div class="actions"><button class="secondary" on:click={()=>{importOpen=false;importText='';}}>Cancelar</button><button class="primary" on:click={importCharacter}>Importar y distribuir datos</button></div></div>{/if}
+          
           <label>Nombre del personaje<input bind:value={character.name} placeholder="Nombre" /></label>
           <div class="two"><label>Jugador<input bind:value={character.playerName} placeholder="Jugador" /></label><label>Nivel<input bind:value={character.level} placeholder="Nivel" /></label></div>
           <label>Especie<input bind:value={character.species} /></label>
@@ -414,7 +427,7 @@
           {/if}
         </section>
       {/if}
-      <section class="panel save-panel"><button class="primary full" on:click={saveCharacter}>{gmCreatingCharacter?'Crear y asignar personaje':editingRoomPlayerId?'Guardar cambios y enviar al jugador':'Guardar ficha'}</button>{#if gmCreatingCharacter}<button class="secondary full" on:click={()=>{gmCreatingCharacter=false;view='gm';gmTab='characters';}}>Cancelar creación</button>{/if}</section>
+      <section class="panel save-panel">{#if saved.length || editingRoomPlayerId}<button class="primary full" on:click={saveCharacter}>{editingRoomPlayerId?'Guardar cambios y enviar al jugador':'Guardar ficha'}</button>{/if}</section>
       {#if saved.length}
       <section class="saved"><div class="section-heading"><div><div class="eyebrow">PERSONAJE GUARDADO</div><h2>Mi personaje</h2></div><span class="count">1</span></div>
         <div class="character-grid">{#each saved as c}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{c.name}</h3><p>{c.species||'Especie sin indicar'} · {c.className||'Clase sin indicar'}</p></div><div class="card-actions"><button on:click={()=>editCharacter(c)}>Editar ficha</button><button class="danger-text" on:click={()=>deleteCharacter(c)}>Eliminar ficha</button></div></article>{/each}</div>
@@ -422,11 +435,19 @@
     {:else if obrRole==='GM'}
       <div class="eyebrow">ESPACIO DEL DIRECTOR DE JUEGO <span>SINCRONIZACIÓN DE SALA</span></div><h1>Panel del <em>director.</em></h1>
       <p class="intro">Consulta y edita las fichas publicadas por los jugadores. Los cambios se notifican al propietario de la ficha.</p>
-      <div class="player-tabs gm-tabs"><button class:active={gmTab==='characters'} on:click={()=>gmTab='characters'}>Personajes</button><button class:active={gmTab==='bestiary'} on:click={()=>gmTab='bestiary'}>Bestiario</button></div>
-      {#if gmTab==='characters'}
+      <div class="player-tabs gm-tabs"><button class:active={gmTab==='unassigned'} on:click={()=>gmTab='unassigned'}>Personajes no asignados ({unassignedCharacters.length})</button><button class:active={gmTab==='characters'} on:click={()=>gmTab='characters'}>Personajes en sala</button><button class:active={gmTab==='bestiary'} on:click={()=>gmTab='bestiary'}>Bestiario</button></div>
+      {#if gmTab==='unassigned'}
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">BIBLIOTECA DEL GM</div><h2>Importar personaje</h2></div><span class="count">{unassignedCharacters.length}</span></div>
+        <p class="hint">Pega el texto completo usando el formato especificado. El GM conserva el texto original; no necesita completar los campos de creación.</p>
+        <label>Texto completo del personaje<textarea rows="14" bind:value={gmImportText} placeholder="Name: ..."></textarea></label>
+        <button class="primary full" on:click={importForGm}>Guardar en personajes no asignados</button></section>
+      <section class="saved"><div class="section-heading"><div><div class="eyebrow">PENDIENTES</div><h2>Personajes no asignados</h2></div><span class="count">{unassignedCharacters.length}</span></div>
+        {#if !unassignedCharacters.length}<p class="muted">Todavía no hay personajes importados.</p>{:else}<div class="character-grid">{#each unassignedCharacters as item}<article class="character-card"><div><h3>{item.name}</h3><p>Texto original guardado</p><details><summary>Ver texto importado</summary><pre>{item.rawText}</pre></details><label>Asignar a jugador conectado<select on:change={(e)=>assignImportedCharacter(item,e.currentTarget.value)}><option value="">Seleccionar jugador...</option>{#each connectedPlayers as p}<option value={p.id}>{p.name}</option>{/each}</select></label><button class="danger-text" on:click={()=>deleteUnassigned(item.id)}>Eliminar personaje</button></div></article>{/each}</div>{/if}
+      </section>
+      {:else if gmTab==='characters'}
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">SALA ACTUAL</div><h2>Personajes de los jugadores</h2></div><span class="count">{roomCharacters.length}</span></div>
-        <div class="actions"><button class="primary" on:click={startGmCharacter} disabled={!connectedPlayers.length}>＋ Crear personaje y asignar</button><button class="secondary" on:click={refreshRoomPlayers}>Actualizar jugadores</button></div>
-        <p class="hint">Jugadores conectados: {connectedPlayers.length}. La asignación reemplaza la ficha que el jugador tenga guardada.</p>
+        <div class="actions"><button class="secondary" on:click={refreshRoomPlayers}>Actualizar jugadores</button></div>
+        <p class="hint">Jugadores conectados: {connectedPlayers.length}. Asigna personajes desde la pestaña «Personajes no asignados».</p>
         {#if !obrReady}<p class="muted">Abre esta aplicación desde Owlbear Rodeo.</p>{:else if !roomCharacters.length}<p class="muted">Todavía no se ha recibido ninguna ficha de jugador.</p>{:else}<div class="character-grid">{#each roomCharacters as item}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{item.character.name}</h3><p>Jugador: {item.playerName} · {item.character.species} · {item.character.className}</p><p>CA: {item.character.ac||'—'} · PG: {item.character.hp||'—'} · Nivel: {item.character.level||'—'}</p></div><div class="card-actions"><button on:click={()=>editRoomCharacter(item)}>Ver y editar ficha</button></div></article>{/each}</div>{/if}
       </section>
       {:else}
