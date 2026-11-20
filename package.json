@@ -1,9 +1,12 @@
 {
   "name": "creacion-personaje-dnd-2024",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": { "dev": "vite", "build": "vite build", "preview": "vite preview", "check": "svelte-check --tsconfig ./tsconfig.json" },
+  "dependencies": {
+    "@owlbear-rodeo/sdk": "3.1.0"
+  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.3",
     "@tsconfig/svelte": "^4.0.1",
