@@ -2,13 +2,14 @@
   import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
 
+  type CharacterTrait = {id:string;name:string;level:string;source:string;description:string};
   type Character = {
     id:string; name:string; playerName:string; species:string; speciesTraits:string;
     className:string; classTraits:string; level:string; ac:string; hp:string; speed:string;
     abilities:Record<string,string>; abilityChecks:string; background:string; proficiencies:string; savingThrows:string;
     skills:string; attacks:string; initiative:string; passivePerception:string; spellAttack:string;
     spellSaveDc:string; equipment:string; spells:string; features:string; personality:string;
-    alignment:string; experience:string; notes:string; updatedAt:string;
+    alignment:string; experience:string; notes:string; updatedAt:string; traits:CharacterTrait[];
   };
   type Monster = {id:string;name:string;size:string;type:string;ac:string;hp:string;speed:string;traits:string;actions:string;notes:string;rawBlock?:string};
   type RoomCharacter = {playerId:string;playerName:string;character:Character};
@@ -22,12 +23,14 @@
   const DICE_ERROR=DICE_SOURCE+'/roll-error';
   const DICE_READY='dice-plus/isReady';
   const stats=[{key:'str',label:'Fuerza'},{key:'dex',label:'Destreza'},{key:'con',label:'Constitución'},{key:'int',label:'Inteligencia'},{key:'wis',label:'Sabiduría'},{key:'cha',label:'Carisma'}];
+  const traitSources=['Clase','Dote','Especie','Trasfondo','Otro'];
+  const traitOrder=['Especie','Clase','Dote','Trasfondo','Otro'];
   const abilityNames:Record<string,string>={Fuerza:'str',Destreza:'dex',Constitución:'con',Inteligencia:'int',Sabiduría:'wis',Carisma:'cha'};
   function blankCharacter():Character {
     return {id:crypto.randomUUID(),name:'',playerName:'',species:'',speciesTraits:'',className:'',classTraits:'',level:'',ac:'',hp:'',speed:'',
       abilities:{str:'',dex:'',con:'',int:'',wis:'',cha:''},abilityChecks:'',background:'',proficiencies:'',savingThrows:'',skills:'',attacks:'',
       initiative:'',passivePerception:'',spellAttack:'',spellSaveDc:'',equipment:'',spells:'',features:'',personality:'',
-      alignment:'',experience:'',notes:'',updatedAt:''};
+      alignment:'',experience:'',notes:'',updatedAt:'',traits:[]};
   }
   let view:'player'|'gm'='player';
   let playerTab:'identity'|'combat'|'abilities'|'proficiencies'|'traits'|'spells'|'equipment'|'rolls'='identity';
@@ -60,6 +63,8 @@
   let initiativeChoices:RollChoice[]=[];
   let rollChoices:RollChoice[]=[];
   let categoryChoices:RollChoice[]=[];
+  let traitGroups:{source:string;items:CharacterTrait[]}[]=[];
+  $: traitGroups=traitOrder.map(source=>({source,items:(character.traits||[]).filter(t=>t.source===source)})).filter(group=>group.items.length>0);
   let monster:Omit<Monster,'id'>={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};
   let monsterImportOpen=false;
   let monsterImportText='';
@@ -92,7 +97,22 @@
       return {label:name,category:'Ataque',notation,detail:'Ataque '+bonus+(damage?' · Daño '+damage:'')};
     }).filter(Boolean) as RollChoice[];
   }
-  function persistLocal(){localStorage.setItem('forja-characters',JSON.stringify(saved));localStorage.setItem('forja-monsters',JSON.stringify(monsters));}
+  function persistLocal(){localStorage.setItem('forja-characters',JSON.stringify(saved.slice(0,1)));localStorage.setItem('forja-monsters',JSON.stringify(monsters));}
+  function addTrait(){character.traits=[...(character.traits||[]),{id:crypto.randomUUID(),name:'',level:'',source:'Clase',description:''}];}
+  function removeTrait(id:string){character.traits=(character.traits||[]).filter(t=>t.id!==id);}
+  function legacyTraits(text:string,source:string):CharacterTrait[]{
+    const clean=text.trim();if(!clean)return[];
+    return clean.split(/\n\s*\n/).map(block=>block.trim()).filter(Boolean).map(block=>{
+      const lines=block.split('\n').map(x=>x.trim()).filter(Boolean);
+      const first=lines[0]||'Rasgo';
+      const looksLikeName=first.length<90&&!/[.!?]$/.test(first);
+      return {id:crypto.randomUUID(),name:looksLikeName?first:'Rasgo importado',level:'',source,description:looksLikeName?lines.slice(1).join('\n'):block};
+    });
+  }
+  function normalizeTraits(c:any):CharacterTrait[]{
+    if(Array.isArray(c.traits))return c.traits.map((t:any)=>({id:t.id||crypto.randomUUID(),name:t.name||'',level:t.level||'',source:traitSources.includes(t.source)?t.source:'Otro',description:t.description||''}));
+    return [...legacyTraits(c.speciesTraits||'','Especie'),...legacyTraits(c.classTraits||'','Clase'),...legacyTraits(c.features||'','Otro')];
+  }
   function readRoomPlayers(players:any[]){
     roomCharacters=players.flatMap((p:any)=>{const payload=p.metadata?.[KEY];if(!payload||payload.deleted||!payload.character)return[];return[{playerId:p.id,playerName:p.name||payload.playerName||'Jugador',character:payload.character}];});
   }
@@ -117,6 +137,8 @@
   onMount(()=>{
     try{saved=JSON.parse(localStorage.getItem('forja-characters')||'[]');monsters=JSON.parse(localStorage.getItem('forja-monsters')||'[]');rollLog=JSON.parse(localStorage.getItem('forja-roll-history')||'[]');}
     catch{saved=[];monsters=[];rollLog=[];}
+    saved=saved.length?[{...saved[saved.length-1],traits:normalizeTraits(saved[saved.length-1])}]:[];
+    if(saved.length)character={...blankCharacter(),...saved[0],traits:saved[0].traits,abilities:{...blankCharacter().abilities,...saved[0].abilities}};
     if(OBR.isAvailable)OBR.onReady(async()=>{
       obrReady=true;
       try{
@@ -152,13 +174,14 @@
       OBR.broadcast.sendMessage(CHANNEL,{type:'character-edited',playerId:editingRoomPlayerId,playerName:roomCharacters.find(x=>x.playerId===editingRoomPlayerId)?.playerName||'Jugador',character:updated},{destination:'ALL'});
       notice='Cambios enviados al jugador y a la sala.';return;
     }
-    if(editingId)saved=saved.map(c=>c.id===editingId?{...character,id:editingId}:c);
-    else{character={...character,id:crypto.randomUUID()};saved=[...saved,character];}
-    editingId=character.id;persistLocal();publishCharacter(character);notice='Ficha guardada.';
+    if(editingId)character={...character,id:editingId};
+    else if(saved.length){character={...character,id:saved[0].id};}
+    else character={...character,id:crypto.randomUUID()};
+    saved=[character];editingId=character.id;persistLocal();publishCharacter(character);notice='Ficha guardada.';
   }
-  function newCharacter(){character=blankCharacter();editingId='';editingRoomPlayerId='';view='player';playerTab='identity';}
-  function editCharacter(c:Character){character={...blankCharacter(),...c,abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='identity';}
-  function editRoomCharacter(c:RoomCharacter){character={...blankCharacter(),...c.character,abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='identity';}
+  function newCharacter(){if(saved.length){editCharacter(saved[0]);return;}character=blankCharacter();editingId='';editingRoomPlayerId='';view='player';playerTab='identity';}
+  function editCharacter(c:Character){character={...blankCharacter(),...c,traits:normalizeTraits(c),abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='identity';}
+  function editRoomCharacter(c:RoomCharacter){character={...blankCharacter(),...c.character,traits:normalizeTraits(c.character),abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='identity';}
   function deleteCharacter(c:Character){saved=saved.filter(x=>x.id!==c.id);if(editingId===c.id){editingId='';character=blankCharacter();}persistLocal();notice='Ficha eliminada.';}
   function addMonster(){if(!monster.name.trim()){notice='Escribe el nombre del monstruo.';return;}monsters=[...monsters,{...monster,id:crypto.randomUUID()}];persistLocal();monster={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};notice='Bloque de estadísticas guardado.';}
   function deleteMonster(id:string){monsters=monsters.filter(m=>m.id!==id);persistLocal();}
@@ -216,6 +239,7 @@
     c.equipment=section(t,'Carried Gear','');
     c.personality=section(t,'Guide Background','Proficiencies & Languages');
     c.features=section(t,'FEATURES, TRAITS, SPECIAL ABILITIES','EQUIPMENT & TREASURE').replace(/Proficiencies & Languages[\s\S]*/,'').trim();
+    c.traits=[...legacyTraits(c.speciesTraits,'Especie'),...legacyTraits(c.classTraits,'Clase'),...legacyTraits(c.features,'Otro')];
     c.notes='';
     character=c;editingId='';editingRoomPlayerId='';importOpen=false;importText='';playerTab='identity';
     notice='Personaje importado. Revisa los campos antes de guardarlo.';
@@ -275,8 +299,8 @@
           {#if importOpen}<div class="import-box"><label>Pega aquí el texto completo de la ficha<textarea rows="10" bind:value={importText} placeholder="Name: ..."></textarea></label><div class="actions"><button class="secondary" on:click={()=>{importOpen=false;importText='';}}>Cancelar</button><button class="primary" on:click={importCharacter}>Importar y distribuir datos</button></div></div>{/if}
           <label>Nombre del personaje<input bind:value={character.name} placeholder="Nombre" /></label>
           <div class="two"><label>Jugador<input bind:value={character.playerName} placeholder="Jugador" /></label><label>Nivel<input bind:value={character.level} placeholder="Nivel" /></label></div>
-          <label>Especie<textarea rows="2" bind:value={character.species}></textarea></label>
-          <label>Clase<textarea rows="2" bind:value={character.className}></textarea></label>
+          <label>Especie<input bind:value={character.species} /></label>
+          <label>Clase<input bind:value={character.className} /></label>
           <label>Trasfondo<textarea rows="3" bind:value={character.background}></textarea></label>
           <div class="two"><label>Alineamiento<input bind:value={character.alignment} /></label><label>Experiencia<input bind:value={character.experience} /></label></div>
           <label>Personalidad, apariencia e historia<textarea rows="5" bind:value={character.personality}></textarea></label>
@@ -306,10 +330,33 @@
         </section>
       {:else if playerTab==='traits'}
         <section class="panel form-panel">
-          <div class="section-heading"><div><div class="eyebrow">RASGOS Y CAPACIDADES</div><h2>Características especiales</h2></div></div>
-          <label>Rasgos de especie<textarea rows="6" bind:value={character.speciesTraits}></textarea></label>
-          <label>Rasgos y capacidades de clase<textarea rows="8" bind:value={character.classTraits}></textarea></label>
-          <label>Rasgos del trasfondo y otras capacidades<textarea rows="8" bind:value={character.features}></textarea></label>
+          <div class="section-heading"><div><div class="eyebrow">RASGOS Y CAPACIDADES</div><h2>Rasgos del personaje</h2></div><span class="count">{(character.traits||[]).length}</span></div>
+          <p class="hint">Cada rasgo se registra por separado y se organiza automáticamente según su origen.</p>
+          <button class="secondary add-trait" on:click={addTrait}>＋ Añadir rasgo</button>
+          {#if !(character.traits||[]).length}<p class="muted">Todavía no hay rasgos añadidos.</p>{/if}
+          {#each character.traits||[] as trait, index}
+            <article class="trait-editor">
+              <div class="trait-editor-head"><strong>Rasgo {index+1}</strong><button class="danger-text" on:click={()=>removeTrait(trait.id)}>Eliminar</button></div>
+              <div class="two">
+                <label>Nombre del rasgo<input bind:value={trait.name} placeholder="Nombre" /></label>
+                <label>Nivel<input bind:value={trait.level} placeholder="Nivel en que se obtiene (si corresponde)" /></label>
+              </div>
+              <label>Origen del rasgo<select bind:value={trait.source}>{#each traitSources as source}<option value={source}>{source}</option>{/each}</select></label>
+              <label>Descripción<textarea rows="4" bind:value={trait.description} placeholder="Describe el efecto y sus reglas"></textarea></label>
+            </article>
+          {/each}
+          <div class="traits-preview">
+            <div class="eyebrow">RASGOS ORDENADOS EN LA FICHA</div>
+            {#if !traitGroups.length}<p class="muted">Los rasgos aparecerán aquí agrupados por origen.</p>{:else}
+              {#each traitGroups as group}
+                <section class="trait-group"><h3>{group.source}</h3>
+                  {#each group.items as trait}
+                    <article class="trait-view"><div><strong>{trait.name||'Rasgo sin nombre'}</strong>{#if trait.level}<span class="trait-level">Nivel {trait.level}</span>{/if}</div>{#if trait.description}<p>{trait.description}</p>{/if}</article>
+                  {/each}
+                </section>
+              {/each}
+            {/if}
+          </div>
         </section>
       {:else if playerTab==='spells'}
         <section class="panel form-panel">
@@ -345,9 +392,10 @@
           {/if}
         </section>
       {/if}
-      <section class="saved"><div class="section-heading"><div><div class="eyebrow">ALMACENAMIENTO LOCAL</div><h2>Mis fichas</h2></div><span class="count">{saved.length}</span></div>
-        {#if !saved.length}<p class="muted">Todavía no hay fichas guardadas en este dispositivo.</p>{:else}<div class="character-grid">{#each saved as c}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{c.name}</h3><p>{c.species||'Especie sin indicar'} · {c.className||'Clase sin indicar'}</p></div><div class="card-actions"><button on:click={()=>editCharacter(c)}>Editar</button><button class="danger-text" on:click={()=>deleteCharacter(c)}>Eliminar</button></div></article>{/each}</div>{/if}
-      </section>
+      {#if saved.length}
+      <section class="saved"><div class="section-heading"><div><div class="eyebrow">PERSONAJE GUARDADO</div><h2>Mi personaje</h2></div><span class="count">1</span></div>
+        <div class="character-grid">{#each saved as c}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{c.name}</h3><p>{c.species||'Especie sin indicar'} · {c.className||'Clase sin indicar'}</p></div><div class="card-actions"><button on:click={()=>editCharacter(c)}>Editar ficha</button><button class="danger-text" on:click={()=>deleteCharacter(c)}>Eliminar ficha</button></div></article>{/each}</div>
+      </section>{/if}
     {:else if obrRole==='GM'}
       <div class="eyebrow">ESPACIO DEL DIRECTOR DE JUEGO <span>SINCRONIZACIÓN DE SALA</span></div><h1>Panel del <em>director.</em></h1>
       <p class="intro">Consulta y edita las fichas publicadas por los jugadores. Los cambios se notifican al propietario de la ficha.</p>
