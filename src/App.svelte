@@ -30,7 +30,7 @@
       alignment:'',experience:'',notes:'',updatedAt:''};
   }
   let view:'player'|'gm'='player';
-  let playerTab:'character'|'rolls'='character';
+  let playerTab:'identity'|'combat'|'abilities'|'proficiencies'|'traits'|'spells'|'equipment'|'rolls'='identity';
   let gmTab:'characters'|'bestiary'='characters';
   let character=blankCharacter();
   let saved:Character[]=[];
@@ -257,39 +257,71 @@
       <div class="eyebrow">HOJA DE PERSONAJE <span>EDICIÓN MANUAL</span></div>
       <h1>Forja tu <em>aventurero.</em></h1>
       <p class="intro">Importa una ficha o edita sus datos. Los valores se conservan tal como los introduces; no se calculan automáticamente.</p>
-      <div class="player-tabs"><button class:active={playerTab==='character'} on:click={()=>playerTab='character'}>Personaje</button><button class:active={playerTab==='rolls'} on:click={()=>playerTab='rolls'}>Tiradas</button></div>
-      {#if playerTab==='character'}
+      <div class="player-tabs character-tabs">
+        <button class:active={playerTab==='identity'} on:click={()=>playerTab='identity'}>Identidad</button>
+        <button class:active={playerTab==='combat'} on:click={()=>playerTab='combat'}>Combate</button>
+        <button class:active={playerTab==='abilities'} on:click={()=>playerTab='abilities'}>Características</button>
+        <button class:active={playerTab==='proficiencies'} on:click={()=>playerTab='proficiencies'}>Competencias</button>
+        <button class:active={playerTab==='traits'} on:click={()=>playerTab='traits'}>Rasgos</button>
+        <button class:active={playerTab==='spells'} on:click={()=>playerTab='spells'}>Conjuros</button>
+        <button class:active={playerTab==='equipment'} on:click={()=>playerTab='equipment'}>Equipo</button>
+        <button class:active={playerTab==='rolls'} on:click={()=>playerTab='rolls'}>Tiradas</button>
+      </div>
+      {#if playerTab==='identity'}
         <section class="panel form-panel">
-          <div class="section-heading"><div><div class="eyebrow">IDENTIDAD</div><h2>Datos generales</h2></div><span class="free-tag">Todo editable</span></div>
+          <div class="section-heading"><div><div class="eyebrow">IDENTIDAD</div><h2>Datos del aventurero</h2></div><span class="free-tag">Todo editable</span></div>
           {#if editingRoomPlayerId}<p class="hint">Estás editando la ficha de un jugador como director. Al guardar, los cambios se enviarán al jugador y a la sala.</p>{/if}
-          <div class="import-row"><button class="secondary" on:click={()=>importOpen=!importOpen}>Importar personaje</button><span class="hint">Formato de exportación compatible</span></div>
+          <div class="import-row"><button class="secondary" on:click={()=>importOpen=!importOpen}>Importar personaje</button><span class="hint">La importación distribuye los datos en todas las secciones</span></div>
           {#if importOpen}<div class="import-box"><label>Pega aquí el texto completo de la ficha<textarea rows="10" bind:value={importText} placeholder="Name: ..."></textarea></label><div class="actions"><button class="secondary" on:click={()=>{importOpen=false;importText='';}}>Cancelar</button><button class="primary" on:click={importCharacter}>Importar y distribuir datos</button></div></div>{/if}
           <label>Nombre del personaje<input bind:value={character.name} placeholder="Nombre" /></label>
           <div class="two"><label>Jugador<input bind:value={character.playerName} placeholder="Jugador" /></label><label>Nivel<input bind:value={character.level} placeholder="Nivel" /></label></div>
           <label>Especie<textarea rows="2" bind:value={character.species}></textarea></label>
-          <label>Rasgos de especie<textarea rows="4" bind:value={character.speciesTraits}></textarea></label>
           <label>Clase<textarea rows="2" bind:value={character.className}></textarea></label>
-          <label>Rasgos y capacidades de clase<textarea rows="5" bind:value={character.classTraits}></textarea></label>
+          <label>Trasfondo<textarea rows="3" bind:value={character.background}></textarea></label>
+          <div class="two"><label>Alineamiento<input bind:value={character.alignment} /></label><label>Experiencia<input bind:value={character.experience} /></label></div>
+          <label>Personalidad, apariencia e historia<textarea rows="5" bind:value={character.personality}></textarea></label>
+          <label>Notas generales<textarea rows="4" bind:value={character.notes}></textarea></label>
+        </section>
+      {:else if playerTab==='combat'}
+        <section class="panel form-panel">
+          <div class="section-heading"><div><div class="eyebrow">COMBATE</div><h2>Estadísticas y ataques</h2></div></div>
           <div class="two"><label>Clase de Armadura (CA)<input bind:value={character.ac} /></label><label>Puntos de Golpe (PG)<input bind:value={character.hp} /></label></div>
           <div class="two"><label>Velocidad<input bind:value={character.speed} /></label><label>Iniciativa<input bind:value={character.initiative} /></label></div>
           <label>Percepción pasiva<input bind:value={character.passivePerception} /></label>
-          <div class="section-heading subheading"><div><div class="eyebrow">CARACTERÍSTICAS</div><h2>Valores manuales</h2></div></div>
+          <label>Armas y ataques<textarea rows="8" bind:value={character.attacks} placeholder="Nombre del arma, bonificador de ataque, daño y propiedades"></textarea></label>
+        </section>
+      {:else if playerTab==='abilities'}
+        <section class="panel form-panel">
+          <div class="section-heading"><div><div class="eyebrow">CARACTERÍSTICAS</div><h2>Valores del personaje</h2></div></div>
+          <p class="hint">Introduce los valores tal como aparecen en la ficha. Los modificadores no se calculan automáticamente.</p>
           <div class="ability-grid">{#each stats as stat}<label class="ability"><span>{stat.label}</span><input bind:value={character.abilities[stat.key]} placeholder="Valor" /></label>{/each}</div>
-          <div class="section-heading subheading"><div><div class="eyebrow">COMPETENCIAS Y COMBATE</div><h2>Datos de tiradas</h2></div></div>
-          <label>Pruebas de característica y modificadores<textarea rows="4" bind:value={character.abilityChecks} placeholder="Fuerza: -1"></textarea></label>
-          <label>Habilidades y modificadores<textarea rows="5" bind:value={character.skills} placeholder="Sigilo: +7"></textarea></label>
-          <label>Salvaciones y modificadores<textarea rows="4" bind:value={character.savingThrows} placeholder="Destreza: +5"></textarea></label>
-          <label>Armas y ataques<textarea rows="6" bind:value={character.attacks} placeholder="Rapier. Melee Weapon Attack: +5 to hit. Hit: 1d8+3 piercing damage."></textarea></label>
+        </section>
+      {:else if playerTab==='proficiencies'}
+        <section class="panel form-panel">
+          <div class="section-heading"><div><div class="eyebrow">COMPETENCIAS</div><h2>Pruebas, habilidades y salvaciones</h2></div></div>
+          <label>Pruebas de característica y modificadores<textarea rows="5" bind:value={character.abilityChecks} placeholder="Fuerza: +3"></textarea></label>
+          <label>Habilidades y modificadores<textarea rows="7" bind:value={character.skills} placeholder="Sigilo: +5"></textarea></label>
+          <label>Salvaciones y modificadores<textarea rows="5" bind:value={character.savingThrows} placeholder="Destreza: +4"></textarea></label>
+          <label>Competencias con armaduras, armas y herramientas; idiomas<textarea rows="6" bind:value={character.proficiencies}></textarea></label>
+        </section>
+      {:else if playerTab==='traits'}
+        <section class="panel form-panel">
+          <div class="section-heading"><div><div class="eyebrow">RASGOS Y CAPACIDADES</div><h2>Características especiales</h2></div></div>
+          <label>Rasgos de especie<textarea rows="6" bind:value={character.speciesTraits}></textarea></label>
+          <label>Rasgos y capacidades de clase<textarea rows="8" bind:value={character.classTraits}></textarea></label>
+          <label>Rasgos del trasfondo y otras capacidades<textarea rows="8" bind:value={character.features}></textarea></label>
+        </section>
+      {:else if playerTab==='spells'}
+        <section class="panel form-panel">
+          <div class="section-heading"><div><div class="eyebrow">CONJUROS</div><h2>Magia y recursos</h2></div></div>
           <div class="two"><label>Bonificador de ataque de conjuro<input bind:value={character.spellAttack} /></label><label>CD de salvación de conjuros<input bind:value={character.spellSaveDc} /></label></div>
-          <label>Trasfondo<textarea rows="3" bind:value={character.background}></textarea></label>
-          <label>Competencias, herramientas e idiomas<textarea rows="4" bind:value={character.proficiencies}></textarea></label>
-          <label>Equipo y objetos<textarea rows="5" bind:value={character.equipment}></textarea></label>
-          <label>Conjuros y recursos mágicos<textarea rows="5" bind:value={character.spells}></textarea></label>
-          <label>Otros rasgos y capacidades<textarea rows="5" bind:value={character.features}></textarea></label>
-          <div class="two"><label>Alineamiento<input bind:value={character.alignment} /></label><label>Experiencia<input bind:value={character.experience} /></label></div>
-          <label>Personalidad, apariencia e historia<textarea rows="4" bind:value={character.personality}></textarea></label>
-          <label>Notas<textarea rows="4" bind:value={character.notes}></textarea></label>
-          <div class="actions"><button class="secondary" on:click={newCharacter}>Nueva ficha</button><button class="primary" on:click={saveCharacter}>Guardar ficha</button></div>
+          <label>Conjuros conocidos, preparados y otros recursos mágicos<textarea rows="12" bind:value={character.spells}></textarea></label>
+        </section>
+      {:else if playerTab==='equipment'}
+        <section class="panel form-panel">
+          <div class="section-heading"><div><div class="eyebrow">EQUIPO</div><h2>Inventario y tesoro</h2></div></div>
+          <p class="hint">Incluye aquí armas, armaduras, equipo, objetos y tesoro. Los datos de ataques también se consultan en la pestaña Combate.</p>
+          <label>Equipo, objetos y tesoro<textarea rows="12" bind:value={character.equipment}></textarea></label>
         </section>
       {:else}
         <section class="panel rolls-panel">
@@ -301,7 +333,7 @@
             <label>Notación de dados<input bind:value={customNotation} placeholder="1d20+3" /></label>
           {:else}
             <label>Seleccionar tirada<select bind:value={selectedRoll}>{#each categoryChoices as option}<option value={option.label}>{option.label} · {option.detail}</option>{/each}</select></label>
-            {#if categoryChoices.length===0}<p class="hint">No hay opciones de esta categoría en la ficha. Añade sus datos en la pestaña Personaje.</p>{/if}
+            {#if categoryChoices.length===0}<p class="hint">No hay opciones de esta categoría en la ficha. Añade sus datos en la pestaña Competencias, Combate o Conjuros.</p>{/if}
             {#if rollCategory==='Conjuro' && character.spellSaveDc}<p class="hint">CD de salvación de conjuros: {character.spellSaveDc}. Las tiradas de salvación de los objetivos se realizan desde la categoría Salvación.</p>{/if}
           {/if}
           <button class="primary full" on:click={makeRoll} disabled={rollBusy||(!categoryChoices.length&&rollCategory!=='Personalizada')}>{rollBusy?'Esperando resultado…':'Lanzar dados con Dice+'}</button>
