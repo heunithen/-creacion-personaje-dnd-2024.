@@ -56,6 +56,7 @@
   let abilityChoices:RollChoice[]=[];
   let attackChoices:RollChoice[]=[];
   let spellChoices:RollChoice[]=[];
+  let initiativeChoices:RollChoice[]=[];
   let rollChoices:RollChoice[]=[];
   let categoryChoices:RollChoice[]=[];
   let monster:Omit<Monster,'id'>={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};
@@ -64,8 +65,9 @@
   $: saveChoices=parseNamedModifiers(character.savingThrows,'Salvación');
   $: abilityChoices=parseNamedModifiers(character.abilityChecks,'Característica');
   $: attackChoices=parseAttacks(character.attacks);
-  $: spellChoices=character.spells.trim()? [{label:'Ataque de conjuro',category:'Conjuro',notation:'1d20'+signedModifier(character.spellAttack),detail:'Bonificador '+(character.spellAttack||'no indicado') }]:[];
-  $: rollChoices=[...skillChoices,...saveChoices,...abilityChoices,...attackChoices,...spellChoices].filter(x=>x.notation);
+  $: spellChoices=character.spells.trim() && character.spellAttack!=='' ? [{label:'Ataque de conjuro',category:'Conjuro',notation:'1d20'+signedModifier(character.spellAttack),detail:'Bonificador '+character.spellAttack }]:[];
+  $: initiativeChoices=character.initiative!==''?[{label:'Iniciativa',category:'Iniciativa',notation:'1d20'+signedModifier(character.initiative),detail:'Modificador '+character.initiative}]:[];
+  $: rollChoices=[...skillChoices,...saveChoices,...abilityChoices,...attackChoices,...spellChoices,...initiativeChoices].filter(x=>x.notation);
   $: categoryChoices=rollChoices.filter(x=>x.category===rollCategory);
   $: if(!categoryChoices.some(x=>x.label===selectedRoll)) selectedRoll=categoryChoices[0]?.label||'';
 
@@ -272,7 +274,7 @@
           <div class="section-heading"><div><div class="eyebrow">DADOS EN SALA</div><h2>Realizar una tirada</h2></div><span class:ready={diceReady} class="free-tag">{diceReady?'Dice+ listo':'Dice+ no detectado'}</span></div>
           <p class="hint">Las opciones se obtienen de los datos de la ficha. La tirada se envía a Dice+ y todos los participantes la ven.</p>
           <label>Personaje activo<input readonly value={character.name||'Sin personaje seleccionado'}/></label>
-          <label>Tipo de tirada<select bind:value={rollCategory}><option>Habilidad</option><option>Característica</option><option>Salvación</option><option>Ataque</option><option>Conjuro</option><option>Personalizada</option></select></label>
+          <label>Tipo de tirada<select bind:value={rollCategory}><option>Habilidad</option><option>Característica</option><option>Salvación</option><option>Ataque</option><option>Conjuro</option><option>Iniciativa</option><option>Personalizada</option></select></label>
           {#if rollCategory==='Personalizada'}
             <label>Notación de dados<input bind:value={customNotation} placeholder="1d20+3"/></label>
           {:else}
