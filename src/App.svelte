@@ -51,6 +51,13 @@
   let rollBusy=false;
   let rollLog:RollEntry[]=[];
   let pendingRolls:Record<string,{label:string;notation:string;characterName:string}>={};
+  let skillChoices:RollChoice[]=[];
+  let saveChoices:RollChoice[]=[];
+  let abilityChoices:RollChoice[]=[];
+  let attackChoices:RollChoice[]=[];
+  let spellChoices:RollChoice[]=[];
+  let rollChoices:RollChoice[]=[];
+  let categoryChoices:RollChoice[]=[];
   let monster:Omit<Monster,'id'>={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};
 
   $: skillChoices=parseNamedModifiers(character.skills,'Habilidad');
