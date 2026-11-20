@@ -52,6 +52,7 @@
   let notice='';
   let obrReady=false;
   let obrRole='';
+  let processingAssignment=false;
   let playerName='';
   let syncStatus='Owlbear Rodeo no está conectado.';
   let importOpen=false;
@@ -125,37 +126,49 @@
     connectedPlayers=players.map((p:any)=>({id:p.id,name:p.name||'Jugador'}));
     roomCharacters=players.flatMap((p:any)=>{const payload=p.metadata?.[KEY];if(!payload||payload.deleted||!payload.character)return[];return[{playerId:p.id,playerName:p.name||payload.playerName||'Jugador',character:payload.character}];});
   }
-  async function refreshRoomPlayers(){try{const players=await OBR.party.getPlayers();readRoomPlayers(players);await processPendingAssignments(players);if(obrRole==='GM')await cleanupAcknowledgedAssignments(players);}catch{}}
-  async function processPendingAssignments(players:any[]){
-    if(!obrReady||obrRole!=='PLAYER')return;
+  async function refreshRoomPlayers(){
+    try{
+      const players=await OBR.party.getPlayers();
+      readRoomPlayers(players);
+      await processPendingAssignments();
+      if(obrRole==='GM')await cleanupAcknowledgedAssignments(players);
+    }catch{}
+  }
+  async function processPendingAssignments(){
+    if(!obrReady||obrRole!=='PLAYER'||processingAssignment)return;
+    processingAssignment=true;
     try{
       const playerId=await OBR.player.getId();
-      const self=players.find((p:any)=>p.id===playerId);
-      const acknowledgements=Array.isArray(self?.metadata?.[ACK_KEY])?self.metadata[ACK_KEY]:[];
-      const pending=players.flatMap((p:any)=>Array.isArray(p.metadata?.[PENDING_KEY])?p.metadata[PENDING_KEY]:[]);
+      const [playerMetadata,roomMetadata]=await Promise.all([OBR.player.getMetadata(),OBR.room.getMetadata()]);
+      const acknowledgements=Array.isArray(playerMetadata?.[ACK_KEY])?playerMetadata[ACK_KEY]:[];
+      const pending=Array.isArray(roomMetadata?.[PENDING_KEY])?roomMetadata[PENDING_KEY]:[];
       const assignment=pending.find((item:any)=>item?.targetPlayerId===playerId&&item?.id&&item?.rawText&&!acknowledgements.includes(item.id));
       if(!assignment)return;
       importText=assignment.rawText;
       importCharacter();
+      if(!character.name.trim())throw new Error('El texto no contiene un campo Name válido.');
       const assigned={...character,id:crypto.randomUUID(),playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
-      character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
       await OBR.player.setMetadata({
         [KEY]:{character:assigned,playerName:assigned.playerName,updatedAt:assigned.updatedAt},
         [ACK_KEY]:[...acknowledgements,assignment.id].slice(-100)
       });
+      character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
       await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId,playerName:assigned.playerName,character:assigned},{destination:'ALL'});
       notice='El GM te ha asignado un personaje.';
-    }catch{notice='No se pudo importar la asignación. Vuelve a abrir la extensión o solicita al GM que revise la asignación.';}
+    }catch(error){
+      notice=error instanceof Error?error.message:'No se pudo importar la asignación. Vuelve a abrir la extensión o solicita al GM que la revise.';
+    }finally{
+      processingAssignment=false;
+    }
   }
   async function cleanupAcknowledgedAssignments(players:any[]){
     try{
-      const playerId=await OBR.player.getId();
-      const self=players.find((p:any)=>p.id===playerId);
-      const pending=Array.isArray(self?.metadata?.[PENDING_KEY])?self.metadata[PENDING_KEY]:[];
+      const roomMetadata=await OBR.room.getMetadata();
+      const pending=Array.isArray(roomMetadata?.[PENDING_KEY])?roomMetadata[PENDING_KEY]:[];
       if(!pending.length)return;
       const acknowledgements=new Set(players.flatMap((p:any)=>Array.isArray(p.metadata?.[ACK_KEY])?p.metadata[ACK_KEY]:[]));
       const remaining=pending.filter((item:any)=>!acknowledgements.has(item.id));
-      if(remaining.length!==pending.length)await OBR.player.setMetadata({[PENDING_KEY]:remaining});
+      if(remaining.length!==pending.length)await OBR.room.setMetadata({[PENDING_KEY]:remaining});
     }catch{}
   }
   async function publishCharacter(c:Character){
@@ -186,18 +199,11 @@
         obrRole=await OBR.player.getRole();playerName=await OBR.player.getName();
         syncStatus='Conectado a Owlbear Rodeo como '+(obrRole==='GM'?'Director de juego.':'Jugador.');
         await refreshRoomPlayers();
-        OBR.party.onChange((players:any[])=>{readRoomPlayers(players);void processPendingAssignments(players);if(obrRole==='GM')void cleanupAcknowledgedAssignments(players);});
+        OBR.party.onChange((players:any[])=>{readRoomPlayers(players);void processPendingAssignments();if(obrRole==='GM')void cleanupAcknowledgedAssignments(players);});
+        OBR.room.onMetadataChange((metadata:any)=>{if(obrRole==='PLAYER')void processPendingAssignments();else if(obrRole==='GM')void OBR.party.getPlayers().then((players:any[])=>cleanupAcknowledgedAssignments(players));});
         OBR.broadcast.onMessage(CHANNEL,async(event:any)=>{
           const d=event.data;
           if(d?.type==='assignment-available'&&obrRole==='PLAYER')await refreshRoomPlayers();
-          if(d?.type==='character-assigned'&&d.rawText&&obrRole==='PLAYER'&&d.targetPlayerId===await OBR.player.getId()){
-            importText=d.rawText;importCharacter();
-            const assigned={...character,id:crypto.randomUUID(),playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
-            character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
-            await OBR.player.setMetadata({[KEY]:{character:assigned,playerName:assigned.playerName,updatedAt:assigned.updatedAt}});
-            await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId:await OBR.player.getId(),playerName:assigned.playerName,character:assigned},{destination:'ALL'});
-            notice='El GM te ha asignado un personaje.';
-          }
           if(d?.type==='character-updated'&&d.character)roomCharacters=[...roomCharacters.filter(c=>c.playerId!==d.playerId),{playerId:d.playerId,playerName:d.playerName||'Jugador',character:d.character}];
           if(d?.type==='character-deleted')roomCharacters=roomCharacters.filter(c=>c.playerId!==d.playerId);
           if(d?.type==='character-edited'&&d.character){
@@ -240,12 +246,12 @@
     const target=connectedPlayers.find(p=>p.id===playerId);
     if(!target){notice='El jugador ya no está conectado. Actualiza la lista.';return;}
     try{
-      const players=await OBR.party.getPlayers();
-      const currentPlayerId=await OBR.player.getId();
-      const self=players.find((p:any)=>p.id===currentPlayerId);
-      const pending=Array.isArray(self?.metadata?.[PENDING_KEY])?self.metadata[PENDING_KEY]:[];
+      const roomMetadata=await OBR.room.getMetadata();
+      const pending=Array.isArray(roomMetadata?.[PENDING_KEY])?roomMetadata[PENDING_KEY]:[];
       const assignment={id:crypto.randomUUID(),targetPlayerId:target.id,rawText:item.rawText,createdAt:new Date().toISOString()};
-      await OBR.player.setMetadata({[PENDING_KEY]:[...pending,assignment]});
+      const nextPending=[...pending,assignment];
+      if(new TextEncoder().encode(JSON.stringify(nextPending)).length>12000)throw new Error('La cola de asignaciones supera el límite seguro de almacenamiento de la sala.');
+      await OBR.room.setMetadata({[PENDING_KEY]:nextPending});
       await OBR.broadcast.sendMessage(CHANNEL,{type:'assignment-available',targetPlayerId:target.id},{destination:'ALL'});
       unassignedCharacters=unassignedCharacters.filter(x=>x.id!==item.id);
       localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
