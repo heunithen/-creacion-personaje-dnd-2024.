@@ -172,6 +172,24 @@
       if(remaining.length!==pending.length)await OBR.room.setMetadata({[PENDING_KEY]:remaining});
     }catch{}
   }
+  async function restoreOwnCharacter(){
+    if(obrRole!=='PLAYER')return;
+    const metadata=await OBR.player.getMetadata();
+    const payload=metadata?.[KEY];
+    if(payload?.deleted){
+      saved=[];character=blankCharacter();editingId='';persistLocal();return;
+    }
+    if(payload?.character){
+      const remote=payload.character as Character;
+      const local=saved[0];
+      const remoteTime=Date.parse(payload.updatedAt||remote.updatedAt||'')||0;
+      const localTime=Date.parse(local?.updatedAt||'')||0;
+      if(!local||remoteTime>=localTime){
+        const normalized={...blankCharacter(),...remote,traits:normalizeTraits(remote),abilities:{...blankCharacter().abilities,...remote.abilities}};
+        saved=[normalized];character=normalized;editingId=normalized.id;persistLocal();
+      }
+    }
+  }
   async function publishCharacter(c:Character){
     if(!obrReady||obrRole!=='PLAYER')return;
     try{const id=await OBR.player.getId();const name=await OBR.player.getName();const payload={...c,playerName:name};
@@ -199,6 +217,7 @@
       try{
         obrRole=await OBR.player.getRole();playerName=await OBR.player.getName();
         syncStatus='Conectado a Owlbear Rodeo como '+(obrRole==='GM'?'Director de juego.':'Jugador.');
+        await restoreOwnCharacter();
         await refreshRoomPlayers();
         OBR.party.onChange((players:any[])=>{readRoomPlayers(players);void processPendingAssignments();if(obrRole==='GM')void cleanupAcknowledgedAssignments(players);});
         OBR.room.onMetadataChange((metadata:any)=>{if(obrRole==='PLAYER')void processPendingAssignments();else if(obrRole==='GM')void OBR.party.getPlayers().then((players:any[])=>cleanupAcknowledgedAssignments(players));});
