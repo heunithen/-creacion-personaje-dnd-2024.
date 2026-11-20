@@ -31,6 +31,7 @@
   }
   let view:'player'|'gm'='player';
   let playerTab:'character'|'rolls'='character';
+  let gmTab:'characters'|'bestiary'='characters';
   let character=blankCharacter();
   let saved:Character[]=[];
   let monsters:Monster[]=[];
@@ -60,6 +61,8 @@
   let rollChoices:RollChoice[]=[];
   let categoryChoices:RollChoice[]=[];
   let monster:Omit<Monster,'id'>={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};
+  let monsterImportOpen=false;
+  let monsterImportText='';
 
   $: skillChoices=parseNamedModifiers(character.skills,'Habilidad');
   $: saveChoices=parseNamedModifiers(character.savingThrows,'Salvación');
@@ -159,6 +162,24 @@
   function deleteCharacter(c:Character){saved=saved.filter(x=>x.id!==c.id);if(editingId===c.id){editingId='';character=blankCharacter();}persistLocal();notice='Ficha eliminada.';}
   function addMonster(){if(!monster.name.trim()){notice='Escribe el nombre del monstruo.';return;}monsters=[...monsters,{...monster,id:crypto.randomUUID()}];persistLocal();monster={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};notice='Bloque de estadísticas guardado.';}
   function deleteMonster(id:string){monsters=monsters.filter(m=>m.id!==id);persistLocal();}
+  function importMonster(){
+    const t=monsterImportText.replace(/\r/g,'').trim();
+    if(!t){notice='Pega el bloque de estadísticas del monstruo.';return;}
+    const lines=t.split('\n').map(x=>x.trim()).filter(Boolean);
+    const m:Omit<Monster,'id'>={name:lines[0]||'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};
+    const sizeType=lines.find(x=>/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\s+/.test(x));
+    if(sizeType){const match=sizeType.match(/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\s+(.+?)(?:,|$)/);if(match){m.size=match[1];m.type=match[2];}}
+    m.ac=t.match(/Armor Class\s+(\d+)/i)?.[1]||'';
+    m.hp=t.match(/Hit Points\s+(\d+)/i)?.[1]||'';
+    m.speed=t.match(/Speed\s+([^\n]+)/i)?.[1]||'';
+    const sections=t.split(/\n(?=Traits\b|Actions\b|Bonus Actions\b|Reactions\b|Legendary Actions\b)/i);
+    const traitSection=sections.find(x=>/^Traits\b/i.test(x.trim()))||'';
+    const actionSections=sections.filter(x=>/^(?:Actions|Bonus Actions|Reactions|Legendary Actions)\b/i.test(x.trim()));
+    m.traits=traitSection.replace(/^Traits\s*/i,'').trim();
+    m.actions=actionSections.map(x=>x.replace(/^(?:Actions|Bonus Actions|Reactions|Legendary Actions)\s*/i,'').trim()).filter(Boolean).join('\n\n');
+    m.notes=lines.filter(line=>line!==m.name&&line!==sizeType&&!/^(Armor Class|Hit Points|Speed|STR|DEX|CON|INT|WIS|CHA|Saving Throws|Skills|Senses|Languages|Challenge|Traits|Actions|Bonus Actions|Reactions|Legendary Actions)\b/i.test(line)).join('\n');
+    monsters=[...monsters,{...m,id:crypto.randomUUID()}];persistLocal();monsterImportText='';monsterImportOpen=false;notice='Monstruo importado. Revisa el bloque antes de usarlo.';
+  }
   function showRoomCharacter(c:RoomCharacter){editRoomCharacter(c);}
   function section(text:string,start:string,end:string){const a=text.indexOf(start);if(a<0)return'';const from=a+start.length;const b=end?text.indexOf(end,from):-1;return text.slice(from,b<0?undefined:b).trim();}
   function importCharacter(){
@@ -227,7 +248,7 @@
 <div class="app-shell">
   <header class="topbar">
     <a class="brand" href="#inicio" on:click|preventDefault={()=>{view='player';newCharacter();}}><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>DUNGEONS & DRAGONS · 2024</small></span></a>
-    <nav><button class:active={view==='player'} on:click={()=>view='player'}>Jugador</button><button class:active={view==='gm'} on:click={()=>view='gm'}>Director de juego</button></nav>
+    <nav><button class:active={view==='player'} on:click={()=>view='player'}>Jugador</button>{#if obrRole==='GM'}<button class:active={view==='gm'} on:click={()=>{view='gm';gmTab='characters';}}>Director de juego</button>{/if}</nav>
   </header>
   <main class="main">
     <div class="connection"><span class:connected={obrReady}></span>{syncStatus}<span class:connected={diceReady} class="dice-status">Dice+ {diceReady?'conectado':'no detectado'}</span></div>
@@ -294,14 +315,19 @@
       <section class="saved"><div class="section-heading"><div><div class="eyebrow">ALMACENAMIENTO LOCAL</div><h2>Mis fichas</h2></div><span class="count">{saved.length}</span></div>
         {#if !saved.length}<p class="muted">Todavía no hay fichas guardadas en este dispositivo.</p>{:else}<div class="character-grid">{#each saved as c}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{c.name}</h3><p>{c.species||'Especie sin indicar'} · {c.className||'Clase sin indicar'}</p></div><div class="card-actions"><button on:click={()=>editCharacter(c)}>Editar</button><button class="danger-text" on:click={()=>deleteCharacter(c)}>Eliminar</button></div></article>{/each}</div>{/if}
       </section>
-    {:else}
+    {:else if obrRole==='GM'}
       <div class="eyebrow">ESPACIO DEL DIRECTOR DE JUEGO <span>SINCRONIZACIÓN DE SALA</span></div><h1>Panel del <em>director.</em></h1>
       <p class="intro">Consulta y edita las fichas publicadas por los jugadores. Los cambios se notifican al propietario de la ficha.</p>
+      <div class="player-tabs gm-tabs"><button class:active={gmTab==='characters'} on:click={()=>gmTab='characters'}>Personajes</button><button class:active={gmTab==='bestiary'} on:click={()=>gmTab='bestiary'}>Bestiario</button></div>
+      {#if gmTab==='characters'}
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">SALA ACTUAL</div><h2>Personajes de los jugadores</h2></div><span class="count">{roomCharacters.length}</span></div>
         {#if !obrReady}<p class="muted">Abre esta aplicación desde Owlbear Rodeo.</p>{:else if !roomCharacters.length}<p class="muted">Todavía no se ha recibido ninguna ficha de jugador.</p>{:else}<div class="character-grid">{#each roomCharacters as item}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{item.character.name}</h3><p>Jugador: {item.playerName} · {item.character.species} · {item.character.className}</p><p>CA: {item.character.ac||'—'} · PG: {item.character.hp||'—'} · Nivel: {item.character.level||'—'}</p></div><div class="card-actions"><button on:click={()=>editRoomCharacter(item)}>Ver y editar ficha</button></div></article>{/each}</div>{/if}
       </section>
-      <section class="panel monster-panel"><div class="section-heading"><div><div class="eyebrow">BESTIARIO PERSONAL</div><h2>Crear bloque de estadísticas</h2></div><span class="count">{monsters.length}</span></div>
-        <p class="hint">Todos los datos del monstruo se introducen manualmente.</p>
+      {:else}
+      <section class="panel monster-panel"><div class="section-heading"><div><div class="eyebrow">BESTIARIO PRIVADO</div><h2>Crear bloque de estadísticas</h2></div><span class="count">{monsters.length}</span></div>
+        <p class="hint">Este bestiario solo está disponible para el director de juego y se guarda en su dispositivo.</p>
+        <div class="import-row"><button class="secondary" on:click={()=>monsterImportOpen=!monsterImportOpen}>Importar statblock</button><span class="hint">Pega el bloque de estadísticas del monstruo</span></div>
+        {#if monsterImportOpen}<div class="import-box"><label>Bloque de estadísticas<textarea rows="12" bind:value={monsterImportText} placeholder="Nombre del monstruo&#10;Medium humanoid...&#10;Armor Class ...&#10;Hit Points ...&#10;Speed ..."></textarea></label><div class="actions"><button class="secondary" on:click={()=>{monsterImportOpen=false;monsterImportText='';}}>Cancelar</button><button class="primary" on:click={importMonster}>Importar monstruo</button></div></div>{/if}
         <label>Nombre<input bind:value={monster.name} /></label><div class="two"><label>Tamaño<input bind:value={monster.size} /></label><label>Tipo<input bind:value={monster.type} /></label></div>
         <div class="two"><label>Clase de Armadura (CA)<input bind:value={monster.ac} /></label><label>Puntos de Golpe (PG)<input bind:value={monster.hp} /></label></div>
         <label>Velocidad<input bind:value={monster.speed} /></label><label>Rasgos<textarea rows="4" bind:value={monster.traits}></textarea></label><label>Acciones<textarea rows="4" bind:value={monster.actions}></textarea></label><label>Notas<textarea rows="3" bind:value={monster.notes}></textarea></label>
@@ -310,6 +336,9 @@
       <section class="saved"><div class="section-heading"><div><div class="eyebrow">BESTIARIO</div><h2>Monstruos guardados</h2></div><span class="count">{monsters.length}</span></div>
         {#if !monsters.length}<p class="muted">Aún no hay monstruos guardados.</p>{:else}<div class="monster-grid">{#each monsters as m}<article class="monster-card"><div class="monster-top"><span class="eyebrow">{m.size} · {m.type}</span><button class="danger-text" on:click={()=>deleteMonster(m.id)}>Eliminar</button></div><h3>{m.name}</h3><div class="monster-stats"><span>CA <b>{m.ac||'—'}</b></span><span>PG <b>{m.hp||'—'}</b></span><span>Vel. <b>{m.speed||'—'}</b></span></div>{#if m.traits}<p><b>Rasgos.</b> {m.traits}</p>{/if}{#if m.actions}<p><b>Acciones.</b> {m.actions}</p>{/if}{#if m.notes}<p>{m.notes}</p>{/if}</article>{/each}</div>{/if}
       </section>
+      {/if}
+    {:else}
+      <div class="eyebrow">ACCESO RESTRINGIDO</div><h1>Panel del <em>director.</em></h1><p class="intro">El bestiario y las herramientas del director solo están disponibles para el usuario con rol de GM en Owlbear Rodeo.</p>
     {/if}
   </main>
   {#if notice}<button class="toast" on:click={()=>notice=''}>{notice}<span>×</span></button>{/if}
