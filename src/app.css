@@ -18,3 +18,5 @@ select{display:block;width:100%;margin-top:8px;padding:12px 13px;background:#141
 .character-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .character-tabs button{min-width:0;padding:11px 8px;font-size:12px;white-space:nowrap}
 @media(max-width:650px){.character-tabs{grid-template-columns:repeat(4,minmax(112px,1fr));overflow-x:auto;padding-bottom:6px}.character-tabs button{font-size:11px;padding:10px 7px}}
+
+.add-trait{margin:0 0 18px}.trait-editor{background:#24221e;border:1px solid #514638;border-radius:9px;padding:16px;margin:14px 0}.trait-editor-head{display:flex;justify-content:space-between;align-items:center;color:#d8c8ad;font-size:12px}.trait-editor label{margin:12px 0}.traits-preview{border-top:1px solid #39352e;margin-top:26px;padding-top:22px}.trait-group{margin-top:18px}.trait-group h3{font:400 17px 'Libre Baskerville',serif;color:#d6b47b;margin:0 0 8px}.trait-view{padding:12px 0;border-top:1px solid #39352e}.trait-view strong{font-size:13px;color:#eee5d7}.trait-view p{white-space:pre-wrap;font-size:12px;line-height:1.6;color:#aaa195;margin:7px 0 0}.trait-level{margin-left:10px;color:#bd955a;font-size:10px}
