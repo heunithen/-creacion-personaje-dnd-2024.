@@ -156,9 +156,9 @@
     else{character={...character,id:crypto.randomUUID()};saved=[...saved,character];}
     editingId=character.id;persistLocal();publishCharacter(character);notice='Ficha guardada.';
   }
-  function newCharacter(){character=blankCharacter();editingId='';editingRoomPlayerId='';view='player';playerTab='character';}
-  function editCharacter(c:Character){character={...blankCharacter(),...c,abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='character';}
-  function editRoomCharacter(c:RoomCharacter){character={...blankCharacter(),...c.character,abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='character';}
+  function newCharacter(){character=blankCharacter();editingId='';editingRoomPlayerId='';view='player';playerTab='identity';}
+  function editCharacter(c:Character){character={...blankCharacter(),...c,abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='identity';}
+  function editRoomCharacter(c:RoomCharacter){character={...blankCharacter(),...c.character,abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='identity';}
   function deleteCharacter(c:Character){saved=saved.filter(x=>x.id!==c.id);if(editingId===c.id){editingId='';character=blankCharacter();}persistLocal();notice='Ficha eliminada.';}
   function addMonster(){if(!monster.name.trim()){notice='Escribe el nombre del monstruo.';return;}monsters=[...monsters,{...monster,id:crypto.randomUUID()}];persistLocal();monster={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};notice='Bloque de estadísticas guardado.';}
   function deleteMonster(id:string){monsters=monsters.filter(m=>m.id!==id);persistLocal();}
@@ -217,7 +217,7 @@
     c.personality=section(t,'Guide Background','Proficiencies & Languages');
     c.features=section(t,'FEATURES, TRAITS, SPECIAL ABILITIES','EQUIPMENT & TREASURE').replace(/Proficiencies & Languages[\s\S]*/,'').trim();
     c.notes='';
-    character=c;editingId='';editingRoomPlayerId='';importOpen=false;importText='';playerTab='character';
+    character=c;editingId='';editingRoomPlayerId='';importOpen=false;importText='';playerTab='identity';
     notice='Personaje importado. Revisa los campos antes de guardarlo.';
   }
   async function makeRoll(){
