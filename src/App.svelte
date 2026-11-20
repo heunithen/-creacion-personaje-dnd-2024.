@@ -17,6 +17,8 @@
   type RollChoice = {label:string;category:string;notation:string;detail:string};
   type RollEntry = {id:string;playerName:string;characterName:string;label:string;notation:string;total?:number;summary?:string;status:string;timestamp:number};
   const KEY='com.heunithen.dnd2024-character-builder/character';
+  const PENDING_KEY='com.heunithen.dnd2024-character-builder/pending-assignments';
+  const ACK_KEY='com.heunithen.dnd2024-character-builder/assignment-acks';
   const CHANNEL='com.heunithen.dnd2024-character-builder/character-sync';
   const ROLL_CHANNEL='com.heunithen.dnd2024-character-builder/roll-log';
   const DICE_SOURCE='com.heunithen.dnd2024-character-builder';
@@ -123,7 +125,39 @@
     connectedPlayers=players.map((p:any)=>({id:p.id,name:p.name||'Jugador'}));
     roomCharacters=players.flatMap((p:any)=>{const payload=p.metadata?.[KEY];if(!payload||payload.deleted||!payload.character)return[];return[{playerId:p.id,playerName:p.name||payload.playerName||'Jugador',character:payload.character}];});
   }
-  async function refreshRoomPlayers(){try{readRoomPlayers(await OBR.party.getPlayers());}catch{}}
+  async function refreshRoomPlayers(){try{const players=await OBR.party.getPlayers();readRoomPlayers(players);await processPendingAssignments(players);if(obrRole==='GM')await cleanupAcknowledgedAssignments(players);}catch{}}
+  async function processPendingAssignments(players:any[]){
+    if(!obrReady||obrRole!=='PLAYER')return;
+    try{
+      const playerId=await OBR.player.getId();
+      const self=players.find((p:any)=>p.id===playerId);
+      const acknowledgements=Array.isArray(self?.metadata?.[ACK_KEY])?self.metadata[ACK_KEY]:[];
+      const pending=players.flatMap((p:any)=>Array.isArray(p.metadata?.[PENDING_KEY])?p.metadata[PENDING_KEY]:[]);
+      const assignment=pending.find((item:any)=>item?.targetPlayerId===playerId&&item?.id&&item?.rawText&&!acknowledgements.includes(item.id));
+      if(!assignment)return;
+      importText=assignment.rawText;
+      importCharacter();
+      const assigned={...character,id:crypto.randomUUID(),playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
+      character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
+      await OBR.player.setMetadata({
+        [KEY]:{character:assigned,playerName:assigned.playerName,updatedAt:assigned.updatedAt},
+        [ACK_KEY]:[...acknowledgements,assignment.id].slice(-100)
+      });
+      await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId,playerName:assigned.playerName,character:assigned},{destination:'ALL'});
+      notice='El GM te ha asignado un personaje.';
+    }catch{notice='No se pudo importar la asignación. Vuelve a abrir la extensión o solicita al GM que revise la asignación.';}
+  }
+  async function cleanupAcknowledgedAssignments(players:any[]){
+    try{
+      const playerId=await OBR.player.getId();
+      const self=players.find((p:any)=>p.id===playerId);
+      const pending=Array.isArray(self?.metadata?.[PENDING_KEY])?self.metadata[PENDING_KEY]:[];
+      if(!pending.length)return;
+      const acknowledgements=new Set(players.flatMap((p:any)=>Array.isArray(p.metadata?.[ACK_KEY])?p.metadata[ACK_KEY]:[]));
+      const remaining=pending.filter((item:any)=>!acknowledgements.has(item.id));
+      if(remaining.length!==pending.length)await OBR.player.setMetadata({[PENDING_KEY]:remaining});
+    }catch{}
+  }
   async function publishCharacter(c:Character){
     if(!obrReady||obrRole!=='PLAYER')return;
     try{const id=await OBR.player.getId();const name=await OBR.player.getName();const payload={...c,playerName:name};
@@ -152,7 +186,7 @@
         obrRole=await OBR.player.getRole();playerName=await OBR.player.getName();
         syncStatus='Conectado a Owlbear Rodeo como '+(obrRole==='GM'?'Director de juego.':'Jugador.');
         await refreshRoomPlayers();
-        OBR.party.onChange((players:any[])=>readRoomPlayers(players));
+        OBR.party.onChange((players:any[])=>{readRoomPlayers(players);void processPendingAssignments(players);if(obrRole==='GM')void cleanupAcknowledgedAssignments(players);});
         OBR.broadcast.onMessage(CHANNEL,async(event:any)=>{
           const d=event.data;
           if(d?.type==='character-assigned'&&d.rawText&&obrRole==='PLAYER'&&d.targetPlayerId===await OBR.player.getId()){
@@ -201,13 +235,20 @@
     localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
     gmImportText='';notice='Personaje guardado en Personajes no asignados.';
   }
-  function assignImportedCharacter(item:UnassignedCharacter,playerId:string){
+  async function assignImportedCharacter(item:UnassignedCharacter,playerId:string){
     const target=connectedPlayers.find(p=>p.id===playerId);
     if(!target){notice='El jugador ya no está conectado. Actualiza la lista.';return;}
-    OBR.broadcast.sendMessage(CHANNEL,{type:'character-assigned',targetPlayerId:target.id,rawText:item.rawText,priority:true},{destination:'ALL'});
-    unassignedCharacters=unassignedCharacters.filter(x=>x.id!==item.id);
-    localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
-    notice='Ficha asignada a '+target.name+'. Reemplazará cualquier personaje anterior.';
+    try{
+      const players=await OBR.party.getPlayers();
+      const currentPlayerId=await OBR.player.getId();
+      const self=players.find((p:any)=>p.id===currentPlayerId);
+      const pending=Array.isArray(self?.metadata?.[PENDING_KEY])?self.metadata[PENDING_KEY]:[];
+      const assignment={id:crypto.randomUUID(),targetPlayerId:target.id,rawText:item.rawText,createdAt:new Date().toISOString()};
+      await OBR.player.setMetadata({[PENDING_KEY]:[...pending,assignment]});
+      unassignedCharacters=unassignedCharacters.filter(x=>x.id!==item.id);
+      localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
+      notice='Ficha asignada a '+target.name+'. Se importará automáticamente cuando abra la extensión y reemplazará cualquier personaje anterior.';
+    }catch{notice='No se pudo guardar la asignación en la sala. El personaje sigue en la lista de no asignados.';}
   }
   function deleteUnassigned(id:string){
     unassignedCharacters=unassignedCharacters.filter(x=>x.id!==id);
