@@ -147,7 +147,7 @@
       const updated={...character};
       roomCharacters=roomCharacters.map(x=>x.playerId===editingRoomPlayerId?{...x,character:updated}:x);
       OBR.broadcast.sendMessage(CHANNEL,{type:'character-edited',playerId:editingRoomPlayerId,playerName:roomCharacters.find(x=>x.playerId===editingRoomPlayerId)?.playerName||'Jugador',character:updated},{destination:'ALL'});
-      editingRoomPlayerId='';notice='Cambios enviados al jugador y a la sala.';return;
+      notice='Cambios enviados al jugador y a la sala.';return;
     }
     if(editingId)saved=saved.map(c=>c.id===editingId?{...character,id:editingId}:c);
     else{character={...character,id:crypto.randomUUID()};saved=[...saved,character];}
