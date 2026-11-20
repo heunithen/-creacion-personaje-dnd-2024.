@@ -196,7 +196,7 @@
   function importForGm(){
     const raw=gmImportText.trim();
     if(!raw){notice='Pega el texto completo de la ficha.';return;}
-    const name=raw.match(/^Name:\\s*(.+)$/mi)?.[1]?.trim()||raw.split('\\n').find(x=>x.trim())?.trim()||'Personaje sin nombre';
+    const name=raw.match(/^Name:\s*(.+)$/mi)?.[1]?.trim()||raw.split('\n').find(x=>x.trim())?.trim()||'Personaje sin nombre';
     unassignedCharacters=[...unassignedCharacters,{id:crypto.randomUUID(),rawText:raw,name,createdAt:new Date().toISOString()}];
     localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
     gmImportText='';notice='Personaje guardado en Personajes no asignados.';
@@ -442,7 +442,7 @@
         <label>Texto completo del personaje<textarea rows="14" bind:value={gmImportText} placeholder="Name: ..."></textarea></label>
         <button class="primary full" on:click={importForGm}>Guardar en personajes no asignados</button></section>
       <section class="saved"><div class="section-heading"><div><div class="eyebrow">PENDIENTES</div><h2>Personajes no asignados</h2></div><span class="count">{unassignedCharacters.length}</span></div>
-        {#if !unassignedCharacters.length}<p class="muted">Todavía no hay personajes importados.</p>{:else}<div class="character-grid">{#each unassignedCharacters as item}<article class="character-card"><div><h3>{item.name}</h3><p>Texto original guardado</p><details><summary>Ver texto importado</summary><pre>{item.rawText}</pre></details><label>Asignar a jugador conectado<select on:change={(e)=>assignImportedCharacter(item,e.currentTarget.value)}><option value="">Seleccionar jugador...</option>{#each connectedPlayers as p}<option value={p.id}>{p.name}</option>{/each}</select></label><button class="danger-text" on:click={()=>deleteUnassigned(item.id)}>Eliminar personaje</button></div></article>{/each}</div>{/if}
+        {#if !unassignedCharacters.length}<p class="muted">Todavía no hay personajes importados.</p>{:else}<div class="character-grid">{#each unassignedCharacters as item}<article class="character-card"><div><h3>{item.name}</h3><p>Texto original guardado</p><details><summary>Ver texto importado</summary><pre>{item.rawText}</pre></details><label>Asignar a jugador conectado<select on:change={(e)=>assignImportedCharacter(item,(e.currentTarget as HTMLSelectElement).value)}><option value="">Seleccionar jugador...</option>{#each connectedPlayers as p}<option value={p.id}>{p.name}</option>{/each}</select></label><button class="danger-text" on:click={()=>deleteUnassigned(item.id)}>Eliminar personaje</button></div></article>{/each}</div>{/if}
       </section>
       {:else if gmTab==='characters'}
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">SALA ACTUAL</div><h2>Personajes de los jugadores</h2></div><span class="count">{roomCharacters.length}</span></div>
