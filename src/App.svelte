@@ -154,7 +154,7 @@
         [KEY]:{character:assigned,playerName:assigned.playerName,updatedAt:assigned.updatedAt},
         [ACK_KEY]:[...acknowledgements,...targetAssignments.map((item:any)=>item.id)].slice(-100)
       });
-      await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId,playerName:assigned.playerName,character:assigned},{destination:'ALL'});
+      try{await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId,playerName:assigned.playerName,character:assigned},{destination:'ALL'});}catch{}
       notice='El GM te ha asignado un personaje.';
     }catch(error){
       notice=error instanceof Error?error.message:'No se pudo importar la asignación. Vuelve a abrir la extensión o solicita al GM que la revise.';
