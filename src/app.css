@@ -1,0 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&display=swap');
+:root{font-family:Inter,system-ui,sans-serif;color:#eee9df;background:#141414;font-synthesis:none;text-rendering:optimizeLegibility}
+*{box-sizing:border-box}
+body{margin:0;min-width:320px;min-height:100vh;background:radial-gradient(ellipse at 50% -15%,#393024 0,#1b1a18 38%,#121212 75%)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+::selection{background:#a77b3e;color:#fff}
