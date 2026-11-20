@@ -39,6 +39,9 @@
   let saved:Character[]=[];
   let monsters:Monster[]=[];
   let roomCharacters:RoomCharacter[]=[];
+  let connectedPlayers:{id:string;name:string}[]=[];
+  let gmCreatingCharacter=false;
+  let assignmentPlayerId='';
   let editingId='';
   let editingRoomPlayerId='';
   let notice='';
@@ -114,6 +117,7 @@
     return [...legacyTraits(c.speciesTraits||'','Especie'),...legacyTraits(c.classTraits||'','Clase'),...legacyTraits(c.features||'','Otro')];
   }
   function readRoomPlayers(players:any[]){
+    connectedPlayers=players.map((p:any)=>({id:p.id,name:p.name||'Jugador'}));
     roomCharacters=players.flatMap((p:any)=>{const payload=p.metadata?.[KEY];if(!payload||payload.deleted||!payload.character)return[];return[{playerId:p.id,playerName:p.name||payload.playerName||'Jugador',character:payload.character}];});
   }
   async function refreshRoomPlayers(){try{readRoomPlayers(await OBR.party.getPlayers());}catch{}}
@@ -148,6 +152,13 @@
         OBR.party.onChange((players:any[])=>readRoomPlayers(players));
         OBR.broadcast.onMessage(CHANNEL,async(event:any)=>{
           const d=event.data;
+          if(d?.type==='character-assigned'&&d.character&&obrRole==='PLAYER'&&d.targetPlayerId===await OBR.player.getId()){
+            const assigned={...d.character,playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
+            character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
+            await OBR.player.setMetadata({[KEY]:{character:assigned,playerName:assigned.playerName,updatedAt:assigned.updatedAt}});
+            await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId:await OBR.player.getId(),playerName:assigned.playerName,character:assigned},{destination:'ALL'});
+            notice='El GM te ha asignado un personaje.';
+          }
           if(d?.type==='character-updated'&&d.character)roomCharacters=[...roomCharacters.filter(c=>c.playerId!==d.playerId),{playerId:d.playerId,playerName:d.playerName||'Jugador',character:d.character}];
           if(d?.type==='character-deleted')roomCharacters=roomCharacters.filter(c=>c.playerId!==d.playerId);
           if(d?.type==='character-edited'&&d.character){
@@ -168,6 +179,16 @@
   function saveCharacter(){
     character={...character,name:character.name.trim(),playerName:editingRoomPlayerId?(roomCharacters.find(x=>x.playerId===editingRoomPlayerId)?.playerName||character.playerName):(playerName||character.playerName),updatedAt:new Date().toISOString()};
     if(!character.name){notice='Escribe el nombre del personaje.';return;}
+    if(gmCreatingCharacter){
+      if(!assignmentPlayerId){notice='Selecciona un jugador conectado para asignarle el personaje.';return;}
+      const target=connectedPlayers.find(p=>p.id===assignmentPlayerId);
+      if(!target){notice='Ese jugador ya no está conectado. Actualiza la sala y vuelve a intentarlo.';return;}
+      const assigned={...character,id:crypto.randomUUID(),playerName:target.name,updatedAt:new Date().toISOString()};
+      OBR.broadcast.sendMessage(CHANNEL,{type:'character-assigned',targetPlayerId:target.id,character:assigned},{destination:'ALL'});
+      roomCharacters=roomCharacters.filter(x=>x.playerId!==target.id);
+      notice='Personaje enviado a '+target.name+'. El jugador debe tener la extensión abierta para recibirlo.';
+      gmCreatingCharacter=false;assignmentPlayerId='';view='gm';gmTab='characters';return;
+    }
     if(editingRoomPlayerId){
       const updated={...character};
       roomCharacters=roomCharacters.map(x=>x.playerId===editingRoomPlayerId?{...x,character:updated}:x);
@@ -179,9 +200,10 @@
     else character={...character,id:crypto.randomUUID()};
     saved=[character];editingId=character.id;persistLocal();publishCharacter(character);notice='Ficha guardada.';
   }
-  function newCharacter(){if(saved.length){editCharacter(saved[0]);return;}character=blankCharacter();editingId='';editingRoomPlayerId='';view='player';playerTab='identity';}
-  function editCharacter(c:Character){character={...blankCharacter(),...c,traits:normalizeTraits(c),abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='identity';}
-  function editRoomCharacter(c:RoomCharacter){character={...blankCharacter(),...c.character,traits:normalizeTraits(c.character),abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='identity';}
+  function startGmCharacter(){character=blankCharacter();editingId='';editingRoomPlayerId='';gmCreatingCharacter=true;assignmentPlayerId='';view='player';playerTab='identity';}
+  function newCharacter(){gmCreatingCharacter=false;if(saved.length){editCharacter(saved[0]);return;}character=blankCharacter();editingId='';editingRoomPlayerId='';view='player';playerTab='identity';}
+  function editCharacter(c:Character){gmCreatingCharacter=false;character={...blankCharacter(),...c,traits:normalizeTraits(c),abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='identity';}
+  function editRoomCharacter(c:RoomCharacter){gmCreatingCharacter=false;character={...blankCharacter(),...c.character,traits:normalizeTraits(c.character),abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='identity';}
   function deleteCharacter(c:Character){saved=saved.filter(x=>x.id!==c.id);if(editingId===c.id){editingId='';character=blankCharacter();}persistLocal();notice='Ficha eliminada.';}
   function addMonster(){if(!monster.name.trim()){notice='Escribe el nombre del monstruo.';return;}monsters=[...monsters,{...monster,id:crypto.randomUUID()}];persistLocal();monster={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};notice='Bloque de estadísticas guardado.';}
   function deleteMonster(id:string){monsters=monsters.filter(m=>m.id!==id);persistLocal();}
@@ -294,7 +316,7 @@
       {#if playerTab==='identity'}
         <section class="panel form-panel">
           <div class="section-heading"><div><div class="eyebrow">IDENTIDAD</div><h2>Datos del aventurero</h2></div><span class="free-tag">Todo editable</span></div>
-          {#if editingRoomPlayerId}<p class="hint">Estás editando la ficha de un jugador como director. Al guardar, los cambios se enviarán al jugador y a la sala.</p>{/if}
+          {#if gmCreatingCharacter}<p class="hint">Estás creando una ficha como GM. Al guardarla se asignará al jugador conectado que selecciones.</p><label>Asignar a jugador conectado<select bind:value={assignmentPlayerId}><option value="">Seleccionar jugador</option>{#each connectedPlayers as p}<option value={p.id}>{p.name}</option>{/each}</select></label>{:else if editingRoomPlayerId}<p class="hint">Estás editando la ficha de un jugador como director. Al guardar, los cambios se enviarán al jugador y a la sala.</p>{/if}
           <div class="import-row"><button class="secondary" on:click={()=>importOpen=!importOpen}>Importar personaje</button><span class="hint">La importación distribuye los datos en todas las secciones</span></div>
           {#if importOpen}<div class="import-box"><label>Pega aquí el texto completo de la ficha<textarea rows="10" bind:value={importText} placeholder="Name: ..."></textarea></label><div class="actions"><button class="secondary" on:click={()=>{importOpen=false;importText='';}}>Cancelar</button><button class="primary" on:click={importCharacter}>Importar y distribuir datos</button></div></div>{/if}
           <label>Nombre del personaje<input bind:value={character.name} placeholder="Nombre" /></label>
@@ -392,6 +414,7 @@
           {/if}
         </section>
       {/if}
+      <section class="panel save-panel"><button class="primary full" on:click={saveCharacter}>{gmCreatingCharacter?'Crear y asignar personaje':editingRoomPlayerId?'Guardar cambios y enviar al jugador':'Guardar ficha'}</button>{#if gmCreatingCharacter}<button class="secondary full" on:click={()=>{gmCreatingCharacter=false;view='gm';gmTab='characters';}}>Cancelar creación</button>{/if}</section>
       {#if saved.length}
       <section class="saved"><div class="section-heading"><div><div class="eyebrow">PERSONAJE GUARDADO</div><h2>Mi personaje</h2></div><span class="count">1</span></div>
         <div class="character-grid">{#each saved as c}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{c.name}</h3><p>{c.species||'Especie sin indicar'} · {c.className||'Clase sin indicar'}</p></div><div class="card-actions"><button on:click={()=>editCharacter(c)}>Editar ficha</button><button class="danger-text" on:click={()=>deleteCharacter(c)}>Eliminar ficha</button></div></article>{/each}</div>
@@ -402,6 +425,8 @@
       <div class="player-tabs gm-tabs"><button class:active={gmTab==='characters'} on:click={()=>gmTab='characters'}>Personajes</button><button class:active={gmTab==='bestiary'} on:click={()=>gmTab='bestiary'}>Bestiario</button></div>
       {#if gmTab==='characters'}
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">SALA ACTUAL</div><h2>Personajes de los jugadores</h2></div><span class="count">{roomCharacters.length}</span></div>
+        <div class="actions"><button class="primary" on:click={startGmCharacter} disabled={!connectedPlayers.length}>＋ Crear personaje y asignar</button><button class="secondary" on:click={refreshRoomPlayers}>Actualizar jugadores</button></div>
+        <p class="hint">Jugadores conectados: {connectedPlayers.length}. La asignación reemplaza la ficha que el jugador tenga guardada.</p>
         {#if !obrReady}<p class="muted">Abre esta aplicación desde Owlbear Rodeo.</p>{:else if !roomCharacters.length}<p class="muted">Todavía no se ha recibido ninguna ficha de jugador.</p>{:else}<div class="character-grid">{#each roomCharacters as item}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{item.character.name}</h3><p>Jugador: {item.playerName} · {item.character.species} · {item.character.className}</p><p>CA: {item.character.ac||'—'} · PG: {item.character.hp||'—'} · Nivel: {item.character.level||'—'}</p></div><div class="card-actions"><button on:click={()=>editRoomCharacter(item)}>Ver y editar ficha</button></div></article>{/each}</div>{/if}
       </section>
       {:else}
