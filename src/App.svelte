@@ -5,7 +5,7 @@
   type Character = {
     id:string; name:string; playerName:string; species:string; speciesTraits:string;
     className:string; classTraits:string; level:string; ac:string; hp:string; speed:string;
-    abilities:Record<string,string>; background:string; proficiencies:string; savingThrows:string;
+    abilities:Record<string,string>; abilityChecks:string; background:string; proficiencies:string; savingThrows:string;
     skills:string; attacks:string; initiative:string; passivePerception:string; spellAttack:string;
     spellSaveDc:string; equipment:string; spells:string; features:string; personality:string;
     alignment:string; experience:string; notes:string; updatedAt:string;
@@ -25,7 +25,7 @@
   const abilityNames:Record<string,string>={Fuerza:'str',Destreza:'dex',Constitución:'con',Inteligencia:'int',Sabiduría:'wis',Carisma:'cha'};
   function blankCharacter():Character {
     return {id:crypto.randomUUID(),name:'',playerName:'',species:'',speciesTraits:'',className:'',classTraits:'',level:'',ac:'',hp:'',speed:'',
-      abilities:{str:'',dex:'',con:'',int:'',wis:'',cha:''},background:'',proficiencies:'',savingThrows:'',skills:'',attacks:'',
+      abilities:{str:'',dex:'',con:'',int:'',wis:'',cha:''},abilityChecks:'',background:'',proficiencies:'',savingThrows:'',skills:'',attacks:'',
       initiative:'',passivePerception:'',spellAttack:'',spellSaveDc:'',equipment:'',spells:'',features:'',personality:'',
       alignment:'',experience:'',notes:'',updatedAt:''};
   }
@@ -55,7 +55,7 @@
 
   $: skillChoices=parseNamedModifiers(character.skills,'Habilidad');
   $: saveChoices=parseNamedModifiers(character.savingThrows,'Salvación');
-  $: abilityChoices=stats.filter(s=>character.abilities[s.key]!=='' ).map(s=>({label:s.label,category:'Característica',notation:'1d20'+signedModifier(character.abilities[s.key]),detail:'Prueba de '+s.label}));
+  $: abilityChoices=parseNamedModifiers(character.abilityChecks,'Característica');
   $: attackChoices=parseAttacks(character.attacks);
   $: spellChoices=character.spells.trim()? [{label:'Ataque de conjuro',category:'Conjuro',notation:'1d20'+signedModifier(character.spellAttack),detail:'Bonificador '+(character.spellAttack||'no indicado') }]:[];
   $: rollChoices=[...skillChoices,...saveChoices,...abilityChoices,...attackChoices,...spellChoices].filter(x=>x.notation);
@@ -103,8 +103,8 @@
     });
   }
   onMount(()=>{
-    try{saved=JSON.parse(localStorage.getItem('forja-characters')||'[]');monsters=JSON.parse(localStorage.getItem('forja-monsters')||'[]');}
-    catch{saved=[];monsters=[];}
+    try{saved=JSON.parse(localStorage.getItem('forja-characters')||'[]');monsters=JSON.parse(localStorage.getItem('forja-monsters')||'[]');rollLog=JSON.parse(localStorage.getItem('forja-roll-history')||'[]');}
+    catch{saved=[];monsters=[];rollLog=[];}
     if(OBR.isAvailable)OBR.onReady(async()=>{
       obrReady=true;
       try{
@@ -124,7 +124,7 @@
             }
           }
         });
-        OBR.broadcast.onMessage(ROLL_CHANNEL,(event:any)=>{const d=event.data;if(d?.entry&& !rollLog.some(x=>x.id===d.entry.id))rollLog=[d.entry,...rollLog].slice(0,100);});
+        OBR.broadcast.onMessage(ROLL_CHANNEL,(event:any)=>{const d=event.data;if(d?.entry&& !rollLog.some(x=>x.id===d.entry.id)){rollLog=[d.entry,...rollLog].slice(0,100);localStorage.setItem('forja-roll-history',JSON.stringify(rollLog));}});
         OBR.broadcast.onMessage(DICE_RESULT,(event:any)=>handleDiceResult(event.data));
         OBR.broadcast.onMessage(DICE_ERROR,(event:any)=>handleDiceError(event.data));
         diceReady=await requestDiceReady();
@@ -132,7 +132,7 @@
     });
   });
   function saveCharacter(){
-    character={...character,name:character.name.trim(),playerName:playerName||character.playerName,updatedAt:new Date().toISOString()};
+    character={...character,name:character.name.trim(),playerName:editingRoomPlayerId?(roomCharacters.find(x=>x.playerId===editingRoomPlayerId)?.playerName||character.playerName):(playerName||character.playerName),updatedAt:new Date().toISOString()};
     if(!character.name){notice='Escribe el nombre del personaje.';return;}
     if(editingRoomPlayerId){
       const updated={...character};
@@ -171,8 +171,11 @@
     c.spellAttack=t.match(/spell attack bonus is\s*([+-]?\d+)/i)?.[1]||'';
     c.spellSaveDc=t.match(/Spell Save is DC\s*(\d+)/i)?.[1]||'';
     for(const [name,key] of Object.entries(abilityNames)){const score=t.match(new RegExp('^'+name+'\\s+(\\d+)','mi'))?.[1];if(score)c.abilities[key]=score;}
-    c.speciesTraits=section(t,'Halfling Traits','Rogue Class Features')||section(t,'Species Traits','COMBAT');
-    c.classTraits=section(t,'Rogue Class Features','EQUIPMENT & TREASURE')||section(t,'Class Features','EQUIPMENT & TREASURE');
+    const speciesHeading=t.match(/^(.+ Traits) \\[PHB/gmi)?.[1];
+    const classHeading=t.match(/^(.+ Class Features) \\[PHB/gmi)?.[1];
+    c.speciesTraits=speciesHeading?section(t,speciesHeading,classHeading||'EQUIPMENT & TREASURE'):section(t,'Species Traits','COMBAT');
+    c.classTraits=classHeading?section(t,classHeading,'EQUIPMENT & TREASURE'):section(t,'Class Features','EQUIPMENT & TREASURE');
+    c.abilityChecks=[...t.matchAll(/^\s*([+-]\d+)\s+\.\.\.\s+(.+?)\s+Ability Checks\s*\*?\*?/gmi)].map(m=>m[2].trim()+': '+m[1]).join('\n');
     c.savingThrows=[...t.matchAll(/^\s*([+-]\d+)\s+\.\.\.\s+(.+?)\s+Saving Throws\s*\*?\*?/gmi)].map(m=>m[2].replace(/\s+\*+$/,'').trim()+': '+m[1]).join('\n');
     c.skills=[...t.matchAll(/^\s*([+-]\d+)\s+\.\.\.\s+(.+?)\s+Skill\s*\*?\*?/gmi)].map(m=>m[2].replace(/\s+\*+$/,'').trim()+': '+m[1]).join('\n');
     const combat=section(t,'COMBAT','FEATURES, TRAITS, SPECIAL ABILITIES');
@@ -207,7 +210,7 @@
     delete pendingRolls[data.rollId];rollBusy=false;addRollEntry(entry);
   }
   function handleDiceError(data:any){const pending=pendingRolls[data?.rollId];if(!pending)return;const entry:RollEntry={id:data.rollId,playerName:playerName||'Jugador',characterName:pending.characterName,label:pending.label,notation:pending.notation,summary:data.error||'Error de Dice+',status:'Error',timestamp:Date.now()};delete pendingRolls[data.rollId];rollBusy=false;addRollEntry(entry);}
-  function addRollEntry(entry:RollEntry){if(rollLog.some(x=>x.id===entry.id))return;rollLog=[entry,...rollLog].slice(0,100);OBR.broadcast.sendMessage(ROLL_CHANNEL,{entry},{destination:'ALL'});}
+  function addRollEntry(entry:RollEntry){if(rollLog.some(x=>x.id===entry.id))return;rollLog=[entry,...rollLog].slice(0,100);localStorage.setItem('forja-roll-history',JSON.stringify(rollLog));OBR.broadcast.sendMessage(ROLL_CHANNEL,{entry},{destination:'ALL'});}
   function formatTime(ts:number){return new Date(ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 </script>
 
@@ -242,6 +245,7 @@
           <div class="section-heading subheading"><div><div class="eyebrow">CARACTERÍSTICAS</div><h2>Valores manuales</h2></div></div>
           <div class="ability-grid">{#each stats as stat}<label class="ability"><span>{stat.label}</span><input bind:value={character.abilities[stat.key]} placeholder="Valor"/></label>{/each}</div>
           <div class="section-heading subheading"><div><div class="eyebrow">COMPETENCIAS Y COMBATE</div><h2>Datos de tiradas</h2></div></div>
+          <label>Pruebas de característica y modificadores<textarea rows="4" bind:value={character.abilityChecks} placeholder="Fuerza: -1"/></label>
           <label>Habilidades y modificadores<textarea rows="5" bind:value={character.skills} placeholder="Sigilo: +7"/></label>
           <label>Salvaciones y modificadores<textarea rows="4" bind:value={character.savingThrows} placeholder="Destreza: +5"/></label>
           <label>Armas y ataques<textarea rows="6" bind:value={character.attacks} placeholder="Rapier. Melee Weapon Attack: +5 to hit. Hit: 1d8+3 piercing damage."/></label>
