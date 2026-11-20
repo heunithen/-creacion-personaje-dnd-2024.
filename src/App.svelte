@@ -55,7 +55,6 @@
   let processingAssignment=false;
   let playerName='';
   let syncStatus='Owlbear Rodeo no está conectado.';
-  let importOpen=false;
   let importText='';
   let rollCategory='Habilidad';
   let selectedRoll='';
@@ -174,7 +173,7 @@
   }
   async function restoreOwnCharacter(){
     if(obrRole!=='PLAYER')return;
-    const metadata=await OBR.player.getMetadata();
+    const metadata:any=await OBR.player.getMetadata();
     const payload=metadata?.[KEY];
     if(payload?.deleted){
       saved=[];character=blankCharacter();editingId='';persistLocal();return;
@@ -220,7 +219,7 @@
         await restoreOwnCharacter();
         await refreshRoomPlayers();
         OBR.party.onChange((players:any[])=>{readRoomPlayers(players);void processPendingAssignments();if(obrRole==='GM')void cleanupAcknowledgedAssignments(players);});
-        OBR.room.onMetadataChange((metadata:any)=>{if(obrRole==='PLAYER')void processPendingAssignments();else if(obrRole==='GM')void OBR.party.getPlayers().then((players:any[])=>cleanupAcknowledgedAssignments(players));});
+        OBR.room.onMetadataChange(()=>{if(obrRole==='PLAYER')void processPendingAssignments();else if(obrRole==='GM')void OBR.party.getPlayers().then((players:any[])=>cleanupAcknowledgedAssignments(players));});
         OBR.broadcast.onMessage(CHANNEL,async(event:any)=>{
           const d=event.data;
           if(d?.type==='assignment-available'&&obrRole==='PLAYER')await refreshRoomPlayers();
@@ -287,7 +286,6 @@
     unassignedCharacters=unassignedCharacters.filter(x=>x.id!==id);
     localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
   }
-  function startGmCharacter(){gmTab='unassigned';}
   function newCharacter(){if(saved.length){editCharacter(saved[0]);return;}notice='No tienes un personaje asignado. El GM debe asignártelo.';view='player';}
   function editCharacter(c:Character){gmCreatingCharacter=false;character={...blankCharacter(),...c,traits:normalizeTraits(c),abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='identity';}
   function editRoomCharacter(c:RoomCharacter){gmCreatingCharacter=false;character={...blankCharacter(),...c.character,traits:normalizeTraits(c.character),abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='identity';}
@@ -313,7 +311,6 @@
     m.rawBlock=t;
     monsters=[...monsters,{...m,id:crypto.randomUUID()}];persistLocal();monsterImportText='';monsterImportOpen=false;notice='Monstruo importado. Revisa el bloque antes de usarlo.';
   }
-  function showRoomCharacter(c:RoomCharacter){editRoomCharacter(c);}
   function section(text:string,start:string,end:string){const a=text.indexOf(start);if(a<0)return'';const from=a+start.length;const b=end?text.indexOf(end,from):-1;return text.slice(from,b<0?undefined:b).trim();}
   function importCharacter(){
     const t=importText.replace(/\r/g,'');
@@ -350,7 +347,7 @@
     c.features=section(t,'FEATURES, TRAITS, SPECIAL ABILITIES','EQUIPMENT & TREASURE').replace(/Proficiencies & Languages[\s\S]*/,'').trim();
     c.traits=[...legacyTraits(c.speciesTraits,'Especie'),...legacyTraits(c.classTraits,'Clase'),...legacyTraits(c.features,'Otro')];
     c.notes='';
-    character=c;editingId='';editingRoomPlayerId='';importOpen=false;importText='';playerTab='identity';
+    character=c;editingId='';editingRoomPlayerId='';importText='';playerTab='identity';
     notice='Personaje importado. Revisa los campos antes de guardarlo.';
   }
   async function makeRoll(){
