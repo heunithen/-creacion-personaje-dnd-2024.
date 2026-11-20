@@ -171,8 +171,8 @@
     c.spellAttack=t.match(/spell attack bonus is\s*([+-]?\d+)/i)?.[1]||'';
     c.spellSaveDc=t.match(/Spell Save is DC\s*(\d+)/i)?.[1]||'';
     for(const [name,key] of Object.entries(abilityNames)){const score=t.match(new RegExp('^'+name+'\\s+(\\d+)','mi'))?.[1];if(score)c.abilities[key]=score;}
-    const speciesHeading=t.match(/^(.+ Traits) \\[PHB/gmi)?.[1];
-    const classHeading=t.match(/^(.+ Class Features) \\[PHB/gmi)?.[1];
+    const speciesHeading=t.match(/^(.+ Traits) \[PHB/gmi)?.[1];
+    const classHeading=t.match(/^(.+ Class Features) \[PHB/gmi)?.[1];
     c.speciesTraits=speciesHeading?section(t,speciesHeading,classHeading||'EQUIPMENT & TREASURE'):section(t,'Species Traits','COMBAT');
     c.classTraits=classHeading?section(t,classHeading,'EQUIPMENT & TREASURE'):section(t,'Class Features','EQUIPMENT & TREASURE');
     c.abilityChecks=[...t.matchAll(/^\s*([+-]\d+)\s+\.\.\.\s+(.+?)\s+Ability Checks\s*\*?\*?/gmi)].map(m=>m[2].trim()+': '+m[1]).join('\n');
@@ -262,7 +262,7 @@
         </section>
       {:else}
         <section class="panel rolls-panel">
-          <div class="section-heading"><div><div class="eyebrow">DADOS EN SALA</div><h2>Realizar una tirada</h2></div><span class:free-tag={diceReady} class="free-tag">{diceReady?'Dice+ listo':'Dice+ no detectado'}</span></div>
+          <div class="section-heading"><div><div class="eyebrow">DADOS EN SALA</div><h2>Realizar una tirada</h2></div><span class:ready={diceReady} class="free-tag">{diceReady?'Dice+ listo':'Dice+ no detectado'}</span></div>
           <p class="hint">Las opciones se obtienen de los datos de la ficha. La tirada se envía a Dice+ y todos los participantes la ven.</p>
           <label>Personaje activo<input readonly value={character.name||'Sin personaje seleccionado'}/></label>
           <label>Tipo de tirada<select bind:value={rollCategory}><option>Habilidad</option><option>Característica</option><option>Salvación</option><option>Ataque</option><option>Conjuro</option><option>Personalizada</option></select></label>
