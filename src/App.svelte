@@ -189,6 +189,7 @@
         OBR.party.onChange((players:any[])=>{readRoomPlayers(players);void processPendingAssignments(players);if(obrRole==='GM')void cleanupAcknowledgedAssignments(players);});
         OBR.broadcast.onMessage(CHANNEL,async(event:any)=>{
           const d=event.data;
+          if(d?.type==='assignment-available'&&obrRole==='PLAYER')await refreshRoomPlayers();
           if(d?.type==='character-assigned'&&d.rawText&&obrRole==='PLAYER'&&d.targetPlayerId===await OBR.player.getId()){
             importText=d.rawText;importCharacter();
             const assigned={...character,id:crypto.randomUUID(),playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
@@ -245,6 +246,7 @@
       const pending=Array.isArray(self?.metadata?.[PENDING_KEY])?self.metadata[PENDING_KEY]:[];
       const assignment={id:crypto.randomUUID(),targetPlayerId:target.id,rawText:item.rawText,createdAt:new Date().toISOString()};
       await OBR.player.setMetadata({[PENDING_KEY]:[...pending,assignment]});
+      await OBR.broadcast.sendMessage(CHANNEL,{type:'assignment-available',targetPlayerId:target.id},{destination:'ALL'});
       unassignedCharacters=unassignedCharacters.filter(x=>x.id!==item.id);
       localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
       notice='Ficha asignada a '+target.name+'. Se importará automáticamente cuando abra la extensión y reemplazará cualquier personaje anterior.';
