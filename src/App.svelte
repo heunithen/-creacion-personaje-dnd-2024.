@@ -142,17 +142,18 @@
       const [playerMetadata,roomMetadata]=await Promise.all([OBR.player.getMetadata(),OBR.room.getMetadata()]);
       const acknowledgements=Array.isArray(playerMetadata?.[ACK_KEY])?playerMetadata[ACK_KEY]:[];
       const pending=Array.isArray(roomMetadata?.[PENDING_KEY])?roomMetadata[PENDING_KEY]:[];
-      const assignment=pending.find((item:any)=>item?.targetPlayerId===playerId&&item?.id&&item?.rawText&&!acknowledgements.includes(item.id));
-      if(!assignment)return;
+      const targetAssignments=pending.filter((item:any)=>item?.targetPlayerId===playerId&&item?.id&&item?.rawText&&!acknowledgements.includes(item.id));
+      if(!targetAssignments.length)return;
+      const assignment=targetAssignments[targetAssignments.length-1];
       importText=assignment.rawText;
       importCharacter();
       if(!character.name.trim())throw new Error('El texto no contiene un campo Name válido.');
       const assigned={...character,id:crypto.randomUUID(),playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
+      character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
       await OBR.player.setMetadata({
         [KEY]:{character:assigned,playerName:assigned.playerName,updatedAt:assigned.updatedAt},
-        [ACK_KEY]:[...acknowledgements,assignment.id].slice(-100)
+        [ACK_KEY]:[...acknowledgements,...targetAssignments.map((item:any)=>item.id)].slice(-100)
       });
-      character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
       await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId,playerName:assigned.playerName,character:assigned},{destination:'ALL'});
       notice='El GM te ha asignado un personaje.';
     }catch(error){
@@ -250,7 +251,8 @@
       const pending=Array.isArray(roomMetadata?.[PENDING_KEY])?roomMetadata[PENDING_KEY]:[];
       const assignment={id:crypto.randomUUID(),targetPlayerId:target.id,rawText:item.rawText,createdAt:new Date().toISOString()};
       const nextPending=[...pending,assignment];
-      if(new TextEncoder().encode(JSON.stringify(nextPending)).length>12000)throw new Error('La cola de asignaciones supera el límite seguro de almacenamiento de la sala.');
+      const nextRoomMetadata={...roomMetadata,[PENDING_KEY]:nextPending};
+      if(new TextEncoder().encode(JSON.stringify(nextRoomMetadata)).length>15000)throw new Error('Los metadatos de la sala están cerca del límite de 16 KB. Elimina asignaciones antiguas antes de continuar.');
       await OBR.room.setMetadata({[PENDING_KEY]:nextPending});
       await OBR.broadcast.sendMessage(CHANNEL,{type:'assignment-available',targetPlayerId:target.id},{destination:'ALL'});
       unassignedCharacters=unassignedCharacters.filter(x=>x.id!==item.id);
