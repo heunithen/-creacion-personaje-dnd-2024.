@@ -223,8 +223,8 @@
     });
   });
   function saveCharacter(){
-    if(!saved.length){notice='No tienes un personaje asignado. Solicita al GM que te asigne uno.';return;}
-    character={...character,name:character.name.trim(),playerName:playerName||character.playerName,updatedAt:new Date().toISOString()};
+    if(!saved.length&&!editingRoomPlayerId){notice='No tienes un personaje asignado. Solicita al GM que te asigne uno.';return;}
+    character={...character,name:character.name.trim(),playerName:editingRoomPlayerId?character.playerName:(playerName||character.playerName),updatedAt:new Date().toISOString()};
     if(!character.name){notice='Escribe el nombre del personaje.';return;}
     if(editingRoomPlayerId){
       const updated={...character};
