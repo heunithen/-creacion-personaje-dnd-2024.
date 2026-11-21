@@ -300,7 +300,7 @@
 <svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
 <div class="app-shell">
   <header class="topbar">
-    <a class="brand" href="#inicio" on:click|preventDefault={()=>{if(obrRole==='GM')view='gm';else{view='player';newCharacter();}}}><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>DUNGEONS & DRAGONS · 2024</small></span></a>
+    <a class="brand" href="#inicio" on:click|preventDefault={()=>{if(obrRole==='GM')view='gm';else{view='player';newCharacter();}}}><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>DUNGEONS & DRAGONS · 2024 · v0.9.8</small></span></a>
     <nav>{#if obrRole!=='GM'}<button class:active={view==='player'} on:click={()=>view='player'}>Jugador</button>{/if}{#if obrRole==='GM'}<button class:active={view==='gm'} on:click={()=>{view='gm';gmTab='characters';}}>Director de juego</button>{/if}</nav>
   </header>
   <main class="main">
