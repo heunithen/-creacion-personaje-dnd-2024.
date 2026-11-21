@@ -319,8 +319,7 @@
       {#if sheet}
         <article class="character-sheet">
           <header class="sheet-banner">
-            <textarea class="character-name editable" aria-label="Nombre del personaje" rows="1" value={sheet.name || ''} on:input={(event) => editSheetField('name', event)}></textarea>
-            <textarea class="sheet-notes editable" aria-label="Notas" rows="2" placeholder="Notas..." value={sheet.notes || ''} on:input={(event) => editSheetField('notes', event)}></textarea>
+            <h1 class="character-name">{sheet.name || 'Personaje'}</h1>
           </header>
           <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha">
             {#each tabs as tab}<button class:active={activeTab === tab} role="tab" aria-selected={activeTab === tab} on:click={() => activeTab = tab}>{tab}</button>{/each}
