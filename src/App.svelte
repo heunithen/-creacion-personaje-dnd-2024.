@@ -21,11 +21,20 @@
   const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let fileInput: HTMLInputElement;
-  type CustomRoll = { id: string; name: string; die: number; bonus: number };
+  type RollPart = { id: string; name: string; die: number; bonus: number };
+  type CustomRoll = { id: string; name: string; parts: RollPart[] };
   let customRolls: CustomRoll[] = [];
   let newRollName = '';
-  let newRollDie = 20;
-  let newRollBonus = 0;
+  let newRollParts: RollPart[] = [createRollPart()];
+  function createRollPart(): RollPart {
+    return { id: String(Date.now()) + Math.random().toString(36).slice(2), name: 'Ataque', die: 20, bonus: 0 };
+  }
+  function addRollPart() {
+    newRollParts = [...newRollParts, { ...createRollPart(), name: 'Daño', die: 4 }];
+  }
+  function removeRollPart(id: string) {
+    if (newRollParts.length > 1) newRollParts = newRollParts.filter(part => part.id !== id);
+  }
   const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
 
   function persistCustomRolls() {
@@ -35,8 +44,10 @@
   function addCustomRoll() {
     const name = newRollName.trim();
     if (!name) { notice = 'Escribe un nombre para la tirada.'; return; }
-    customRolls = [{ id: String(Date.now()) + Math.random().toString(36).slice(2), name, die: newRollDie, bonus: Number(newRollBonus) || 0 }, ...customRolls];
+    if (!newRollParts.length || newRollParts.some(part => !part.name.trim())) { notice = 'Cada tirada necesita un nombre.'; return; }
+    customRolls = [{ id: String(Date.now()) + Math.random().toString(36).slice(2), name, parts: newRollParts.map(part => ({ ...part, name: part.name.trim(), bonus: Number(part.bonus) || 0 })) }, ...customRolls];
     newRollName = '';
+    newRollParts = [createRollPart()];
     persistCustomRolls();
   }
 
@@ -54,7 +65,7 @@
     });
   }
 
-  async function performCustomRoll(roll: CustomRoll, mode: 'normal' | 'advantage' | 'disadvantage') {
+  async function performCustomRoll(group: CustomRoll, roll: RollPart, mode: 'normal' | 'advantage' | 'disadvantage') {
     if (!obrReady || obrRole !== 'PLAYER') {
       notice = 'Las tiradas solo pueden enviarse desde la ficha de un jugador dentro de Owlbear Rodeo.';
       return;
@@ -69,7 +80,7 @@
       const currentPlayerName = await OBR.player.getName();
       const dice = mode === 'normal' ? '1d' + roll.die : '2d' + roll.die + (mode === 'advantage' ? 'kh1' : 'kl1');
       const modifier = roll.bonus === 0 ? '' : (roll.bonus > 0 ? '+' : '') + roll.bonus;
-      const label = roll.name.replace(/[#\\n]/g, ' ').trim();
+      const label = (group.name + ' - ' + roll.name).replace(/[#\\n]/g, ' ').trim();
       const rollId = 'forja_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
       await OBR.broadcast.sendMessage('dice-plus/roll-request', {
         rollId,
@@ -234,7 +245,15 @@
       const stored = localStorage.getItem('forja-raw-character');
       if (stored) sheet = JSON.parse(stored) as RawSheet;
       const storedRolls = localStorage.getItem('forja-custom-rolls');
-      if (storedRolls) customRolls = JSON.parse(storedRolls) as CustomRoll[];
+      if (storedRolls) {
+        const saved = JSON.parse(storedRolls) as any[];
+        customRolls = saved.map(item => ({
+          id: item.id || String(Date.now()) + Math.random().toString(36).slice(2),
+          name: item.name || 'Tirada',
+          parts: Array.isArray(item.parts) ? item.parts : [{ id: String(Date.now()) + Math.random().toString(36).slice(2), name: item.name || 'Tirada', die: Number(item.die) || 20, bonus: Number(item.bonus) || 0 }]
+        }));
+        persistCustomRolls();
+      }
     } catch {
       localStorage.removeItem('forja-raw-character');
     }
@@ -330,25 +349,36 @@
             <section class="custom-rolls">
               {#if customRolls.length}
                 <div class="custom-roll-list">
-                  {#each customRolls as roll (roll.id)}
+                  {#each customRolls as group (group.id)}
                     <article class="custom-roll-card">
-                      <div class="custom-roll-info"><strong>{roll.name}</strong><span class="roll-notation">1d{roll.die} {roll.bonus >= 0 ? '+' : ''}{roll.bonus}</span></div>
-                      <div class="roll-actions">
-                        <button type="button" on:click={() => performCustomRoll(roll, 'normal')}>Tirar</button>
-                        <button type="button" on:click={() => performCustomRoll(roll, 'advantage')}>Ventaja</button>
-                        <button type="button" on:click={() => performCustomRoll(roll, 'disadvantage')}>Desventaja</button>
-                        <button class="remove-roll" type="button" aria-label="Eliminar tirada" on:click={() => removeCustomRoll(roll.id)}>×</button>
-                      </div>
+                      <div class="custom-roll-info"><strong>{group.name}</strong><button class="remove-roll" type="button" aria-label="Eliminar grupo" on:click={() => removeCustomRoll(group.id)}>×</button></div>
+                      {#each group.parts as part (part.id)}
+                        <div class="roll-part">
+                          <div class="roll-part-heading"><strong>{part.name}</strong><span class="roll-notation">1d{part.die}{part.bonus === 0 ? '' : (part.bonus > 0 ? '+' : '') + part.bonus}</span></div>
+                          <div class="roll-actions">
+                            <button type="button" on:click={() => performCustomRoll(group, part, 'normal')}>Tirar</button>
+                            <button type="button" on:click={() => performCustomRoll(group, part, 'advantage')}>Ventaja</button>
+                            <button type="button" on:click={() => performCustomRoll(group, part, 'disadvantage')}>Desventaja</button>
+                          </div>
+                        </div>
+                      {/each}
                     </article>
                   {/each}
                 </div>
               {:else}<p class="muted">Todavía no hay tiradas guardadas.</p>{/if}
               <h3>Crear tirada</h3>
-              <form class="roll-creator" on:submit|preventDefault={addCustomRoll}>
-                <label>Nombre<input bind:value={newRollName} placeholder="Ej. Percepción" /></label>
-                <label>Dado<select bind:value={newRollDie}>{#each [4,6,8,10,12,20,100] as die}<option value={die}>d{die}</option>{/each}</select></label>
-                <label>Bonificador<input type="number" bind:value={newRollBonus} /></label>
-                <button class="primary" type="submit">Añadir tirada</button>
+              <form class="roll-creator roll-group-creator" on:submit|preventDefault={addCustomRoll}>
+                <label>Nombre del grupo<input bind:value={newRollName} placeholder="Ej. Ataque con dagas" /></label>
+                {#each newRollParts as part, i (part.id)}
+                  <div class="new-roll-part">
+                    <div class="new-roll-part-title"><strong>Tirada {i + 1}</strong>{#if newRollParts.length > 1}<button type="button" class="remove-roll" on:click={() => removeRollPart(part.id)}>×</button>{/if}</div>
+                    <label>Nombre<input bind:value={part.name} placeholder="Ej. Ataque o Daño" /></label>
+                    <label>Dado<select bind:value={part.die}>{#each [4,6,8,10,12,20,100] as die}<option value={die}>d{die}</option>{/each}</select></label>
+                    <label>Bonificador<input type="number" bind:value={part.bonus} /></label>
+                  </div>
+                {/each}
+                <button type="button" class="add-roll-part" on:click={addRollPart}>+ Añadir otra tirada</button>
+                <button class="primary" type="submit">Crear grupo</button>
               </form>
             </section>
           {:else}
@@ -424,10 +454,18 @@
   .roll-creator button{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .custom-roll-list{display:grid;gap:.55rem;margin-top:.9rem}
   .custom-roll-card{padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:rgba(255,255,255,.45)}
-  .custom-roll-info{display:flex;justify-content:space-between;gap:.5rem;align-items:center;margin-bottom:.45rem;color:var(--ink)}
-  .custom-roll-info .roll-notation{display:inline-block;padding:.22rem .5rem;border:1px solid #b18a45;border-radius:4px;background:#e8dfce;color:#292722;font:700 .9rem/1.2 system-ui,sans-serif;letter-spacing:.025em}
+  .custom-roll-info,.roll-part-heading{display:flex;justify-content:space-between;gap:.5rem;align-items:center;margin-bottom:.4rem;color:var(--ink)}
+  .custom-roll-info .remove-roll,.new-roll-part-title .remove-roll{border:0;background:transparent;color:var(--red);font-size:1rem;cursor:pointer}
+  .roll-notation{display:inline-block;padding:.22rem .5rem;border:1px solid #b18a45;border-radius:4px;background:#e8dfce;color:#292722;font:700 .9rem/1.2 system-ui,sans-serif;letter-spacing:.025em}
+  .roll-part{padding:.45rem 0;border-top:1px solid var(--rule)}
+  .roll-part-heading strong{font:700 .82rem system-ui,sans-serif}
   .roll-actions{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
   .roll-actions button{flex:0 1 auto}
+  .roll-group-creator{display:grid;grid-template-columns:1fr;gap:.55rem}
+  .new-roll-part{display:grid;grid-template-columns:minmax(0,2fr) minmax(5rem,1fr) minmax(5rem,1fr);gap:.45rem;padding:.55rem;border:1px solid var(--rule);border-radius:4px}
+  .new-roll-part-title{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;font:.75rem system-ui,sans-serif}
+  .add-roll-part{justify-self:start}
+  .roll-group-creator>button[type=submit]{justify-self:start}
   .roll-actions .remove-roll{flex:0 0 30px;padding:.25rem;font-size:.9rem;color:var(--red)}
   .roll-result{display:block;margin-top:.5rem;padding:.45rem .55rem;border-radius:4px;background:#e8dfce;color:var(--ink);font:700 .82rem system-ui,sans-serif}
   .sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;align-items:start}
