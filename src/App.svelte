@@ -415,7 +415,7 @@
                       {#if pair.values?.stats?.[i]}
                         <textarea class="stat-value editable" aria-label="Valor" rows="1" value={displayValue(pair.values.stats[i].value)} on:input={(event) => editStatValue(pair, stat, i, event)}></textarea>
                       {:else}
-                        <textarea class="stat-value editable" aria-label="Valor" rows="1" value={displayValue(stat.value)} on:input={(event) => editStatValue(pair, stat, i, event)}></textarea>
+                        <textarea class="stat-value editable" aria-label="Valor" rows="3" value={displayValue(stat.value)} on:input={(event) => editStatValue(pair, stat, i, event)}></textarea>
                       {/if}
                     </div>
                   {/each}
@@ -484,7 +484,7 @@
   .sheet-stat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:.45rem;align-items:center;padding:.35rem .02rem;border-bottom:1px solid rgba(130,112,83,.24)}
   .sheet-stat:last-child{border-bottom:0}
   .stat-label{width:100%;color:var(--ink-soft);font:.73rem/1.35 system-ui,sans-serif}
-  .stat-value{width:100%;min-height:1.55rem;color:var(--ink);text-align:right;font:700 .76rem/1.35 system-ui,sans-serif;overflow-wrap:anywhere}
+  .stat-value{width:100%;min-height:3.2rem;color:var(--ink);text-align:left;font:500 .8rem/1.45 system-ui,sans-serif;overflow-wrap:anywhere;white-space:pre-wrap;overflow-y:auto;resize:vertical;padding:.35rem .4rem;background:rgba(255,255,255,.3)}\n  .features-section .sheet-stat{grid-template-columns:1fr;gap:.2rem;align-items:start}\n  .features-section .stat-label{font-weight:700;color:var(--ink)}\n  .features-section .stat-value{min-height:7rem;text-align:left;font:500 .82rem/1.5 system-ui,sans-serif;background:rgba(255,255,255,.48)}\n  .gm-character-sheet .sheet-stat strong{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;font:500 .8rem/1.45 system-ui,sans-serif}
   .combat-section{border-top-color:#292722;background:#ebe5d8}
   .combat-section .section-name{color:#292722}
   .attributes-section{grid-column:1/-1;border-top-color:var(--gold);background:#eee7d8}
