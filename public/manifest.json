@@ -1,6 +1,6 @@
 {
   "name": "Forja de Aventureros — D&D 2024",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "manifest_version": 1,
   "author": "heunithen",
   "description": "Creador de fichas D&D 2024 con importación completa desde texto de Roll20 y tiradas Dice+.",
