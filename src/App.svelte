@@ -78,16 +78,23 @@
       }
       const playerId = await OBR.player.getId();
       const currentPlayerName = await OBR.player.getName();
-      const dice = mode === 'normal' ? '1d' + roll.die : '2d' + roll.die + (mode === 'advantage' ? 'kh1' : 'kl1');
-      const modifier = roll.bonus === 0 ? '' : (roll.bonus > 0 ? '+' : '') + roll.bonus;
-      const label = (group.name + ' - ' + roll.name).replace(/[#\\n]/g, ' ').trim();
+      const die = Number(roll.die);
+      const bonus = Number(roll.bonus);
+      if (![4, 6, 8, 10, 12, 20, 100].includes(die) || !Number.isFinite(bonus) || !Number.isInteger(bonus)) {
+        notice = 'La tirada tiene un dado o bonificador no válido. Revisa su configuración.';
+        return;
+      }
+      const dice = mode === 'normal' ? '1d' + die : '2d' + die + (mode === 'advantage' ? 'kh1' : 'kl1');
+      const modifier = bonus === 0 ? '' : (bonus > 0 ? '+' : '') + bonus;
+      const label = (group.name + ' - ' + roll.name).replace(/[#\\r\\n]/g, ' ').trim();
+      const notation = dice + modifier + (label ? '#' + label : '');
       const rollId = 'forja_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
       await OBR.broadcast.sendMessage('dice-plus/roll-request', {
         rollId,
         playerId,
         playerName: currentPlayerName,
         rollTarget: 'everyone',
-        diceNotation: dice + modifier + ' # ' + label,
+        diceNotation: notation,
         showResults: true,
         timestamp: Date.now(),
         source: DICE_PLUS_SOURCE
