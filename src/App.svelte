@@ -37,6 +37,7 @@
   }
   let view:'player'|'gm'='player';
   let playerTab:'identity'|'combat'|'abilities'|'proficiencies'|'traits'|'spells'|'equipment'|'rolls'='identity';
+  let gmTab:'characters'|'bestiary'='characters';
 
   let character=blankCharacter();
   let saved:Character[]=[];
@@ -387,7 +388,7 @@
       </section>{/if}
     {:else if obrRole==='GM'}
       <div class="eyebrow">ESPACIO DEL DIRECTOR DE JUEGO <span>SINCRONIZACIÓN DE SALA</span></div><h1>Panel del <em>director.</em></h1>
-      <p class="intro">Consulta y edita las fichas publicadas por los jugadores. Los cambios se notifican al propietario de la ficha.</p>
+      <p class="intro">Consulta las fichas publicadas por los jugadores y administra tu bestiario.</p>
       <div class="player-tabs gm-tabs"><button class:active={gmTab==='characters'} on:click={()=>gmTab='characters'}>Personajes en sala</button><button class:active={gmTab==='bestiary'} on:click={()=>gmTab='bestiary'}>Bestiario</button></div>
       {#if gmTab==='characters'}
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">SALA ACTUAL</div><h2>Personajes de los jugadores</h2></div><span class="count">{roomCharacters.length}</span></div>
