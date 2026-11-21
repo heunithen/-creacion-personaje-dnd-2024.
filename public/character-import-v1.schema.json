@@ -1,0 +1,558 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://heunithen.github.io/-creacion-personaje-dnd-2024./character-import-v1.schema.json",
+  "title": "Forja de Aventureros — Character Import v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "identity",
+    "abilities"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "forja-character-v1"
+    },
+    "identity": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "species": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "subclass": {
+          "type": "string"
+        },
+        "level": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "background": {
+          "type": "string"
+        },
+        "alignment": {
+          "type": "string"
+        },
+        "experience": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "abilities": {
+      "type": "object",
+      "properties": {
+        "str": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer"
+                },
+                "modifier": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score"
+              ]
+            }
+          ]
+        },
+        "dex": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer"
+                },
+                "modifier": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score"
+              ]
+            }
+          ]
+        },
+        "con": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer"
+                },
+                "modifier": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score"
+              ]
+            }
+          ]
+        },
+        "int": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer"
+                },
+                "modifier": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score"
+              ]
+            }
+          ]
+        },
+        "wis": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer"
+                },
+                "modifier": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score"
+              ]
+            }
+          ]
+        },
+        "cha": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "integer"
+                },
+                "modifier": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "score"
+              ]
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "abilityChecks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "modifier": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          }
+        }
+      }
+    },
+    "combat": {
+      "type": "object",
+      "properties": {
+        "armorClass": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "initiative": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "speed": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "passivePerception": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "hitPoints": {
+          "oneOf": [
+            {
+              "type": [
+                "integer",
+                "string"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "maximum": {
+                  "type": [
+                    "integer",
+                    "string"
+                  ]
+                },
+                "current": {
+                  "type": [
+                    "integer",
+                    "string"
+                  ]
+                },
+                "hitDice": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "proficiencies": {
+      "type": "object",
+      "properties": {
+        "bonus": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "savingThrows": {
+          "type": "array"
+        },
+        "skills": {
+          "type": "array"
+        },
+        "armor": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weapons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "other": {
+          "type": "array"
+        }
+      }
+    },
+    "traits": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "level": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "class": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "level": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "feats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "level": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "background": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "level": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "other": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "level": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "attacks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "attackBonus": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "damage": {
+            "type": "string"
+          },
+          "range": {
+            "type": "string"
+          },
+          "properties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "spellcasting": {
+      "type": "object",
+      "properties": {
+        "ability": {
+          "type": "string"
+        },
+        "attackModifier": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "saveDC": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "cantrips": {
+          "type": "array"
+        },
+        "preparedSpells": {
+          "type": "array"
+        },
+        "knownSpells": {
+          "type": "array"
+        },
+        "spellSlots": {
+          "type": "object"
+        },
+        "other": {
+          "type": "string"
+        }
+      }
+    },
+    "equipment": {
+      "type": "object",
+      "properties": {
+        "carried": {
+          "type": "array"
+        },
+        "treasure": {
+          "type": "array"
+        },
+        "coins": {
+          "type": "object"
+        },
+        "other": {
+          "type": "string"
+        }
+      }
+    },
+    "personality": {
+      "type": "object",
+      "properties": {
+        "traits": {
+          "type": "string"
+        },
+        "ideal": {
+          "type": "string"
+        },
+        "bond": {
+          "type": "string"
+        },
+        "flaw": {
+          "type": "string"
+        },
+        "appearance": {
+          "type": "string"
+        },
+        "backstory": {
+          "type": "string"
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "rawText": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}
