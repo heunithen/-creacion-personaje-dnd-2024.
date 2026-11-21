@@ -25,6 +25,15 @@
     if (sheet) sheet = { ...sheet };
   }
 
+  function editSheetField(key: string, event: Event) {
+    if (sheet) editField(sheet, key, event);
+  }
+
+  function editStatValue(pair: { heading: RawSection; values?: RawSection }, stat: RawStat, index: number, event: Event) {
+    const valueStat = pair.values?.stats?.[index];
+    editField(valueStat || stat, 'value', event);
+  }
+
   function importJson(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
     const file = input.files?.[0];
@@ -221,8 +230,8 @@
       {#if sheet}
         <article class="character-sheet">
           <header class="sheet-banner">
-            <textarea class="character-name editable" aria-label="Nombre del personaje" rows="1" value={sheet.name || ''} on:input={(event) => editField(sheet as RawSheet, 'name', event)}></textarea>
-            <textarea class="sheet-notes editable" aria-label="Notas" rows="2" placeholder="Notas..." value={sheet.notes || ''} on:input={(event) => editField(sheet as RawSheet, 'notes', event)}></textarea>
+            <textarea class="character-name editable" aria-label="Nombre del personaje" rows="1" value={sheet.name || ''} on:input={(event) => editSheetField('name', event)}></textarea>
+            <textarea class="sheet-notes editable" aria-label="Notas" rows="2" placeholder="Notas..." value={sheet.notes || ''} on:input={(event) => editSheetField('notes', event)}></textarea>
           </header>
           <div class="sheet-grid">
             {#each sectionPairs(sheet.sections || []) as pair}
@@ -235,9 +244,9 @@
                     <div class="sheet-stat">
                       <input class="stat-label editable" aria-label="Nombre del campo" value={stat.name || ''} on:input={(event) => editField(stat, 'name', event)} />
                       {#if pair.values?.stats?.[i]}
-                        <textarea class="stat-value editable" aria-label="Valor" rows="1" value={displayValue(pair.values.stats[i].value)} on:input={(event) => editField(pair.values!.stats[i], 'value', event)}></textarea>
+                        <textarea class="stat-value editable" aria-label="Valor" rows="1" value={displayValue(pair.values.stats[i].value)} on:input={(event) => editStatValue(pair, stat, i, event)}></textarea>
                       {:else}
-                        <textarea class="stat-value editable" aria-label="Valor" rows="1" value={displayValue(stat.value)} on:input={(event) => editField(stat, 'value', event)}></textarea>
+                        <textarea class="stat-value editable" aria-label="Valor" rows="1" value={displayValue(stat.value)} on:input={(event) => editStatValue(pair, stat, i, event)}></textarea>
                       {/if}
                     </div>
                   {/each}
