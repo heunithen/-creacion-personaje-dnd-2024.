@@ -177,8 +177,7 @@
     const payload=metadata?.[KEY];
     if(payload?.deleted){
       saved=[];character=blankCharacter();editingId='';persistLocal();return;
-    }
-    if(payload?.character){
+    }    if(payload?.character){
       const remote=payload.character as Character;
       const local=saved[0];
       const remoteTime=Date.parse(payload.updatedAt||remote.updatedAt||'')||0;
@@ -214,7 +213,7 @@
     if(OBR.isAvailable)OBR.onReady(async()=>{
       obrReady=true;
       try{
-        obrRole=await OBR.player.getRole();playerName=await OBR.player.getName();
+        obrRole=await OBR.player.getRole();playerName=await OBR.player.getName();if(obrRole==='GM')view='gm';
         syncStatus='Conectado a Owlbear Rodeo como '+(obrRole==='GM'?'Director de juego.':'Jugador.');
         await restoreOwnCharacter();
         await refreshRoomPlayers();
@@ -357,8 +356,7 @@
     if(!notation){notice='Selecciona una tirada válida.';return;}
     if(!obrReady){notice='Abre la extensión dentro de una sala de Owlbear Rodeo.';return;}
     if(!diceReady){diceReady=await requestDiceReady();if(!diceReady){notice='Dice+ no está disponible en esta sala.';return;}}
-    const rollId=crypto.randomUUID();
-    pendingRolls[rollId]={label,notation,characterName:character.name};
+    const rollId=crypto.randomUUID();    pendingRolls[rollId]={label,notation,characterName:character.name};
     rollBusy=true;
     try{
       await OBR.broadcast.sendMessage('dice-plus/roll-request',{rollId,playerId:await OBR.player.getId(),playerName:await OBR.player.getName(),rollTarget:'everyone',diceNotation:notation,showResults:false,timestamp:Date.now(),source:DICE_SOURCE},{destination:'ALL'});
@@ -378,8 +376,8 @@
 <svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
 <div class="app-shell">
   <header class="topbar">
-    <a class="brand" href="#inicio" on:click|preventDefault={()=>{view='player';newCharacter();}}><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>DUNGEONS & DRAGONS · 2024</small></span></a>
-    <nav><button class:active={view==='player'} on:click={()=>view='player'}>Jugador</button>{#if obrRole==='GM'}<button class:active={view==='gm'} on:click={()=>{view='gm';gmTab='characters';}}>Director de juego</button>{/if}</nav>
+    <a class="brand" href="#inicio" on:click|preventDefault={()=>{if(obrRole==='GM')view='gm';else{view='player';newCharacter();}}}><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>DUNGEONS & DRAGONS · 2024</small></span></a>
+    <nav>{#if obrRole!=='GM'}<button class:active={view==='player'} on:click={()=>view='player'}>Jugador</button>{/if}{#if obrRole==='GM'}<button class:active={view==='gm'} on:click={()=>{view='gm';gmTab='characters';}}>Director de juego</button>{/if}</nav>
   </header>
   <main class="main">
     <div class="connection"><span class:connected={obrReady}></span>{syncStatus}<span class:connected={diceReady} class="dice-status">Dice+ {diceReady?'conectado':'no detectado'}</span></div>
