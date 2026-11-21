@@ -504,10 +504,7 @@
   </main>
   {#if notice}<button class="toast" on:click={()=>notice=''}>{notice}<span>×</span></button>{/if}
   <footer><span>FORJA DE AVENTUREROS</span><span>Herramienta manual · D&D 2024</span></footer>
-</div>,'i').test(x.trim())));
-      if(i<0)return '';
-      let j=lines.length;
-      for(let n=i+1;n<lines.length;n++)if(stops.some(h=>new RegExp('^\\s*'+h+'(?:\\s*\\[.*\\])?\\s*
+</div>
 
   let notice='';
   let obrReady=false;
