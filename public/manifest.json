@@ -1,9 +1,9 @@
 {
   "name": "Forja de Aventureros — D&D 2024",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "manifest_version": 1,
   "author": "heunithen",
-  "description": "Creador de fichas D&D 2024 con importación de personajes desde archivos JSON estructurados y tiradas Dice+.",
+  "description": "Importa fichas JSON de DummySheet y visualízalas en Owlbear Rodeo.",
   "icon": "https://heunithen.github.io/-creacion-personaje-dnd-2024./icon.svg",
   "action": {
     "title": "Forja de Aventureros",
