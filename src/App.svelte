@@ -68,8 +68,8 @@
   }
 
   function sectionTab(name = '') {
-    const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
-    if (/\\b19\\b.*recurso|recurso/.test(n)) return 'Ocultar';
+    const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (/\b19\b.*recurso|recurso/.test(n)) return 'Ocultar';
     if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
     if (/tirada|roll|dado/.test(n)) return 'Tiradas';
     if (/equipo|inventario|objeto/.test(n)) return 'Equipo';
