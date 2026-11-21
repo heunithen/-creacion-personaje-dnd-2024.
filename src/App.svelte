@@ -250,7 +250,7 @@
                 <div class="character-sheet gm-character-sheet">
                   <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2>{#if entry.sheet?.notes}<p>{entry.sheet.notes}</p>{/if}</div>
                   <div class="sheet-grid">
-                    {#each visiblePairs(entry.sheet?.sections || []) as pair}
+                    {#each visiblePairs(entry.sheet?.sections || [], 'Datos') as pair}
                       <section class="sheet-section {sectionClass(pair.heading.name)}">
                         <div class="sheet-section-title"><h3>{pair.heading.name || 'Sección'}</h3></div>
                         <div class="stats-list">
@@ -317,7 +317,7 @@
             </section>
           {:else}
           <div class="sheet-grid">
-            {#each visiblePairs(sheet.sections || []) as pair}
+            {#each visiblePairs(sheet.sections || [], activeTab) as pair}
               <section class="sheet-section {sectionClass(pair.heading.name)}">
                 <div class="sheet-section-title">
                   <input class="section-name editable" aria-label="Nombre de sección" value={pair.heading.name || ''} on:input={(event) => editField(pair.heading, 'name', event)} />
