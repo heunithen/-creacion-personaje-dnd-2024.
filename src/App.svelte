@@ -51,83 +51,42 @@
   let editingId='';
 
   let characterImportOpen=false;
-  let characterImportText='';
-  function importCharacterText(){
-    const raw=characterImportText.replace(/\r/g,'').replace(/\u00a0/g,' ').trim();
-    if(!raw){notice='Pega el texto del personaje.';return;}
-    const decoded=raw.replace(/<br\s*\/?>/gi,'\n').replace(/<\/p>/gi,'\n').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#39;|&apos;/gi,"'").replace(/&quot;/gi,'"');
-    const lines=decoded.split('\n').map(x=>x.trim()).filter(Boolean);
-    const clean=(v:string)=>v.replace(/\*\*/g,'').replace(/^[-•*]\s*/,'').replace(/\s+/g,' ').trim();
-    const escapeRe=(v:string)=>v.replace(/[.*+?^$()|[\]\\]/g,'\\$&');
-    const sheetStart=lines.findIndex(x=>/^Name\s*:/i.test(x));
-    const sheetLines=sheetStart>=0?lines.slice(sheetStart):lines;
-    const field=(label:string)=>{
-      const re=new RegExp('^\\s*'+escapeRe(label)+'\\s*:\\s*(.+)$','i');
-      const m=sheetLines.find(x=>re.test(x))?.match(re);
-      return m?clean(m[1]):'';
-    };
-    const section=(heading:string[],stops:string[])=>{
-      const isHeading=(line:string,names:string[])=>names.some(h=>new RegExp('^'+h+'(?:\\s*\\[.*\\])?\\s*$','i').test(clean(line)));
-      const i=sheetLines.findIndex(x=>isHeading(x,heading));
-      if(i<0)return '';
-      const out:string[]=[];
-      for(let j=i+1;j<sheetLines.length;j++){if(stops.length&&isHeading(sheetLines[j],stops))break;out.push(sheetLines[j]);}
-      return out.join('\n').trim();
-    };
-    const c=blankCharacter();
-    c.name=field('Name');
-    c.species=field('Race/Ancestry/Heritage')||field('Species')||field('Race');
-    const cls=field('Class & Level')||field('Class');
-    const classMatch=cls.match(/^(.+?)\s+(\d+)\b/);
-    c.className=classMatch?cls.replace(/\s+\d+\b/,'').trim():cls;
-    c.level=classMatch?classMatch[2]:(cls.match(/\bLevel\s*(\d+)/i)?.[1]||'');
-    c.background=field('Background');c.alignment=field('Alignment');c.experience=field('Experience');
-    const abilityKeys:Record<string,string>={Strength:'str',Dexterity:'dex',Constitution:'con',Intelligence:'int',Wisdom:'wis',Charisma:'cha'};
-    for(const [name,key] of Object.entries(abilityKeys)){const m=sheetLines.map(x=>x.match(new RegExp('\\*{0,2}'+name+'\\s+(\\d{1,2})\\*{0,2}','i'))).find(Boolean);if(m)c.abilities[key]=m[1];}
-    const combat=section(['COMBAT'],['FEATURES, TRAITS, SPECIAL ABILITIES','Proficiencies & Languages','PREPARED SPELLS','EQUIPMENT & TREASURE','ABILITY SCORES & ABILITIES']);
-    const allCombat=combat||sheetLines.join('\n');
-    c.ac=allCombat.match(/Armor Class\s*[: ]\s*(\d+)/i)?.[1]||'';
-    c.hp=allCombat.match(/(?:Hit Points|Current Hit Points|HP)\s*[: ]\s*(\d+)/i)?.[1]||'';
-    c.speed=allCombat.match(/Speed\s*[: ]\s*([^\n]+)/i)?.[1]?.trim()||'';
-    c.initiative=allCombat.match(/Initiative Modifier\s*[: ]\s*([+-]?\d+)/i)?.[1]||'';
-    c.passivePerception=allCombat.match(/Passive Perception\s*[: ]\s*(\d+)/i)?.[1]||'';
-    const prof=section(['Proficiencies & Languages','PROFICIENCIES AND LANGUAGES'],['PREPARED SPELLS','SPELLS','EQUIPMENT & TREASURE','FEATURES, TRAITS, SPECIAL ABILITIES']);
-    if(prof){
-      c.proficiencies=prof;
-      const saves=prof.match(/Saving Throws?\s*[: ]\s*([^\n]+)/i)?.[1];
-      const skills=prof.match(/Skills?\s*[: ]\s*([^\n]+)/i)?.[1];
-      if(saves)c.savingThrows=saves.split(/,\s*/).map(x=>x.replace(/\s*\([^)]*\)/g,'').trim()).filter(Boolean).join('\n');
-      if(skills)c.skills=skills.split(/,\s*/).map(x=>x.trim()).filter(Boolean).join('\n');
-      const pb=prof.match(/Proficiency Bonus\s*[: ]\s*([+-]?\d+)/i);if(pb)c.notes='Bonificador de competencia: '+pb[1]+'\n';
-    }
-    const features=section(['FEATURES, TRAITS, SPECIAL ABILITIES'],['Proficiencies & Languages','PREPARED SPELLS','SPELLS','EQUIPMENT & TREASURE']);
-    if(features){
-      const blocks=features.split(/(?=^\s*\*\*[^*]+\*\*\s*$)/m).map(x=>x.trim()).filter(Boolean);
-      for(const block of blocks){
-        const first=block.split('\n')[0]||'';const title=clean(first);const body=block.split('\n').slice(1).join('\n').trim();if(!title)continue;
-        let source='Otro';
-        if(/tiefling|species|species trait|race|ancestry/i.test(title))source='Especie';
-        else if(/class feature|paladin|rogue|wizard|barbarian|bard|cleric|druid|fighter|monk|ranger|sorcerer|warlock/i.test(title))source='Clase';
-        else if(/feat|skilled|ability score improvement/i.test(title))source='Dote';
-        else if(/background|noble|soldier|sage|guide|criminal|artisan|acolyte/i.test(title))source='Trasfondo';
-        c.traits.push({id:crypto.randomUUID(),name:title,level:'',source,description:body});
-      }
-      c.features=features;
-    }
-    const spellSection=section(['PREPARED SPELLS','SPELLS','SPELLCASTING'],['EQUIPMENT & TREASURE']);if(spellSection)c.spells=spellSection;
-    const equipment=section(['EQUIPMENT & TREASURE'],[]);if(equipment)c.equipment=equipment;
-    const spellcasting=features.match(/Spellcasting[\s\S]*?(?=\n\*\*|$)/i)?.[0]||'';
-    const spellAttack=spellcasting.match(/Spell Attack Modifier\s*[: ]\s*([+-]?\d+)/i);
-    const spellDc=spellcasting.match(/Spell Save DC\s*[: ]\s*(\d+)/i);
-    if(spellAttack)c.spellAttack=spellAttack[1];if(spellDc)c.spellSaveDc=spellDc[1];
-    const attackLines=decoded.split('\n').filter(x=>/to hit/i.test(x)&&/Hit:/i.test(x)&&!/^\s*\[\[/.test(x));
-    if(attackLines.length)c.attacks=attackLines.map(clean).join('\n');
-    const personality=features.match(/(?:Personality Trait|Personality Traits|Ideal|Bond|Flaw)s?\s*[: ]([\s\S]*?)(?=\n\*\*|$)/i);
-    if(personality)c.personality=personality[0];
-    c.notes=[c.notes,'Importado desde una exportación de Roll20. Se conserva el texto original completo a continuación.',raw].filter(Boolean).join('\n\n');
-    if(!c.name){notice='No se encontró el campo Name: en el texto. Revisa que hayas pegado la exportación completa.';return;}
-    character={...c,playerName:playerName||'',updatedAt:''};editingId=saved[0]?.id||'';playerTab='identity';characterImportOpen=false;characterImportText='';
-    notice='Personaje importado. Revisa los datos de cada pestaña y guarda la ficha.';
+  let characterImportFileName='';
+  async function importCharacterJson(event:Event){
+    const input=event.currentTarget as HTMLInputElement;
+    const file=input.files?.[0];
+    if(!file)return;
+    try{
+      const data=JSON.parse(await file.text());
+      if(data.schemaVersion!=='forja-character-v1')throw new Error('Formato no compatible. Se requiere schemaVersion: forja-character-v1.');
+      if(!data.identity?.name?.trim())throw new Error('Falta identity.name.');
+      const c=blankCharacter();
+      const text=(value:any)=>Array.isArray(value)?value.map(x=>typeof x==='string'?x:[x.name,x.modifier!==undefined?x.modifier:'',x.description||''].filter(Boolean).join(': ')).join('\\n'):typeof value==='string'?value:value==null?'':String(value);
+      const list=(value:any)=>Array.isArray(value)?value.map(x=>typeof x==='string'?x:[x.name,x.modifier!==undefined?x.modifier:''].filter(Boolean).join(': ')).join('\\n'):text(value);
+      c.name=data.identity.name||'';c.species=data.identity.species||'';
+      c.className=[data.identity.class,data.identity.subclass?'('+data.identity.subclass+')':''].filter(Boolean).join(' ');
+      c.level=text(data.identity.level);c.background=data.identity.background||'';c.alignment=data.identity.alignment||'';c.experience=text(data.identity.experience);
+      const abilities=data.abilities||{};
+      for(const key of ['str','dex','con','int','wis','cha'])if(abilities[key]!==undefined)c.abilities[key]=text(abilities[key].score??abilities[key]);
+      c.ac=text(data.combat?.armorClass);c.hp=text(data.combat?.hitPoints?.maximum??data.combat?.hitPoints);c.speed=text(data.combat?.speed);
+      c.initiative=text(data.combat?.initiative);c.passivePerception=text(data.combat?.passivePerception);
+      const prof=data.proficiencies||{};
+      c.savingThrows=list(prof.savingThrows);c.skills=list(prof.skills);c.abilityChecks=list(data.abilityChecks);
+      c.proficiencies=[prof.bonus!==undefined?'Bonificador de competencia: +'+text(prof.bonus):'',prof.armor?.length?'Armaduras: '+list(prof.armor):'',prof.weapons?.length?'Armas: '+list(prof.weapons):'',prof.tools?.length?'Herramientas: '+list(prof.tools):'',prof.languages?.length?'Idiomas: '+list(prof.languages):'',prof.other?.length?'Otras: '+list(prof.other):''].filter(Boolean).join('\\n');
+      const traitItems=[...(data.traits?.species||[]).map((t:any)=>({...t,source:'Especie'})),...(data.traits?.class||[]).map((t:any)=>({...t,source:'Clase'})),...(data.traits?.feats||[]).map((t:any)=>({...t,source:'Dote'})),...(data.traits?.background||[]).map((t:any)=>({...t,source:'Trasfondo'})),...(data.traits?.other||[]).map((t:any)=>({...t,source:'Otro'}))];
+      c.traits=traitItems.map((t:any)=>({id:crypto.randomUUID(),name:t.name||'Rasgo',level:text(t.level),source:t.source,description:text(t.description)}));
+      c.speciesTraits=c.traits.filter(t=>t.source==='Especie').map(t=>t.name+': '+t.description).join('\\n');
+      c.classTraits=c.traits.filter(t=>t.source==='Clase').map(t=>t.name+': '+t.description).join('\\n');
+      c.features=c.traits.filter(t=>!['Especie','Clase'].includes(t.source)).map(t=>t.name+': '+t.description).join('\\n');
+      c.attacks=(data.attacks||[]).map((a:any)=>[a.name+':',a.attackBonus!==undefined?((Number(a.attackBonus)>=0?'+':'')+a.attackBonus+' to hit'):'',a.damage?'Hit: '+a.damage+' damage':'',a.range?'Range: '+a.range:'',a.properties||''].filter(Boolean).join('. ')).join('\\n');
+      const magic=data.spellcasting||{};c.spellAttack=text(magic.attackModifier);c.spellSaveDc=text(magic.saveDC);
+      c.spells=[magic.ability?'Característica: '+magic.ability:'',magic.cantrips?.length?'Trucos: '+list(magic.cantrips):'',magic.preparedSpells?.length?'Conjuros preparados: '+list(magic.preparedSpells):'',magic.knownSpells?.length?'Conjuros conocidos: '+list(magic.knownSpells):'',magic.spellSlots?'Espacios: '+Object.entries(magic.spellSlots).map(([level,slots])=>level+': '+slots).join(', '):'',magic.other?'Otros: '+text(magic.other):''].filter(Boolean).join('\\n\\n');
+      c.equipment=[data.equipment?.carried?.length?'Equipo: '+list(data.equipment.carried):'',data.equipment?.treasure?.length?'Tesoro: '+list(data.equipment.treasure):'',data.equipment?.coins?'Monedas: '+Object.entries(data.equipment.coins).map(([coin,amount])=>amount+' '+coin).join(', '):'',data.equipment?.other?'Otros: '+text(data.equipment.other):''].filter(Boolean).join('\\n\\n');
+      const p=data.personality||{};c.personality=[p.traits?'Rasgos: '+text(p.traits):'',p.ideal?'Ideal: '+text(p.ideal):'',p.bond?'Vínculo: '+text(p.bond):'',p.flaw?'Defecto: '+text(p.flaw):'',p.appearance?'Apariencia: '+text(p.appearance):'',p.backstory?'Historia: '+text(p.backstory):''].filter(Boolean).join('\\n\\n');
+      c.notes=[data.notes||'',data.combat?.hitPoints?.hitDice?'Dados de golpe: '+data.combat.hitPoints.hitDice:'',data.source?.rawText?'TEXTO ORIGINAL\\n'+data.source.rawText:''].filter(Boolean).join('\\n\\n');
+      character={...c,playerName:playerName||'',updatedAt:''};editingId=saved[0]?.id||'';playerTab='identity';characterImportOpen=false;characterImportFileName=file.name;
+      notice='JSON importado. Revisa las pestañas y guarda la ficha.';input.value='';
+    }catch(error){notice='No se pudo importar el JSON: '+(error instanceof Error?error.message:'archivo inválido');input.value='';}
   }
   let notice='';
   let obrReady=false;
@@ -351,11 +310,12 @@
       <h1>Tu <em>aventurero.</em></h1>
       <p class="intro">Crea tu personaje, completa sus datos y guarda la ficha. Se sincronizará con la sala de Owlbear Rodeo.</p>
       <section class="panel import-character-panel">
-        <div class="import-row"><button class="secondary" on:click={()=>characterImportOpen=!characterImportOpen}>Importar personaje desde texto</button><span class="hint">Pega el formato de personaje D&D que ya tienes.</span></div>
+        <div class="import-row"><button class="secondary" on:click={()=>characterImportOpen=!characterImportOpen}>Importar personaje desde JSON</button><span class="hint">Carga un archivo .json preparado con el formato Forja v1.</span></div>
         {#if characterImportOpen}
           <div class="import-box">
-            <label>Texto del personaje<textarea rows="14" bind:value={characterImportText} placeholder="Name: copro&#10;Race/Ancestry/Heritage: Halfling&#10;Class & Level: Rogue 1&#10;Background: Guide&#10;Alignment: Neutral Good&#10;Experience: 0 xp&#10;&#10;ABILITY SCORES & ABILITIES&#10;...&#10;&#10;COMBAT [PHB p. 189]&#10;...&#10;&#10;FEATURES, TRAITS, SPECIAL ABILITIES&#10;...&#10;&#10;Proficiencies & Languages&#10;...&#10;&#10;EQUIPMENT & TREASURE&#10;..."></textarea></label>
-            <div class="actions"><button class="secondary" on:click={()=>{characterImportOpen=false;characterImportText='';}}>Cancelar</button><button class="primary" on:click={importCharacterText}>Importar a mi ficha</button></div>
+            <label>Archivo JSON del personaje<input type="file" accept=".json,application/json" on:change={importCharacterJson} /></label>
+            <p class="hint">El archivo debe utilizar el esquema <strong>forja-character-v1</strong>. La importación no sustituye tu ficha guardada hasta que pulses «Guardar ficha».</p>
+            <div class="actions"><button class="secondary" on:click={()=>characterImportOpen=false}>Cerrar</button></div>
           </div>
         {/if}
       </section>
