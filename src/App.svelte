@@ -304,17 +304,19 @@
         {/if}
       </section>
     {:else}
-      <section class="panel import-character-panel">
-        <div class="import-row">
-          <button class="secondary" on:click={() => importOpen = !importOpen}>{sheet ? 'Importar otro JSON' : 'Importar ficha JSON'}</button>
-        </div>
-        {#if importOpen}
-          <div class="import-box">
-            <label>Archivo<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
-            <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
+      {#if !sheet}
+        <section class="panel import-character-panel">
+          <div class="import-row">
+            <button class="secondary" on:click={() => importOpen = !importOpen}>Importar ficha JSON</button>
           </div>
-        {/if}
-      </section>
+          {#if importOpen}
+            <div class="import-box">
+              <label>Archivo<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
+              <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
+            </div>
+          {/if}
+        </section>
+      {/if}
 
       {#if sheet}
         <article class="character-sheet">
@@ -350,6 +352,19 @@
               </form>
             </section>
           {:else}
+          {#if activeTab === 'Datos'}
+            <section class="import-character-panel data-import-panel">
+              <div class="import-row">
+                <button class="secondary" on:click={() => importOpen = !importOpen}>Importar otro JSON</button>
+              </div>
+              {#if importOpen}
+                <div class="import-box">
+                  <label>Archivo<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
+                  <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
+                </div>
+              {/if}
+            </section>
+          {/if}
           <div class="sheet-grid">
             {#each visiblePairs(sheet.sections || [], activeTab) as pair}
               <section class="sheet-section {sectionClass(pair.heading.name)}">
