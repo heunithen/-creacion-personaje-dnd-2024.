@@ -21,11 +21,12 @@
   const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let fileInput: HTMLInputElement;
-  type CustomRoll = { id: string; name: string; die: number; bonus: number; result?: string };
+  type CustomRoll = { id: string; name: string; die: number; bonus: number };
   let customRolls: CustomRoll[] = [];
   let newRollName = '';
   let newRollDie = 20;
   let newRollBonus = 0;
+  const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
 
   function persistCustomRolls() {
     localStorage.setItem('forja-custom-rolls', JSON.stringify(customRolls));
@@ -34,21 +35,56 @@
   function addCustomRoll() {
     const name = newRollName.trim();
     if (!name) { notice = 'Escribe un nombre para la tirada.'; return; }
-    customRolls = [...customRolls, { id: String(Date.now()) + Math.random().toString(36).slice(2), name, die: newRollDie, bonus: Number(newRollBonus) || 0 }];
+    customRolls = [{ id: String(Date.now()) + Math.random().toString(36).slice(2), name, die: newRollDie, bonus: Number(newRollBonus) || 0 }, ...customRolls];
     newRollName = '';
     persistCustomRolls();
   }
 
-  function performCustomRoll(roll: CustomRoll, mode: 'normal' | 'advantage' | 'disadvantage') {
-    const first = Math.floor(Math.random() * roll.die) + 1;
-    const second = mode === 'normal' ? null : Math.floor(Math.random() * roll.die) + 1;
-    const chosen = second === null ? first : mode === 'advantage' ? Math.max(first, second) : Math.min(first, second);
-    const total = chosen + roll.bonus;
-    const pair = second === null ? String(first) : first + ' / ' + second;
-    const sign = roll.bonus > 0 ? '+' : '';
-    roll.result = pair + ' → ' + chosen + sign + roll.bonus + ' = ' + total;
-    customRolls = [...customRolls];
-    persistCustomRolls();
+  async function checkDicePlusReady(): Promise<boolean> {
+    const requestId = String(Date.now()) + Math.random().toString(36).slice(2);
+    return new Promise((resolve) => {
+      const unsubscribe = OBR.broadcast.onMessage('dice-plus/isReady', (event: any) => {
+        if (event.data?.ready === true && event.data.requestId === requestId) {
+          unsubscribe();
+          resolve(true);
+        }
+      });
+      OBR.broadcast.sendMessage('dice-plus/isReady', { requestId, timestamp: Date.now() }, { destination: 'ALL' });
+      setTimeout(() => { unsubscribe(); resolve(false); }, 1200);
+    });
+  }
+
+  async function performCustomRoll(roll: CustomRoll, mode: 'normal' | 'advantage' | 'disadvantage') {
+    if (!obrReady || obrRole !== 'PLAYER') {
+      notice = 'Las tiradas solo pueden enviarse desde la ficha de un jugador dentro de Owlbear Rodeo.';
+      return;
+    }
+    try {
+      const ready = await checkDicePlusReady();
+      if (!ready) {
+        notice = 'Dice+ no está disponible en esta sala. Activa la extensión Dice+ para tirar.';
+        return;
+      }
+      const playerId = await OBR.player.getId();
+      const currentPlayerName = await OBR.player.getName();
+      const dice = mode === 'normal' ? '1d' + roll.die : '2d' + roll.die + (mode === 'advantage' ? 'kh1' : 'kl1');
+      const modifier = roll.bonus === 0 ? '' : (roll.bonus > 0 ? '+' : '') + roll.bonus;
+      const label = roll.name.replace(/[#\\n]/g, ' ').trim();
+      const rollId = 'forja_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+      await OBR.broadcast.sendMessage('dice-plus/roll-request', {
+        rollId,
+        playerId,
+        playerName: currentPlayerName,
+        rollTarget: 'everyone',
+        diceNotation: dice + modifier + ' # ' + label,
+        showResults: true,
+        timestamp: Date.now(),
+        source: DICE_PLUS_SOURCE
+      }, { destination: 'ALL' });
+      notice = 'Tirada enviada a Dice+.';
+    } catch {
+      notice = 'No se pudo enviar la tirada a Dice+.';
+    }
   }
 
   function removeCustomRoll(id: string) {
@@ -291,13 +327,6 @@
           </nav>
           {#if activeTab === 'Tiradas'}
             <section class="custom-rolls">
-              <h3>Crear tirada</h3>
-              <form class="roll-creator" on:submit|preventDefault={addCustomRoll}>
-                <label>Nombre<input bind:value={newRollName} placeholder="Ej. Percepción" /></label>
-                <label>Dado<select bind:value={newRollDie}>{#each [4,6,8,10,12,20,100] as die}<option value={die}>d{die}</option>{/each}</select></label>
-                <label>Bonificador<input type="number" bind:value={newRollBonus} /></label>
-                <button class="primary" type="submit">Añadir tirada</button>
-              </form>
               {#if customRolls.length}
                 <div class="custom-roll-list">
                   {#each customRolls as roll (roll.id)}
@@ -309,11 +338,17 @@
                         <button type="button" on:click={() => performCustomRoll(roll, 'disadvantage')}>Desventaja</button>
                         <button class="remove-roll" type="button" aria-label="Eliminar tirada" on:click={() => removeCustomRoll(roll.id)}>×</button>
                       </div>
-                      {#if roll.result}<output class="roll-result">{roll.result}</output>{/if}
                     </article>
                   {/each}
                 </div>
               {:else}<p class="muted">Todavía no hay tiradas guardadas.</p>{/if}
+              <h3>Crear tirada</h3>
+              <form class="roll-creator" on:submit|preventDefault={addCustomRoll}>
+                <label>Nombre<input bind:value={newRollName} placeholder="Ej. Percepción" /></label>
+                <label>Dado<select bind:value={newRollDie}>{#each [4,6,8,10,12,20,100] as die}<option value={die}>d{die}</option>{/each}</select></label>
+                <label>Bonificador<input type="number" bind:value={newRollBonus} /></label>
+                <button class="primary" type="submit">Añadir tirada</button>
+              </form>
             </section>
           {:else}
           <div class="sheet-grid">
