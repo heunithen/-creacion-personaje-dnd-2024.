@@ -330,7 +330,7 @@
                 <div class="custom-roll-list">
                   {#each customRolls as roll (roll.id)}
                     <article class="custom-roll-card">
-                      <div class="custom-roll-info"><strong>{roll.name}</strong><span>d{roll.die} {roll.bonus >= 0 ? '+' : ''}{roll.bonus}</span></div>
+                      <div class="custom-roll-info"><strong>{roll.name}</strong><span class="roll-notation">1d{roll.die} {roll.bonus >= 0 ? '+' : ''}{roll.bonus}</span></div>
                       <div class="roll-actions">
                         <button type="button" on:click={() => performCustomRoll(roll, 'normal')}>Tirar</button>
                         <button type="button" on:click={() => performCustomRoll(roll, 'advantage')}>Ventaja</button>
@@ -405,15 +405,15 @@
   .roll-creator{display:grid;grid-template-columns:minmax(0,2fr) minmax(5rem,1fr) minmax(5rem,1fr) auto;gap:.55rem;align-items:end}
   .roll-creator label{display:grid;gap:.25rem;color:var(--ink-soft);font:600 .7rem system-ui,sans-serif}
   .roll-creator input,.roll-creator select{width:100%;min-width:0;box-sizing:border-box;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#fffdf8;color:var(--ink);font:.85rem system-ui,sans-serif}
-  .roll-creator button,.roll-actions button{min-height:36px;padding:.45rem .65rem;border:1px solid var(--rule);border-radius:4px;background:#e8dfce;color:var(--ink);font:600 .72rem system-ui,sans-serif;cursor:pointer}
+  .roll-creator button,.roll-actions button{min-height:30px;padding:.32rem .55rem;border:1px solid var(--rule);border-radius:4px;background:#e8dfce;color:var(--ink);font:600 .68rem system-ui,sans-serif;cursor:pointer}
   .roll-creator button{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .custom-roll-list{display:grid;gap:.55rem;margin-top:.9rem}
   .custom-roll-card{padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:rgba(255,255,255,.45)}
   .custom-roll-info{display:flex;justify-content:space-between;gap:.5rem;align-items:center;margin-bottom:.45rem;color:var(--ink)}
-  .custom-roll-info span{color:var(--ink-soft);font:.75rem system-ui,sans-serif}
-  .roll-actions{display:flex;flex-wrap:wrap;gap:.35rem}
-  .roll-actions button{flex:1 1 auto}
-  .roll-actions .remove-roll{flex:0 0 36px;font-size:1rem;color:var(--red)}
+  .custom-roll-info .roll-notation{display:inline-block;padding:.22rem .5rem;border:1px solid #b18a45;border-radius:4px;background:#e8dfce;color:#292722;font:700 .9rem/1.2 system-ui,sans-serif;letter-spacing:.025em}
+  .roll-actions{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
+  .roll-actions button{flex:0 1 auto}
+  .roll-actions .remove-roll{flex:0 0 30px;padding:.25rem;font-size:.9rem;color:var(--red)}
   .roll-result{display:block;margin-top:.5rem;padding:.45rem .55rem;border-radius:4px;background:#e8dfce;color:var(--ink);font:700 .82rem system-ui,sans-serif}
   .sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;align-items:start}
   .sheet-section{min-width:0;padding:.7rem .8rem .65rem;border:1px solid var(--rule);border-top:3px solid var(--red);border-radius:5px;background:rgba(255,255,255,.43);break-inside:avoid}
