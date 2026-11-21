@@ -21,6 +21,40 @@
   const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let fileInput: HTMLInputElement;
+  type CustomRoll = { id: string; name: string; die: number; bonus: number; result?: string };
+  let customRolls: CustomRoll[] = [];
+  let newRollName = '';
+  let newRollDie = 20;
+  let newRollBonus = 0;
+
+  function persistCustomRolls() {
+    localStorage.setItem('forja-custom-rolls', JSON.stringify(customRolls));
+  }
+
+  function addCustomRoll() {
+    const name = newRollName.trim();
+    if (!name) { notice = 'Escribe un nombre para la tirada.'; return; }
+    customRolls = [...customRolls, { id: String(Date.now()) + Math.random().toString(36).slice(2), name, die: newRollDie, bonus: Number(newRollBonus) || 0 }];
+    newRollName = '';
+    persistCustomRolls();
+  }
+
+  function performCustomRoll(roll: CustomRoll, mode: 'normal' | 'advantage' | 'disadvantage') {
+    const first = Math.floor(Math.random() * roll.die) + 1;
+    const second = mode === 'normal' ? null : Math.floor(Math.random() * roll.die) + 1;
+    const chosen = second === null ? first : mode === 'advantage' ? Math.max(first, second) : Math.min(first, second);
+    const total = chosen + roll.bonus;
+    const pair = second === null ? String(first) : first + ' / ' + second;
+    const sign = roll.bonus > 0 ? '+' : '';
+    roll.result = pair + ' → ' + chosen + sign + roll.bonus + ' = ' + total;
+    customRolls = [...customRolls];
+    persistCustomRolls();
+  }
+
+  function removeCustomRoll(id: string) {
+    customRolls = customRolls.filter(roll => roll.id !== id);
+    persistCustomRolls();
+  }
 
   function editField(target: Record<string, unknown>, key: string, event: Event) {
     target[key] = (event.currentTarget as HTMLInputElement | HTMLTextAreaElement).value;
@@ -163,6 +197,8 @@
     try {
       const stored = localStorage.getItem('forja-raw-character');
       if (stored) sheet = JSON.parse(stored) as RawSheet;
+      const storedRolls = localStorage.getItem('forja-custom-rolls');
+      if (storedRolls) customRolls = JSON.parse(storedRolls) as CustomRoll[];
     } catch {
       localStorage.removeItem('forja-raw-character');
     }
@@ -253,6 +289,33 @@
           <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha">
             {#each tabs as tab}<button class:active={activeTab === tab} role="tab" aria-selected={activeTab === tab} on:click={() => activeTab = tab}>{tab}</button>{/each}
           </nav>
+          {#if activeTab === 'Tiradas'}
+            <section class="custom-rolls">
+              <h3>Crear tirada</h3>
+              <form class="roll-creator" on:submit|preventDefault={addCustomRoll}>
+                <label>Nombre<input bind:value={newRollName} placeholder="Ej. Percepción" /></label>
+                <label>Dado<select bind:value={newRollDie}>{#each [4,6,8,10,12,20,100] as die}<option value={die}>d{die}</option>{/each}</select></label>
+                <label>Bonificador<input type="number" bind:value={newRollBonus} /></label>
+                <button class="primary" type="submit">Añadir tirada</button>
+              </form>
+              {#if customRolls.length}
+                <div class="custom-roll-list">
+                  {#each customRolls as roll (roll.id)}
+                    <article class="custom-roll-card">
+                      <div class="custom-roll-info"><strong>{roll.name}</strong><span>d{roll.die} {roll.bonus >= 0 ? '+' : ''}{roll.bonus}</span></div>
+                      <div class="roll-actions">
+                        <button type="button" on:click={() => performCustomRoll(roll, 'normal')}>Tirar</button>
+                        <button type="button" on:click={() => performCustomRoll(roll, 'advantage')}>Ventaja</button>
+                        <button type="button" on:click={() => performCustomRoll(roll, 'disadvantage')}>Desventaja</button>
+                        <button class="remove-roll" type="button" aria-label="Eliminar tirada" on:click={() => removeCustomRoll(roll.id)}>×</button>
+                      </div>
+                      {#if roll.result}<output class="roll-result">{roll.result}</output>{/if}
+                    </article>
+                  {/each}
+                </div>
+              {:else}<p class="muted">Todavía no hay tiradas guardadas.</p>{/if}
+            </section>
+          {:else}
           <div class="sheet-grid">
             {#each visiblePairs(sheet.sections || []) as pair}
               <section class="sheet-section {sectionClass(pair.heading.name)}">
@@ -274,6 +337,7 @@
               </section>
             {/each}
           </div>
+          {/if}
         </article>
 
         <section class="panel save-panel">
@@ -302,6 +366,21 @@
   .sheet-tabs{display:flex;gap:.35rem;overflow-x:auto;padding:.15rem 0 .65rem;margin-bottom:.7rem;border-bottom:1px solid var(--rule)}
   .sheet-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.48rem .68rem;background:#e8dfce;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}
   .sheet-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .custom-rolls{padding:.8rem;border:1px solid var(--rule);border-top:3px solid var(--gold);border-radius:5px;background:rgba(255,255,255,.43);color:var(--ink)}
+  .custom-rolls h3{margin:0 0 .75rem;color:var(--red);font:700 .9rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+  .roll-creator{display:grid;grid-template-columns:minmax(0,2fr) minmax(5rem,1fr) minmax(5rem,1fr) auto;gap:.55rem;align-items:end}
+  .roll-creator label{display:grid;gap:.25rem;color:var(--ink-soft);font:600 .7rem system-ui,sans-serif}
+  .roll-creator input,.roll-creator select{width:100%;min-width:0;box-sizing:border-box;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#fffdf8;color:var(--ink);font:.85rem system-ui,sans-serif}
+  .roll-creator button,.roll-actions button{min-height:36px;padding:.45rem .65rem;border:1px solid var(--rule);border-radius:4px;background:#e8dfce;color:var(--ink);font:600 .72rem system-ui,sans-serif;cursor:pointer}
+  .roll-creator button{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .custom-roll-list{display:grid;gap:.55rem;margin-top:.9rem}
+  .custom-roll-card{padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:rgba(255,255,255,.45)}
+  .custom-roll-info{display:flex;justify-content:space-between;gap:.5rem;align-items:center;margin-bottom:.45rem;color:var(--ink)}
+  .custom-roll-info span{color:var(--ink-soft);font:.75rem system-ui,sans-serif}
+  .roll-actions{display:flex;flex-wrap:wrap;gap:.35rem}
+  .roll-actions button{flex:1 1 auto}
+  .roll-actions .remove-roll{flex:0 0 36px;font-size:1rem;color:var(--red)}
+  .roll-result{display:block;margin-top:.5rem;padding:.45rem .55rem;border-radius:4px;background:#e8dfce;color:var(--ink);font:700 .82rem system-ui,sans-serif}
   .sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;align-items:start}
   .sheet-section{min-width:0;padding:.7rem .8rem .65rem;border:1px solid var(--rule);border-top:3px solid var(--red);border-radius:5px;background:rgba(255,255,255,.43);break-inside:avoid}
   .sheet-section-title{display:flex;align-items:center;padding-bottom:.4rem;margin-bottom:.25rem;border-bottom:1px solid var(--rule)}
@@ -333,6 +412,7 @@
   .empty-state{text-align:center;padding:2rem}.save-panel{display:flex;flex-direction:column;gap:.8rem;margin-top:1rem}
   .save-panel .danger-text{align-self:center}
   .roster-panel{margin-top:1rem}.card-identity{min-width:0}
+  @media(max-width:650px){.roll-creator{grid-template-columns:1fr 1fr}.roll-creator label:first-child{grid-column:1/-1}.roll-creator button{grid-column:1/-1}}
   @media(max-width:560px){.sheet-grid{grid-template-columns:1fr}.attributes-section{grid-column:auto}.attributes-section .stats-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(min-width:900px){.sheet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.attributes-section{grid-column:1/-1}}
 </style>
