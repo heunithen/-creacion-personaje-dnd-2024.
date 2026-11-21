@@ -1,0 +1,274 @@
+{
+  "schemaVersion": "forja-character-v1",
+  "identity": {
+    "name": "Orwen of the Woods",
+    "species": "Forest Gnome",
+    "class": "Druid",
+    "subclass": "Circle of the Stars",
+    "level": 4,
+    "background": "Hermit",
+    "alignment": "Lawful Neutral",
+    "experience": 2835
+  },
+  "abilities": {
+    "str": {
+      "score": 8,
+      "modifier": -1
+    },
+    "dex": {
+      "score": 13,
+      "modifier": 1
+    },
+    "con": {
+      "score": 15,
+      "modifier": 2
+    },
+    "int": {
+      "score": 12,
+      "modifier": 1
+    },
+    "wis": {
+      "score": 19,
+      "modifier": 4
+    },
+    "cha": {
+      "score": 10,
+      "modifier": 0
+    }
+  },
+  "abilityChecks": [
+    {
+      "name": "Strength",
+      "modifier": -1
+    },
+    {
+      "name": "Dexterity",
+      "modifier": 1
+    },
+    {
+      "name": "Constitution",
+      "modifier": 2
+    },
+    {
+      "name": "Intelligence",
+      "modifier": 1
+    },
+    {
+      "name": "Wisdom",
+      "modifier": 4
+    },
+    {
+      "name": "Charisma",
+      "modifier": 0
+    }
+  ],
+  "combat": {
+    "armorClass": 14,
+    "initiative": 1,
+    "speed": "30 ft.",
+    "passivePerception": 16,
+    "hitPoints": {
+      "maximum": 31,
+      "hitDice": "4d8"
+    }
+  },
+  "proficiencies": {
+    "bonus": 2,
+    "savingThrows": [
+      "Intelligence: +3",
+      "Wisdom: +6"
+    ],
+    "skills": [
+      "Athletics: -1",
+      "Acrobatics: +1",
+      "Sleight of Hand: +1",
+      "Stealth: +1",
+      "Arcana: +1",
+      "History: +1",
+      "Investigation: +1",
+      "Nature: +3",
+      "Religion: +3",
+      "Animal Handling: +4",
+      "Insight: +4",
+      "Medicine: +6",
+      "Perception: +6",
+      "Survival: +4",
+      "Deception: +0",
+      "Intimidation: +0",
+      "Performance: +0",
+      "Persuasion: +0"
+    ],
+    "armor": [
+      "Light armor",
+      "Shields"
+    ],
+    "weapons": [
+      "Simple weapons"
+    ],
+    "tools": [
+      "Herbalism kit"
+    ],
+    "languages": [
+      "Common",
+      "Druidic",
+      "Gnomish",
+      "Halfling"
+    ]
+  },
+  "traits": {
+    "species": [
+      {
+        "name": "Creature Type",
+        "description": "Humanoid."
+      },
+      {
+        "name": "Age",
+        "description": "145 years old."
+      },
+      {
+        "name": "Small Size",
+        "description": "3 ft. 7 in.; 43 lb."
+      },
+      {
+        "name": "Darkvision",
+        "description": "60 feet."
+      },
+      {
+        "name": "Gnome Cunning",
+        "description": "Advantage on Intelligence, Wisdom and Charisma saving throws."
+      },
+      {
+        "name": "Gnomish Lineage",
+        "description": "Minor Illusion cantrip; Speak with Animals twice between Long Rests or by expending a spell slot."
+      }
+    ],
+    "class": [
+      {
+        "name": "Druidic",
+        "description": "Secret language; also has Speak with Animals."
+      },
+      {
+        "name": "Primal Order",
+        "description": "Magician."
+      },
+      {
+        "name": "Wild Shape",
+        "description": "Ape, black bear, crocodile, reef shark, spider and warhorse; maximum CR 1/2, no flying; three uses between Long Rests."
+      },
+      {
+        "name": "Wild Companion",
+        "description": "Can cast Find Familiar."
+      },
+      {
+        "name": "Star Map",
+        "description": "Spellcasting focus."
+      },
+      {
+        "name": "Starry Form",
+        "description": "Archer bonus ranged attack, Chalice healing and Dragon concentration benefits."
+      }
+    ],
+    "feats": [
+      {
+        "name": "Healer",
+        "description": "A healing kit allows a treated creature to expend one Hit Point Die to recover hit points. Healing dice from a kit or magic reroll results of 1."
+      }
+    ],
+    "background": [],
+    "other": []
+  },
+  "attacks": [
+    {
+      "name": "Scimitar",
+      "type": "Melee weapon",
+      "attackBonus": 3,
+      "damage": "1d6+1 slashing",
+      "range": "5 ft."
+    },
+    {
+      "name": "Dagger",
+      "type": "Melee or ranged weapon",
+      "attackBonus": 3,
+      "damage": "1d4+1 piercing",
+      "range": "5 ft.; thrown 20/60 ft."
+    },
+    {
+      "name": "Sling",
+      "type": "Ranged weapon",
+      "attackBonus": 3,
+      "damage": "1d4+1 bludgeoning",
+      "range": "30/120 ft."
+    },
+    {
+      "name": "Produce Flame",
+      "type": "Ranged spell attack",
+      "attackBonus": 6,
+      "damage": "1d8 fire",
+      "range": "60 ft."
+    }
+  ],
+  "spellcasting": {
+    "ability": "Wisdom",
+    "attackModifier": 6,
+    "saveDC": 14,
+    "cantrips": [
+      "Druidcraft",
+      "Elementalism",
+      "Guidance",
+      "Produce Flame",
+      "Starry Wisp"
+    ],
+    "preparedSpells": [
+      "Charm Person",
+      "Create or Destroy Water",
+      "Faerie Fire",
+      "Guiding Bolt",
+      "Protection from Evil and Good",
+      "Speak with Animals",
+      "Thunderwave",
+      "Moonbeam",
+      "Protection from Poison"
+    ],
+    "spellSlots": {
+      "1st level": 4,
+      "2nd level": 3
+    }
+  },
+  "equipment": {
+    "carried": [
+      "Leather armor",
+      "Wooden shield",
+      "Scimitar",
+      "Dagger",
+      "Quarterstaff",
+      "Sickle",
+      "Sling and 20 stones",
+      "Explorer's pack",
+      "Herbalism kit",
+      "Bedroll",
+      "Common clothes",
+      "Traveler's clothes",
+      "Druidic focus: wooden staff",
+      "Book (philosophy)",
+      "Three flasks of oil"
+    ],
+    "treasure": [
+      "4 gems worth 10 gp each"
+    ],
+    "coins": {
+      "gp": 34,
+      "sp": 14,
+      "cp": 8
+    }
+  },
+  "personality": {
+    "traits": "Actually disgraced noble in hiding. Hedonistic and prone to excess.",
+    "ideal": "Truth unlocks cosmic power.",
+    "bond": "Still seeking, just not alone.",
+    "flaw": "Haunted by isolation."
+  },
+  "notes": "Peso aproximado del equipo: 120 lb. Añadir 1 lb. por cada 50 monedas.",
+  "source": {
+    "format": "Roll20 text export"
+  }
+}
