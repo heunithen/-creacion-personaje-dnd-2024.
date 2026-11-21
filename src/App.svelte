@@ -286,7 +286,7 @@
 <div class="app-shell">
   <header class="topbar">
     <a class="brand" href="#inicio"><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>D&D · 2024</small></span></a>
-    {#if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>Jugador</span></nav>{/if}
+    {#if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{playerName || 'Jugador'}</span></nav>{/if}
   </header>
 
   <main class="main">
