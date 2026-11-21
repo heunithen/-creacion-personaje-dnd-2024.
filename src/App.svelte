@@ -79,7 +79,7 @@
     c.species=field('Race/Ancestry/Heritage')||field('Species')||field('Race');
     const cls=field('Class & Level')||field('Class');
     const classMatch=cls.match(/^(.+?)\s+(\d+)\b/);
-    c.className=classMatch?classMatch[1].trim():cls;
+    c.className=classMatch?cls.replace(/\s+\d+\b/,'').trim():cls;
     c.level=classMatch?classMatch[2]:(cls.match(/\bLevel\s*(\d+)/i)?.[1]||'');
     c.background=field('Background');c.alignment=field('Alignment');c.experience=field('Experience');
     const abilityKeys:Record<string,string>={Strength:'str',Dexterity:'dex',Constitution:'con',Intelligence:'int',Wisdom:'wis',Charisma:'cha'};
