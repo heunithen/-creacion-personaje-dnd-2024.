@@ -24,6 +24,7 @@
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
   let customRolls: CustomRoll[] = [];
+  let lastRollId = '';
   let newRollName = '';
   let newRollParts: RollPart[] = [createRollPart()];
   function createRollPart(): RollPart {
@@ -86,9 +87,10 @@
       }
       const dice = mode === 'normal' ? '1d' + die : '2d' + die + (mode === 'advantage' ? 'kh1' : 'kl1');
       const modifier = bonus === 0 ? '' : (bonus > 0 ? '+' : '') + bonus;
-      const label = (group.name + ' - ' + roll.name).replace(/[#\\r\\n]/g, ' ').trim();
+      const label = (group.name + ' - ' + roll.name).replace(/[#\r\n]/g, ' ').trim();
       const notation = dice + modifier + (label ? '#' + label : '');
       const rollId = 'forja_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+      lastRollId = rollId;
       await OBR.broadcast.sendMessage('dice-plus/roll-request', {
         rollId,
         playerId,
@@ -273,6 +275,12 @@
         await restoreOwnSheet();
         await refreshPlayers();
         OBR.party.onChange((players: any[]) => readPlayers(players));
+        OBR.broadcast.onMessage(`${DICE_PLUS_SOURCE}/roll-error`, (event: any) => {
+          const failure = event.data;
+          if (!failure?.rollId || failure.rollId === lastRollId) {
+            notice = 'Dice+ rechazó la notación «' + String(failure?.notation || 'desconocida') + '»: ' + String(failure?.error || 'error de notación');
+          }
+        });
         OBR.broadcast.onMessage(CHANNEL, (event: any) => {
           const d = event.data;
           if (d?.type === 'character-updated' && d.character) {
