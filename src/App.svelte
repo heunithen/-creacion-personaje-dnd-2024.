@@ -25,7 +25,6 @@
     const file = input.files?.[0];
     if (!file) return;
     file.text().then((contents) => {
-      // Se conserva el objeto JSON completo, sin validar ni transformar sus campos.
       sheet = JSON.parse(contents) as RawSheet;
       localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
       importOpen = false;
@@ -50,6 +49,18 @@
       if (result[result.length - 1].values) i++;
     }
     return result;
+  }
+
+  function sectionClass(name = '') {
+    const n = name.toLocaleLowerCase();
+    if (/atribut|característic|ability|ability score/.test(n)) return 'attributes-section';
+    if (/combate|ataque|armadura|punto de golpe|defensa/.test(n)) return 'combat-section';
+    if (/habilidad|salvaci|competenc/.test(n)) return 'skills-section';
+    if (/rasgo|dote|característica de clase|especie|racial/.test(n)) return 'features-section';
+    if (/conjuro|magia|hechizo/.test(n)) return 'magic-section';
+    if (/equipo|inventario|objeto/.test(n)) return 'equipment-section';
+    if (/personalidad|historia|trasfondo|apariencia/.test(n)) return 'story-section';
+    return 'general-section';
   }
 
   function displayValue(value: unknown) {
@@ -152,7 +163,7 @@
 <svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
 <div class="app-shell">
   <header class="topbar">
-    <a class="brand" href="#inicio"><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>DUNGEONS & DRAGONS · 2024 · v0.9.9</small></span></a>
+    <a class="brand" href="#inicio"><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>DUNGEONS & DRAGONS · 2024 · v1.0.0</small></span></a>
     {#if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>Jugador</span></nav>{/if}
   </header>
 
@@ -160,9 +171,8 @@
     <div class="connection"><span class:connected={obrReady}></span>{syncStatus}</div>
 
     {#if obrRole === 'GM'}
-      <div class="eyebrow">SALA ACTUAL</div>
-      <h1>Personajes de <em>la sala.</em></h1>
-      <section class="panel">
+      <div class="page-heading"><div class="eyebrow">SALA ACTUAL</div><h1>Personajes de <em>la sala.</em></h1></div>
+      <section class="panel roster-panel">
         <div class="section-heading"><div><div class="eyebrow">FICHAS PUBLICADAS</div><h2>Personajes de los jugadores</h2></div><span class="count">{roomSheets.length}</span></div>
         <div class="actions"><button class="secondary" on:click={refreshPlayers}>Actualizar jugadores</button></div>
         {#if !roomSheets.length}<p class="muted">Todavía no hay personajes publicados.</p>
@@ -170,25 +180,31 @@
           {#each roomSheets as entry}
             <article class="character-card">
               <div class="card-symbol">✧</div>
-              <div><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName}</p></div>
+              <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName}</p></div>
               <details class="gm-sheet-details">
-                <summary>Ver ficha</summary>
-                {#each sectionPairs(entry.sheet?.sections || []) as pair}
-                  <section class="sheet-section"><h3>{pair.heading.name}</h3>
-                    {#each pair.heading.stats || [] as stat, i}
-                      <div class="sheet-stat"><span>{stat.name || '—'}</span><strong>{displayValue(pair.values?.stats?.[i]?.value ?? stat.value)}</strong></div>
+                <summary>Ver ficha completa</summary>
+                <div class="character-sheet gm-character-sheet">
+                  <div class="sheet-banner"><span class="sheet-kicker">HOJA DE PERSONAJE · D&D 2024</span><h2>{entry.sheet?.name || 'Personaje'}</h2>{#if entry.sheet?.notes}<p>{entry.sheet.notes}</p>{/if}</div>
+                  <div class="sheet-grid">
+                    {#each sectionPairs(entry.sheet?.sections || []) as pair}
+                      <section class="sheet-section {sectionClass(pair.heading.name)}">
+                        <div class="sheet-section-title"><span>{pair.heading.id ?? ''}</span><h3>{pair.heading.name || 'Sección'}</h3></div>
+                        <div class="stats-list">
+                          {#each pair.heading.stats || [] as stat, i}
+                            <div class="sheet-stat"><span>{stat.name || '—'}</span><strong>{displayValue(pair.values?.stats?.[i]?.value ?? stat.value)}</strong></div>
+                          {/each}
+                        </div>
+                      </section>
                     {/each}
-                  </section>
-                {/each}
+                  </div>
+                </div>
               </details>
             </article>
           {/each}
         {/if}
       </section>
     {:else}
-      <div class="eyebrow">HOJA DE PERSONAJE <span>IMPORTACIÓN JSON</span></div>
-      <h1>Tu <em>aventurero.</em></h1>
-      <p class="intro">Importa la ficha JSON de DummySheet. La aplicación conserva sus datos y los muestra siguiendo el orden de sus secciones.</p>
+      <div class="page-heading"><div class="eyebrow">HOJA DE PERSONAJE <span>IMPORTACIÓN JSON</span></div><h1>Tu <em>aventurero.</em></h1><p class="intro">Importa la ficha JSON de DummySheet para verla con una presentación inspirada en la hoja oficial de D&D 2024.</p></div>
 
       <section class="panel import-character-panel">
         <div class="import-row">
@@ -204,25 +220,28 @@
       </section>
 
       {#if sheet}
-        <div class="sheet-title">
-          <div class="eyebrow">FICHA IMPORTADA</div>
-          <h2>{sheet.name || 'Personaje'}</h2>
-          {#if sheet.notes}<p>{sheet.notes}</p>{/if}
-        </div>
-
-        <div class="sheet-grid">
-          {#each sectionPairs(sheet.sections || []) as pair}
-            <section class="panel sheet-section">
-              <div class="section-heading"><div><div class="eyebrow">SECCIÓN {pair.heading.id ?? ''}</div><h2>{pair.heading.name || 'Sección'}</h2></div></div>
-              {#each pair.heading.stats || [] as stat, i}
-                <div class="sheet-stat">
-                  <span>{stat.name || '—'}</span>
-                  <strong>{displayValue(pair.values?.stats?.[i]?.value ?? stat.value)}</strong>
+        <article class="character-sheet">
+          <header class="sheet-banner">
+            <span class="sheet-kicker">HOJA DE PERSONAJE · D&D 2024</span>
+            <h2>{sheet.name || 'Personaje'}</h2>
+            {#if sheet.notes}<p>{sheet.notes}</p>{/if}
+          </header>
+          <div class="sheet-grid">
+            {#each sectionPairs(sheet.sections || []) as pair}
+              <section class="sheet-section {sectionClass(pair.heading.name)}">
+                <div class="sheet-section-title"><span>{pair.heading.id ?? ''}</span><h3>{pair.heading.name || 'Sección'}</h3></div>
+                <div class="stats-list">
+                  {#each pair.heading.stats || [] as stat, i}
+                    <div class="sheet-stat">
+                      <span>{stat.name || '—'}</span>
+                      <strong>{displayValue(pair.values?.stats?.[i]?.value ?? stat.value)}</strong>
+                    </div>
+                  {/each}
                 </div>
-              {/each}
-            </section>
-          {/each}
-        </div>
+              </section>
+            {/each}
+          </div>
+        </article>
 
         <section class="panel save-panel">
           <button class="primary full" on:click={saveSheet}>Guardar ficha</button>
@@ -239,13 +258,46 @@
 </div>
 
 <style>
-  .sheet-title{margin:1.25rem 0}.sheet-title h2{font-size:1.8rem;margin:.25rem 0}.sheet-title p{color:var(--muted,#aeb5c2);line-height:1.5}
-  .sheet-grid{display:grid;grid-template-columns:1fr;gap:.8rem}.sheet-section{min-width:0}
-  .sheet-stat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.8rem;padding:.65rem 0;border-bottom:1px solid var(--line,rgba(255,255,255,.1));align-items:start}
-  .sheet-stat:last-child{border-bottom:0}.sheet-stat span{color:var(--muted,#aeb5c2);font-size:.9rem}.sheet-stat strong{text-align:right;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.92rem;font-weight:600}
+  :global(:root){--paper:#f3eee2;--paper-deep:#e8dfce;--ink:#24231f;--ink-soft:#5e594f;--rule:#c9bea9;--red:#8f3028;--gold:#b18a45}
+  .page-heading{margin:1.2rem 0 1rem}.page-heading h1{margin:.2rem 0}.page-heading .intro{max-width:48rem}
+  .character-sheet{background:var(--paper);color:var(--ink);border:1px solid #c8bda8;border-radius:10px;padding:clamp(.65rem,2vw,1.25rem);box-shadow:0 12px 32px rgba(0,0,0,.22);font-family:Georgia,'Times New Roman',serif}
+  .sheet-banner{position:relative;padding:1.1rem 1.2rem 1rem;margin-bottom:.9rem;border:2px solid var(--ink);outline:1px solid var(--ink);outline-offset:4px;background:linear-gradient(135deg,#f8f4eb,#e9e0d0);text-align:center}
+  .sheet-kicker{font:700 .62rem/1.2 system-ui,sans-serif;letter-spacing:.19em;color:var(--red)}
+  .sheet-banner h2{font:700 clamp(1.55rem,4vw,2.5rem)/1.1 Georgia,serif;letter-spacing:.025em;margin:.35rem 0;color:var(--ink)}
+  .sheet-banner p{font: .85rem/1.45 system-ui,sans-serif;color:var(--ink-soft);margin:.35rem auto 0;max-width:50rem}
+  .sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;align-items:start}
+  .sheet-section{min-width:0;padding:.7rem .8rem .65rem;border:1px solid var(--rule);border-top:3px solid var(--red);border-radius:5px;background:rgba(255,255,255,.43);break-inside:avoid}
+  .sheet-section-title{display:flex;align-items:center;gap:.5rem;padding-bottom:.45rem;margin-bottom:.25rem;border-bottom:1px solid var(--rule)}
+  .sheet-section-title>span{display:grid;place-items:center;min-width:1.45rem;height:1.45rem;border-radius:50%;background:var(--red);color:#fff;font:700 .68rem system-ui,sans-serif}
+  .sheet-section-title h3{margin:0;color:var(--red);font:700 .9rem/1.2 system-ui,sans-serif;letter-spacing:.055em;text-transform:uppercase}
+  .stats-list{display:grid;grid-template-columns:1fr}
+  .sheet-stat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:.55rem;align-items:start;padding:.42rem .05rem;border-bottom:1px solid rgba(130,112,83,.24)}
+  .sheet-stat:last-child{border-bottom:0}
+  .sheet-stat span{color:var(--ink-soft);font: .75rem/1.35 system-ui,sans-serif;overflow-wrap:anywhere}
+  .sheet-stat strong{color:var(--ink);text-align:right;white-space:pre-wrap;overflow-wrap:anywhere;font:700 .78rem/1.35 system-ui,sans-serif}
+  .combat-section{border-top-color:#292722;background:#ebe5d8}
+  .combat-section .sheet-section-title h3{color:#292722}
+  .attributes-section{grid-column:1/-1;border-top-color:var(--gold);background:#eee7d8}
+  .attributes-section .sheet-section-title h3{color:#765a27}
+  .attributes-section .stats-list{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:.8rem}
+  .attributes-section .sheet-stat{grid-template-columns:1fr;gap:.15rem;text-align:center;padding:.55rem .2rem;border:1px solid rgba(130,112,83,.25);margin:.15rem;border-radius:4px;background:rgba(255,255,255,.38)}
+  .attributes-section .sheet-stat span{text-transform:uppercase;font-size:.66rem;letter-spacing:.06em}
+  .attributes-section .sheet-stat strong{text-align:center;font:700 1.05rem/1.3 Georgia,serif}
+  .skills-section{border-top-color:#75664c}
+  .features-section{border-top-color:#56705c}
+  .features-section .sheet-section-title h3{color:#405a46}
+  .magic-section{border-top-color:#526b8c}
+  .magic-section .sheet-section-title h3{color:#405a78}
+  .equipment-section{border-top-color:#987343}
+  .story-section{border-top-color:#7b5d70}
+  .general-section{border-top-color:#8b8171}
+  .import-character-panel{margin-bottom:1rem}
+  .sheet-title{margin:1.25rem 0}.sheet-title h2{font-size:1.8rem;margin:.25rem 0}
   .gm-sheet-details{flex-basis:100%;margin-top:.7rem}.gm-sheet-details summary{cursor:pointer;color:var(--accent,#d6b66d);padding:.5rem 0}
-  .gm-sheet-details .sheet-section{margin:.7rem 0;padding:.8rem;background:rgba(0,0,0,.12);border-radius:.5rem}
-  .empty-state{text-align:center;padding:2rem}.save-panel{display:flex;flex-direction:column;gap:.8rem}
+  .gm-character-sheet{margin-top:.8rem}.gm-character-sheet .sheet-grid{grid-template-columns:1fr}
+  .empty-state{text-align:center;padding:2rem}.save-panel{display:flex;flex-direction:column;gap:.8rem;margin-top:1rem}
   .save-panel .danger-text{align-self:center}
-  @media(min-width:700px){.sheet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .roster-panel{margin-top:1rem}.card-identity{min-width:0}
+  @media(max-width:560px){.sheet-grid{grid-template-columns:1fr}.attributes-section{grid-column:auto}.attributes-section .stats-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(min-width:900px){.sheet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.attributes-section{grid-column:1/-1}}
 </style>
