@@ -391,8 +391,8 @@
 <style>
   :global(:root){--paper:#f3eee2;--paper-deep:#e8dfce;--ink:#24231f;--ink-soft:#5e594f;--rule:#c9bea9;--red:#8f3028;--gold:#b18a45}
   .character-sheet{background:var(--paper);color:var(--ink);border:1px solid #c8bda8;border-radius:10px;padding:clamp(.65rem,2vw,1.25rem);box-shadow:0 12px 32px rgba(0,0,0,.22);font-family:Georgia,'Times New Roman',serif}
-  .sheet-banner{padding:.7rem .8rem .65rem;margin:0 0 .9rem;border:2px solid var(--ink);outline:1px solid var(--ink);outline-offset:3px;background:linear-gradient(135deg,#f8f4eb,#e9e0d0);text-align:center}
-  .character-name{display:block;width:100%;font:700 clamp(1.45rem,4vw,2.15rem)/1.15 Georgia,serif;text-align:center}
+  .sheet-banner{padding:0;margin:0 0 .9rem;border:0;outline:0;background:transparent;text-align:center}
+  .character-name{display:block;width:100%;margin:0;color:#000;font:700 clamp(1.45rem,4vw,2.15rem)/1.15 Georgia,serif;text-align:center}
   .sheet-notes{display:block;width:100%;margin-top:.35rem;font:.78rem/1.4 system-ui,sans-serif;text-align:center;color:var(--ink-soft)}
   .editable{box-sizing:border-box;border:1px solid transparent;border-radius:3px;background:transparent;color:inherit;min-width:0;padding:.16rem .22rem;resize:vertical}
   .editable:hover{border-color:rgba(143,48,40,.35);background:rgba(255,255,255,.22)}
