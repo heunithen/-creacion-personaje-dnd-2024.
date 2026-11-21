@@ -284,7 +284,7 @@
               <details class="gm-sheet-details">
                 <summary>Ver ficha</summary>
                 <div class="character-sheet gm-character-sheet">
-                  <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2>{#if entry.sheet?.notes}<p>{entry.sheet.notes}</p>{/if}</div>
+                  <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2></div>
                   <div class="sheet-grid">
                     {#each visiblePairs(entry.sheet?.sections || [], 'Datos') as pair}
                       <section class="sheet-section {sectionClass(pair.heading.name)}">
