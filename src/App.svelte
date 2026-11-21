@@ -17,6 +17,8 @@
   let obrReady = false;
   let obrRole = '';
   let playerName = '';
+  let activeTab = 'Datos';
+  const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let fileInput: HTMLInputElement;
 
@@ -63,6 +65,21 @@
       if (result[result.length - 1].values) i++;
     }
     return result;
+  }
+
+  function sectionTab(name = '') {
+    const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
+    if (/\\b19\\b.*recurso|recurso/.test(n)) return 'Ocultar';
+    if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
+    if (/tirada|roll|dado/.test(n)) return 'Tiradas';
+    if (/equipo|inventario|objeto/.test(n)) return 'Equipo';
+    if (/salvacion|habilidad|competencia|skill|saving throw|proficien/.test(n)) return 'Competencias';
+    if (/combate|ataque|rasgo|dote|caracteristica de clase|especie|racial|weapon|armor/.test(n)) return 'Combate';
+    return 'Datos';
+  }
+
+  function visiblePairs(sections: RawSection[] = [], tab = activeTab) {
+    return sectionPairs(sections).filter(pair => sectionTab(String(pair.heading.name || '')) === tab);
   }
 
   function sectionClass(name = '') {
@@ -197,7 +214,7 @@
                 <div class="character-sheet gm-character-sheet">
                   <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2>{#if entry.sheet?.notes}<p>{entry.sheet.notes}</p>{/if}</div>
                   <div class="sheet-grid">
-                    {#each sectionPairs(entry.sheet?.sections || []) as pair}
+                    {#each visiblePairs(entry.sheet?.sections || []) as pair}
                       <section class="sheet-section {sectionClass(pair.heading.name)}">
                         <div class="sheet-section-title"><h3>{pair.heading.name || 'Sección'}</h3></div>
                         <div class="stats-list">
@@ -233,8 +250,11 @@
             <textarea class="character-name editable" aria-label="Nombre del personaje" rows="1" value={sheet.name || ''} on:input={(event) => editSheetField('name', event)}></textarea>
             <textarea class="sheet-notes editable" aria-label="Notas" rows="2" placeholder="Notas..." value={sheet.notes || ''} on:input={(event) => editSheetField('notes', event)}></textarea>
           </header>
+          <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha">
+            {#each tabs as tab}<button class:active={activeTab === tab} role="tab" aria-selected={activeTab === tab} on:click={() => activeTab = tab}>{tab}</button>{/each}
+          </nav>
           <div class="sheet-grid">
-            {#each sectionPairs(sheet.sections || []) as pair}
+            {#each visiblePairs(sheet.sections || []) as pair}
               <section class="sheet-section {sectionClass(pair.heading.name)}">
                 <div class="sheet-section-title">
                   <input class="section-name editable" aria-label="Nombre de sección" value={pair.heading.name || ''} on:input={(event) => editField(pair.heading, 'name', event)} />
@@ -279,6 +299,9 @@
   .editable{box-sizing:border-box;border:1px solid transparent;border-radius:3px;background:transparent;color:inherit;min-width:0;padding:.16rem .22rem;resize:vertical}
   .editable:hover{border-color:rgba(143,48,40,.35);background:rgba(255,255,255,.22)}
   .editable:focus{outline:1px solid var(--red);border-color:var(--red);background:#fffdf8}
+  .sheet-tabs{display:flex;gap:.35rem;overflow-x:auto;padding:.15rem 0 .65rem;margin-bottom:.7rem;border-bottom:1px solid var(--rule)}
+  .sheet-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.48rem .68rem;background:#e8dfce;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}
+  .sheet-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
   .sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;align-items:start}
   .sheet-section{min-width:0;padding:.7rem .8rem .65rem;border:1px solid var(--rule);border-top:3px solid var(--red);border-radius:5px;background:rgba(255,255,255,.43);break-inside:avoid}
   .sheet-section-title{display:flex;align-items:center;padding-bottom:.4rem;margin-bottom:.25rem;border-bottom:1px solid var(--rule)}
