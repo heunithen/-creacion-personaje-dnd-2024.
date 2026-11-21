@@ -462,8 +462,9 @@
   .roll-actions{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
   .roll-actions button{flex:0 1 auto}
   .roll-group-creator{display:grid;grid-template-columns:1fr;gap:.55rem}
-  .new-roll-part{display:grid;grid-template-columns:minmax(0,2fr) minmax(5rem,1fr) minmax(5rem,1fr);gap:.45rem;padding:.55rem;border:1px solid var(--rule);border-radius:4px}
-  .new-roll-part-title{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;font:.75rem system-ui,sans-serif}
+  .new-roll-part{display:grid;grid-template-columns:1fr;gap:.55rem;padding:.65rem;border:1px solid var(--rule);border-radius:4px}
+  .new-roll-part-title{display:flex;justify-content:space-between;align-items:center;font:.75rem system-ui,sans-serif}
+  .new-roll-part label{display:grid;gap:.3rem}
   .add-roll-part{justify-self:start}
   .roll-group-creator>button[type=submit]{justify-self:start}
   .roll-actions .remove-roll{flex:0 0 30px;padding:.25rem;font-size:.9rem;color:var(--red)}
