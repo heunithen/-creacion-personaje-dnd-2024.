@@ -13,12 +13,12 @@
   };
   type Monster = {id:string;name:string;size:string;type:string;ac:string;hp:string;speed:string;traits:string;actions:string;notes:string;rawBlock?:string};
   type RoomCharacter = {playerId:string;playerName:string;character:Character};
-  type UnassignedCharacter = {id:string;rawText:string;name:string;createdAt:string};
+
   type RollChoice = {label:string;category:string;notation:string;detail:string};
   type RollEntry = {id:string;playerName:string;characterName:string;label:string;notation:string;total?:number;summary?:string;status:string;timestamp:number};
   const KEY='com.heunithen.dnd2024-character-builder/character';
-  const PENDING_KEY='com.heunithen.dnd2024-character-builder/pending-assignments';
-  const ACK_KEY='com.heunithen.dnd2024-character-builder/assignment-acks';
+
+
   const CHANNEL='com.heunithen.dnd2024-character-builder/character-sync';
   const ROLL_CHANNEL='com.heunithen.dnd2024-character-builder/roll-log';
   const DICE_SOURCE='com.heunithen.dnd2024-character-builder';
@@ -37,25 +37,25 @@
   }
   let view:'player'|'gm'='player';
   let playerTab:'identity'|'combat'|'abilities'|'proficiencies'|'traits'|'spells'|'equipment'|'rolls'='identity';
-  let gmTab:'characters'|'unassigned'|'bestiary'='unassigned';
+
   let character=blankCharacter();
   let saved:Character[]=[];
   let monsters:Monster[]=[];
   let roomCharacters:RoomCharacter[]=[];
-  let unassignedCharacters:UnassignedCharacter[]=[];
-  let gmImportText='';
-  let connectedPlayers:{id:string;name:string}[]=[];
-  let gmCreatingCharacter=false;
-  let assignmentPlayerId='';
+
+
+
+
+
   let editingId='';
-  let editingRoomPlayerId='';
+
   let notice='';
   let obrReady=false;
   let obrRole='';
-  let processingAssignment=false;
+
   let playerName='';
   let syncStatus='Owlbear Rodeo no está conectado.';
-  let importText='';
+
   let rollCategory='Habilidad';
   let selectedRoll='';
   let customNotation='1d20';
@@ -122,54 +122,14 @@
     return [...legacyTraits(c.speciesTraits||'','Especie'),...legacyTraits(c.classTraits||'','Clase'),...legacyTraits(c.features||'','Otro')];
   }
   function readRoomPlayers(players:any[]){
-    connectedPlayers=players.map((p:any)=>({id:p.id,name:p.name||'Jugador'}));
-    roomCharacters=players.flatMap((p:any)=>{const payload=p.metadata?.[KEY];if(!payload||payload.deleted||!payload.character)return[];return[{playerId:p.id,playerName:p.name||payload.playerName||'Jugador',character:payload.character}];});
+    roomCharacters=players.flatMap((p:any)=>{
+      const payload=p.metadata?.[KEY];
+      if(!payload||payload.deleted||!payload.character)return[];
+      return[{playerId:p.id,playerName:p.name||payload.playerName||'Jugador',character:payload.character}];
+    });
   }
   async function refreshRoomPlayers(){
-    try{
-      const players=await OBR.party.getPlayers();
-      readRoomPlayers(players);
-      await processPendingAssignments();
-      if(obrRole==='GM')await cleanupAcknowledgedAssignments(players);
-    }catch{}
-  }
-  async function processPendingAssignments(){
-    if(!obrReady||obrRole!=='PLAYER'||processingAssignment)return;
-    processingAssignment=true;
-    try{
-      const playerId=await OBR.player.getId();
-      const [playerMetadata,roomMetadata]=await Promise.all([OBR.player.getMetadata(),OBR.room.getMetadata()]);
-      const acknowledgements=Array.isArray(playerMetadata?.[ACK_KEY])?playerMetadata[ACK_KEY]:[];
-      const pending=Array.isArray(roomMetadata?.[PENDING_KEY])?roomMetadata[PENDING_KEY]:[];
-      const targetAssignments=pending.filter((item:any)=>item?.targetPlayerId===playerId&&item?.id&&item?.rawText&&!acknowledgements.includes(item.id));
-      if(!targetAssignments.length)return;
-      const assignment=targetAssignments[targetAssignments.length-1];
-      importText=assignment.rawText;
-      importCharacter();
-      if(!character.name.trim())throw new Error('El texto no contiene un campo Name válido.');
-      const assigned={...character,id:crypto.randomUUID(),playerName:await OBR.player.getName(),updatedAt:new Date().toISOString()};
-      character=assigned;saved=[assigned];editingId=assigned.id;persistLocal();
-      await OBR.player.setMetadata({
-        [KEY]:{character:assigned,playerName:assigned.playerName,updatedAt:assigned.updatedAt},
-        [ACK_KEY]:[...acknowledgements,...targetAssignments.map((item:any)=>item.id)].slice(-100)
-      });
-      try{await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId,playerName:assigned.playerName,character:assigned},{destination:'ALL'});}catch{}
-      notice='El GM te ha asignado un personaje.';
-    }catch(error){
-      notice=error instanceof Error?error.message:'No se pudo importar la asignación. Vuelve a abrir la extensión o solicita al GM que la revise.';
-    }finally{
-      processingAssignment=false;
-    }
-  }
-  async function cleanupAcknowledgedAssignments(players:any[]){
-    try{
-      const roomMetadata=await OBR.room.getMetadata();
-      const pending=Array.isArray(roomMetadata?.[PENDING_KEY])?roomMetadata[PENDING_KEY]:[];
-      if(!pending.length)return;
-      const acknowledgements=new Set(players.flatMap((p:any)=>Array.isArray(p.metadata?.[ACK_KEY])?p.metadata[ACK_KEY]:[]));
-      const remaining=pending.filter((item:any)=>!acknowledgements.has(item.id));
-      if(remaining.length!==pending.length)await OBR.room.setMetadata({[PENDING_KEY]:remaining});
-    }catch{}
+    try{readRoomPlayers(await OBR.party.getPlayers());}catch{}
   }
   async function restoreOwnCharacter(){
     if(obrRole!=='PLAYER')return;
@@ -177,8 +137,7 @@
     const payload=metadata?.[KEY];
     if(payload?.deleted){
       saved=[];character=blankCharacter();editingId='';persistLocal();return;
-    }    if(payload?.character){
-      const remote=payload.character as Character;
+    }    if(payload?.character){      const remote=payload.character as Character;
       const local=saved[0];
       const remoteTime=Date.parse(payload.updatedAt||remote.updatedAt||'')||0;
       const localTime=Date.parse(local?.updatedAt||'')||0;
@@ -206,7 +165,7 @@
     });
   }
   onMount(()=>{
-    try{saved=JSON.parse(localStorage.getItem('forja-characters')||'[]');monsters=JSON.parse(localStorage.getItem('forja-monsters')||'[]');rollLog=JSON.parse(localStorage.getItem('forja-roll-history')||'[]');unassignedCharacters=JSON.parse(localStorage.getItem('forja-unassigned-characters')||'[]');}
+    try{saved=JSON.parse(localStorage.getItem('forja-characters')||'[]');monsters=JSON.parse(localStorage.getItem('forja-monsters')||'[]');rollLog=JSON.parse(localStorage.getItem('forja-roll-history')||'[]');}
     catch{saved=[];monsters=[];rollLog=[];}
     saved=saved.length?[{...saved[saved.length-1],traits:normalizeTraits(saved[saved.length-1])}]:[];
     if(saved.length)character={...blankCharacter(),...saved[0],traits:saved[0].traits,abilities:{...blankCharacter().abilities,...saved[0].abilities}};
@@ -217,20 +176,11 @@
         syncStatus='Conectado a Owlbear Rodeo como '+(obrRole==='GM'?'Director de juego.':'Jugador.');
         await restoreOwnCharacter();
         await refreshRoomPlayers();
-        OBR.party.onChange((players:any[])=>{readRoomPlayers(players);void processPendingAssignments();if(obrRole==='GM')void cleanupAcknowledgedAssignments(players);});
-        OBR.room.onMetadataChange(()=>{if(obrRole==='PLAYER')void processPendingAssignments();else if(obrRole==='GM')void OBR.party.getPlayers().then((players:any[])=>cleanupAcknowledgedAssignments(players));});
+        OBR.party.onChange((players:any[])=>readRoomPlayers(players));
         OBR.broadcast.onMessage(CHANNEL,async(event:any)=>{
           const d=event.data;
-          if(d?.type==='assignment-available'&&obrRole==='PLAYER')await refreshRoomPlayers();
           if(d?.type==='character-updated'&&d.character)roomCharacters=[...roomCharacters.filter(c=>c.playerId!==d.playerId),{playerId:d.playerId,playerName:d.playerName||'Jugador',character:d.character}];
           if(d?.type==='character-deleted')roomCharacters=roomCharacters.filter(c=>c.playerId!==d.playerId);
-          if(d?.type==='character-edited'&&d.character){
-            roomCharacters=[...roomCharacters.filter(c=>c.playerId!==d.playerId),{playerId:d.playerId,playerName:d.playerName||'Jugador',character:d.character}];
-            if(obrRole==='PLAYER'&&d.playerId===await OBR.player.getId()){
-              character=d.character;editingId=character.id;saved=saved.map(c=>c.id===character.id?character:c);persistLocal();
-              await OBR.player.setMetadata({[KEY]:{character,playerName,updatedAt:character.updatedAt}});
-            }
-          }
         });
         OBR.broadcast.onMessage(ROLL_CHANNEL,(event:any)=>{const d=event.data;if(d?.entry&& !rollLog.some(x=>x.id===d.entry.id)){rollLog=[d.entry,...rollLog].slice(0,100);localStorage.setItem('forja-roll-history',JSON.stringify(rollLog));}});
         OBR.broadcast.onMessage(DICE_RESULT,(event:any)=>handleDiceResult(event.data));
@@ -240,55 +190,30 @@
     });
   });
   function saveCharacter(){
-    if(!saved.length&&!editingRoomPlayerId){notice='No tienes un personaje asignado. Solicita al GM que te asigne uno.';return;}
-    character={...character,name:character.name.trim(),playerName:editingRoomPlayerId?character.playerName:(playerName||character.playerName),updatedAt:new Date().toISOString()};
+    character={...character,name:character.name.trim(),playerName:playerName||character.playerName,updatedAt:new Date().toISOString()};
     if(!character.name){notice='Escribe el nombre del personaje.';return;}
-    if(editingRoomPlayerId){
-      const updated={...character};
-      roomCharacters=roomCharacters.map(x=>x.playerId===editingRoomPlayerId?{...x,character:updated}:x);
-      OBR.broadcast.sendMessage(CHANNEL,{type:'character-edited',playerId:editingRoomPlayerId,playerName:roomCharacters.find(x=>x.playerId===editingRoomPlayerId)?.playerName||'Jugador',character:updated},{destination:'ALL'});
-      notice='Cambios enviados al jugador y a la sala.';return;
+    character={...character,id:editingId||saved[0]?.id||crypto.randomUUID()};
+    saved=[character];editingId=character.id;persistLocal();publishCharacter(character);notice='Ficha guardada.';
+  }
+  function newCharacter(){
+    if(saved.length){editCharacter(saved[0]);return;}
+    character=blankCharacter();editingId='';view='player';playerTab='identity';notice='';
+  }
+  function editCharacter(c:Character){
+    character={...blankCharacter(),...c,traits:normalizeTraits(c),abilities:{...blankCharacter().abilities,...c.abilities}};
+    editingId=c.id;view='player';playerTab='identity';
+  }
+  async function deleteCharacter(c:Character){
+    saved=saved.filter(x=>x.id!==c.id);
+    if(editingId===c.id){editingId='';character=blankCharacter();}
+    persistLocal();
+    if(obrReady&&obrRole==='PLAYER'){
+      const id=await OBR.player.getId();
+      await OBR.player.setMetadata({[KEY]:{deleted:true,updatedAt:new Date().toISOString()}});
+      await OBR.broadcast.sendMessage(CHANNEL,{type:'character-deleted',playerId:id},{destination:'ALL'});
     }
-    character={...character,id:editingId||saved[0].id};
-    saved=[character];persistLocal();publishCharacter(character);notice='Ficha guardada.';
+    notice='Ficha eliminada. Puedes crear un nuevo personaje.';
   }
-  function importForGm(){
-    const raw=gmImportText.trim();
-    if(!raw){notice='Pega el texto completo de la ficha.';return;}
-    const name=raw.match(/^Name:\s*(.+)$/mi)?.[1]?.trim()||raw.split('\n').find(x=>x.trim())?.trim()||'Personaje sin nombre';
-    unassignedCharacters=[...unassignedCharacters,{id:crypto.randomUUID(),rawText:raw,name,createdAt:new Date().toISOString()}];
-    localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
-    gmImportText='';notice='Personaje guardado en Personajes no asignados.';
-  }
-  async function assignImportedCharacter(item:UnassignedCharacter,playerId:string){
-    const target=connectedPlayers.find(p=>p.id===playerId);
-    if(!target){notice='El jugador ya no está conectado. Actualiza la lista.';return;}
-    try{
-      const roomMetadata=await OBR.room.getMetadata();
-      const pending=Array.isArray(roomMetadata?.[PENDING_KEY])?roomMetadata[PENDING_KEY]:[];
-      const assignment={id:crypto.randomUUID(),targetPlayerId:target.id,rawText:item.rawText,createdAt:new Date().toISOString()};
-      const nextPending=[...pending,assignment];
-      const nextRoomMetadata={...roomMetadata,[PENDING_KEY]:nextPending};
-      if(new TextEncoder().encode(JSON.stringify(nextRoomMetadata)).length>15000)throw new Error('Los metadatos de la sala están cerca del límite de 16 KB. Elimina asignaciones antiguas antes de continuar.');
-      await OBR.room.setMetadata({[PENDING_KEY]:nextPending});
-      unassignedCharacters=unassignedCharacters.filter(x=>x.id!==item.id);
-      try{localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));}catch{}
-      try{await OBR.broadcast.sendMessage(CHANNEL,{type:'assignment-available',targetPlayerId:target.id},{destination:'ALL'});}catch{}
-      notice='Ficha asignada a '+target.name+'. Se importará automáticamente cuando abra la extensión y reemplazará cualquier personaje anterior.';
-    }catch{notice='No se pudo guardar la asignación en la sala. El personaje sigue en la lista de no asignados.';}
-  }
-  function handleAssignmentChange(item:UnassignedCharacter,event:Event){
-    const select=event.currentTarget as HTMLSelectElement;
-    void assignImportedCharacter(item,select.value);
-  }
-  function deleteUnassigned(id:string){
-    unassignedCharacters=unassignedCharacters.filter(x=>x.id!==id);
-    localStorage.setItem('forja-unassigned-characters',JSON.stringify(unassignedCharacters));
-  }
-  function newCharacter(){if(saved.length){editCharacter(saved[0]);return;}notice='No tienes un personaje asignado. El GM debe asignártelo.';view='player';}
-  function editCharacter(c:Character){gmCreatingCharacter=false;character={...blankCharacter(),...c,traits:normalizeTraits(c),abilities:{...blankCharacter().abilities,...c.abilities}};editingId=c.id;editingRoomPlayerId='';view='player';playerTab='identity';}
-  function editRoomCharacter(c:RoomCharacter){gmCreatingCharacter=false;character={...blankCharacter(),...c.character,traits:normalizeTraits(c.character),abilities:{...blankCharacter().abilities,...c.character.abilities}};editingId=c.character.id;editingRoomPlayerId=c.playerId;view='player';playerTab='identity';}
-  async function deleteCharacter(c:Character){saved=saved.filter(x=>x.id!==c.id);if(editingId===c.id){editingId='';character=blankCharacter();}persistLocal();if(obrReady&&obrRole==='PLAYER'){const id=await OBR.player.getId();await OBR.player.setMetadata({[KEY]:{deleted:true,updatedAt:new Date().toISOString()}});await OBR.broadcast.sendMessage(CHANNEL,{type:'character-deleted',playerId:id},{destination:'ALL'});}notice='Ficha eliminada. Ahora puedes recibir una nueva asignación del GM.';}
   function addMonster(){if(!monster.name.trim()){notice='Escribe el nombre del monstruo.';return;}monsters=[...monsters,{...monster,id:crypto.randomUUID()}];persistLocal();monster={name:'',size:'',type:'',ac:'',hp:'',speed:'',traits:'',actions:'',notes:''};notice='Bloque de estadísticas guardado.';}
   function deleteMonster(id:string){monsters=monsters.filter(m=>m.id!==id);persistLocal();}
   function importMonster(){
@@ -310,45 +235,6 @@
     m.rawBlock=t;
     monsters=[...monsters,{...m,id:crypto.randomUUID()}];persistLocal();monsterImportText='';monsterImportOpen=false;notice='Monstruo importado. Revisa el bloque antes de usarlo.';
   }
-  function section(text:string,start:string,end:string){const a=text.indexOf(start);if(a<0)return'';const from=a+start.length;const b=end?text.indexOf(end,from):-1;return text.slice(from,b<0?undefined:b).trim();}
-  function importCharacter(){
-    const t=importText.replace(/\r/g,'');
-    if(!t.trim()){notice='Pega el texto del personaje.';return;}
-    const c=blankCharacter();
-    c.name=t.match(/^Name:\s*(.+)$/mi)?.[1]?.trim()||'';
-    c.species=t.match(/^Race\/Ancestry\/Heritage:\s*(.+)$/mi)?.[1]?.trim()||'';
-    c.className=t.match(/^Class\s*&\s*Level:\s*(.+)$/mi)?.[1]?.trim()||'';
-    c.level=c.className.match(/\b(\d+)\s*$/)?.[1]||'';
-    c.background=t.match(/^Background:\s*(.+)$/mi)?.[1]?.trim()||'';
-    c.alignment=t.match(/^Alignment:\s*(.+)$/mi)?.[1]?.trim()||'';
-    c.experience=t.match(/^Experience:\s*(.+)$/mi)?.[1]?.trim()||'';
-    c.ac=t.match(/Armor Class\s+(\d+)/i)?.[1]||'';
-    c.hp=t.match(/(\d+)\s+hit points/i)?.[1]||'';
-    c.speed=t.match(/(\d+\s*ft\.?\s*Speed)/i)?.[1]?.replace(/\s*Speed/i,'')||'';
-    c.initiative=t.match(/([+-]\d+)\s+Initiative Modifier/i)?.[1]||'';
-    c.passivePerception=t.match(/(\d+)\s+Passive Perception/i)?.[1]||'';
-    c.spellAttack=t.match(/spell attack bonus is\s*([+-]?\d+)/i)?.[1]||'';
-    c.spellSaveDc=t.match(/Spell Save is DC\s*(\d+)/i)?.[1]||'';
-    for(const [name,key] of Object.entries(abilityNames)){const score=t.match(new RegExp('^'+name+'\\s+(\\d+)','mi'))?.[1];if(score)c.abilities[key]=score;}
-    const speciesHeading=t.match(/^(.+ Traits) \[PHB/gmi)?.[1];
-    const classHeading=t.match(/^(.+ Class Features) \[PHB/gmi)?.[1];
-    c.speciesTraits=speciesHeading?section(t,speciesHeading,classHeading||'EQUIPMENT & TREASURE'):section(t,'Species Traits','COMBAT');
-    c.classTraits=classHeading?section(t,classHeading,'EQUIPMENT & TREASURE'):section(t,'Class Features','EQUIPMENT & TREASURE');
-    c.abilityChecks=[...t.matchAll(/^\s*([+-]\d+)\s+\.\.\.\s+(.+?)\s+Ability Checks\s*\*?\*?/gmi)].map(m=>m[2].trim()+': '+m[1]).join('\n');
-    c.savingThrows=[...t.matchAll(/^\s*([+-]\d+)\s+\.\.\.\s+(.+?)\s+Saving Throws\s*\*?\*?/gmi)].map(m=>m[2].replace(/\s+\*+$/,'').trim()+': '+m[1]).join('\n');
-    c.skills=[...t.matchAll(/^\s*([+-]\d+)\s+\.\.\.\s+(.+?)\s+Skill\s*\*?\*?/gmi)].map(m=>m[2].replace(/\s+\*+$/,'').trim()+': '+m[1]).join('\n');
-    const combat=section(t,'COMBAT','FEATURES, TRAITS, SPECIAL ABILITIES');
-    c.attacks=combat.split('\n').filter(line=>/Weapon Attack:/i.test(line)).join('\n');
-    c.proficiencies=section(t,'Proficiencies & Languages','Magic Initiate')||section(t,'Proficiencies & Languages','Halfling Traits');
-    c.spells=section(t,'Magic Initiate','Halfling Traits');
-    c.equipment=section(t,'Carried Gear','');
-    c.personality=section(t,'Guide Background','Proficiencies & Languages');
-    c.features=section(t,'FEATURES, TRAITS, SPECIAL ABILITIES','EQUIPMENT & TREASURE').replace(/Proficiencies & Languages[\s\S]*/,'').trim();
-    c.traits=[...legacyTraits(c.speciesTraits,'Especie'),...legacyTraits(c.classTraits,'Clase'),...legacyTraits(c.features,'Otro')];
-    c.notes='';
-    character=c;editingId='';editingRoomPlayerId='';importText='';playerTab='identity';
-    notice='Personaje importado. Revisa los campos antes de guardarlo.';
-  }
   async function makeRoll(){
     const choice=categoryChoices.find(x=>x.label===selectedRoll);
     const notation=rollCategory==='Personalizada'?customNotation.trim():choice?.notation;
@@ -357,8 +243,7 @@
     if(!obrReady){notice='Abre la extensión dentro de una sala de Owlbear Rodeo.';return;}
     if(!diceReady){diceReady=await requestDiceReady();if(!diceReady){notice='Dice+ no está disponible en esta sala.';return;}}
     const rollId=crypto.randomUUID();    pendingRolls[rollId]={label,notation,characterName:character.name};
-    rollBusy=true;
-    try{
+    rollBusy=true;    try{
       await OBR.broadcast.sendMessage('dice-plus/roll-request',{rollId,playerId:await OBR.player.getId(),playerName:await OBR.player.getName(),rollTarget:'everyone',diceNotation:notation,showResults:false,timestamp:Date.now(),source:DICE_SOURCE},{destination:'ALL'});
       notice='Tirada enviada a Dice+.';
     }catch{delete pendingRolls[rollId];rollBusy=false;notice='No se pudo enviar la tirada a Dice+.';}
@@ -384,8 +269,7 @@
     {#if view==='player'}
       <div class="eyebrow">HOJA DE PERSONAJE <span>EDICIÓN MANUAL</span></div>
       <h1>Tu <em>aventurero.</em></h1>
-      <p class="intro">El GM importa el texto original y te asigna la ficha. Aquí aparece organizada por secciones y puedes editarla.</p>
-      {#if !saved.length}<section class="panel"><h2>Sin personaje asignado</h2><p>El GM todavía no te ha asignado una ficha. No puedes crear una desde aquí.</p></section>{/if}
+      <p class="intro">Crea tu personaje, completa sus datos y guarda la ficha. Se sincronizará con la sala de Owlbear Rodeo.</p>
       <div class="player-tabs character-tabs">
         <button class:active={playerTab==='identity'} on:click={()=>playerTab='identity'}>Identidad</button>
         <button class:active={playerTab==='combat'} on:click={()=>playerTab='combat'}>Combate</button>
@@ -399,7 +283,7 @@
       {#if playerTab==='identity'}
         <section class="panel form-panel">
           <div class="section-heading"><div><div class="eyebrow">IDENTIDAD</div><h2>Datos del aventurero</h2></div><span class="free-tag">Todo editable</span></div>
-          {#if gmCreatingCharacter}<p class="hint">Estás creando una ficha como GM. Al guardarla se asignará al jugador conectado que selecciones.</p><label>Asignar a jugador conectado<select bind:value={assignmentPlayerId}><option value="">Seleccionar jugador</option>{#each connectedPlayers as p}<option value={p.id}>{p.name}</option>{/each}</select></label>{:else if editingRoomPlayerId}<p class="hint">Estás editando la ficha de un jugador como director. Al guardar, los cambios se enviarán al jugador y a la sala.</p>{/if}
+
           
           <label>Nombre del personaje<input bind:value={character.name} placeholder="Nombre" /></label>
           <div class="two"><label>Jugador<input bind:value={character.playerName} placeholder="Jugador" /></label><label>Nivel<input bind:value={character.level} placeholder="Nivel" /></label></div>
@@ -496,7 +380,7 @@
           {/if}
         </section>
       {/if}
-      <section class="panel save-panel">{#if saved.length || editingRoomPlayerId}<button class="primary full" on:click={saveCharacter}>{editingRoomPlayerId?'Guardar cambios y enviar al jugador':'Guardar ficha'}</button>{/if}</section>
+      <section class="panel save-panel"><button class="primary full" on:click={saveCharacter}>Guardar ficha</button></section>
       {#if saved.length}
       <section class="saved"><div class="section-heading"><div><div class="eyebrow">PERSONAJE GUARDADO</div><h2>Mi personaje</h2></div><span class="count">1</span></div>
         <div class="character-grid">{#each saved as c}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{c.name}</h3><p>{c.species||'Especie sin indicar'} · {c.className||'Clase sin indicar'}</p></div><div class="card-actions"><button on:click={()=>editCharacter(c)}>Editar ficha</button><button class="danger-text" on:click={()=>deleteCharacter(c)}>Eliminar ficha</button></div></article>{/each}</div>
@@ -504,20 +388,12 @@
     {:else if obrRole==='GM'}
       <div class="eyebrow">ESPACIO DEL DIRECTOR DE JUEGO <span>SINCRONIZACIÓN DE SALA</span></div><h1>Panel del <em>director.</em></h1>
       <p class="intro">Consulta y edita las fichas publicadas por los jugadores. Los cambios se notifican al propietario de la ficha.</p>
-      <div class="player-tabs gm-tabs"><button class:active={gmTab==='unassigned'} on:click={()=>gmTab='unassigned'}>Personajes no asignados ({unassignedCharacters.length})</button><button class:active={gmTab==='characters'} on:click={()=>gmTab='characters'}>Personajes en sala</button><button class:active={gmTab==='bestiary'} on:click={()=>gmTab='bestiary'}>Bestiario</button></div>
-      {#if gmTab==='unassigned'}
-      <section class="panel"><div class="section-heading"><div><div class="eyebrow">BIBLIOTECA DEL GM</div><h2>Importar personaje</h2></div><span class="count">{unassignedCharacters.length}</span></div>
-        <p class="hint">Pega el texto completo usando el formato especificado. El GM conserva el texto original; no necesita completar los campos de creación.</p>
-        <label>Texto completo del personaje<textarea rows="14" bind:value={gmImportText} placeholder="Name: ..."></textarea></label>
-        <button class="primary full" on:click={importForGm}>Guardar en personajes no asignados</button></section>
-      <section class="saved"><div class="section-heading"><div><div class="eyebrow">PENDIENTES</div><h2>Personajes no asignados</h2></div><span class="count">{unassignedCharacters.length}</span></div>
-        {#if !unassignedCharacters.length}<p class="muted">Todavía no hay personajes importados.</p>{:else}<div class="character-grid">{#each unassignedCharacters as item}<article class="character-card"><div><h3>{item.name}</h3><p>Texto original guardado</p><details><summary>Ver texto importado</summary><pre>{item.rawText}</pre></details><label>Asignar a jugador conectado<select on:change={(e)=>handleAssignmentChange(item,e)}><option value="">Seleccionar jugador...</option>{#each connectedPlayers as p}<option value={p.id}>{p.name}</option>{/each}</select></label><button class="danger-text" on:click={()=>deleteUnassigned(item.id)}>Eliminar personaje</button></div></article>{/each}</div>{/if}
-      </section>
-      {:else if gmTab==='characters'}
+      <div class="player-tabs gm-tabs"><button class:active={gmTab==='characters'} on:click={()=>gmTab='characters'}>Personajes en sala</button><button class:active={gmTab==='bestiary'} on:click={()=>gmTab='bestiary'}>Bestiario</button></div>
+      {#if gmTab==='characters'}
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">SALA ACTUAL</div><h2>Personajes de los jugadores</h2></div><span class="count">{roomCharacters.length}</span></div>
         <div class="actions"><button class="secondary" on:click={refreshRoomPlayers}>Actualizar jugadores</button></div>
-        <p class="hint">Jugadores conectados: {connectedPlayers.length}. Asigna personajes desde la pestaña «Personajes no asignados».</p>
-        {#if !obrReady}<p class="muted">Abre esta aplicación desde Owlbear Rodeo.</p>{:else if !roomCharacters.length}<p class="muted">Todavía no se ha recibido ninguna ficha de jugador.</p>{:else}<div class="character-grid">{#each roomCharacters as item}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{item.character.name}</h3><p>Jugador: {item.playerName} · {item.character.species} · {item.character.className}</p><p>CA: {item.character.ac||'—'} · PG: {item.character.hp||'—'} · Nivel: {item.character.level||'—'}</p></div><div class="card-actions"><button on:click={()=>editRoomCharacter(item)}>Ver y editar ficha</button></div></article>{/each}</div>{/if}
+        <p class="hint">Fichas creadas y publicadas por los jugadores en esta sala.</p>
+        {#if !obrReady}<p class="muted">Abre esta aplicación desde Owlbear Rodeo.</p>{:else if !roomCharacters.length}<p class="muted">Todavía no se ha recibido ninguna ficha de jugador.</p>{:else}<div class="character-grid">{#each roomCharacters as item}<article class="character-card"><div class="card-symbol">✧</div><div><h3>{item.character.name}</h3><p>Jugador: {item.playerName} · {item.character.species} · {item.character.className}</p><p>CA: {item.character.ac||'—'} · PG: {item.character.hp||'—'} · Nivel: {item.character.level||'—'}</p></div><div class="card-actions"><span class="muted">Ficha del jugador</span></div></article>{/each}</div>{/if}
       </section>
       {:else}
       <section class="panel monster-panel"><div class="section-heading"><div><div class="eyebrow">BESTIARIO PRIVADO</div><h2>Crear bloque de estadísticas</h2></div><span class="count">{monsters.length}</span></div>
