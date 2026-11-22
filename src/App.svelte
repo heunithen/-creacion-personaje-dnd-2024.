@@ -87,7 +87,7 @@
       }
       const dice = mode === 'normal' ? '1d' + die : '2d' + die + (mode === 'advantage' ? 'kh1' : 'kl1');
       const modifier = bonus === 0 ? '' : (bonus > 0 ? '+' : '') + bonus;
-      const label = (group.name + ' - ' + roll.name).replace(/[#\r\n]/g, ' ').trim();
+      const label = (group.name + ' ' + roll.name).replace(/[#+\-*/(),\r\n]/g, ' ').replace(/\s+/g, ' ').trim();
       const notation = dice + modifier + (label ? '#' + label : '');
       const rollId = 'forja_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
       lastRollId = rollId;
