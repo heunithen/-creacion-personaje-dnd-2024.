@@ -769,6 +769,13 @@
   let levelUpSubclass = '';
   let levelUpSubclassVariant = '';
   let levelUpBarbarianAspect = '';
+  let levelUpRangerStyle = '';
+  let levelUpRangerCantrips = '';
+  let levelUpRangerHunterPrey = '';
+  let levelUpRangerHunterDefense = '';
+  let levelUpRangerFeyGift = '';
+  let levelUpRangerBeastProfile = '';
+  let levelUpRangerBeastAnimal = '';
   let levelUpSubclassCantrips = '';
   let levelUpSubclassSpells = '';
   let levelUpAsiMode = 'asi';
@@ -1217,6 +1224,12 @@
   const BUILDER_MUSICAL_INSTRUMENTS = ['Chirimía','Cuerno','Dulcémele','Flauta','Flauta de pan','Gaita','Laúd','Lira','Tambor','Viola'];
   const BUILDER_ARTISAN_TOOLS = ['Herramientas de albañil','Herramientas de alfarero','Herramientas de carpintero','Herramientas de cartógrafo','Herramientas de curtidor','Herramientas de ebanista','Herramientas de herrero','Herramientas de joyero','Herramientas de manitas','Herramientas de soplador de vidrio','Herramientas de tejedor','Herramientas de zapatero'];
   const BUILDER_LANGUAGES = ['Abisal','Celestial','Dracónico','Druídico','Elfo','Enano','Gigante','Gnomo','Goblin','Habla de las profundidades','Infernal','Infracomún','Jerga de ladrones','Lenguaje de signos común','Mediano','Orco','Primordial','Silvano'];
+  const BUILDER_RANGER_FEY_GIFTS = ['Unas mariposas ilusorias revolotean a tu alrededor mientras haces un descanso corto o largo.','Te brotan flores en el pelo cada amanecer.','Emanas un ligero olor a canela, lavanda, nuez moscada u otra hierba o especia agradable.','Tu sombra baila cuando nadie la mira directamente.','De tu cabeza brotan cuernos o astas.','Tu piel y tu cabello cambian de color cada amanecer.'];
+  const BUILDER_RANGER_BEAST_PROFILES: Record<string,string> = {
+    'Bestia de los mares':'Bestia Mediana. CA 13 + modificador de Sabiduría. PG 5 + cinco veces tu nivel de Explorador; dados de golpe d8 iguales a tu nivel. Velocidad 1,5 m; nadar 18 m. Características: FUE 14 (+2), DES 14 (+2), CON 15 (+2), INT 8 (-1), SAB 14 (+2), CAR 11 (+0). Visión en la oscuridad 27 m; Percepción pasiva 12; entiende los idiomas que conoces. Anfibia: respira dentro y fuera del agua. Vínculo primigenio: suma tu bonificador por competencia a sus pruebas de característica y salvaciones. Golpe de bestia: ataque cuerpo a cuerpo con tu modificador de ataque de conjuros, alcance 1,5 m; daño 1d6 + 2 + tu modificador de Sabiduría contundente o perforante; el objetivo queda agarrado (CD para escapar igual a tu CD de salvación de conjuros).',
+    'Bestia de tierra firme':'Bestia Mediana. CA 13 + modificador de Sabiduría. PG 5 + cinco veces tu nivel de Explorador; dados de golpe d8 iguales a tu nivel. Velocidad 12 m; trepar 12 m. Características: FUE 14 (+2), DES 14 (+2), CON 15 (+2), INT 8 (-1), SAB 14 (+2), CAR 11 (+0). Visión en la oscuridad 18 m; Percepción pasiva 12; entiende los idiomas que conoces. Vínculo primigenio: suma tu bonificador por competencia a sus pruebas de característica y salvaciones. Golpe de bestia: ataque cuerpo a cuerpo con tu modificador de ataque de conjuros, alcance 1,5 m; daño 1d8 + 2 + tu modificador de Sabiduría contundente, cortante o perforante. Si recorrió al menos 6 m en línea recta hacia el objetivo antes de acertar, inflige 1d6 adicional y derriba al objetivo si es Grande o más pequeño.',
+    'Bestia del cielo':'Bestia Pequeña. CA 13 + modificador de Sabiduría. PG 4 + cuatro veces tu nivel de Explorador; dados de golpe d6 iguales a tu nivel. Velocidad 3 m; volar 18 m. Características: FUE 6 (-2), DES 16 (+3), CON 13 (+1), INT 8 (-1), SAB 14 (+2), CAR 11 (+0). Visión en la oscuridad 18 m; Percepción pasiva 12; entiende los idiomas que conoces. Pasar volando: no provoca ataques de oportunidad cuando vuela para salir del alcance de un enemigo. Vínculo primigenio: suma tu bonificador por competencia a sus pruebas de característica y salvaciones. Golpe de bestia: ataque cuerpo a cuerpo con tu modificador de ataque de conjuros, alcance 1,5 m; daño 1d4 + 3 + tu modificador de Sabiduría cortante.'
+  };
   const BUILDER_STANDARD_LANGUAGES = ['Dracónico','Elfo','Enano','Gigante','Gnomo','Goblin','Lenguaje de signos común','Mediano','Orco'];
   const BUILDER_SKILL_OPTIONS = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
   const BUILDER_BATTLE_MANEUVER_OPTIONS = ['Arremetida','Ataque amenazador','Ataque de barrido','Ataque preciso','Ataque provocador','Ataque y derribo','Ataque y desarme','Ataque y distracción','Ataque y empujón','Ataque y maniobra','Cambio de posición ventajoso','Contraataque','Emboscada','Evaluación táctica','Finta','Juego de pies evasivo','Orden de ataque','Parada','Presencia imponente','Reagrupar'];
@@ -2176,6 +2189,14 @@ import SPELLS from './spells.json';
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
     levelUpBarbarianAspect = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Aspecto de lo salvaje') || '';
+    levelUpRangerStyle = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Estilo de combate') || '';
+    levelUpRangerCantrips = getCharacterStat(entry.sheet,'CONJUROS','Trucos de estilo de combate') || '';
+    levelUpRangerHunterPrey = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opción de Cazador · nivel 3') || '';
+    levelUpRangerHunterDefense = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opción de Cazador · nivel 7') || '';
+    levelUpRangerFeyGift = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Bendición feérica') || '';
+    const oldBeastRecord = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Compañero primigenio') || '';
+    levelUpRangerBeastProfile = (String(oldBeastRecord).match(/Perfil:\s*([^;\n]+)/i)||[])[1] || '';
+    levelUpRangerBeastAnimal = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Animal del compañero primigenio') || '';
     levelUpSubclassCantrips = getCharacterStat(entry.sheet,'CONJUROS','Trucos de subclase');
     levelUpSubclassSpells = getCharacterStat(entry.sheet,'CONJUROS','Conjuros preparados de subclase');
     levelUpAsiMode = 'asi'; levelUpAbility1 = 'Fuerza'; levelUpAbility2 = 'Destreza';
@@ -2302,6 +2323,22 @@ import SPELLS from './spells.json';
     const retainedInvocations=invocationChoices.filter(choice=>oldInvocations.some(old=>normalizeLevelText(old)===normalizeLevelText(choice))).length;
     if(needsWarlockInvocations && (!Number.isFinite(invocationTarget)||invocationChoices.length!==invocationTarget||!invocationChoicesValid||!uniqueRepeatChoices||(oldInvocations.length>0&&retainedInvocations<oldInvocations.length-1))) { notice='Registra '+invocationTarget+' invocaciones válidas para tu nivel. Respeta los requisitos del manual; las invocaciones repetibles deben indicar una elección distinta después de dos puntos. Solo puedes sustituir una invocación conocida al subir de nivel.'; return; }
     const selectedSubclassKey=normalizeLevelText(levelUpSubclass || getCharacterStat(original,'PERSONAJE','Subclase'));
+    const rangerSubclassKey=selectedSubclassKey.replace(/[\s_-]/g,'');
+    const needsRangerStyle=className==='Explorador' && nextLevel===2;
+    const rangerStyle=levelUpRangerStyle || getCharacterStat(original,'RASGOS Y DOTES','Estilo de combate');
+    const isRangerDruidicWarrior=className==='Explorador' && normalizeLevelText(rangerStyle)==='guerrero druidico';
+    const rangerCantripChoices=splitChoiceList(levelUpRangerCantrips);
+    const oldRangerCantrips=splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos de estilo de combate'));
+    if(needsRangerStyle && ![...(BUILDER_CLASS_DATA['Guerrero'].specialOptions||[]),'Guerrero druídico'].some(option=>normalizeLevelText(option)===normalizeLevelText(levelUpRangerStyle))) { notice='Elige una dote de Estilo de combate o Guerrero druídico.'; return; }
+    if(isRangerDruidicWarrior && (rangerCantripChoices.length!==2 || new Set(rangerCantripChoices.map(name=>normalizeLevelText(name))).size!==2 || rangerCantripChoices.some(name=>!BUILDER_SPELL_LISTS.Druida.cantrips.some(option=>normalizeLevelText(option)===normalizeLevelText(name))) || (oldRangerCantrips.length>0 && rangerCantripChoices.filter(name=>oldRangerCantrips.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldRangerCantrips.length-1))) { notice='Guerrero druídico requiere dos trucos distintos de la lista de Druida. Al subir de nivel solo puedes sustituir uno de los dos.'; return; }
+    const needsHunterPrey=className==='Explorador' && rangerSubclassKey==='cazador' && nextLevel===3;
+    const needsHunterDefense=className==='Explorador' && rangerSubclassKey==='cazador' && nextLevel===7;
+    const needsRangerFeyGift=className==='Explorador' && rangerSubclassKey==='errantefeerico' && nextLevel===3;
+    const needsRangerBeastCompanion=className==='Explorador' && rangerSubclassKey==='senordelasbestias' && nextLevel===3;
+    if(needsHunterPrey && !['Azote de colosos','Destructor de hordas'].includes(levelUpRangerHunterPrey)) { notice='Elige Azote de colosos o Destructor de hordas para El cazador y la presa.'; return; }
+    if(needsHunterDefense && !['Defensa contra ataques múltiples','Escapar de la horda'].includes(levelUpRangerHunterDefense)) { notice='Elige Defensa contra ataques múltiples o Escapar de la horda para Tácticas defensivas.'; return; }
+    if(needsRangerFeyGift && !BUILDER_RANGER_FEY_GIFTS.includes(levelUpRangerFeyGift)) { notice='Elige una dádiva de los Parajes Feéricos.'; return; }
+    if(needsRangerBeastCompanion && (!Object.hasOwn(BUILDER_RANGER_BEAST_PROFILES,levelUpRangerBeastProfile) || !levelUpRangerBeastAnimal.trim())) { notice='Elige el perfil de tu bestia primigenia e indica qué animal representa.'; return; }
     const barbarianAspectChoice=findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices as LevelUpChoiceDefinition[],'barbarian.wildHeart.aspect');
     const needsBarbarianWildAspect=className==='Bárbaro' && selectedSubclassKey===(barbarianAspectChoice?.subclass || '') && nextLevel===barbarianAspectChoice?.level;
     if(needsBarbarianWildAspect && !validateSingleLevelUpChoice(barbarianAspectChoice,levelUpBarbarianAspect)) { notice='Elige una opción válida para Aspecto de lo salvaje: '+(barbarianAspectChoice?.options||[]).join(', ')+'.'; return; }
@@ -2459,6 +2496,22 @@ import SPELLS from './spells.json';
       if(oldCurrentHp===oldHp) setCharacterStat(updated,'COMBATE','Puntos de golpe actuales',(oldCurrentHp+hpGain+constitutionHpAdjustment)+' PG');
     }
     if(needsBarbarianWildAspect) setCharacterStat(updated,'RASGOS Y DOTES','Aspecto de lo salvaje',levelUpBarbarianAspect);
+    if(needsRangerStyle) setCharacterStat(updated,'RASGOS Y DOTES','Estilo de combate',levelUpRangerStyle);
+    if(isRangerDruidicWarrior) {
+      setCharacterStat(updated,'CONJUROS','Trucos de estilo de combate',rangerCantripChoices.join(', '));
+      setCharacterStat(updated,'CONJUROS','Aptitud mágica de estilo de combate','Sabiduría');
+      setCharacterStat(updated,'CONJUROS','Lista de conjuros de estilo de combate','Druida');
+      const allKnownTricks=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos'));
+      const otherKnownTricks=allKnownTricks.filter(name=>!oldRangerCantrips.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+      setCharacterStat(updated,'CONJUROS','Trucos',[...otherKnownTricks,...rangerCantripChoices].join(', '));
+    }
+    if(needsHunterPrey) setCharacterStat(updated,'RASGOS Y DOTES','Opción de Cazador · nivel 3',levelUpRangerHunterPrey);
+    if(needsHunterDefense) setCharacterStat(updated,'RASGOS Y DOTES','Opción de Cazador · nivel 7',levelUpRangerHunterDefense);
+    if(needsRangerFeyGift) setCharacterStat(updated,'RASGOS Y DOTES','Bendición feérica',levelUpRangerFeyGift);
+    if(needsRangerBeastCompanion) {
+      setCharacterStat(updated,'RASGOS Y DOTES','Animal del compañero primigenio',levelUpRangerBeastAnimal.trim());
+      setCharacterStat(updated,'RASGOS Y DOTES','Compañero primigenio','Perfil: '+levelUpRangerBeastProfile+'; Animal: '+levelUpRangerBeastAnimal.trim()+'\n'+BUILDER_RANGER_BEAST_PROFILES[levelUpRangerBeastProfile]+'\nReglas: actúa durante tu turno; se mueve y usa su reacción por cuenta propia, pero su acción es Esquivar salvo que le ordenes actuar con una acción adicional o sacrifiques uno de tus ataques. Si mueres, desaparece. Si muere, puedes devolverla a la vida durante la hora siguiente gastando un espacio de conjuro; vuelve tras 1 minuto con todos sus PG. Tras un descanso largo puedes invocar otra bestia y elegir de nuevo perfil y aspecto.');
+    }
     if (levelUpFeat.trim() && (needsEpicFeat || (needsASI && levelUpAsiMode==='feat'))) {
       const previous=getCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales');
       setCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales',[previous,levelUpFeat.trim()].filter(Boolean).join('; '));
@@ -2599,7 +2652,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsRangerStyle?' · Estilo de combate: '+levelUpRangerStyle:'')+(isRangerDruidicWarrior?' · Guerrero druídico: '+rangerCantripChoices.join(', '):'')+(needsHunterPrey?' · Cazador y presa: '+levelUpRangerHunterPrey:'')+(needsHunterDefense?' · Tácticas defensivas: '+levelUpRangerHunterDefense:'')+(needsRangerFeyGift?' · Bendición feérica: '+levelUpRangerFeyGift:'')+(needsRangerBeastCompanion?' · Compañero primigenio: '+levelUpRangerBeastProfile+' · '+levelUpRangerBeastAnimal:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2877,6 +2930,13 @@ import SPELLS from './spells.json';
               {#if levelUpSubclass && getSubclassFeaturesForNextLevel(levelUpEntry).length}
                 <div class="subclass-level-preview"><strong>Rasgos de subclase que se incorporarán</strong>{#each getSubclassFeaturesForNextLevel(levelUpEntry) as feature}<div><b>Nivel {feature.level}: {feature.name}</b><p>{feature.description}</p></div>{/each}</div>
               {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2}
+                <label>Estilo de combate<select bind:value={levelUpRangerStyle}><option value="">Elige una opción</option>{#each BUILDER_CLASS_DATA['Guerrero'].specialOptions as option}<option value={option}>{option}</option>{/each}<option value="Guerrero druídico">Guerrero druídico · aprende dos trucos de Druida</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && (levelUpRangerStyle || getCharacterStat(levelUpEntry.sheet,'RASGOS Y DOTES','Estilo de combate'))==='Guerrero druídico'}
+                <label>Trucos de Guerrero druídico (elige dos; puedes sustituir uno al subir de nivel)<textarea bind:value={levelUpRangerCantrips} rows="2" placeholder="Ej. Guía, Voluta estelar" /></label>
+                <small>Lista de Druida: {BUILDER_SPELL_LISTS.Druida.cantrips.join(' · ')}</small>
+              {/if}
               {#if levelUpChoice('barbarian.wildHeart.aspect') && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))===levelUpChoice('barbarian.wildHeart.aspect')?.subclass && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===levelUpChoice('barbarian.wildHeart.aspect')?.level}
                 <label>{levelUpChoice('barbarian.wildHeart.aspect')?.label} — {levelUpChoice('barbarian.wildHeart.aspect')?.description}<select bind:value={levelUpBarbarianAspect}><option value="">Elige una opción</option>{#each levelUpChoice('barbarian.wildHeart.aspect')?.options || [] as option}<option value={option}>{option}</option>{/each}</select></label>
               {/if}
@@ -2929,6 +2989,20 @@ import SPELLS from './spells.json';
               {/if}
               {#if levelUpSubclass==='ERRANTE FEÉRICO' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
                 <label>Habilidad de Glamur sobrenatural<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option><option>Engaño</option><option>Interpretación</option><option>Persuasión</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='cazador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>El cazador y la presa<select bind:value={levelUpRangerHunterPrey}><option value="">Elige una opción</option><option>Azote de colosos</option><option>Destructor de hordas</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='cazador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
+                <label>Tácticas defensivas<select bind:value={levelUpRangerHunterDefense}><option value="">Elige una opción</option><option>Defensa contra ataques múltiples</option><option>Escapar de la horda</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='errantefeerico' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Bendición feérica<select bind:value={levelUpRangerFeyGift}><option value="">Elige una dádiva</option>{#each BUILDER_RANGER_FEY_GIFTS as gift}<option value={gift}>{gift}</option>{/each}</select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='senordelasbestias' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Perfil de compañero primigenio<select bind:value={levelUpRangerBeastProfile}><option value="">Elige un perfil</option>{#each Object.keys(BUILDER_RANGER_BEAST_PROFILES) as profile}<option value={profile}>{profile}</option>{/each}</select></label>
+                <label>Animal que representa a tu compañero<input bind:value={levelUpRangerBeastAnimal} placeholder="Ej. lobo, oso, águila, tiburón…" /></label>
+                {#if levelUpRangerBeastProfile}<div class="builder-info"><strong>Estadísticas del perfil</strong><p>{BUILDER_RANGER_BEAST_PROFILES[levelUpRangerBeastProfile]}</p></div>{/if}
               {/if}
               {#if normalizeLevelText(levelUpSubclass)==='colegio del conocimiento' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
                 <label>Competencias adicionales del Colegio del Conocimiento (elige tres habilidades nuevas)<textarea bind:value={levelUpSubclassSkills} rows="2" placeholder="Tres habilidades distintas, separadas por comas" /></label>
