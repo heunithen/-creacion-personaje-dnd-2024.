@@ -49,6 +49,16 @@ report('ranger-hunter-choices', app.includes("needsHunterPrey=className==='Explo
 report('ranger-fey-gift', app.includes('BUILDER_RANGER_FEY_GIFTS') && app.includes("'Bendición feérica',levelUpRangerFeyGift"), 'Errante feérico registra una dádiva de los Parajes Feéricos.');
 report('ranger-beast-companion', app.includes('BUILDER_RANGER_BEAST_PROFILES') && app.includes("'Compañero primigenio','Perfil: '+levelUpRangerBeastProfile") && app.includes('Animal del compañero primigenio'), 'Señor de las bestias registra perfil, animal y estadísticas de la bestia primigenia.');
 report('warlock-spell-replacement', app.includes("isWarlockSpellProgression && oldClassSpellNames.length") && app.includes("solo puedes sustituir un conjuro que ya conozcas"), 'El Brujo puede sustituir como máximo un conjuro conocido por nivel.');
+const rogueRows=progression.classes['Pícaro']?.rows || [];
+const rogueFeatures=classFeatures.classes['Pícaro'] || [];
+const rogueSubclasses=subclasses.classes['Pícaro'] || {};
+const rogueSneakAttack=[1,3,5,7,9,11,13,15,17,19].every((level,index)=>String(rogueRows.find(row=>row.level===level)?.resources?.['Ataque furtivo']||'')===`${index+1}d6`);
+const arcaneTrickster=rogueSubclasses['EMBAUCADOR ARCANO'];
+const arcaneTable=arcaneTrickster?.tables?.find(table=>table.name==='LANZAMIENTO DE CONJUROS DEL EMBAUCADOR ARCANO');
+report('rogue-expertise-creation', app.includes("builderData.className === 'Pícaro'") && app.includes('builderData.classExpertise.length}/{2}') && app.includes("'Pericia: ' + b.classExpertise.join"), 'La creación del pícaro exige dos pericias entre habilidades en las que ya tiene competencia y las guarda en la ficha.');
+report('rogue-expertise-level-six', app.includes("name.includes('pericia')?2") && app.includes("'Pericia: '+[...oldExpertiseList,...expertiseChoices].join(', ')"), 'La subida al nivel 6 solicita dos pericias adicionales, conserva las anteriores y evita repetir habilidades.');
+report('rogue-sneak-attack-progression', rogueRows.length===20 && rogueSneakAttack && app.includes("for (const [resourceName,resourceValue] of resourceEntries) setCharacterStat(updated,'PROGRESIÓN',resourceName,String(resourceValue ?? '—'))"), 'Ataque furtivo progresa de 1d6 a 10d6 en los niveles impares del pícaro y se refleja en la ficha.');
+report('rogue-arcane-trickster-spellcasting', !!arcaneTable && arcaneTable.rows.length===18 && arcaneTable.rows[0][1]==='3' && arcaneTable.rows[17][1]==='13' && app.includes("className==='Pícaro'?(nextLevel>=10?4:3):0") && app.includes('subclassSpellNames.some(name=>!isValidClassSpell(name,subclassList,subclassMaxSpellLevel))'), 'Embaucador arcano valida trucos, conjuros, espacios y progresión de conjuros preparados del nivel 3 al 20.');
 const escapeRegExp = (value) => value.replace(/[|\\{}()[\]^$+*?.-]/g, '\\$&');
 const classNames = Object.keys(progression.classes ?? {});
 const manualAttributeTables = [...manual.matchAll(/^TABLA:\s*ATRIBUTOS BÁSICOS DE\s+([^\n]+)$/gim)];
