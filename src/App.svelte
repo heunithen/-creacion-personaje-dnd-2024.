@@ -1046,64 +1046,99 @@
       return line ? line.slice(line.indexOf(':') + 1).trim() : '';
     };
     const name = get('Name') || 'Personaje importado';
-    const rows = (items: [string,string][]) => items.filter(item => item[1]).map(([label,value],i) => ({id:i+1,name:label,value}));
+    const sections: RawSection[] = [];
+    let sectionId = 1;
+    const addPaired = (title: string, items: [string,string][]) => {
+      const valid = items.filter(([label,value]) => label.trim() && value.trim());
+      if (!valid.length) return;
+      sections.push({id:sectionId++,name:title,stats:valid.map(([label],i)=>({id:i+1,name:label}))});
+      sections.push({id:sectionId++,name:'VALORES',stats:valid.map(([,value],i)=>({id:i+1,name:'',value}))});
+    };
     const identity: [string,string][] = [
-      ['Raza / ascendencia',get('Race/Ancestry/Heritage')],['Clase y nivel',get('Class & Level')],
-      ['Trasfondo',get('Background')],['Alineamiento',get('Alignment')],['Experiencia',get('Experience')]
+      ['Raza / ascendencia',get('Race/Ancestry/Heritage')],
+      ['Clase y nivel',get('Class & Level')],['Trasfondo',get('Background')],
+      ['Alineamiento',get('Alignment')],['Experiencia',get('Experience')]
     ];
+    addPaired('Datos del personaje',identity);
+
+    const abilityLabels: Record<string,string> = {
+      Strength:'Fuerza',Dexterity:'Destreza',Constitution:'Constitución',
+      Intelligence:'Inteligencia',Wisdom:'Sabiduría',Charisma:'Carisma'
+    };
     const abilities: [string,string][] = [];
+    const modifiers: [string,string][] = [];
     let current = '';
-    let detail: string[] = [];
-    const flush = () => { if (current) abilities.push([current,detail.join('\n')]); };
     for (const line of lines) {
-      const m = line.match(/^(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+(\d+)$/i);
-      if (m) { flush(); current=m[1]; detail=[m[2]]; }
-      else if (current && /Ability Checks|Saving Throws|Skill|Maximum|Max\.|lbs\./i.test(line)) detail.push(line);
-      else if (/^(COMBAT|FEATURES|Proficiencies|EQUIPMENT)/i.test(line)) { flush(); current=''; detail=[]; }
+      const match = line.match(/^(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+(\d+)$/i);
+      if (match) { current=match[1]; abilities.push([abilityLabels[current],match[2]]); continue; }
+      if (!current) continue;
+      const detail=line.match(/^([+\-]?\d+)\s*\.\.\.\s*(.+)$/);
+      if (detail) modifiers.push([abilityLabels[current]+' · '+detail[2].replace(/\s+\*+$/,'').trim(),detail[1]]);
+      else if (/^(COMBAT|FEATURES|Proficiencies|EQUIPMENT)/i.test(line)) current='';
     }
-    flush();
-    const start = (prefix: string) => lines.findIndex(line => line.toLowerCase().startsWith(prefix.toLowerCase()));
-    const combatStart=start('COMBAT'), featuresStart=start('FEATURES, TRAITS'), equipmentStart=start('EQUIPMENT & TREASURE');
+    if (abilities.length!==6) { notice='No se reconocieron las seis características. Comprueba que pegaste el texto completo de Fast Character.'; return; }
+    addPaired('Atributos',abilities);
+    addPaired('Competencias y modificadores',modifiers);
+
+    const findStart=(prefix:string)=>lines.findIndex(line=>line.toLowerCase().startsWith(prefix.toLowerCase()));
+    const combatStart=findStart('COMBAT'), featuresStart=findStart('FEATURES, TRAITS'), equipmentStart=findStart('EQUIPMENT & TREASURE');
     const combatLines=combatStart>=0?lines.slice(combatStart+1,featuresStart>combatStart?featuresStart:lines.length):[];
     const combat: [string,string][]=[];
+    const attacks: [string,string][]=[];
     for (const line of combatLines) {
-      let m=line.match(/^(\d+)\s*\.\.\. Passive Perception/i);
+      let m=line.match(/^(\d+)\s*\.\.\.\s*Passive Perception/i);
       if(m){combat.push(['Percepción pasiva',m[1]]);continue;}
-      m=line.match(/^([+\-]\d+)\s*\.\.\. Initiative Modifier/i);
+      m=line.match(/^([+\-]\d+)\s*\.\.\.\s*Initiative Modifier/i);
       if(m){combat.push(['Iniciativa',m[1]]);continue;}
-      if(line.startsWith('Armor Class ')){combat.push(['Clase de Armadura',line.slice(12)]);continue;}
-      m=line.match(/^(\d+)\s*ft\. Speed\s*\.\.\.\s*(.*)$/i);
+      m=line.match(/^Armor Class\s+(\d+)(.*)$/i);
+      if(m){combat.push(['Clase de armadura',m[1]+(m[2]?' · '+m[2]:'')]);continue;}
+      m=line.match(/^(\d+)\s*ft\.\s*Speed\s*\.\.\.\s*(.*)$/i);
       if(m){combat.push(['Velocidad',m[1]+' pies · '+m[2]]);continue;}
-      m=line.match(/^(\d+) hit points\s*\.\.\.\s*(.*)$/i);
+      m=line.match(/^(\d+)\s+hit points\s*\.\.\.\s*(.*)$/i);
       if(m){combat.push(['Puntos de golpe y dados',m[1]+' PG · '+m[2]]);continue;}
-      if (/Attack:|During A Turn:|Weapon Attack:/.test(line)) combat.push([line.split('.')[0] || 'Regla de combate',line]);
+      if(/Attack:|Weapon Attack:/.test(line)){const split=line.indexOf('.');attacks.push([split>0?line.slice(0,split).trim():'Ataque',line]);}
+      else if(/During A Turn:/i.test(line)) attacks.push(['Acciones de combate',line]);
     }
-    const profStart=start('Proficiencies & Languages'), healerStart=start('Healer Feat');
+    addPaired('Combate',combat);
+    addPaired('Ataques',attacks);
+
+    const profStart=findStart('Proficiencies & Languages'),healerStart=findStart('Healer Feat');
     const profLines=profStart>=0?lines.slice(profStart+1,healerStart>profStart?healerStart:lines.length):[];
-    const prof: [string,string][]=profLines.map(line=>{
-      const v=line.replace(/^•\s*/,''); const p=v.indexOf(':');
-      return p>0?[v.slice(0,p).trim(),v.slice(p+1).trim()]:['Competencia',v];
-    });
-    const featureLines=featuresStart>=0?lines.slice(featuresStart+1,equipmentStart>featuresStart?equipmentStart:lines.length)
-      .filter(line=>!line.startsWith('Proficiencies & Languages') && !profLines.includes(line)):[];
+    const prof: [string,string][]=[];
+    for(const line of profLines){
+      const clean=line.replace(/^•\s*/,'');const split=clean.indexOf(':');
+      if(split>0) prof.push([clean.slice(0,split).trim(),clean.slice(split+1).trim()]);
+      else if(clean) prof.push(['Competencia',clean]);
+    }
+    addPaired('Competencias',prof);
+
+    const featureEnd=equipmentStart>featuresStart&&featuresStart>=0?equipmentStart:lines.length;
+    const featureLines=featuresStart>=0?lines.slice(featuresStart+1,featureEnd):[];
+    const features: [string,string][]=[];
+    let featureTitle='';let featureBody:string[]=[];
+    const flushFeature=()=>{if(featureTitle||featureBody.length)features.push([featureTitle||'Rasgo',featureBody.join(' · ')||featureTitle]);featureTitle='';featureBody=[];};
+    for(const line of featureLines){
+      if(/^Proficiencies & Languages/i.test(line)) continue;
+      if(/Background|Feat|Traits|Class Features|Goliath|Monk Class Features/i.test(line)&&!line.startsWith('•')){
+        flushFeature();featureTitle=line.replace(/\s+\[PHB.*\]$/,'').replace(/:$/,'').trim();
+      }else{const item=line.replace(/^•\s*/,'').trim();if(item)featureBody.push(item);}
+    }
+    flushFeature();
+    addPaired('Rasgos y características',features);
+
     const equipmentLines=equipmentStart>=0?lines.slice(equipmentStart+1):[];
-    const equipment: [string,string][]=equipmentLines.map(line=>{
-      const v=line.replace(/^•\s*/,''); const p=v.indexOf(':');
-      return p>0?[v.slice(0,p).trim(),v.slice(p+1).trim()]:['Equipo',v];
-    });
-    const section=(id:number,title:string,data:[string,string][])=>({id,name:title,stats:rows(data)});
-    if(abilities.length!==6){notice='No se reconocieron las seis características. Comprueba que pegaste el texto completo de Fast Character.';return;}
-    const featureText=featureLines.join('\n').trim();
-    const sections=[
-      section(1,'Datos del personaje',identity),section(2,'Atributos',abilities),
-      section(3,'Combate',combat),section(4,'Competencias',prof),
-      section(5,'Rasgos y características',featureText?[['Rasgos, dotes y características',featureText]]:[]),
-      section(6,'Equipo e inventario',equipment)
-    ].filter(item=>item.stats.length);
+    const equipment: [string,string][]=[];
+    for(const line of equipmentLines){
+      const clean=line.replace(/^•\s*/,'');const split=clean.indexOf(':');
+      if(split>0)equipment.push([clean.slice(0,split).trim(),clean.slice(split+1).trim()]);
+      else if(clean)equipment.push(['Equipo',clean]);
+    }
+    addPaired('Equipo e inventario',equipment);
+
     sheet={id:Date.now(),name,notes:'Importado desde Fast Character',sections};
     localStorage.setItem('forja-raw-character',JSON.stringify(sheet));
-    scheduleAutoSync(); fastCharacterText=''; importOpen=false; activeTab='Datos';
-    notice='Personaje convertido y cargado. Revisa los datos antes de exportar.';
+    scheduleAutoSync();fastCharacterText='';importOpen=false;activeTab='Datos';
+    notice='Personaje convertido y cargado. Revisa la ficha; los datos ahora están organizados en campos individuales.';
   }
 
   function sectionPairs(sections: RawSection[] = []) {
