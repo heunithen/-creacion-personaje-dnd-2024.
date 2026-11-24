@@ -759,6 +759,7 @@
   let levelUpWizardMastery2 = '';
   let levelUpWizardSignatureSpells = '';
   let levelUpSubclassSkill = '';
+  let levelUpSubclassSkills = '';
   let levelUpSubclassTool = '';
   let levelUpManeuvers = '';
   let levelUpWizardSchoolSpells = '';
@@ -2167,7 +2168,7 @@ import SPELLS from './spells.json';
     levelUpWizardMastery1=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 1') || '';
     levelUpWizardMastery2=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 2') || '';
     levelUpWizardSignatureSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros característicos') || '';
-    levelUpSubclassSkill=''; levelUpSubclassTool=''; levelUpManeuvers=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Maniobras de maestro del combate') || '';
+    levelUpSubclassSkill=''; levelUpSubclassSkills=''; levelUpSubclassTool=''; levelUpManeuvers=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Maniobras de maestro del combate') || '';
     levelUpWizardSchoolSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros de escuela') || '';
     levelUpWizardIllusionCantrip='';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
@@ -2295,10 +2296,14 @@ import SPELLS from './spells.json';
     const isFeyWanderer=className==='Explorador' && selectedSubclassKey==='errantefeerico';
     const needsBattleMasterTraining=isBattleMaster && nextLevel===3;
     const needsFeySkill=isFeyWanderer && nextLevel===3;
+    const isCollegeOfKnowledge=className==='Bardo' && selectedSubclassKey==='colegio del conocimiento';
+    const needsCollegeKnowledgeSkills=isCollegeOfKnowledge && nextLevel===3;
+    const collegeKnowledgeSkills=splitChoiceList(levelUpSubclassSkills);
     const currentSkillChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Habilidades'));
     const currentToolChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Herramientas'));
     if(needsBattleMasterTraining && (!BUILDER_CLASS_SKILLS.Guerrero.options.includes(levelUpSubclassSkill) || currentSkillChoices.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpSubclassSkill)) || !BUILDER_ARTISAN_TOOLS.includes(levelUpSubclassTool) || currentToolChoices.some(tool=>normalizeLevelText(tool)===normalizeLevelText(levelUpSubclassTool)))) { notice='Maestro del combate requiere una habilidad de la lista de guerrero y una herramienta de artesano en las que aún no tengas competencia.'; return; }
     if(needsFeySkill && (!['Engaño','Interpretación','Persuasión'].includes(levelUpSubclassSkill) || currentSkillChoices.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpSubclassSkill)))) { notice='Glamur sobrenatural requiere elegir Engaño, Interpretación o Persuasión, una habilidad en la que aún no tengas competencia.'; return; }
+    if(needsCollegeKnowledgeSkills && (collegeKnowledgeSkills.length!==3 || new Set(collegeKnowledgeSkills.map(skill=>normalizeLevelText(skill))).size!==3 || collegeKnowledgeSkills.some(skill=>!BUILDER_SKILL_OPTIONS.some(option=>normalizeLevelText(option)===normalizeLevelText(skill)) || currentSkillChoices.some(old=>normalizeLevelText(old)===normalizeLevelText(skill))))) { notice='El Colegio del Conocimiento requiere tres habilidades distintas en las que todavía no tengas competencia.'; return; }
     const needsBattleManeuvers=isBattleMaster && [3,7,10,15].includes(nextLevel);
     const maneuverTarget=nextLevel>=15?9:nextLevel>=10?7:nextLevel>=7?5:3;
     const maneuverChoices=splitChoiceList(levelUpManeuvers);
@@ -2487,6 +2492,10 @@ import SPELLS from './spells.json';
       const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
       setCharacterStat(updated,'COMPETENCIAS','Habilidades',[oldSkills,levelUpSubclassSkill].filter(Boolean).join('; '));
     }
+    if(needsCollegeKnowledgeSkills) {
+      const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
+      setCharacterStat(updated,'COMPETENCIAS','Habilidades',[oldSkills,...collegeKnowledgeSkills].filter(Boolean).join('; '));
+    }
     if(needsBattleMasterTraining) {
       const oldTools=getCharacterStat(updated,'COMPETENCIAS','Herramientas');
       setCharacterStat(updated,'COMPETENCIAS','Herramientas',[oldTools,levelUpSubclassTool].filter(Boolean).join('; '));
@@ -2575,7 +2584,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2905,6 +2914,9 @@ import SPELLS from './spells.json';
               {/if}
               {#if levelUpSubclass==='ERRANTE FEÉRICO' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
                 <label>Habilidad de Glamur sobrenatural<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option><option>Engaño</option><option>Interpretación</option><option>Persuasión</option></select></label>
+              {/if}
+              {#if normalizeLevelText(levelUpSubclass)==='colegio del conocimiento' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Competencias adicionales del Colegio del Conocimiento (elige tres habilidades nuevas)<textarea bind:value={levelUpSubclassSkills} rows="2" placeholder="Tres habilidades distintas, separadas por comas" /></label>
               {/if}
               {#if levelUpSubclass==='MAESTRO DEL COMBATE' && [3,7,10,15].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
                 <label>Maniobras de Maestro del combate (lista completa)<textarea bind:value={levelUpManeuvers} rows="3" placeholder="Ej. Arremetida, Ataque preciso, Contraataque" /></label>

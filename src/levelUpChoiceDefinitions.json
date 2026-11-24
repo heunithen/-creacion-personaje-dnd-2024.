@@ -84,6 +84,75 @@
         "section": "RASGOS Y DOTES",
         "field": "Aspecto de lo salvaje"
       }
+    },
+    {
+      "id": "bard.collegeOfLore.additionalSkills",
+      "class": "Bardo",
+      "subclass": "colegio del conocimiento",
+      "level": 3,
+      "kind": "multiple",
+      "label": "Competencias adicionales del Colegio del Conocimiento",
+      "description": "Elige tres habilidades en las que todavía no tengas competencia.",
+      "options": [
+        "Acrobacias",
+        "Arcanos",
+        "Atletismo",
+        "Engaño",
+        "Historia",
+        "Interpretación",
+        "Intimidación",
+        "Investigación",
+        "Juego de manos",
+        "Medicina",
+        "Naturaleza",
+        "Percepción",
+        "Perspicacia",
+        "Persuasión",
+        "Religión",
+        "Sigilo",
+        "Supervivencia",
+        "Trato con animales"
+      ],
+      "excludeExisting": true,
+      "storage": {
+        "section": "COMPETENCIAS",
+        "field": "Habilidades"
+      }
+    },
+    {
+      "id": "bard.expertise",
+      "class": "Bardo",
+      "level": "progression",
+      "kind": "multiple",
+      "label": "Pericia del Bardo",
+      "description": "Elige dos habilidades en las que ya tengas competencia en los niveles 2 y 9. Conserva las pericias anteriores y no repitas una habilidad que ya tenga Pericia.",
+      "options": [
+        "Acrobacias",
+        "Arcanos",
+        "Atletismo",
+        "Engaño",
+        "Historia",
+        "Interpretación",
+        "Intimidación",
+        "Investigación",
+        "Juego de manos",
+        "Medicina",
+        "Naturaleza",
+        "Percepción",
+        "Perspicacia",
+        "Persuasión",
+        "Religión",
+        "Sigilo",
+        "Supervivencia",
+        "Trato con animales"
+      ],
+      "excludeExisting": false,
+      "retainExisting": true,
+      "countFromResource": "Pericia",
+      "storage": {
+        "section": "COMPETENCIAS",
+        "field": "Habilidades"
+      }
     }
   ]
 }
