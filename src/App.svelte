@@ -761,7 +761,7 @@
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
     alignment: 'Neutral', method: 'standard',
     abilities: { Fuerza: 15, Destreza: 14, Constitución: 13, Inteligencia: 12, Sabiduría: 10, Carisma: 8 },
-    feat: 'Atacante salvaje', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', backgroundToolChoice: '', classEquipmentChoice: 'A', classSkillChoices: [], classToolsChoices: [], classSpecialChoice: '', classExpertise: [], weaponMasteries: [], selectedCantrips: [], selectedSpells: [], wizardSpellbook: [], speciesChoice: '', speciesMagicAbility: 'Inteligencia', speciesSkill: '', speciesExtraFeat: 'Habilidoso', speciesSize: 'Mediano', speciesBreathShape: 'Cono', backgroundFeatChoices: [], speciesFeatChoices: [], languages: [], rogueLanguage: '', backgroundMagicCantrips: [], backgroundMagicSpell: '', backgroundMagicAbility: 'Inteligencia', speciesMagicCantrips: [], speciesMagicSpell: '', speciesFeatMagicAbility: 'Inteligencia', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
+    feat: 'Atacante salvaje', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', backgroundToolChoice: '', classEquipmentChoice: 'A', classSkillChoices: [], classToolsChoices: [], classSpecialChoice: '', classExpertise: [], weaponMasteries: [], selectedCantrips: [], selectedSpells: [], wizardSpellbook: [], speciesChoice: '', speciesMagicAbility: '', speciesSkill: '', speciesExtraFeat: 'Habilidoso', speciesSize: '', speciesBreathShape: 'Cono', backgroundFeatChoices: [], speciesFeatChoices: [], languages: [], rogueLanguage: '', backgroundMagicCantrips: [], backgroundMagicSpell: '', backgroundMagicAbility: 'Inteligencia', speciesMagicCantrips: [], speciesMagicSpell: '', speciesFeatMagicAbility: 'Inteligencia', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
   };
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
@@ -829,7 +829,7 @@
   };
   const BUILDER_SPECIES_TRAITS: Record<string,string> = {
     'Aasimar':'Tipo de criatura: Humanoide. Manos curativas; Portador de luz (truco luz); Resistencia celestial (necrótico y radiante); Visión en la oscuridad 18 m; Revelación celestial desde nivel 3.',
-    'Dracónido':'Tipo de criatura: Humanoide. Linaje dracónico; Ataque de aliento; Resistencia al daño del linaje; Visión en la oscuridad 18 m; Vuelo dracónico desde nivel 5.',
+    'Dracónido':'Tipo de criatura: Humanoide. Linaje dracónico; Ataque de aliento (cono de 4,5 m o línea de 9 m, a elegir en cada uso); Resistencia al daño del linaje; Visión en la oscuridad 18 m; Vuelo dracónico desde nivel 5.',
     'Enano':'Tipo de criatura: Humanoide. Afinidad con la piedra; Aguante enano (+1 PG por nivel); Resistencia enana (veneno); Visión en la oscuridad 36 m.',
     'Elfo':'Tipo de criatura: Humanoide. Linaje feérico; Linaje élfico; Sentidos agudos (elige Percepción, Perspicacia o Supervivencia); Trance; Visión en la oscuridad 18 m.',
     'Gnomo':'Tipo de criatura: Humanoide. Astucia gnoma; Linaje gnomo; Visión en la oscuridad 18 m.',
@@ -945,10 +945,12 @@
     const abilitiesOk = builderData.method !== 'manual' || builderPointCost() === 27;
     const speciesChoiceOk = BUILDER_SPECIES_CHOICES[builderData.species].length === 0 || Boolean(builderData.speciesChoice);
     const speciesSkillOk = !['Elfo','Humano'].includes(builderData.species) || Boolean(builderData.speciesSkill);
-    const languagesOk = builderData.languages.length === 2 && (builderData.className !== 'Pícaro' || Boolean(builderData.rogueLanguage));
+    const speciesMagicAbilityOk = !['Elfo','Gnomo','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesMagicAbility);
+    const speciesSizeOk = !['Aasimar','Humano','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesSize);
+    const languagesOk = builderData.languages.length === 2 && (builderData.className !== 'Pícaro' || (Boolean(builderData.rogueLanguage) && !builderData.languages.includes('Jerga de ladrones')));
     const humanFeatOk = builderData.species !== 'Humano' || (Boolean(builderData.speciesExtraFeat) && builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell));
     const backgroundFeatOk = builderOriginFeatChoicesOk(BUILDER_BACKGROUND_DATA[builderData.background].feat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell);
-    return skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && humanFeatOk && backgroundFeatOk && languagesOk;
+    return skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && humanFeatOk && backgroundFeatOk && languagesOk;
   }
   function builderNext() { if (builderStep < 6) builderStep += 1; }
   function builderBack() { if (builderStep > 0) builderStep -= 1; }
@@ -962,7 +964,7 @@
     const classData = BUILDER_CLASS_DATA[b.className];
     const classEquipment = b.classEquipmentChoice === 'B' ? classData.equipmentB : b.classEquipmentChoice === 'C' && b.className === 'Guerrero' ? '155 po.' : classData.equipmentA;
     const classChoices = [b.classSpecialChoice ? classData.specialLabel + ': ' + b.classSpecialChoice : '', b.weaponMasteries.length ? 'Maestrías con armas: ' + b.weaponMasteries.join(', ') : '', b.classToolsChoices.length ? 'Competencias de herramientas: ' + b.classToolsChoices.join(', ') : ''].filter(Boolean).join('\n');
-    const speciesChoices = [b.speciesChoice ? 'Elección de especie: ' + b.speciesChoice : '', ['Elfo','Gnomo','Tiefling'].includes(b.species) ? 'Aptitud mágica de linaje: ' + b.speciesMagicAbility : '', ['Aasimar','Humano','Tiefling'].includes(b.species) ? 'Tamaño: ' + b.speciesSize : '', b.species === 'Dracónido' ? 'Forma del ataque de aliento: ' + b.speciesBreathShape : ''].filter(Boolean).join('; ');
+    const speciesChoices = [b.speciesChoice ? 'Elección de especie: ' + b.speciesChoice : '', ['Elfo','Gnomo','Tiefling'].includes(b.species) ? 'Aptitud mágica de linaje: ' + b.speciesMagicAbility : '', ['Aasimar','Humano','Tiefling'].includes(b.species) ? 'Tamaño: ' + b.speciesSize : ''].filter(Boolean).join('; ');
     const speciesCantrips = b.species === 'Aasimar' ? ['Luz'] : b.species === 'Elfo' ? (b.speciesChoice === 'Alto elfo' ? ['Prestidigitación'] : b.speciesChoice === 'Drow' ? ['Luces danzantes'] : ['Saber druídico']) : b.species === 'Gnomo' ? (b.speciesChoice === 'Gnomo de las rocas' ? ['Prestidigitación','Reparar'] : ['Ilusión menor']) : b.species === 'Tiefling' ? ['Taumaturgia', b.speciesChoice === 'Abisal' ? 'Rociada venenosa' : b.speciesChoice === 'Ctónico' ? 'Toque helado' : 'Descarga de fuego'] : [];
     const features = [classData.features, classChoices, BUILDER_SPECIES_TRAITS[b.species] || '', speciesChoices, b.traits].filter(Boolean).join('\n');
     const general = (name:string, values:string[]) => ({
@@ -1553,20 +1555,17 @@
               <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
             {:else if builderStep === 2}
               <h3>3. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
-              <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = 'Inteligencia'; builderData.speciesSize = 'Mediano'; builderData.speciesBreathShape = 'Cono'; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
+              <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = ''; builderData.speciesBreathShape = 'Cono'; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               {#if BUILDER_SPECIES_CHOICES[builderData.species].length > 0}
                 <label>{builderData.species === 'Dracónido' ? 'Linaje dracónico' : builderData.species === 'Elfo' ? 'Linaje élfico' : builderData.species === 'Gnomo' ? 'Linaje gnomo' : builderData.species === 'Goliat' ? 'Linaje gigante' : 'Legado infernal'}<select bind:value={builderData.speciesChoice}><option value="">Elige una opción</option>{#each BUILDER_SPECIES_CHOICES[builderData.species] as choice}<option>{choice}</option>{/each}</select></label>
               {/if}
               {#if ['Aasimar','Humano','Tiefling'].includes(builderData.species)}
-                <label>Tamaño<select bind:value={builderData.speciesSize}><option>Mediano</option><option>Pequeño</option></select></label>
+                <label>Tamaño<select bind:value={builderData.speciesSize}><option value="">Elige el tamaño</option><option>Mediano</option><option>Pequeño</option></select></label>
               {/if}
               {#if ['Elfo','Gnomo','Tiefling'].includes(builderData.species)}
-                <label>Aptitud mágica de linaje<select bind:value={builderData.speciesMagicAbility}><option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option></select></label>
+                <label>Aptitud mágica de linaje<select bind:value={builderData.speciesMagicAbility}><option value="">Elige la característica</option><option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option></select></label>
               {/if}
-              {#if builderData.species === 'Dracónido'}
-                <label>Forma del ataque de aliento<select bind:value={builderData.speciesBreathShape}><option>Cono</option><option>Línea</option></select></label>
-              {/if}
-              {#if builderData.species === 'Elfo'}
+               {#if builderData.species === 'Elfo'}
                 <label>Competencia adicional del elfo<select bind:value={builderData.speciesSkill}><option value="">Elige una habilidad</option><option>Percepción</option><option>Perspicacia</option><option>Supervivencia</option></select></label>
               {/if}
               {#if builderData.species === 'Humano'}
@@ -1580,7 +1579,7 @@
                   <label>Un conjuro de nivel 1 de la dote adicional<select bind:value={builderData.speciesMagicSpell}><option value="">Elige un conjuro</option>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(builderData.speciesExtraFeat)].level1 as spell}<option>{spell}</option>{/each}</select></label>
                 {/if}
               {/if}
-              <label>Dos idiomas adicionales (además del común) ({builderData.languages.length}/2)<select multiple size="7" bind:value={builderData.languages}>{#each BUILDER_LANGUAGES as language}<option>{language}</option>{/each}</select></label>
+              <label>Dos idiomas adicionales (además del común) ({builderData.languages.length}/2)<select multiple size="7" bind:value={builderData.languages}>{#each BUILDER_LANGUAGES.filter(language => builderData.className !== 'Pícaro' || language !== 'Jerga de ladrones') as language}<option>{language}</option>{/each}</select></label>
               {#if builderData.className === 'Pícaro'}
                 <label>Idioma adicional de pícaro ({builderData.rogueLanguage ? 1 : 0}/1)<select bind:value={builderData.rogueLanguage}><option value="">Elige un idioma</option>{#each BUILDER_LANGUAGES.filter(language => !builderData.languages.includes(language)) as language}<option>{language}</option>{/each}</select></label>
               {/if}
@@ -1682,7 +1681,7 @@
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
               <button class="primary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
-              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 0; builderData = {name:'',player:'',className:'Guerrero',species:'Humano',background:'Soldado',alignment:'Neutral',method:'standard',abilities:{Fuerza:15,Destreza:14,Constitución:13,Inteligencia:12,Sabiduría:10,Carisma:8},feat:'Atacante salvaje',abilityIncreaseMode:'two',abilityIncrease2:'Fuerza',abilityIncrease1:'Destreza',abilityIncrease3:'Constitución',backgroundEquipment:'A',backgroundToolChoice:'',classEquipmentChoice:'A',classSkillChoices:[],classToolsChoices:[],classSpecialChoice:'',classExpertise:[],weaponMasteries:[],selectedCantrips:[],selectedSpells:[],wizardSpellbook:[],speciesChoice:'',speciesMagicAbility:'Inteligencia',speciesSkill:'',speciesExtraFeat:'Habilidoso',speciesSize:'Mediano',speciesBreathShape:'Cono',backgroundFeatChoices:[],speciesFeatChoices:[],backgroundMagicCantrips:[],backgroundMagicSpell:'',backgroundMagicAbility:'Inteligencia',speciesMagicCantrips:[],speciesMagicSpell:'',speciesFeatMagicAbility:'Inteligencia',languages:[],rogueLanguage:'',skills:'',tools:'',equipment:'',traits:'',spells:'',notes:''}; }}>Crear otro personaje</button>
+              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 0; builderData = {name:'',player:'',className:'Guerrero',species:'Humano',background:'Soldado',alignment:'Neutral',method:'standard',abilities:{Fuerza:15,Destreza:14,Constitución:13,Inteligencia:12,Sabiduría:10,Carisma:8},feat:'Atacante salvaje',abilityIncreaseMode:'two',abilityIncrease2:'Fuerza',abilityIncrease1:'Destreza',abilityIncrease3:'Constitución',backgroundEquipment:'A',backgroundToolChoice:'',classEquipmentChoice:'A',classSkillChoices:[],classToolsChoices:[],classSpecialChoice:'',classExpertise:[],weaponMasteries:[],selectedCantrips:[],selectedSpells:[],wizardSpellbook:[],speciesChoice:'',speciesMagicAbility:'',speciesSkill:'',speciesExtraFeat:'Habilidoso',speciesSize:'',speciesBreathShape:'Cono',backgroundFeatChoices:[],speciesFeatChoices:[],backgroundMagicCantrips:[],backgroundMagicSpell:'',backgroundMagicAbility:'Inteligencia',speciesMagicCantrips:[],speciesMagicSpell:'',speciesFeatMagicAbility:'Inteligencia',languages:[],rogueLanguage:'',skills:'',tools:'',equipment:'',traits:'',spells:'',notes:''}; }}>Crear otro personaje</button>
             </div>
           {/if}
         </section>
