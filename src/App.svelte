@@ -1509,6 +1509,12 @@
         setCharacterStat(target,'CONJUROS',attackField,signedBonus(abilityMod+proficiency));
       }
     }
+    const subclassSpellAbility=getCharacterStat(target,'CONJUROS','Aptitud mágica de subclase');
+    if(BUILDER_ABILITY_NAMES.includes(subclassSpellAbility)) {
+      const subclassSpellMod=Math.floor((scores[subclassSpellAbility]-10)/2);
+      setCharacterStat(target,'CONJUROS','CD de subclase',8+subclassSpellMod+proficiency);
+      setCharacterStat(target,'CONJUROS','Ataque de conjuro de subclase',signedBonus(subclassSpellMod+proficiency));
+    }
     const spellText=[
       getCharacterStat(target,'CONJUROS','Trucos'),
       getCharacterStat(target,'CONJUROS','Trucos de clase'),
@@ -1553,7 +1559,7 @@
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
       general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas']),
-      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote']),
+      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
       general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})]),
@@ -2098,6 +2104,7 @@ import SPELLS from './spells.json';
     setCharacterStat(updated,'COMBATE','Dados de golpe',oldHitDice+1+'d'+hitDie);
     setCharacterStat(updated,'COMBATE','Bonificador por competencia',row.proficiency);
     if (subclass) setCharacterStat(updated,'PERSONAJE','Subclase',subclass.key);
+    if (numericSubclassCasting && (className==='Guerrero'||className==='Pícaro')) setCharacterStat(updated,'CONJUROS','Aptitud mágica de subclase','Inteligencia');
     if (levelUpSubclassVariant) setCharacterStat(updated,'PERSONAJE','Opción de subclase',levelUpSubclassVariant);
 
     if (needsASI && levelUpAsiMode==='asi') {
