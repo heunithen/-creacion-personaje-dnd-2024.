@@ -1879,7 +1879,7 @@
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.17</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.18</span></footer>
 </div>
 
 <style>
