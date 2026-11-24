@@ -1,0 +1,1266 @@
+[
+  {
+    "name": "ACCIÓN",
+    "category": "General",
+    "description": "En tu turno, puedes llevar a cabo una acción. Elige qué\nacción quieres realizar entre las que aparecen a continuación\no entre las acciones especiales que te otorgan tus rasgos.\nConsulta también el capítulo 1 (“Acciones”). Estas acciones\nse definen en otras partes del glosario:\nAtacar\nCorrer\nEsquivar\nMagia\nAyudar\nDestrabarse\nEstudiar\nPreparar una acción\nBuscar\nEsconderse\nInfluir\nUtilizar",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ACCIÓN ADICIONAL",
+    "category": "General",
+    "description": "Una acción adicional es una acción especial que puedes\nhacer en el mismo turno en que llevas a cabo una acción.\nNo puedes realizar más de una acción adicional en un\nturno y solo tienes acciones adicionales a tu disposición\nsi una regla lo indica de forma explícita. Consulta también\nel capítulo 1 (“Acciones”).",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ACTITUD",
+    "category": "General",
+    "description": "Los monstruos tienen una actitud inicial hacia un\npersonaje de un jugador, la cual puede ser amistosa,\nhostil o indiferente. Consulta también “Amistosa”,\n“Hostil”, “Indiferente” e “Influir”.",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "AGARRADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de agarrado, experimentarás\nlos siguientes efectos:\nVelocidad 0. Tu velocidad es 0 y no puede aumentar.\nAtaques afectados. Tienes desventaja en las tiradas\nde ataque contra cualquier objetivo que no sea quien\nte agarra.\nDesplazable. Quien te agarra puede arrastrarte o transportarte al moverse, pero cada metro de movimiento le\ncuesta 1 m adicional, salvo que seas Diminuto o tu tamaño\nsea dos o más categorías inferior al suyo.",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "AGARRAR",
+    "category": "General",
+    "description": "Una criatura puede agarrar a otra. Por lo general,\nlos personajes realizan agarres usando un ataque sin\narmas. Muchos monstruos poseen ataques especiales\nque les permiten agarrar a sus presas rápidamente.\nCuando se inicia un agarre, este sigue las siguientes reglas.\nConsulta también “Agarrado” y “Ataque sin armas”.\n\nEstado de agarrada. Agarrar a una criatura le impone\nel estado de agarrada.\nUn agarre por mano. Una criatura debe tener una\nmano libre para agarrar a otra criatura. Algunos perfiles\ny efectos del juego permiten que una criatura agarre\na otra usando un tentáculo, sus fauces u otra parte del\ncuerpo. Independientemente de la parte del cuerpo que\nemplee, podrá agarrar solo a una criatura a la vez con\nesa parte y no podrá usar esa parte para hacer objetivo\na otra criatura salvo que ponga fin al agarre.\nPoner fin a un agarre. Una criatura agarrada puede\nemplear su acción para hacer una prueba de Fuerza\n(Atletismo) o Destreza (Acrobacias) contra la CD para\nescapar del agarre; si la supera, pondrá fin a su estado.\nEl estado también termina si quien agarra tiene el estado\nde incapacitado o si la distancia entre el objetivo agarrado\ny quien lo agarra supera el alcance del agarre. Además,\nquien agarra puede soltar al objetivo en cualquier momento\n(no requiere acción).",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "AL DÍA",
+    "category": "General",
+    "description": "Si una regla indica que puedes utilizar algo una cantidad\ndeterminada de veces al día, significa que debes finalizar\nun descanso largo para emplearlo de nuevo tras consumir\ntodos los usos.",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ALCANCE",
+    "category": "General",
+    "description": "Una criatura tiene un alcance de 1,5 m salvo que una regla\nindique algo distinto.",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ALIADO",
+    "category": "General",
+    "description": "Una criatura es tu aliada si es un miembro de tu grupo\nde aventureros, si es tu amiga, si combate en tu bando\no si las reglas o tu DM determinan que sea tu aliada.",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ALINEAMIENTO",
+    "category": "General",
+    "description": "El alineamiento de una criatura describe en términos\ngenerales su actitud e ideales éticos. El alineamiento es una\ncombinación de dos factores: por una parte, la moralidad\n(bueno, malvado o neutral) y, por otra, la actitud hacia\nel orden (legal, caótico o neutral). Estos factores dan\npie a nueve combinaciones posibles, como las de legal\nbueno y neutral malvado. Consulta también el capítulo 2\n(“Crear tu personaje”).",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "AMISTOSA",
+    "category": "Actitud",
+    "description": "Una criatura amistosa te verá con buenos ojos. Tienes\nventaja en las pruebas de característica para influir\nen una criatura amistosa. Consulta también “Influir”.",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "APRESADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de apresado, experimentarás\nlos siguientes efectos:\nVelocidad 0. Tu velocidad es 0 y no puede aumentar.\nAtaques afectados. Las tiradas de ataque contra ti tienen\nventaja y tus tiradas de ataque tienen desventaja.\nTiradas de salvación afectadas. Tienes desventaja en las\ntiradas de salvación de Destreza.",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ÁREA DE EFECTO",
+    "category": "General",
+    "description": "Las descripciones de muchos conjuros y otros rasgos\nespecifican que tienen un área de efecto, que suele tener\nuna de seis formas posibles. Estas formas se definen\nen otras partes del glosario:\nCilindro\nCubo\nEsfera\nCono\nEmanación\nLínea\nLas áreas de efecto poseen un punto de origen, un lugar\ndesde el que surge la energía del efecto. Las reglas de cada\nforma especifican cuál es el punto de origen. Si todas las\nlíneas rectas que se extienden desde el punto de origen\nhasta un lugar del área de efecto están bloqueadas, ese\nlugar no estará incluido en el área de efecto. Para bloquear\nuna línea, un obstáculo debe proporcionar cobertura\ncompleta. Consulta también “Cobertura”.\nSi el creador de un área de efecto la sitúa en un punto\nque no vea y una obstrucción (como un muro) está entre\ndicho punto y el creador, el origen se moverá hasta el lado\nde la obstrucción más cercano a él.",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ARMA",
+    "category": "General",
+    "description": "Un arma es un objeto que pertenece a la categoría de\narmas sencillas o marciales. Consulta también el capítulo 6\n(“Armas”).",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ARMAS IMPROVISADAS",
+    "category": "General",
+    "description": "Un arma improvisada es cualquier objeto que utilices como\narma provisional, como una botella rota, la pata de una\nmesa o una sartén. Un arma sencilla o marcial también\ncuenta como arma improvisada si se emplea de un modo\ncontrario a su diseño: por ejemplo, si utilizas un arma\na distancia para realizar un ataque cuerpo a cuerpo\no lanzas un arma cuerpo a cuerpo sin la propiedad\n“arrojadiza”, contará como un arma improvisada.\nUn arma improvisada sigue estas reglas:\nCompetencia. No sumas tu bonificador por competencia\na las tiradas de ataque con un arma improvisada.\nDaño. Si acierta, el arma inflige 1d4 de daño de un tipo\nque tu DM considere apropiado para el objeto.\nAlcance. Si arrojas el arma, tendrá un alcance normal\nde 6 m y un alcance largo de 18 m.\nEquivalentes del arma. Si un arma improvisada se parece\na un arma sencilla o marcial, tu DM puede decidir que\nfuncione como ella y emplear las reglas que se le aplican.\nPor ejemplo, tu DM podría tratar la pata de una mesa\ncomo un garrote.",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ARRASTRARSE",
+    "category": "General",
+    "description": "Cuando te arrastras, cada metro de movimiento te cuesta\n1 m adicional (2 m adicionales en terreno difícil). Consulta\ntambién “Velocidad”.",
+    "pdfPage": 363,
+    "printedPage": 361,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ASFIXIA",
+    "category": "Peligro",
+    "description": "Una criatura puede aguantar la respiración durante una\ncantidad de minutos igual a 1 más su modificador por\nConstitución (mínimo de 30 segundos) antes de que\nempiece a asfixiarse. Cuando una criatura se quede sin\naire o se esté ahogando, sumará 1 nivel de cansancio\nal final de cada uno de sus turnos. Cuando recupere el\naliento, perderá todos los niveles de cansancio sumados\npor la asfixia.",
+    "pdfPage": 364,
+    "printedPage": 362,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ASUSTADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de asustado, experimentarás\nlos siguientes efectos:\nPruebas de característica y ataques afectados. Tienes\ndesventaja en las pruebas de característica y las tiradas\nde ataque mientras la fuente de tu miedo esté en tu línea\nde visión.\nNo puedes acercarte. No puedes acercarte voluntariamente a la fuente de tu miedo.",
+    "pdfPage": 364,
+    "printedPage": 362,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ATACAR",
+    "category": "Acción",
+    "description": "Cuando llevas a cabo la acción de atacar, puedes hacer\nuna tirada de ataque con un arma o un ataque sin armas.\nEquiparse con armas y desequiparse de ellas. Como parte\nde la acción de atacar, puedes equiparte con un arma\no desequiparte de ella. Puedes hacerlo antes o después\ndel ataque. Si te equipas con un arma antes de un ataque,\nno tienes por qué usarla en él. Equiparse con un arma\nincluye desenvainarla o recogerla. Desequiparse de un\narma incluye envainarla, guardarla o soltarla.\nMoverse entre ataques. Si te mueves en tu turno y tienes\nun rasgo, como Ataque adicional, que te permite hacer\nmás de un ataque como parte de la acción de atacar,\npuedes usar parte del movimiento o todo él para moverte\nentre esos ataques.",
+    "pdfPage": 364,
+    "printedPage": 362,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ATAQUE CON ARMA",
+    "category": "General",
+    "description": "Un ataque con arma es una tirada de ataque realizada\ncon un arma. Consulta también “Arma”.",
+    "pdfPage": 364,
+    "printedPage": 362,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ATAQUE DE CONJURO",
+    "category": "General",
+    "description": "Un ataque de conjuro es una tirada de ataque que se\nhace como parte de un conjuro u otro efecto mágico.\nConsulta también el capítulo 7 (“Lanzar conjuros”).",
+    "pdfPage": 364,
+    "printedPage": 362,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ATAQUE SIN ARMAS",
+    "category": "General",
+    "description": "En lugar de utilizar un arma para realizar un ataque cuerpo\na cuerpo, puedes dar un puñetazo, una patada, un cabezazo\no cualquier otro golpe enérgico. En la terminología del\njuego, esto se denomina un ataque sin armas: un ataque\ncuerpo a cuerpo en el que usas tu cuerpo para dañar,\nagarrar o empujar a un objetivo a 1,5 m o menos de ti.\nCuando uses tu ataque sin armas, elige una de las\nsiguientes opciones para su efecto.\nDaño. Haces una tirada de ataque contra el objetivo.\nTu bonificador a la tirada es igual a tu modificador por\nFuerza más tu bonificador por competencia. Si acierta,\nel objetivo sufre una cantidad de daño contundente igual\na 1 más tu modificador por Fuerza.\nAgarre. El objetivo deberá superar una tirada de\nsalvación de Fuerza o Destreza (a su elección) o tendrá\nel estado de agarrado. La CD para la tirada de salvación\ny cualquier intento de escapar será igual a 8 más tu\nmodificador por Fuerza y tu bonificador por competencia.\nSolo se puede ejecutar este agarre si el tamaño del objetivo\nestá, como mucho, una categoría por encima de la tuya\ny si tienes una mano libre para agarrarlo. Consulta también\n“Agarrar”.\nEmpujón. El objetivo deberá superar una tirada de\nsalvación de Fuerza o Destreza (a su elección); de lo\ncontrario, lo empujarás 1,5 m respecto a ti o harás que\ntenga el estado de derribado. La CD para la tirada de\nsalvación será igual a 8 más tu modificador por Fuerza\ny tu bonificador por competencia. Solo se puede dar este\nempujón si el tamaño del objetivo está, como mucho,\nuna categoría por encima de la tuya.",
+    "pdfPage": 364,
+    "printedPage": 362,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ATAQUES DE OPORTUNIDAD",
+    "category": "General",
+    "description": "Puedes hacer un ataque de oportunidad cuando una\ncriatura que puedas ver salga de tu alcance usando\nsu acción, acción adicional, reacción o una de sus\nvelocidades. Para ello, usa una reacción para hacer un\nataque cuerpo a cuerpo con un arma o un ataque sin\narmas contra la criatura que lo provoque. Este ataque\nsucede justo antes de que la criatura se mueva fuera de\ntu alcance. Consulta también el capítulo 1 (“Combate”).",
+    "pdfPage": 364,
+    "printedPage": 362,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ATURDIDO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de aturdido, experimentarás\nlos siguientes efectos:\nIncapacitado. Tienes el estado de incapacitado.\nTiradas de salvación afectadas. Fallas automáticamente\nlas tiradas de salvación de Fuerza y Destreza.\nAtaques afectados. Las tiradas de ataque contra ti tienen\nventaja.",
+    "pdfPage": 364,
+    "printedPage": 362,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "AYUDAR",
+    "category": "Acción",
+    "description": "Cuando llevas a cabo la acción de ayudar, tienes estas\nopciones:\nAyudar en una prueba de característica. Elige una de\ntus competencias en habilidades o con herramientas\ny un aliado que esté lo bastante cerca como para\nayudarle verbal o físicamente cuando haga una prueba\nde característica. Ese aliado tendrá ventaja en la siguiente\nprueba de característica que haga con la habilidad\no herramienta elegidas. Este beneficio concluye si el aliado\nno lo usa antes del principio de tu siguiente turno. Tu DM\ntiene la última palabra sobre si puedes o no prestar esta\nayuda.\nAyudar en una tirada de ataque. Distraes por un\nmomento a un enemigo que esté a 1,5 m o menos de ti,\nlo que da ventaja a la siguiente tirada de ataque que uno\nde tus aliados haga contra ese enemigo. Este beneficio\nconcluye al principio de tu siguiente turno.",
+    "pdfPage": 365,
+    "printedPage": 363,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "BUSCAR",
+    "category": "Acción",
+    "description": "Cuando llevas a cabo la acción de buscar, realizas una\nprueba de Sabiduría para distinguir algo que no resulta\nevidente. La tabla “Búsqueda” indica las habilidades que\nse pueden aplicar al usar esta acción, en función de lo que\ntrates de detectar.",
+    "pdfPage": 365,
+    "printedPage": 363,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "BÚSQUEDA",
+    "category": "General",
+    "description": "Habilidad | Objeto de detección\nMedicina | Dolencia o causa de la muerte de una criatura\nPercepción | Criatura u objeto ocultos\nPerspicacia | Estado mental de una criatura\nSupervivencia | Huellas o alimentos",
+    "pdfPage": 365,
+    "printedPage": 363,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CAÍDAS",
+    "category": "Peligro",
+    "description": "Una criatura que sufra una caída recibirá 1d6 de daño\ncontundente por cada 3 m que haya caído antes de\ngolpearse contra el suelo, hasta un máximo de 20d6.\nLa criatura caerá de bruces y tendrá el estado de derribada\nsalvo que, de alguna forma, evite recibir daño de la caída.\nToda criatura que caiga al agua u otro líquido podrá\nusar su reacción y hacer una prueba de Fuerza (Atletismo)\no Destreza (Acrobacias) con CD 15 para entrar al agua de\ncabeza o de pie. Si la supera, cualquier daño que reciba\npor la caída se reducirá a la mitad.",
+    "pdfPage": 365,
+    "printedPage": 363,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CAMBIO DE FORMA",
+    "category": "General",
+    "description": "Si un efecto, como el rasgo Forma salvaje o el conjuro\npolimorfar, te permite cambiar de forma, su descripción\nespecifica lo que te ocurre. Salvo que se indique lo contrario,\ncualquier efecto que te esté afectando (estados, conjuros,\nmaldiciones y similares) se conserva de una forma a otra.\nSi mueres, recuperas tu forma verdadera.",
+    "pdfPage": 365,
+    "printedPage": 363,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CANALIZADOR MÁGICO",
+    "category": "General",
+    "description": "Un canalizador mágico es un objeto que pueden usar\ndeterminadas criaturas en lugar de los componentes\nmateriales de un conjuro si este no los consume y los\nmateriales no tienen un coste especificado. Algunas\nclases permiten a sus miembros utilizar ciertos tipos\nde canalizadores mágicos. Consulta también el capítulo 7\n(“Lanzar conjuros”).",
+    "pdfPage": 365,
+    "printedPage": 363,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CANSANCIO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de cansancio, experimentarás\nlos siguientes efectos:\nNiveles de cansancio. Este estado es acumulativo.\nCada vez que lo recibas, suma 1 nivel de cansancio.\nMorirás si tu nivel de cansancio es 6.\nPruebas con d20 afectadas. Cuando hagas una prueba\ncon d20, el resultado se reduce en 2 × tu nivel de\ncansancio.\nVelocidad reducida. Tu velocidad se reduce en 1,5 m ×\ntu nivel de cansancio.\nEliminar niveles de cansancio. Tras finalizar un descanso\nlargo, resta 1 nivel de cansancio. Cuando tus niveles de\ncansancio se reduzcan a 0, el estado terminará.",
+    "pdfPage": 365,
+    "printedPage": 363,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CAPACIDAD DE CARGA",
+    "category": "General",
+    "description": "Tu tamaño y tu puntuación de Fuerza determinan el peso\nmáximo en kilos que puedes transportar, como se muestra\nen la tabla “Capacidad de carga”. La tabla indica también\nel peso máximo que puedes arrastrar, levantar o empujar.\nSi arrastras, levantas o empujas un peso que supere\nel máximo que puedes cargar, tu velocidad no superará\nlos 1,5 m.\n\nTamaño de la criatura | Máximo | Arrastrar, levantar o empujar\nDiminuto | Fue × 3,75 kg | Fue × 7,5 kg\nPequeño/Mediano | Fue × 7,5 kg | Fue × 15 kg\nGrande | Fue × 15 kg | Fue × 30 kg\nEnorme | Fue × 30 kg | Fue × 60 kg\nGargantuesco | Fue × 60 kg | Fue × 120 kg",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CEGADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de cegado, experimentarás los\nsiguientes efectos:\nNo puedes ver. No puedes ver y fallas automáticamente\ntodas las pruebas de característica que requieran la vista.\nAtaques afectados. Las tiradas de ataque contra ti tienen\nventaja y tus tiradas de ataque tienen desventaja.",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CILINDRO",
+    "category": "Área de efecto",
+    "description": "Un cilindro es un área de efecto que se extiende en líneas\nrectas desde un punto de origen situado en el centro de\nla parte superior o inferior circular del cilindro. El efecto\nque crea un cilindro especifica el radio de la base y la\naltura del cilindro.\nEl punto de origen de un cilindro está incluido en el área\nde efecto.",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CLASE DE ARMADURA",
+    "category": "General",
+    "description": "Una clase de armadura (CA) es el número objetivo de una\ntirada de ataque. La CA representa la dificultad de acertar\na un objetivo.\nEl cálculo de tu CA base es 10 más tu modificador por\nDestreza. Si una regla otorga otro cálculo de tu CA base,\nelige qué cálculo quieres usar, ya que no puedes usar más\nde uno. Consulta también “Tirada de ataque”.",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CLASE DE DIFICULTAD",
+    "category": "General",
+    "description": "Una clase de dificultad (CD) es el número objetivo de una\nprueba de característica o de una tirada de salvación.\nConsulta también el capítulo 1 (“Las pruebas con d20”).",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "COBERTURA",
+    "category": "General",
+    "description": "La cobertura proporciona un grado de protección a un\nobjetivo situado tras ella. Hay tres niveles de cobertura,\ncada uno de los cuales otorga un beneficio diferente al\nobjetivo: cobertura media (bonificador de +2 a la CA y las\ntiradas de salvación de Destreza), cobertura tres cuartos\n(bonificador de +5 a la CA y las tiradas de salvación de\nDestreza) y cobertura completa (no puede ser el objetivo\ndirecto). Si un objetivo está detrás de más de un grado de\ncobertura, solo se beneficia del que le proporciona más\nprotección. Consulta también el capítulo 1 (“Combate”).",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "COMPETENCIA",
+    "category": "General",
+    "description": "Si tienes competencia en algo o con algo, puedes sumar\ntu bonificador por competencia a cualquier prueba con\nd20 que hagas con ese elemento. Una criatura puede\ntener competencia en una habilidad o tirada de salvación,\no con un arma o herramienta. Consulta también el\ncapítulo 1 (“Competencia”).",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CONCENTRACIÓN",
+    "category": "General",
+    "description": "Algunos conjuros y otros efectos requieren concentración para permanecer activos, según se especifique\nen sus descripciones. Si el creador del efecto pierde la\nconcentración, el efecto concluye. Si el efecto tiene una\nduración máxima, la descripción detalla cuánto tiempo\npuede concentrarse el creador en él: hasta 1 minuto, 1 hora\nu otra duración. El creador puede dejar de concentrarse\nen cualquier momento (no requiere acción). Los siguientes\nfactores rompen la concentración:\nOtro efecto de concentración. Pierdes la concentración\nen un efecto en cuanto comienzas a lanzar un conjuro\nque también requiere concentración o activas otro efecto\nque requiere concentración.\nDaño. Si sufres daño, debes superar una tirada de\nsalvación de Constitución para mantener la concentración.\nLa CD es de 10 o la mitad del daño sufrido (redondeando\nhacia abajo), lo que sea mayor, hasta un máximo de 30.\nIncapacitado o muerto. Tu concentración acaba si tienes\nel estado de incapacitado o mueres.",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CONJURO",
+    "category": "General",
+    "description": "Un conjuro es un efecto mágico que tiene las características\ndescritas en el capítulo 7.",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CONO",
+    "category": "Área de efecto",
+    "description": "Un cono es un área de efecto que se extiende en líneas\nrectas desde un punto de origen en la dirección que elija\nsu creador. El ancho del cono en un punto cualquiera\na lo largo de su extensión es igual a la distancia entre\ndicho punto y el origen. Por ejemplo, un cono tiene un\nancho de 4,5 m en un punto a lo largo de su extensión\nque esté a 4,5 m del punto de origen. El efecto que crea\nun cono especifica su extensión máxima.\nEl punto de origen de un cono no está incluido en el área\nde efecto, salvo que su creador decida lo contrario.",
+    "pdfPage": 366,
+    "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CORRER",
+    "category": "Acción",
+    "description": "Cuando llevas a cabo la acción de correr, consigues\nmovimiento adicional para ese turno. Este aumento es igual\na tu velocidad tras aplicar cualquier modificador pertinente.\nAsí, si tu velocidad fuera de 9 m, podrías moverte hasta\n18 m en un turno en el que corras. Si tu velocidad de 9 m\nse redujera a 4,5 m, podrías moverte hasta 9 m en un turno\nen el que realizaras la acción de correr.\nSi tienes una velocidad especial, como una velocidad\nnadando o una velocidad volando, puedes emplearla en\nlugar de tu velocidad normal cuando llevas a cabo esta\nacción. Eliges la velocidad que vas a emplear cada vez\nque realizas la acción. Consulta también “Velocidad”.",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CRIATURA",
+    "category": "General",
+    "description": "Cualquier ser que aparece en el juego, incluidos los\npersonajes de los jugadores, se considera una criatura.\nConsulta también “Tipo de criatura”.",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CRÍTICO",
+    "category": "General",
+    "description": "Si sacas un 20 en el d20 al hacer una tirada de ataque,\ncausarás un crítico y el ataque acertará sin tener en\ncuenta los modificadores ni la CA del objetivo. Un crítico\nte permite tirar dados de daño adicionales contra el objetivo:\ntira todos los dados de daño del ataque dos veces, suma los\nresultados y luego añade los modificadores pertinentes.\nConsulta también el capítulo 1 (“Daño y curación”).",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CUBO",
+    "category": "Área de efecto",
+    "description": "Un cubo es un área de efecto que se extiende en líneas\nrectas desde un punto de origen situado en cualquier\nparte de una cara del cubo. El efecto que crea un cubo\nespecifica su tamaño, que es la longitud de cada lado.\nEl punto de origen de un cubo no está incluido en el\nárea de efecto, salvo que su creador decida lo contrario.",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CURACIÓN",
+    "category": "General",
+    "description": "La curación es el medio para recuperar puntos de golpe.\nConsulta también el capítulo 1 (“Daño y curación”).",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DADOS DE PUNTOS DE GOLPE",
+    "category": "General",
+    "description": "Los dados de puntos de golpe (o dados de golpe para\nabreviar) ayudan a determinar los puntos de golpe máximos\nde un personaje jugador, como se explica en el capítulo 2.\nLa mayoría de monstruos tienen también dados de golpe.\nDurante un descanso corto, una criatura puede gastar\ndados de golpe para recuperar puntos de golpe. Consulta\ntambién “Descanso corto”.",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DAÑO",
+    "category": "General",
+    "description": "Recibir daño hace que una criatura o un objeto pierda\npuntos de golpe.",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DERRIBADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de derribado, experimentarás\nlos siguientes efectos:\nMovimiento restringido. Tus únicas opciones de\nmovimiento son arrastrarte o gastar una cantidad de\nmovimiento igual a la mitad de tu velocidad (redondeando\nhacia abajo) para levantarte y, por tanto, poner fin a este\nestado. Si tu velocidad es 0, no puedes levantarte.\nAtaques afectados. Tienes desventaja en las tiradas\nde ataque. Las tiradas de ataque contra ti tienen ventaja\nsi el atacante está a 1,5 m o menos de ti. De lo contrario,\nlas tiradas de ataque tienen desventaja.",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DESCANSO CORTO",
+    "category": "General",
+    "description": "Un descanso corto es un periodo de inactividad de 1 hora\nen el que una criatura no hace nada más extenuante que\nleer, charlar, comer o montar guardia. Para comenzar un\ndescanso corto, debes tener al menos 1 punto de golpe.\nBeneficios del descanso. Tras finalizar el descanso\nobtendrás los siguientes beneficios:\nGastar dados de puntos de golpe. Puedes gastar uno\no más dados de puntos de golpe para recuperar puntos\nde golpe. Por cada dado de puntos de golpe que gastes\nde esta forma, tira el dado y suma tu modificador por\nConstitución al resultado. Recuperas una cantidad de\npuntos de golpe equivalente al total obtenido (con un\nmínimo de 1). Puedes decidir si gastas otro dado de\npuntos de golpe tras cada tirada.\nRasgo especial. Algunos rasgos se recargan con\nun descanso corto. Si tienes uno de estos rasgos,\nse recargará de la forma que indique su descripción.\nInterrumpir el descanso. Un descanso corto se puede\ninterrumpir de las siguientes formas:\n+ si se tira iniciativa;\n+ si se lanza un conjuro que no sea un truco;\n+ si se sufre daño.\nUn descanso corto interrumpido no otorga ningún\nbeneficio.",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DESCANSO LARGO",
+    "category": "General",
+    "description": "Un descanso largo es un periodo de inactividad prolongado\n(al menos 8 horas) a disposición de cualquier criatura.\nDurante un descanso largo, duermes durante al menos\n6 horas y realizas como máximo 2 horas de actividades\nligeras, como leer, hablar, comer o montar guardia.\n\nMientras duermes, tienes el estado de inconsciente.\nTras finalizar un descanso largo, deberás esperar al menos\n16 horas para comenzar otro.\nBeneficios del descanso. Para comenzar un descanso\nlargo, debes tener al menos 1 punto de golpe. Tras finalizar\nel descanso obtendrás los siguientes beneficios:\nPuntos de golpe al máximo. Recuperas todos los puntos\nde golpe perdidos y todos los dados de puntos de golpe\ngastados. Si tus puntos de golpe máximos se habían\nreducido, vuelven a la normalidad.\nPuntuaciones de característica restablecidas. Si alguna\nde tus puntuaciones de característica se había reducido,\nvuelve a la normalidad.\nCansancio reducido. Si tienes el estado de cansancio,\nsu nivel se reduce en 1.\nRasgo especial. Algunos rasgos se recargan con\nun descanso largo. Si tienes uno de estos rasgos,\nse recargará de la forma que indique su descripción.\nInterrumpir el descanso. Un descanso largo se puede\ninterrumpir de las siguientes formas:\n+ si se tira iniciativa;\n+ si se lanza un conjuro que no sea un truco;\n+ si se sufre daño;\n+ si se camina o se hace algún otro ejercicio físico durante\n1 hora.\nSi logras descansar al menos 1 hora antes de la interrupción,\nobtienes los beneficios de un descanso corto. Consulta\ntambién “Descanso corto”.\nPuedes reanudar un descanso largo inmediatamente\ndespués de una interrupción. Si lo haces, el descanso\nrequerirá 1 hora adicional por cada interrupción para\nfinalizarlo.",
+    "pdfPage": 367,
+    "printedPage": 365,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DESHIDRATACIÓN",
+    "category": "Peligro",
+    "description": "Las criaturas requieren cierta cantidad de agua al día\nen función de su tamaño, como se muestra en la tabla\n“Consumo de agua al día”. Si una criatura bebe menos\nde la mitad del agua que necesita al día, sumará 1 nivel\nde cansancio al final del día. El cansancio causado por la\ndeshidratación no puede eliminarse hasta que la criatura\nbeba la cantidad completa de agua necesaria al día.\nConsulta también “Cansancio”.",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CONSUMO DE AGUA AL DÍA",
+    "category": "General",
+    "description": "Tamaño | Agua\nDiminuto | 1 l\nPequeño | 4 l\nMediano | 4 l\nGrande | 16 l\nEnorme | 64 l\nGargantuesco | 256 l",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DESNUTRICIÓN",
+    "category": "Peligro",
+    "description": "Las criaturas necesitan cierta cantidad de alimentos\nal día en función de su tamaño, como se muestra en la\ntabla “Consumo de alimentos al día”. Si una criatura\ncome, pero ingiere menos de la mitad de los alimentos\nque necesita al día, deberá superar una tirada de salvación\nde Constitución con CD 10 o sumará 1 nivel de cansancio\nal final del día. Si una criatura no come nada durante\n5 días, sumará automáticamente 1 nivel de cansancio\nal final del quinto día y un nivel adicional al final de\ncada día posterior sin comer.\nEl cansancio causado por la desnutrición no puede\neliminarse hasta que la criatura coma la cantidad completa\nde alimentos necesarios al día. Consulta también\n“Cansancio”.",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CONSUMO DE ALIMENTOS AL DÍA",
+    "category": "General",
+    "description": "Tamaño | Alimentos\nDiminuto | 125 g\nPequeño | 0,5 kg\nMediano | 0,5 kg\nGrande | 2 kg\nEnorme | 8 kg\nGargantuesco | 32 kg",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DESTRABARSE",
+    "category": "Acción",
+    "description": "Si llevas a cabo la acción de destrabarse, tu movimiento\nno provocará ataques de oportunidad durante el resto\ndel turno actual.",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DESVENTAJA",
+    "category": "General",
+    "description": "Si tienes desventaja en una prueba con d20, tira 2d20\ny utiliza el resultado más bajo. Una tirada no puede\nverse afectada por más de una desventaja, y una ventaja\ny una desventaja en la misma tirada se anulan entre sí.\nConsulta también el capítulo 1 (“Las pruebas con d20”).",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "EFECTO MÁGICO",
+    "category": "General",
+    "description": "Un efecto es mágico si lo crea un conjuro, un objeto mágico\no un fenómeno que una regla etiquete como mágico.",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "EFECTOS SIMULTÁNEOS",
+    "category": "General",
+    "description": "Si ocurren dos o más cosas a la vez en un turno, la persona\n(jugador o DM) de la partida cuyo turno esté en marcha\ndecidirá el orden en el que ocurren esas cosas. Por ejemplo,\nsi dos efectos ocurren al principio del turno del personaje\nde un jugador, el jugador decidirá qué efecto ocurre\nprimero.",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "EMANACIÓN",
+    "category": "Área de efecto",
+    "description": "Una emanación es un área de efecto que se extiende en\nlíneas rectas desde una criatura o un objeto en todas las\ndirecciones. El efecto que crea una emanación especifica\nla distancia que abarca.\nUna emanación se mueve con la criatura o el objeto que\nsea su origen, salvo que se trate de un efecto instantáneo\no estático.\nEl origen de una emanación (criatura u objeto) no se\nincluye en el área de efecto, salvo que su creador decida\nlo contrario.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ENEMIGO",
+    "category": "General",
+    "description": "Una criatura es tu enemiga si se opone a ti en combate,\nsi tiene intención de perjudicarte o si las reglas o tu DM\nla designan como tal.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ENSORDECIDO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de ensordecido, experimentarás\nel siguiente efecto:\nNo puedes oír. No puedes oír y fallas automáticamente\ncualquier prueba de característica que requiera el oído.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ENTRENAMIENTO CON ARMADURAS",
+    "category": "General",
+    "description": "El entrenamiento con armaduras te permite utilizar una\narmadura de una determinada categoría sin los siguientes\ninconvenientes. Si llevas una armadura ligera, media\no pesada, pero no te has entrenado con ella, tendrás\ndesventaja en cualquier prueba con d20 que implique\nla Fuerza o la Destreza y no podrás lanzar conjuros.\nSi embrazas un escudo, pero no te has entrenado con él,\nno obtendrás su bonificador a la CA. Consulta también\n“Desventaja” y el capítulo 6 (“Armaduras”).",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ENVENENADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de envenenado, experimentarás\nel siguiente efecto:\nPruebas de característica y ataques afectados. Tienes\ndesventaja en las tiradas de ataque y las pruebas de\ncaracterística.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ESCONDERSE",
+    "category": "Acción",
+    "description": "Con la acción de esconderse, tratarás de ocultarte.\nPara ello, debes superar una prueba de Destreza (Sigilo)\ncon CD 15 mientras estás en una zona muy oscura o detrás\nde una cobertura tres cuartos o completa, y deberás estar\nfuera de la línea de visión de cualquier enemigo; si puedes\nver a una criatura, sabrás si te puede ver o no.\nSi la superas, tendrás el estado de invisible mientras\npermanezcas oculto. Anota el resultado de tu prueba, que\nes la CD para que una criatura te detecte con una prueba\nde Sabiduría (Percepción).\nDejas de estar oculto inmediatamente después de que\nocurra algo de lo siguiente: haces un ruido más alto que\nun susurro; un enemigo te detecta; haces una tirada de\nataque, o lanzas un conjuro con un componente verbal.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ESFERA",
+    "category": "Área de efecto",
+    "description": "Una esfera es un área de efecto que se extiende en líneas\nrectas desde un punto de origen hacia fuera en todas\nlas direcciones. El efecto que crea una esfera especifica\nla distancia que se extiende como el radio de la esfera.\nEl punto de origen de una esfera está incluido en su área\nde efecto.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ESPACIO OCUPADO",
+    "category": "General",
+    "description": "Un espacio se considera ocupado si una criatura se\nencuentra en él o si está completamente lleno de objetos.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ESPACIO SIN OCUPAR",
+    "category": "General",
+    "description": "Un espacio está sin ocupar si no hay criaturas en él y si no\nestá completamente lleno de objetos.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ESQUIVAR",
+    "category": "Acción",
+    "description": "Si llevas a cabo la acción de esquivar, obtienes los\nsiguientes beneficios: hasta el principio de tu siguiente\nturno, las tiradas de ataque contra ti tendrán desventaja\nsi puedes ver al atacante y tendrás ventaja en las tiradas\nde salvación de Destreza.\nPerderás estos beneficios si tienes el estado de incapacitado\no si tu velocidad es 0.",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ESTABLE",
+    "category": "General",
+    "description": "Una criatura está estable si tiene 0 puntos de golpe\npero no debe hacer tiradas de salvación contra muerte.\nConsulta también el capítulo 1 (“Daño y curación”).",
+    "pdfPage": 369,
+    "printedPage": 367,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ESTADO",
+    "category": "General",
+    "description": "Un estado es una situación temporal que experimenta\nuna criatura en la partida. La definición de un estado\nindica cómo afecta a su destinatario y diversas reglas\nexplican cómo poner fin a un estado. El glosario define\nlos siguientes estados:\nAgarrado\nCegado\nIncapacitado\nApresado\nDerribado\nInconsciente\nAsustado\nEnsordecido\nInvisible\nAturdido\nEnvenenado\nParalizado\nCansancio\nHechizado\nPetrificado\nUn estado no se acumula: el destinatario lo tiene o no lo\ntiene. El estado de cansancio es una excepción a esta regla.\nConsulta también el capítulo 1 (“Estados”).",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ESTUDIAR",
+    "category": "Acción",
+    "description": "Cuando llevas a cabo la acción de estudiar, haces una prueba\nde Inteligencia para explorar tus recuerdos o examinar un\nlibro, una pista u otra fuente de conocimiento y recordar\nalgún dato importante.\nLa tabla “Áreas de conocimiento” sugiere qué habilidades\nse pueden aplicar a diversos ámbitos.",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ÁREAS DE CONOCIMIENTO",
+    "category": "General",
+    "description": "Habilidad | Áreas\nConocimiento arcano | Conjuros, objetos mágicos, símbolos sobrenaturales, tradiciones mágicas, planos de existencia y determinadas criaturas (aberraciones, autómatas, elementales, feéricos y monstruosidades)\nHistoria | Acontecimientos y personajes históricos, civilizaciones antiguas, guerras y determinadas criaturas (gigantes y humanoides)\nInvestigación | Trampas, códigos, enigmas y artilugios\nNaturaleza | Terreno, flora, clima y determinadas criaturas (bestias, cienos, dragones y plantas)\nReligión | Deidades, jerarquías religiosas y ritos, símbolos sagrados, sectas y determinadas criaturas (celestiales, infernales y muertos vivientes)",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "FUEGO",
+    "category": "Peligro",
+    "description": "Una criatura u objeto que arda sufre 1d4 de daño de fuego\nal principio de cada uno de sus turnos. Como acción,\npuedes apagar el fuego que te afecta adoptando el estado\nde derribado y rodando por el suelo. El fuego también se\nextingue si se empapa, se sumerge o se ahoga.",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "HABILIDAD",
+    "category": "General",
+    "description": "Una habilidad es un área de especialización asociada\na una prueba de característica. Si eres competente en una\nhabilidad, puedes sumar tu bonificador por competencia\ncuando hagas una prueba de característica asociada a esa\nhabilidad. Consulta también el capítulo 1 (“Competencia”).",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "HECHIZADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de hechizado, experimentarás\nlos siguientes efectos:\nNo puedes dañar a quien te haya hechizado. No puedes\natacar ni elegir como objetivo de efectos dañinos o mágicos\na quien te haya hechizado.\nVentaja social. Quien te haya hechizado tiene ventaja en\nlas pruebas de característica para interactuar socialmente\ncontigo.",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "HOSTIL",
+    "category": "Actitud",
+    "description": "Una criatura hostil te ve con malos ojos. Tienes desventaja\nen las pruebas de característica para influir en una criatura\nhostil. Consulta también “Influir”.",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ILUSIONES",
+    "category": "General",
+    "description": "Los conjuros y otros efectos a veces crean ilusiones\nmágicas. Estos efectos definen lo que hace la ilusión\ny con qué sentidos o facultades mentales juega.\nSi una ilusión se manifiesta en un lugar, será insustancial\ne ingrávida, aunque parecerá que le afecta el entorno como\nsi la ilusión fuera real, salvo que el efecto que la haya creado\nespecifique algo distinto. Por ejemplo, una ilusión visual de\nuna criatura proyecta sombras y reflejos, y el viento parece\nafectar a la criatura ilusoria. De manera similar, una ilusión\naudible resuena en un lugar con eco.",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "INCAPACITADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de incapacitado, experimentarás\nlos siguientes efectos:\nInactivo. No puedes llevar a cabo ninguna acción, acción\nadicional o reacción.\nPérdida de concentración. Pierdes la concentración.\nMudo. No puedes hablar.\nSorprendido. Si tienes el estado de incapacitado cuando\ntiras iniciativa, tendrás desventaja en la tirada.",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "INCONSCIENTE",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de inconsciente, experimentarás\nlos siguientes efectos:\nInerte. Tienes los estados de derribado e incapacitado\ny sueltas lo que estés sujetando. Cuando concluya este\nestado, permanecerás derribado.\nVelocidad 0. Tu velocidad es 0 y no puede aumentar.\nAtaques afectados. Las tiradas de ataque contra ti tienen\nventaja.\nTiradas de salvación afectadas. Fallas automáticamente\nlas tiradas de salvación de Fuerza y Destreza.\nCríticos automáticos. Cualquier tirada de ataque que te\nacierte es un crítico si el atacante está a 1,5 m o menos de ti.\nIgnorante. No eres consciente de tu entorno.",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "INDIFERENTE",
+    "category": "Actitud",
+    "description": "Una criatura indiferente no tiene interés ni en ayudarte\nni en obstaculizarte. Esta es la actitud por defecto de un\nmonstruo. Consulta también “Influir”.",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "INFLUIR",
+    "category": "Acción",
+    "description": "Con la acción de influir, instas a un monstruo a que haga\nalgo. Describe o interpreta cómo te comunicas con ese\nmonstruo. ¿Tratas de engañarlo, intimidarlo, entretenerlo\no persuadirlo disimuladamente? Tu DM determinará\nsi el monstruo muestra disposición (voluntario) o no\n(no voluntario), o si está indeciso por tu interacción;\nconforme a esto, establecerá si se necesita o no hacer una\nprueba de característica, como se explica a continuación.\nVoluntario. Si tu afán concuerda con los deseos\ndel monstruo, no será necesaria ninguna prueba de\ncaracterística: el monstruo cumplirá con lo que le pidas\nde la forma que estime pertinente.\nNo voluntario. Si tu deseo resulta aversivo para el\nmonstruo u opuesto a su alineamiento, no será necesaria\nninguna prueba de característica: no lo aceptará.\nIndeciso. Si instas al monstruo a que haga algo sobre\nlo que siente dudas, deberás realizar una prueba de\ncaracterística, en la que influirá la actitud del monstruo:\nindiferente, amistosa u hostil, todas ellas definidas en\neste glosario. La tabla “Pruebas de influencia” sugiere qué\nprueba de característica se debe hacer en función de cómo\ninteractúas con el monstruo. Tu DM elegirá la prueba,\nque tendrá por defecto una CD igual a 15 o la puntuación\nde Inteligencia del monstruo, la que sea más alta.\nSi la superas, el monstruo hará lo que le pides. Si la fallas,\ndeberás esperar 24 horas (o el plazo que establezca\ntu DM) antes de volver a insistir.",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PRUEBAS DE INFLUENCIA",
+    "category": "General",
+    "description": "Prueba de característica | Interacción\nCarisma (Engaño) | Engañar a un monstruo que te entienda.\nCarisma (Interpretación) | Entretener a un monstruo.\nCarisma (Intimidación) | Intimidar a un monstruo.\nCarisma (Persuasión) | Persuadir a un monstruo que te entienda.\nSabiduría (Trato con animales) | Convencer poco a poco a una bestia o monstruosidad.",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "INICIATIVA",
+    "category": "General",
+    "description": "La iniciativa determina el orden de los turnos durante\nel combate. Las reglas del combate del capítulo 1 explican\ncómo tirar iniciativa.\nA veces, los DM pueden hacer que los combatientes\nutilicen sus puntuaciones de iniciativa en vez de tirar\niniciativa. Tu puntuación de iniciativa es igual a 10 más tu\nmodificador por Destreza. Si tienes ventaja en las tiradas\nde iniciativa, aumenta tu puntuación de iniciativa en 5.\nSi, por el contrario, tienes desventaja en estas tiradas,\nreduce esa puntuación en 5. Consulta también el capítulo 1\n(“Combate”).",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "INMUNIDAD",
+    "category": "General",
+    "description": "Si tienes inmunidad a un tipo de daño o un estado,\nno te afectará de ningún modo.",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "INSPIRACIÓN HEROICA",
+    "category": "General",
+    "description": "Si tienes inspiración heroica (como personaje jugador),\npuedes gastarla para volver a tirar cualquier dado\ninmediatamente después de lanzarlo; si lo haces, deberás\nutilizar el nuevo resultado.\nSi obtienes inspiración heroica y ya tenías, se desperdiciará\nsalvo que se la concedas a un personaje jugador que\ncarezca de ella.",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "INVISIBLE",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de invisible, experimentarás\nlos siguientes efectos:\nSorpresa. Si tienes el estado de invisible cuando tiras\niniciativa, tendrás ventaja en la tirada.\nOculto. No te afecta ningún efecto que requiera ver\na su objetivo, salvo que el creador del efecto pueda verte\nde alguna forma. Cualquier equipo que vistas o lleves\ncontigo también se oculta.\nAtaques afectados. Las tiradas de ataque contra ti tienen\ndesventaja y tus tiradas de ataque tienen ventaja. Si una\ncriatura puede verte de alguna forma, no obtienes este\nbeneficio contra esa criatura.",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "LEVITAR",
+    "category": "General",
+    "description": "Algunas criaturas pueden levitar, como se indica en sus\nperfiles, y algunos conjuros y otros efectos otorgan la\ncapacidad de levitar. Si levitas al volar, evitarás caerte\nen determinadas circunstancias. Consulta también “Volar”.",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "LIGERAMENTE OSCURO",
+    "category": "General",
+    "description": "Tienes desventaja en las pruebas de Sabiduría (Percepción)\npara ver algo en un espacio ligeramente oscuro. Consulta\ntambién “Luz tenue” y el capítulo 1 (“Exploración”).",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "LÍNEA",
+    "category": "Área de efecto",
+    "description": "Una línea es un área de efecto que se extiende desde un\npunto de origen en una trayectoria recta a lo largo de\nsu extensión y cubre un área delimitada por su ancho.\nEl efecto que crea una línea especifica su longitud\ny anchura.\nEl punto de origen de una línea no está incluido en el\nárea de efecto, salvo que su creador decida lo contrario.",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "LUZ BRILLANTE",
+    "category": "General",
+    "description": "La luz brillante es la iluminación normal. Consulta también\nel capítulo 1 (“Exploración”).",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "LUZ TENUE",
+    "category": "General",
+    "description": "Una zona con luz tenue está ligeramente oscura.\nConsulta también “Ligeramente oscuro” y el capítulo 1\n(“Exploración”).",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "MAGIA",
+    "category": "Acción",
+    "description": "Cuando llevas a cabo la acción de magia, puedes lanzar\nun conjuro que tenga un tiempo de lanzamiento de una\nacción o usar un rasgo u objeto mágico que requiera una\nacción de magia para activarlo.\nSi lanzas un conjuro que tiene un tiempo de lanzamiento\nde 1 minuto o superior, deberás realizar la acción de\nmagia en cada turno de ese lanzamiento y mantener\nla concentración mientras lo haces. Si pierdes la\nconcentración, el conjuro fallará, pero no gastarás un\nespacio de conjuro. Consulta también “Concentración”.",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "MALDICIONES",
+    "category": "General",
+    "description": "Algunos efectos del juego maldicen a una criatura o un\nobjeto. El efecto que impone la maldición define lo que\nesta hace. Las maldiciones se pueden eliminar con los\nconjuros levantar maldición y restablecimiento mayor u otros\nefectos mágicos que especifiquen esa capacidad.",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "MALTRECHO",
+    "category": "General",
+    "description": "Una criatura está maltrecha cuando le quedan la mitad\nde sus puntos de golpe o menos.",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "MONSTRUO",
+    "category": "General",
+    "description": "Un monstruo es una criatura que controla el DM, aunque\ndicha criatura sea bondadosa. Consulta también “Criatura”\ny “PNJ”.",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "MUERTO",
+    "category": "General",
+    "description": "Una criatura muerta no tiene puntos de golpe ni puede\nrecuperarlos salvo que antes la revivan con magia, como\nlos conjuros alzar a los muertos o revivir. Cuando se lanza\nun conjuro de ese estilo, el espíritu sabe quién lo lanza\ny puede rechazarlo. El espíritu de una criatura muerta\nabandona su cuerpo y parte a los Planos Exteriores,\npor lo que revivir a la criatura requiere llamar a su\nespíritu para que regrese.\nSi la criatura vuelve a la vida, el efecto que la revive\ndetermina sus puntos de golpe actuales. Salvo que indique\nlo contrario, la criatura vuelve a la vida con cualquier\nestado, enfermedad mágica o maldición que la afectara en\nel momento de su muerte si las duraciones de esos efectos\nno han concluido. Si la criatura murió con algún nivel\nde cansancio, regresará con 1 nivel menos. Si la criatura\nestaba sintonizada con uno o varios objetos mágicos,\ndejará de estarlo.",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "MUY OSCURO",
+    "category": "General",
+    "description": "Tienes el estado de cegado cuando tratas de ver algo\nen un espacio muy oscuro. Consulta también “Cegado”,\n“Oscuridad” y el capítulo 1 (“Exploración”).",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "NADAR",
+    "category": "General",
+    "description": "Cuando nadas, cada metro de movimiento te cuesta 1 m\nadicional (2 m adicionales en terreno difícil). Ignoras este\ncoste adicional si tienes una velocidad nadando y la usas\npara nadar. Si tu DM lo cree conveniente, para recorrer\ncualquier distancia por aguas revueltas podría tener que\nsuperarse una prueba de Fuerza (Atletismo) con CD 15.",
+    "pdfPage": 372,
+    "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "NOQUEAR A UNA CRIATURA",
+    "category": "General",
+    "description": "Si fueses a reducir a 0 los puntos de golpe de una criatura\ncon un ataque cuerpo a cuerpo, puedes optar por dejarla\ncon 1 punto de golpe. En tal caso, la criatura tendrá el\nestado de inconsciente y comenzará un descanso corto.\nLa criatura permanecerá inconsciente hasta que\nrecupere algún punto de golpe o hasta que alguien utilice\nuna acción para administrarle primeros auxilios, para lo\nque deberá superar una prueba de Sabiduría (Medicina)\ncon CD 10.",
+    "pdfPage": 373,
+    "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "OBJETIVO",
+    "category": "General",
+    "description": "Un objetivo es la criatura o el objeto al que una tirada de\nataque hace objetivo, al que un efecto obliga a hacer una\ntirada de salvación o al que se selecciona para recibir los\nefectos de un conjuro u otro fenómeno.",
+    "pdfPage": 373,
+    "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "OBJETO",
+    "category": "General",
+    "description": "Un objeto es una cosa individual y sin vida. Las cosas\ncompuestas, como los edificios, constan de más de un\nobjeto. Consulta también “Romper objetos”.",
+    "pdfPage": 373,
+    "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "OSCURIDAD",
+    "category": "General",
+    "description": "Una zona de oscuridad está muy oscura. Consulta también\n“Muy oscuro” y el capítulo 1 (“Exploración”).",
+    "pdfPage": 373,
+    "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PARALIZADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de paralizado, experimentarás\nlos siguientes efectos:\nIncapacitado. Tienes el estado de incapacitado.\nVelocidad 0. Tu velocidad es 0 y no puede aumentar.\nTiradas de salvación afectadas. Fallas automáticamente\nlas tiradas de salvación de Fuerza y Destreza.\nAtaques afectados. Las tiradas de ataque contra ti tienen\nventaja.\nCríticos automáticos. Cualquier tirada de ataque que te\nacierte es un crítico si el atacante está a 1,5 m o menos de ti.",
+    "pdfPage": 373,
+    "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PELIGRO",
+    "category": "General",
+    "description": "Un peligro es una situación contextual comprometida.\nConsulta también “Asfixia”, “Caídas”, “Deshidratación”,\n“Desnutrición” y “Fuego”.",
+    "pdfPage": 373,
+    "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PERCEPCIÓN PASIVA",
+    "category": "General",
+    "description": "La Percepción pasiva es una puntuación que refleja\nla atención general de una criatura al entorno. El DM\nusa esta puntuación para determinar si una criatura se\npercata de algo sin tener que realizar adrede una prueba\nde Sabiduría (Percepción).\nLa Percepción pasiva de una criatura es igual a 10 más\nsu bonificador a las pruebas de Sabiduría (Percepción).\nSi la criatura tiene ventaja en estas pruebas, aumenta la\npuntuación en 5. Si la criatura tiene desventaja en ellas,\nreduce la puntuación en 5. Por ejemplo, un personaje\nde nivel 1 con una Sabiduría de 15 y competencia en\nPercepción tiene una Percepción pasiva de 14 (10 + 2 + 2).\nSi ese personaje tiene ventaja en las pruebas de Sabiduría\n(Percepción), la puntuación será de 19.",
+    "pdfPage": 373,
+    "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PERFIL",
+    "category": "General",
+    "description": "Un perfil contiene las estadísticas de juego de un\nmonstruo. Cada perfil incluye la siguiente información\ntras el nombre del monstruo.\nTamaño. Un monstruo puede ser Diminuto, Pequeño,\nMediano, Grande, Enorme o Gargantuesco. Consulta\ntambién “Tamaño”.\nTipo de criatura. Este apartado indica la familia de\nseres a la que pertenece un monstruo, junto con cualquier\netiqueta descriptiva. Consulta también “Tipo de criatura”.\nAlineamiento. Se sugiere un alineamiento para el\nmonstruo, aunque cada DM determina su alineamiento\nreal. Consulta también “Alineamiento”.\nCA, iniciativa y PG. Estos apartados muestran la clase\nde armadura, la iniciativa y los puntos de golpe del\nmonstruo, que se explican en el capítulo 1. Después de los\npuntos de golpe aparecen los dados de puntos de golpe del\nmonstruo entre paréntesis, junto con la contribución de su\nConstitución a sus puntos de golpe, si corresponde. Tras el\nmodificador a la iniciativa se encuentra la puntuación de\niniciativa. Algunas criaturas creadas mediante magia no\ntienen información sobre los dados de golpe y la iniciativa.\nVelocidad. Aquí se indica la velocidad del monstruo,\njunto con cualquier velocidad especial que tenga. Consulta\ntambién “Velocidad excavando”, “Velocidad nadando”,\n“Velocidad trepando” y “Velocidad volando”.\nPuntuaciones de característica. Una tabla muestra las\npuntuaciones de característica, los modificadores y los\nmodificadores a las tiradas de salvación del monstruo,\ntodos ellos explicados en el capítulo 1.\nHabilidades. Este apartado indica las competencias\nen habilidades del monstruo, si es que tiene alguna.\nConsulta también el capítulo 1 (“Competencia”).\n\nResistencias y vulnerabilidades. Estos apartados\nrecogen las resistencias y vulnerabilidades del monstruo,\nsi es que tiene alguna. Consulta también “Resistencia”\ny “Vulnerabilidad”.\nInmunidades. Este apartado recoge las inmunidades\na daños y a estados del monstruo, si es que tiene alguna.\nConsulta también “Inmunidad”.\nEquipo. Si el monstruo tiene algún equipo que se puede\nentregar o recuperar, aparecerá en este apartado.\nSentidos. Este apartado incluye los sentidos especiales\n(como la visión en la oscuridad) y la Percepción pasiva\ndel monstruo. Consulta también “Percepción pasiva”.\nIdiomas. En este apartado aparecen los idiomas que\nsabe el monstruo.\nVD. El valor de desafío resume la amenaza que supone\nun monstruo y se explica en el Manual de monstruos.\nLuego se muestran los puntos de experiencia que los\npersonajes reciben por derrotar a un monstruo y su\nbonificador por competencia. Algunas criaturas creadas\nmediante magia no tienen VD. Consulta también “Puntos\nde experiencia” y “Valor de desafío”.\nAtributos. Los atributos del monstruo (si tiene) son\ncapacidades que están activas todo el tiempo o en\ndeterminadas situaciones.\nAcciones. El monstruo puede llevar a cabo estas\nacciones además de las detalladas en este glosario.\nConsulta también el capítulo 1 (“Acciones”).\nAcciones adicionales. Si el monstruo tiene opciones\ncomo acción adicional, aparecerán en este apartado.\nReacciones. Si el monstruo puede llevar a cabo alguna\nreacción especial, aparecerá en esta sección.\nNotación de ataques. Los apartados de los ataques de un\nmonstruo comienzan identificando si el ataque es cuerpo\na cuerpo o a distancia. Luego indican el bonificador a la\ntirada de ataque, su alcance y lo que ocurre si acierta.\nUn ataque se lleva a cabo contra un objetivo salvo que\neste apartado diga lo contrario.\nNotación de tiradas de salvación.\nSi un efecto obliga\na realizar una tirada de salvación, el apartado del efecto\ncomienza identificando el tipo de tirada de salvación\nnecesaria. Luego indica la CD de la tirada de salvación\ny describe qué criaturas deben realizar la tirada y lo que\nocurre si la fallan o la superan.\nNotación del daño. Los perfiles suelen proporcionar un\nnúmero estático y la tirada de dados usada con cada efecto\nde daño. Por ejemplo, un ataque podría causar 4 (1d4 +2)\nde daño si acierta. Cada DM determina si se emplea el\nnúmero estático o la tirada de dados que aparece entre\nparéntesis: no se usan los dos.",
+    "pdfPage": 373,
+    "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PERICIA",
+    "category": "General",
+    "description": "La pericia es un rasgo que mejora el uso de tu competencia\nen una habilidad. Cuando hagas una prueba de característica\ncon una competencia en una habilidad en la que tengas\npericia, tu bonificador por competencia se duplica en esa\nprueba salvo que otro rasgo lo duplique.\nSi ganas pericia, la ganas en una habilidad en la que\ntengas competencia. No puedes tener pericia más de una\nvez en la misma habilidad.\nConsulta también el capítulo 1 (“Competencia”).",
+    "pdfPage": 374,
+    "printedPage": 372,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PERSONAJE JUGADOR",
+    "category": "General",
+    "description": "Un personaje jugador (también llamado personaje de\nun jugador) es un personaje que controla un jugador.\nConsulta también el capítulo 2.",
+    "pdfPage": 374,
+    "printedPage": 372,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PERSONAJE NO JUGADOR",
+    "category": "General",
+    "description": "Un personaje no jugador (PNJ) es un monstruo que\ntiene un nombre propio y una personalidad particular.\nConsulta también “Monstruo”.",
+    "pdfPage": 374,
+    "printedPage": 372,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PETRIFICADO",
+    "category": "Estado",
+    "description": "Mientras tengas el estado de petrificado, experimentarás\nlos siguientes efectos:\nTransformación en sustancia inanimada. Te transformas, junto con cualquier objeto no mágico que vistas\no lleves contigo, en una sustancia sólida e inanimada\n(normalmente piedra). Tu peso se multiplica por diez\ny dejas de envejecer.\nIncapacitado. Tienes el estado de incapacitado.\nVelocidad 0. Tu velocidad es 0 y no puede aumentar.\nAtaques afectados. Las tiradas de ataque contra ti tienen\nventaja.\nTiradas de salvación afectadas. Fallas automáticamente\nlas tiradas de salvación de Fuerza y Destreza.\nResistencia al daño. Tienes resistencia a todo el daño.\nInmunidad al veneno. Tienes inmunidad al estado de\nenvenenado.",
+    "pdfPage": 374,
+    "printedPage": 372,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "POSESIÓN",
+    "category": "General",
+    "description": "Algunos efectos hacen que una criatura sea poseída por\notra criatura o entidad. Un efecto de posesión define cómo\nfunciona la misma. Una posesión se puede prevenir con\nel conjuro protección contra el bien y el mal y deshacer con\nel conjuro disipar el bien y el mal.",
+    "pdfPage": 374,
+    "printedPage": 372,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PREPARAR UNA ACCIÓN",
+    "category": "Acción",
+    "description": "Preparas una acción para esperar a que ocurra algo\nconcreto antes de actuar. Para ello, llevas a cabo esta\nacción en tu turno, lo que te permitirá actuar usando\ntu reacción antes del principio de tu siguiente turno.\nEn primer lugar, decide qué circunstancia (que puedas\npercibir) activará tu reacción. A continuación, elige la\nacción que realizarás en respuesta a dicha circunstancia.\nComo alternativa, en vez de una acción puedes decidir\nmoverte hasta tu velocidad. Por ejemplo: “Si los sectarios\npisan la trampilla, tiraré de la palanca que la abre”\no “si el zombi se acerca, me alejaré de él”.\nCuando se produzca la circunstancia de activación,\npodrás elegir entre usar tu reacción cuando dicha\ncircunstancia termine o ignorarla.\nCuando te preparas para lanzar un conjuro, lo lanzas\ncon normalidad (gastando cualquier recurso empleado\npara lanzarlo), pero retienes su energía y la liberas\nusando tu reacción cuando se produzca la circunstancia\nque la desencadene. Solo los conjuros cuyo tiempo de\n\nlanzamiento sea de una acción pueden formar parte de\nuna acción preparada. Además, el esfuerzo que implica\ncontener las energías mágicas exige concentración,\nque podrás mantener hasta el principio de tu siguiente\nturno. Si pierdes la concentración, el conjuro se disipará\nsin causar efecto alguno.",
+    "pdfPage": 374,
+    "printedPage": 372,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PRUEBA CON D20",
+    "category": "General",
+    "description": "Las pruebas con d20 abarcan las tres principales tiradas\ncon el d20 en el juego: las pruebas de característica,\nlas tiradas de ataque y las tiradas de salvación. Si algo\nen el juego afecta a las pruebas con d20, afecta a estas\ntres tiradas. Cada DM decide si una prueba con d20 está\njustificada en una circunstancia determinada. Consulta\ntambién el capítulo 1 (“Las pruebas con d20”).",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PRUEBA DE CARACTERÍSTICA",
+    "category": "General",
+    "description": "Una prueba de característica es una prueba con d20\nque representa el uso de una de las seis características\n(o de una habilidad asociada a una característica)\npara superar un desafío. Consulta también el capítulo 1\n(“Las pruebas con d20” y “Competencia”).",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PUNTOS DE EXPERIENCIA",
+    "category": "General",
+    "description": "A medida que los personajes superan desafíos y completan\naventuras, ganan puntos de experiencia (PX) otorgados\npor su Dungeon Master. Cuando el total de PX de un\npersonaje supera ciertos umbrales, el personaje sube de\nnivel. La Guía del Dungeon Master explica cómo se otorgan\nlos PX. Consulta también el capítulo 2 (“Progresión de\nniveles”).",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PUNTOS DE GOLPE",
+    "category": "General",
+    "description": "Los puntos de golpe (pg) miden lo difícil que resulta\nmatar o destruir a una criatura u objeto. El daño reduce\nlos puntos de golpe y la curación los restaura. No puedes\ntener más puntos de golpe que tus puntos de golpe\nmáximos ni puedes tener menos de 0. Consulta también\n“Romper objetos” y el capítulo 1 (“Daño y curación”).",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PUNTOS DE GOLPE TEMPORALES",
+    "category": "General",
+    "description": "Algunos efectos otorgan puntos de golpe temporales,\nque evitan la pérdida de puntos de golpe reales.\nConsulta también el capítulo 1 (“Daño y curación”).\nPUNTUACIÓN DE CARACTERÍSTICA",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PUNTUACIÓN DE CARACTERÍSTICA Y MODIFICADOR",
+    "category": "General",
+    "description": "Las criaturas tienen seis puntuaciones de característica:\nFuerza, Destreza, Constitución, Inteligencia, Sabiduría\ny Carisma, que tienen su modificador correspondiente.\nSuma el modificador cuando hagas una prueba con d20\ncon la característica que corresponda o cuando una\nregla te lo pida. Consulta también el capítulo 1 (“Las seis\ncaracterísticas”).",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "REACCIÓN",
+    "category": "General",
+    "description": "Una reacción es una acción especial que se realiza en\nrespuesta a un suceso definido en su descripción. Puedes\nllevar a cabo una reacción en el turno de otra criatura,\ny si es en tu turno, puedes hacerlo incluso si también\nrealizas una acción, una acción adicional o ambas. Cuando\nlleves a cabo una reacción, ya no podrás volver a hacerlo\nhasta el principio de tu siguiente turno. El ataque de\noportunidad es una reacción disponible para todas las\ncriaturas. Consulta también “Ataques de oportunidad”\ny el capítulo 1 (“Acciones”).",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "REDONDEAR HACIA ABAJO",
+    "category": "General",
+    "description": "Siempre que tengas que dividir o multiplicar un número\nen la partida, redondéalo hacia abajo si no es entero,\nincluso cuando la parte decimal sea 5 o más. Algunas\nreglas plantean excepciones e indican que redondees\nhacia arriba.",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "RESISTENCIA",
+    "category": "General",
+    "description": "Si tienes resistencia a un tipo de daño, el daño de ese tipo\nse reduce a la mitad contra ti (redondeando hacia abajo).\nLa resistencia se aplica solo una vez a un efecto de daño.\nConsulta también el capítulo 1 (“Daño y curación”).",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "RITUAL",
+    "category": "General",
+    "description": "Si tienes preparado un conjuro marcado como “ritual”,\npuedes lanzarlo como un ritual. Lanzar un conjuro de\nforma ritual requiere 10 minutos más del tiempo normal,\npero, a cambio, no se gasta ningún espacio de conjuro.\nPor tanto, no se puede lanzar la versión ritual de un\nconjuro a un nivel superior al de este. Consulta también\nel capítulo 7.",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ROMPER OBJETOS",
+    "category": "General",
+    "description": "Los objetos pueden dañarse con ataques y algunos\nconjuros, conforme a las siguientes reglas. Si un objeto\nes extremadamente frágil, tu DM puede permitir que una\ncriatura lo rompa automáticamente con las acciones de\natacar o utilizar.\nClase de armadura. La tabla “Clase de armadura de\nobjetos” muestra las CA de varias sustancias.",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CLASE DE ARMADURA DE OBJETOS",
+    "category": "General",
+    "description": "CA | Sustancia\n11 | Tela, papel, cuerda\n13 | Cristal, vidrio, hielo\n15 | Madera\n17 | Piedra\n19 | Hierro, acero\n21 | Mithral\n23 | Adamantina\n\nPuntos de golpe. Un objeto se destruye cuando sus\npuntos de golpe se reducen a 0. La tabla “Puntos de\ngolpe de objetos” sugiere puntos de golpe para objetos\nfrágiles y resistentes de tamaño Grande o más pequeño.\nPara asignar puntos de golpe a un objeto Enorme\no Gargantuesco, divídelo en secciones Grandes o más\npequeñas y lleva la cuenta de cada una por separado.\nCada DM determina si destruir parte de un objeto hará\nque se desmorone por completo.",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PUNTOS DE GOLPE DE OBJETOS",
+    "category": "General",
+    "description": "Tamaño | Frágil | Resistente\nDiminuto (botella, cerradura) | 2 (1d4) | 5 (2d4)\nPequeño (cofre, laúd) | 3 (1d6) | 10 (3d6)\nMediano (barril, candelabro) | 4 (1d8) | 18 (4d8)\nGrande (carreta, mesa de comedor) | 5 (1d10) | 27 (5d10)\n\nTipos de daño y objetos. Los objetos tienen inmunidad\nal daño psíquico y de veneno. Cada DM puede decidir que\ndeterminados tipos de daño sean más o menos efectivos\ncontra un objeto. Por ejemplo, el daño contundente\nsirve para destrozar cosas a golpes, pero no para cortar.\nLos objetos de papel o tela pueden ser vulnerables al daño\nde fuego.\nUmbral de daño. Los objetos de gran tamaño, como\nlos muros de un castillo, suelen tener una resistencia\nmayor, lo que se representa mediante un umbral de daño.\nConsulta también “Umbral de daño”.\nSin puntuaciones de característica. Los objetos no\ntienen puntuaciones de característica, salvo que una\nregla les asigne puntuaciones. Al no tener puntuaciones\nde característica, los objetos no pueden hacer pruebas\nde característica y fallan todas las tiradas de salvación.",
+    "pdfPage": 376,
+    "printedPage": 374,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "SALTAR",
+    "category": "General",
+    "description": "Cuando saltas, puedes hacer un salto de longitud\n(horizontal) o un salto de altura (vertical). Consulta\ntambién “Salto de altura” y “Salto de longitud”.",
+    "pdfPage": 376,
+    "printedPage": 374,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "SALTO DE ALTURA",
+    "category": "General",
+    "description": "Cuando hagas un salto de altura, ascenderás una distancia\nde 90 cm + 30 cm × tu modificador por Fuerza (como\nmínimo 0 m) si te mueves al menos 3 m a pie antes de\nsaltar. Si saltas sin coger carrerilla, solo podrás ascender\nla mitad de esa distancia. En cualquier caso, cada metro\nque saltes te costará un metro de tu movimiento.\nMientras saltas, puedes estirar los brazos una distancia\nequivalente a la mitad de tu altura por encima de ti.\nDe esta forma, podrás alcanzar con las manos una\ndistancia igual a la de la altura del salto más una vez\ny media tu altura.",
+    "pdfPage": 376,
+    "printedPage": 374,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "SALTO DE LONGITUD",
+    "category": "General",
+    "description": "Cuando hagas un salto de longitud, avanzarás horizontalmente una distancia de hasta 30 cm × tu puntuación de\nFuerza si recorres al menos 3 m antes de saltar. Si saltas\nsin coger carrerilla, solo podrás recorrer la mitad de esa\ndistancia. En cualquier caso, cada metro que saltes te\ncostará 1 m de tu movimiento.\nSi aterrizas en terreno difícil, deberás superar una\nprueba de Destreza (Acrobacias) con CD 10 o tendrás\nel estado de derribado.\nLa regla de los saltos de longitud da por supuesto que\nla altura del salto no influye, como cuando se salta para\ncruzar un río o una grieta. Si tu DM lo cree conveniente,\ndeberás superar una prueba de Fuerza (Atletismo)\ncon CD 10 para superar un obstáculo de una altura\nno superior a la cuarta parte de la distancia del salto,\ncomo puede ser un seto o un muro bajo. De lo contrario,\nchocarás contra el obstáculo.",
+    "pdfPage": 376,
+    "printedPage": 374,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "SALVACIÓN",
+    "category": "General",
+    "description": "Salvación es otro nombre para referirse a una tirada\nde salvación. Consulta también “Tirada de salvación”.",
+    "pdfPage": 376,
+    "printedPage": 374,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "SENTIR VIBRACIONES",
+    "category": "General",
+    "description": "Una criatura con la capacidad de sentir vibraciones puede\nlocalizar criaturas y objetos en movimiento dentro de un\nalcance determinado, siempre y cuando la criatura que\npueda sentir vibraciones y cualquier cosa que detecte\nestén en contacto con la misma superficie (como el suelo,\nuna pared o un techo) o con el mismo líquido.\nSentir vibraciones no sirve para detectar criaturas\nu objetos en el aire y no cuenta como una forma de visión.",
+    "pdfPage": 376,
+    "printedPage": 374,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "SINTONIZACIÓN",
+    "category": "General",
+    "description": "Algunos objetos mágicos requieren que una criatura\nforme un vínculo llamado sintonización antes de usar sus\npropiedades mágicas. Una criatura no puede sintonizarse\ncon más de tres objetos mágicos a la vez. Consulta también\nel capítulo 6 (“Objetos mágicos”).",
+    "pdfPage": 376,
+    "printedPage": 374,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "SORPRESA",
+    "category": "General",
+    "description": "Si el comienzo de un combate pilla desprevenida a una\ncriatura, estará sorprendida, lo que le hará tener desventaja\nen su tirada de iniciativa. Consulta también el capítulo 1\n(“Combate”).",
+    "pdfPage": 377,
+    "printedPage": 375,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TAMAÑO",
+    "category": "General",
+    "description": "Cada criatura u objeto pertenece a una categoría de\ntamaño: Diminuto, Pequeño, Mediano, Grande, Enorme\no Gargantuesco. El tamaño de una criatura determina\nel espacio que ocupa en combate. El tamaño de un objeto\nafecta a sus puntos de golpe. Consulta también “Romper\nobjetos” y el capítulo 1 (“Combate”).",
+    "pdfPage": 377,
+    "printedPage": 375,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TELEPATÍA",
+    "category": "General",
+    "description": "La telepatía es una facultad mágica que permite a una\ncriatura comunicarse mentalmente con otra criatura\nque esté dentro del alcance indicado. Salvo que una regla\nindique algo distinto, no es necesario que la criatura\ncontactada tenga un idioma en común con el telépata para\nentender esta comunicación, pero deberá poder entender\nal menos un idioma o ejercer ella misma la telepatía para\npoder entenderse.\nUn telépata no necesita ver a la criatura contactada\ny puede comenzar o terminar la conexión telepática cuando\nquiera (no requiere acción). La conexión telepática no puede\niniciarse y se interrumpe de inmediato si el telépata o la\notra criatura tiene el estado de incapacitado. La conexión\ntelepática se interrumpe también si la criatura contactada\ndeja de estar al alcance del telépata o si el telépata contacta\ncon otra criatura a su alcance.\nLas criaturas sin telepatía pueden recibir mensajes\ntelepáticos, pero no pueden iniciar una conversación\ntelepática. En cuanto comienza una conversación\ntelepática, la criatura que no sea telépata podrá\ncomunicarse mentalmente con el telépata hasta que\nse interrumpa la conexión.",
+    "pdfPage": 377,
+    "printedPage": 375,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TELETRANSPORTE",
+    "category": "General",
+    "description": "El teletransporte es un tipo especial de transporte\nmágico. Si te teletransportas, desapareces y reapareces\nen otra parte al instante, sin atravesar el espacio entre\nmedias. Este transporte no gasta movimiento, salvo que\nuna regla diga lo contrario, y nunca provoca ataques de\noportunidad.\nCuando te teletransportas, todo el equipo que vistas\no lleves se teletransporta contigo. Si estás tocando a otra\ncriatura en el momento en el que te teletransportes,\nla criatura no se teletransportará contigo salvo que el\nefecto de teletransporte diga lo contrario.\nSi el lugar de destino del teletransporte está ocupado\npor otra criatura o bloqueado por un obstáculo sólido,\naparecerás en el espacio sin ocupar más cercano que elijas.\nLa descripción de un efecto de teletransporte indica\nsi debes ver el destino del teletransporte.",
+    "pdfPage": 377,
+    "printedPage": 375,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TERRENO DIFÍCIL",
+    "category": "General",
+    "description": "Si un espacio es terreno difícil, cada metro de movimiento\nen ese espacio cuesta 1 m adicional. Por ejemplo, si te mueves\n1,5 m por terreno difícil, te cuesta 3 m de movimiento.\nEl terreno difícil no es acumulativo; un espacio es terreno\ndifícil o no lo es.\nUn espacio es terreno difícil si contiene algo de lo\nsiguiente u otro elemento similar:\n+ una criatura que no sea Diminuta o aliada tuya;\n+ un mueble diseñado para criaturas de tu tamaño o superior;\n+ escombros, hielo, maleza o nieve espesa;\n+ líquido que llegue entre las espinillas y la cintura;\n+ una abertura estrecha en la que quepa una criatura cuyo\ntamaño sea una categoría inferior al tuyo;\n+ una pendiente de 20 grados o más.",
+    "pdfPage": 377,
+    "printedPage": 375,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TIPO DE CRIATURA",
+    "category": "General",
+    "description": "Todas las criaturas, incluidos los personajes de los\njugadores, tienen una etiqueta en las reglas que identifica\nsu tipo de criatura. La mayoría de los personajes de los\njugadores son de tipo humanoide. Estos son los tipos de\ncriaturas del juego:\nAberración\nDragón\nInfernal\nAutómata\nElemental\nMonstruosidad\nBestia\nFeérico\nMuerto viviente\nCelestial\nGigante\nPlanta\nCieno\nHumanoide\nEstos tipos no tienen reglas en sí mismos, pero hay reglas\ndel juego que afectan de manera distinta a criaturas de\nciertos tipos.",
+    "pdfPage": 377,
+    "printedPage": 375,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TIPOS DE DAÑO",
+    "category": "General",
+    "description": "Los ataques y otros efectos dañinos causan diferentes\ntipos de daño. Los tipos de daño no tienen reglas propias,\npero otras reglas, como la resistencia, dependen de ellos.\nLa tabla “Tipos de daño” plantea ejemplos para que cada\nDM sepa qué tipo puede asignar a los efectos nuevos.\n\nTipo | Ejemplos\nÁcido | Enzimas digestivas, líquidos corrosivos\nContundente | Aplastamientos, caídas, objetos romos\nCortante | Garras, objetos cortantes\nFrío | Agua gélida, ráfagas heladas\nFuego | Calor insoportable, llamas\nFuerza | Energía mágica pura\nNecrótico | Energía que absorbe la vida\nPerforante | Colmillos, objetos punzantes\nPsíquico | Energía que desgarra la mente\nRadiante | Energía sagrada, radiación abrasadora\nRelámpago | Electricidad\nTrueno | Sonido conmocionador\nVeneno | Gas tóxico, veneno",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TIRADA DE ATAQUE",
+    "category": "General",
+    "description": "Una tirada de ataque es una prueba con d20 que representa\nhacer un ataque con un arma, un ataque sin armas o un\nconjuro. Consulta también el capítulo 1 (“Las pruebas\ncon d20”).",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TIRADA DE DAÑO",
+    "category": "General",
+    "description": "Una tirada de daño es una tirada de dados a la que se\nle aplican los modificadores que correspondan y que\ncausa daño a un objetivo. Consulta también el capítulo 1\n(“Daño y curación”).",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TIRADA DE SALVACIÓN",
+    "category": "General",
+    "description": "Una tirada de salvación, o simplemente salvación,\nrepresenta un intento de evitar o resistir una amenaza.\nPor lo general, las tiradas de salvación solo se hacen\ncuando una regla lo requiere, pero puedes optar por no\nhacer la tirada para fallarla. El resultado de una tirada\nde salvación se describe en el efecto que la ha provocado.\nSi un objetivo debe hacer una tirada de salvación y carece\nde la puntuación de característica empleada en ella,\nla fallará automáticamente. Consulta también el capítulo 1\n(“Las pruebas con d20”).",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TIRADA DE SALVACIÓN CONTRA MUERTE",
+    "category": "General",
+    "description": "Si un personaje jugador comienza su turno con 0 puntos\nde golpe, deberá realizar una tirada de salvación contra\nmuerte (también llamada salvación contra muerte).\nConsulta también el capítulo 1 (“Daño y curación”).",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TREPAR",
+    "category": "General",
+    "description": "Cuando trepas, cada metro de movimiento te cuesta 1 m\nadicional (2 m adicionales en terreno difícil). Ignoras este\ncoste adicional si tienes una velocidad trepando y la usas\npara trepar.\nA discreción de cada DM, trepar por una superficie\nresbaladiza o con pocos agarres podría requerir superar\nuna prueba de Fuerza (Atletismo) con CD 15.",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "TRUCO",
+    "category": "General",
+    "description": "Un truco es un conjuro de nivel 0 que se lanza sin un\nespacio de conjuro. Consulta también el capítulo 7.",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "UMBRAL DE DAÑO",
+    "category": "General",
+    "description": "Una criatura u objeto que posea un umbral de daño tendrá\ninmunidad a todo el daño excepto si recibe una cantidad\nde daño procedente de un único ataque o efecto igual\no mayor que su umbral de daño, en cuyo caso sufrirá todo\nese daño. Cualquier daño que no iguale o supere el umbral\nde daño se considera superficial y no reduce los puntos de\ngolpe. Por ejemplo, si un objeto tiene un umbral de daño\nde 10, no sufrirá daño si se le causa 9 de daño, ya que no\nsupera el umbral. Si ese mismo objeto recibe 11 de daño,\nsufrirá todo ese daño.",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "UTILIZAR",
+    "category": "Acción",
+    "description": "Normalmente, interactúas con un objeto mientras haces\notra cosa, como cuando desenvainas una espada como\nparte de una acción de atacar. Si quieres utilizar un objeto\nque requiera una acción para ello, tendrás que llevar\na cabo la acción de utilizar.",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VALOR DE DESAFÍO",
+    "category": "General",
+    "description": "El valor de desafío (VD) resume la amenaza que supone un\nmonstruo para un grupo de cuatro personajes jugadores.\nCompara el VD del monstruo con el nivel de los personajes.\nSi el VD es superior, el monstruo seguramente suponga un\npeligro. Si el VD es inferior, el monstruo probablemente\nno sea una gran amenaza. No obstante, las circunstancias\ny la cantidad de personajes jugadores pueden alterar\nconsiderablemente lo peligroso que puede ser un monstruo\nen realidad. La Guía del Dungeon Master explica cómo\nusar el VD al planear posibles encuentros de combate.\nConsulta también “Perfil”.",
+    "pdfPage": 378,
+    "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VELOCIDAD",
+    "category": "General",
+    "description": "Las criaturas tienen una velocidad, que es la distancia\nen metros que pueden recorrer cuando se mueven en su\nturno. Consulta también “Arrastrarse”, “Nadar”, “Trepar”,\n“Saltar” y “Volar” y el capítulo 1 (“Combate”).\nVelocidades especiales. Algunas criaturas tienen\nvelocidades especiales, como una velocidad excavando,\nvelocidad nadando, velocidad trepando o velocidad volando,\ntodas ellas definidas en este glosario. Si tienes más de una\nvelocidad, elige cuál vas a usar al moverte. Podrás alternar\nentre las velocidades durante el movimiento. Cada vez\nque lo hagas, resta la distancia que ya te hayas movido a la\nnueva velocidad. Lo que quede será lo que aún te puedas\nmover. Si te quedan 0 metros o menos, no podrás usar la\nnueva velocidad durante el movimiento actual. Por ejemplo,\nsi tienes una velocidad caminando de 9 m y una velocidad\nvolando de 12 m, entonces podrías volar 3 m, caminar 3 m\ny levantar el vuelo para recorrer otros 6 m más.\nCambios en tus velocidades. Si un efecto aumenta o reduce\ntu velocidad durante un tiempo, cualquier velocidad especial\nque tengas aumentará o se reducirá en la misma cantidad\ndurante el mismo periodo de tiempo. Por ejemplo, si tu\nvelocidad se reduce a 0 y tienes una velocidad trepando,\ntu velocidad trepando también se reducirá a 0. De igual\nforma, si tu velocidad se reduce a la mitad y tienes una\nvelocidad volando, tu velocidad volando también se\nreducirá a la mitad.",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VELOCIDAD EXCAVANDO",
+    "category": "General",
+    "description": "Si una criatura tiene una velocidad excavando, puede\nusar esa velocidad para desplazarse a través de arena,\ntierra, lodo o hielo. No puede excavar a través de roca\nsólida a menos que tenga un atributo que se lo permita.\nConsulta también “Velocidad”.",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VELOCIDAD NADANDO",
+    "category": "General",
+    "description": "Una velocidad nadando sirve para nadar sin gastar el\nmovimiento adicional que normalmente se asocia a nadar.\nConsulta también “Nadar” y “Velocidad”.",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VELOCIDAD TREPANDO",
+    "category": "General",
+    "description": "Una velocidad trepando se puede utilizar en lugar de la\nvelocidad para recorrer una superficie vertical sin gastar\nel movimiento adicional que normalmente se asocia\na trepar. Consulta también “Trepar” y “Velocidad”.",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VELOCIDAD VOLANDO",
+    "category": "General",
+    "description": "Una velocidad volando sirve para viajar por el aire.\nMientras tengas una velocidad volando, podrás\npermanecer en el aire hasta que aterrices, caigas o mueras.\nConsulta también “Velocidad” y “Volar”.",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VENTAJA",
+    "category": "General",
+    "description": "Si tienes ventaja en una prueba con d20, tira 2d20\ny utiliza el resultado más alto. Una tirada no puede\nverse afectada por más de una ventaja, y una ventaja\ny una desventaja en la misma tirada se anulan entre sí.\nConsulta también el capítulo 1 (“Las pruebas con d20”).",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VISIÓN CIEGA",
+    "category": "General",
+    "description": "Si tienes visión ciega, puedes ver dentro de un alcance\ndeterminado sin recurrir a la vista. Dentro de ese alcance,\npuedes ver cualquier cosa que no esté tras una cobertura\ncompleta, incluso si tienes el estado de cegado o te\nencuentras en la oscuridad. Asimismo, en ese alcance\npuedes ver cosas que tengan el estado de invisibles.",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VISIÓN EN LA OSCURIDAD",
+    "category": "General",
+    "description": "Si tienes visión en la oscuridad dentro de un alcance\nespecífico, puedes ver con luz tenue como si hubiera luz\nbrillante y, en la oscuridad, como si hubiera luz tenue.\nEn esa oscuridad, solo disciernes los colores como tonos\nde gris. Consulta también el capítulo 1 (“Exploración”).",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VISIÓN VERDADERA",
+    "category": "General",
+    "description": "Si tienes visión verdadera, tu visión mejora dentro de un\nalcance especificado. En él, tu visión es capaz de atravesar\nlo siguiente:\nOscuridad. Puedes ver en la oscuridad normal y mágica.\nInvisibilidad. Puedes ver criaturas y objetos que tengan\nel estado de invisibles.\nIlusiones visuales. Las ilusiones visuales parecen\ntransparentes para ti y superas automáticamente las\ntiradas de salvación contra ellas.\nTransformaciones. Distingues la forma verdadera de\ncualquier criatura u objeto que veas y esté transformado\npor un efecto mágico.\nPlano Etéreo. Puedes ver en el Plano Etéreo. Consulta\ntambién el apéndice A (“Planos de transición”).",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VOLAR",
+    "category": "General",
+    "description": "Diversos efectos permiten que las criaturas vuelen.\nCuando vueles, te caerás si tienes los estados de derribado\no incapacitado o si tu velocidad volando se reduce a 0.\nPuedes permanecer en el aire en esas circunstancias si\ntienes la capacidad de levitar. Consulta también “Caídas”\ny “Velocidad volando”.",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VULNERABILIDAD",
+    "category": "General",
+    "description": "Si tienes vulnerabilidad a un tipo de daño, el daño de ese\ntipo se duplica contra ti. La vulnerabilidad se aplica solo\nuna vez a un efecto de daño. Consulta también el capítulo 1\n(“Daño y curación”).",
+    "pdfPage": 379,
+    "printedPage": 377,
+    "source": "Manual del Jugador 2024"
+  }
+]

@@ -21,10 +21,12 @@
   let monsterCrFilter = 'Todos';
   let monsterSearch = '';
   let spellSearch = '';
+  let rulesSearch = '';
+  let rulesCategoryFilter = 'Todas';
   let spellLevelFilter = 'Todos';
   let spellClassFilter = 'Todas';
   let spellSchoolFilter = 'Todas';
-  const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
+  const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas', 'Reglas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
   let syncInProgress = false;
@@ -746,7 +748,7 @@
   }
 
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Monstruos ordenados', 'Conjuros', 'Crear personaje'];
+  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Crear personaje'];
   type BuilderData = {
     name: string; player: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
@@ -1295,6 +1297,7 @@
   }
 
   import MONSTERS from './monsters.json';
+  import RULES from './rules.json';
 import SPELLS from './spells.json';
 
 
@@ -1321,6 +1324,11 @@ import SPELLS from './spells.json';
     (spellClassFilter === 'Todas' || spell.classes.includes(spellClassFilter.toLocaleLowerCase('es'))) &&
     (spellSchoolFilter === 'Todas' || spell.school === spellSchoolFilter) &&
     (!spellSearch.trim() || (spell.name + ' ' + spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es')))
+  );
+  const RULE_CATEGORIES = ['Todas', 'General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro'];
+  $: filteredRules = RULES.filter(rule =>
+    (rulesCategoryFilter === 'Todas' || rule.category === rulesCategoryFilter) &&
+    (!rulesSearch.trim() || (rule.name + ' ' + rule.description + ' ' + rule.category).toLocaleLowerCase('es').includes(rulesSearch.trim().toLocaleLowerCase('es')))
   );
 
   function persistCustomRolls() {
@@ -1947,6 +1955,28 @@ import SPELLS from './spells.json';
             {#if filteredSpells.length === 0}<p class="muted">No hay conjuros que coincidan con esos filtros.</p>{/if}
           </div>
         </section>
+      {:else if masterTab === 'Reglas'}
+        <section class="panel rules-panel">
+          <div class="section-heading"><h2>Reglas · Manual del Jugador 2024</h2><span class="count">{filteredRules.length} / {RULES.length}</span></div>
+          <p class="muted">Glosario del Apéndice C. Busca términos, acciones, condiciones y definiciones reglamentarias extraídas del manual del proyecto.</p>
+          <label class="rules-search">Buscar regla
+            <input type="search" bind:value={rulesSearch} placeholder="Ej. agarrado, cobertura, concentración..." />
+          </label>
+          <label class="rules-category-filter">Tipo de regla
+            <select bind:value={rulesCategoryFilter}>
+              {#each RULE_CATEGORIES as category}<option value={category}>{category === 'Todas' ? 'Todas las categorías' : category}</option>{/each}
+            </select>
+          </label>
+          <div class="rules-list">
+            {#each filteredRules as rule (rule.name)}
+              <details class="rule-card">
+                <summary><span class="rule-name">{rule.name}</span><span class="rule-category">{rule.category}</span><span class="rule-page">PDF {rule.pdfPage}</span></summary>
+                <div class="rule-details"><pre class="rule-description">{rule.description}</pre><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
+              </details>
+            {/each}
+            {#if filteredRules.length === 0}<p class="muted">No hay reglas que coincidan con la búsqueda.</p>{/if}
+          </div>
+        </section>
       {:else}
         <section class="panel monsters-panel">
           <div class="section-heading"><h2>Monster Manual · 2024</h2><span class="count">{filteredMonsters.length} / {MONSTERS.length} criaturas</span></div>
@@ -2038,6 +2068,28 @@ import SPELLS from './spells.json';
                 <button class="primary" type="submit">Crear grupo</button>
               </form>
             </section>
+          {:else if activeTab === 'Reglas'}
+            <section class="panel rules-panel player-rules-panel">
+              <div class="section-heading"><h2>Reglas · Manual del Jugador 2024</h2><span class="count">{filteredRules.length} / {RULES.length}</span></div>
+              <p class="muted">Glosario del Apéndice C. Consulta las definiciones de reglas durante la partida.</p>
+              <label class="rules-search">Buscar regla
+                <input type="search" bind:value={rulesSearch} placeholder="Ej. agarrado, cobertura, concentración..." />
+              </label>
+              <label class="rules-category-filter">Tipo de regla
+                <select bind:value={rulesCategoryFilter}>
+                  {#each RULE_CATEGORIES as category}<option value={category}>{category === 'Todas' ? 'Todas las categorías' : category}</option>{/each}
+                </select>
+              </label>
+              <div class="rules-list">
+                {#each filteredRules as rule (rule.name)}
+                  <details class="rule-card">
+                    <summary><span class="rule-name">{rule.name}</span><span class="rule-category">{rule.category}</span><span class="rule-page">PDF {rule.pdfPage}</span></summary>
+                    <div class="rule-details"><pre class="rule-description">{rule.description}</pre><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
+                  </details>
+                {/each}
+                {#if filteredRules.length === 0}<p class="muted">No hay reglas que coincidan con la búsqueda.</p>{/if}
+              </div>
+            </section>
           {:else}
           {#if activeTab === 'Datos'}
             <section class="import-character-panel data-import-panel">
@@ -2087,7 +2139,7 @@ import SPELLS from './spells.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.20</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.22</span></footer>
 </div>
 
 <style>
@@ -2345,5 +2397,22 @@ import SPELLS from './spells.json';
     :global(.sheet-banner-emblem){width:36px;height:36px;flex-basis:36px}
     :global(.sheet-tabs button){padding:.55rem .7rem!important}
   }
+
+
+  /* Glosario de reglas compartido entre jugador y narrador */
+  :global(.rules-panel){display:grid;gap:.8rem}
+  :global(.rules-search),:global(.rules-category-filter){display:grid;gap:.35rem;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif}
+  :global(.rules-search input),:global(.rules-category-filter select){width:100%;box-sizing:border-box;padding:.7rem .75rem;border:1px solid #76212a;border-radius:6px;background:#101010;color:#fff;font:500 .85rem system-ui,sans-serif}
+  :global(.rules-list){display:grid;gap:.45rem}
+  :global(.rule-card){overflow:hidden;border:1px solid #4d1b21;border-radius:7px;background:linear-gradient(120deg,#141010,#090909)}
+  :global(.rule-card summary){display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.55rem;align-items:center;padding:.75rem .8rem;cursor:pointer;list-style:none}
+  :global(.rule-card summary::-webkit-details-marker){display:none}
+  :global(.rule-name){min-width:0;color:#fff;font:700 .78rem/1.35 system-ui,sans-serif}
+  :global(.rule-category){padding:.2rem .4rem;border:1px solid #76212a;border-radius:4px;color:#ffadb4;background:#1b090c;font:650 .62rem system-ui,sans-serif;white-space:nowrap}
+  :global(.rule-page){color:#a99b9d;font:500 .62rem system-ui,sans-serif;white-space:nowrap}
+  :global(.rule-details){padding:.8rem;border-top:1px solid #4d1b21;background:#0c0b0b}
+  :global(.rule-description){margin:0;color:#e5dddd;white-space:pre-wrap;overflow-wrap:anywhere;font:500 .76rem/1.6 system-ui,sans-serif}
+  :global(.rule-source){display:block;margin-top:.7rem;color:#a99b9d;font-size:.65rem}
+  @media(max-width:480px){:global(.rule-card summary){grid-template-columns:minmax(0,1fr) auto}:global(.rule-page){grid-column:1/-1}}
 
 </style>
