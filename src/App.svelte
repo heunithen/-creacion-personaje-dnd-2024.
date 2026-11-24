@@ -856,7 +856,8 @@
   };
   const BUILDER_MUSICAL_INSTRUMENTS = ['Chirimía','Cuerno','Dulcémele','Flauta','Flauta de pan','Gaita','Laúd','Lira','Tambor','Viola'];
   const BUILDER_ARTISAN_TOOLS = ['Herramientas de albañil','Herramientas de alfarero','Herramientas de carpintero','Herramientas de curtidor','Herramientas de ebanista','Herramientas de herrero','Herramientas de manitas','Herramientas de tejedor'];
-  const BUILDER_LANGUAGES = ['Abisal','Celestial','Dracónico','Druídico','Elfo','Enano','Gigante','Gnómico','Goblin','Habla de las profundidades','Infernal','Infracomún','Lenguaje de signos común','Mediano','Orco','Primordial','Silvano'];
+  const BUILDER_LANGUAGES = ['Abisal','Celestial','Dracónico','Druídico','Elfo','Enano','Gigante','Gnomo','Goblin','Habla de las profundidades','Infernal','Infracomún','Jerga de ladrones','Lenguaje de signos común','Mediano','Orco','Primordial','Silvano'];
+  const BUILDER_STANDARD_LANGUAGES = ['Dracónico','Elfo','Enano','Gigante','Gnomo','Goblin','Lenguaje de signos común','Mediano','Orco'];
   const BUILDER_SKILL_OPTIONS = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
   const BUILDER_FEAT_TOOL_OPTIONS = [...BUILDER_ARTISAN_TOOLS,'Suministros de calígrafo','Suministros de cervecero','Suministros de pintor','Útiles de cocinero','Herramientas de ladrón','Herramientas de navegante','Útiles para falsificar','Útiles de herborista','Útiles de sanador','Útiles de envenenador','Juego','Instrumento musical'];
   function builderFeatChoiceOptions(feat:string) {
@@ -916,6 +917,7 @@
         : cls === 'Monje' ? 10 + dex + wis : 10 + dex;
     }
     if (cls === 'Bárbaro') return 10 + dex + builderModifier(Number(builderAdjustedAbilities().Constitución));
+    if (cls === 'Brujo' && builderData.classSpecialChoice === 'Armadura de sombras') return 13 + dex;
     if (cls === 'Monje') return 10 + dex + wis;
     if (cls === 'Clérigo') return 15 + Math.min(2,dex);
     if (cls === 'Druida') return 13 + dex;
@@ -1562,7 +1564,7 @@
               <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
             {:else if builderStep === 2}
               <h3>3. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
-              <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = ''; builderData.speciesBreathShape = 'Cono'; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
+              <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = ''; builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               {#if BUILDER_SPECIES_CHOICES[builderData.species].length > 0}
                 <label>{builderData.species === 'Dracónido' ? 'Linaje dracónico' : builderData.species === 'Elfo' ? 'Linaje élfico' : builderData.species === 'Gnomo' ? 'Linaje gnomo' : builderData.species === 'Goliat' ? 'Linaje gigante' : 'Legado infernal'}<select bind:value={builderData.speciesChoice}><option value="">Elige una opción</option>{#each BUILDER_SPECIES_CHOICES[builderData.species] as choice}<option>{choice}</option>{/each}</select></label>
               {/if}
@@ -1577,7 +1579,7 @@
               {/if}
               {#if builderData.species === 'Humano'}
                 <label>Habilidad adicional humana<select bind:value={builderData.speciesSkill}><option value="">Elige una habilidad</option>{#each ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'] as skill}<option>{skill}</option>{/each}</select></label>
-                <label>Dote de origen adicional humana<select bind:value={builderData.speciesExtraFeat}>{#each BUILDER_FEATS.filter(feat => feat !== BUILDER_BACKGROUND_DATA[builderData.background].feat) as feat}<option>{feat}</option>{/each}</select></label>
+                <label>Dote de origen adicional humana<select bind:value={builderData.speciesExtraFeat} on:change={() => { builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_FEATS.filter(feat => feat !== BUILDER_BACKGROUND_DATA[builderData.background].feat) as feat}<option>{feat}</option>{/each}</select></label>
                 {#if ['Habilidoso','Fabricante','Músico'].includes(builderData.speciesExtraFeat)}
                   <label>Elecciones de la dote adicional ({builderData.speciesFeatChoices.length}/3)<select multiple size="7" bind:value={builderData.speciesFeatChoices}>{#each builderFeatChoiceOptions(builderData.speciesExtraFeat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<option>{choice}</option>{/each}</select></label>
                 {:else if builderMagicInitiateClass(builderData.speciesExtraFeat)}
@@ -1597,7 +1599,7 @@
               {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
                 <label>Elecciones de la dote {BUILDER_BACKGROUND_DATA[builderData.background].feat} ({builderData.backgroundFeatChoices.length}/3)<select multiple size="7" bind:value={builderData.backgroundFeatChoices}>{#each builderFeatChoiceOptions(BUILDER_BACKGROUND_DATA[builderData.background].feat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<option>{choice}</option>{/each}</select></label>
               {:else if builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
-                <label>Lista de Iniciado en la magia: {builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}</label>
+                <p class="muted">Lista de Iniciado en la magia: {builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}</p>
                 <label>Aptitud mágica de la dote<select bind:value={builderData.backgroundMagicAbility}><option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option></select></label>
                 <label>Dos trucos de la dote ({builderData.backgroundMagicCantrips.length}/2)<select multiple size="6" bind:value={builderData.backgroundMagicCantrips}>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)].cantrips as spell}<option>{spell}</option>{/each}</select></label>
                 <label>Un conjuro de nivel 1 de la dote<select bind:value={builderData.backgroundMagicSpell}><option value="">Elige un conjuro</option>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)].level1 as spell}<option>{spell}</option>{/each}</select></label>
@@ -1655,8 +1657,8 @@
               <label>Equipo inicial de clase<select bind:value={builderData.classEquipmentChoice}><option value="A">Paquete A: {BUILDER_CLASS_DATA[builderData.className].equipmentA}</option><option value="B">Paquete B: {BUILDER_CLASS_DATA[builderData.className].equipmentB}</option>{#if builderData.className === 'Guerrero'}<option value="C">Paquete C: 155 po</option>{/if}</select></label>
               {#if builderData.className === 'Brujo' && builderData.classSpecialChoice === 'Pacto del grimorio'}
                 <div class="builder-info"><strong>Pacto del grimorio</strong><p>Elige tres trucos y dos conjuros de nivel 1 con la etiqueta de ritual. Estos se añaden a los beneficios de tu invocación.</p></div>
-                <label>Trucos del grimorio ({builderData.warlockTomeCantrips.length}/3)<select multiple size="8" bind:value={builderData.warlockTomeCantrips}>{#each BUILDER_TOME_CANTRIPS as spell}<option>{spell}</option>{/each}</select></label>
-                <label>Conjuros rituales de nivel 1 ({builderData.warlockTomeRituals.length}/2)<select multiple size="8" bind:value={builderData.warlockTomeRituals}>{#each BUILDER_TOME_RITUALS as spell}<option>{spell}</option>{/each}</select></label>
+                <label>Trucos del grimorio ({builderData.warlockTomeCantrips.length}/3)<select multiple size="8" bind:value={builderData.warlockTomeCantrips}>{#each BUILDER_TOME_CANTRIPS.filter(spell => !builderData.selectedCantrips.includes(spell)) as spell}<option>{spell}</option>{/each}</select></label>
+                <label>Conjuros rituales de nivel 1 ({builderData.warlockTomeRituals.length}/2)<select multiple size="8" bind:value={builderData.warlockTomeRituals}>{#each BUILDER_TOME_RITUALS.filter(spell => !builderData.selectedSpells.includes(spell)) as spell}<option>{spell}</option>{/each}</select></label>
               {/if}
               {#if BUILDER_CLASS_DATA[builderData.className].cantrips > 0}
                 <label>Trucos ({builderData.selectedCantrips.length}/{BUILDER_CLASS_DATA[builderData.className].cantrips + ((builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista') ? 1 : 0)})<select multiple size="7" bind:value={builderData.selectedCantrips}>{#each BUILDER_SPELL_LISTS[builderData.className].cantrips as spell}<option>{spell}</option>{/each}</select></label>
@@ -1877,7 +1879,7 @@
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.15</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.16</span></footer>
 </div>
 
 <style>
