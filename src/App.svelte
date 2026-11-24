@@ -1183,10 +1183,9 @@
           <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 10d10</button></div>
           {#if lastChestRoll}
             <div class="chest-result">
-              <span class="chest-result-number">10d10: {lastChestRoll.dice.join(' + ')} = {lastChestRoll.total}</span>
+              <span class="chest-result-number">Resultado: {lastChestRoll.total}</span>
               <strong>{lastChestRoll.name}</strong>
               <span>{lastChestRoll.category} · {lastChestRoll.priceLabel}</span>
-              <span>Objeto {lastChestRoll.lootNumber} de 100</span>
             </div>
           {/if}
           <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>#</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
