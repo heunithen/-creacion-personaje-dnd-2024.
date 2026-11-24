@@ -755,6 +755,9 @@
   let levelUpWizardMastery1 = '';
   let levelUpWizardMastery2 = '';
   let levelUpWizardSignatureSpells = '';
+  let levelUpSubclassSkill = '';
+  let levelUpSubclassTool = '';
+  let levelUpManeuvers = '';
   let levelUpWildShapeForms = '';
   let levelUpWeaponMasteries = '';
   let levelUpSubclass = '';
@@ -1201,6 +1204,7 @@
   const BUILDER_LANGUAGES = ['Abisal','Celestial','Dracónico','Druídico','Elfo','Enano','Gigante','Gnomo','Goblin','Habla de las profundidades','Infernal','Infracomún','Jerga de ladrones','Lenguaje de signos común','Mediano','Orco','Primordial','Silvano'];
   const BUILDER_STANDARD_LANGUAGES = ['Dracónico','Elfo','Enano','Gigante','Gnomo','Goblin','Lenguaje de signos común','Mediano','Orco'];
   const BUILDER_SKILL_OPTIONS = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
+  const BUILDER_BATTLE_MANEUVER_OPTIONS = ['Arremetida','Ataque amenazador','Ataque de barrido','Ataque preciso','Ataque provocador','Ataque y derribo','Ataque y desarme','Ataque y distracción','Ataque y empujón','Ataque y maniobra','Cambio de posición ventajoso','Contraataque','Emboscada','Evaluación táctica','Finta','Juego de pies evasivo','Orden de ataque','Parada','Presencia imponente','Reagrupar'];
   const BUILDER_METAMAGIC_OPTIONS = ['Conjuro acelerado','Conjuro buscador','Conjuro cuidadoso','Conjuro distante','Conjuro extendido','Conjuro gemelo','Conjuro intensificado','Conjuro potenciado','Conjuro sutil','Conjuro transmutado'];
   const BUILDER_WARLOCK_INVOCATIONS = [
     {name:'Armadura de sombras',level:1},
@@ -1678,7 +1682,7 @@
       general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
-      general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia','Invocaciones sobrenaturales','Detalles de invocaciones']),
+      general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia','Invocaciones sobrenaturales','Detalles de invocaciones','Maniobras de maestro del combate']),
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Arcanum místico','Opción de Furia elemental','Opción de Golpes benditos','Maestría sobre conjuros nivel 1','Maestría sobre conjuros nivel 2','Conjuros característicos']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
@@ -2084,6 +2088,7 @@ import SPELLS from './spells.json';
     levelUpWizardMastery1=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 1') || '';
     levelUpWizardMastery2=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 2') || '';
     levelUpWizardSignatureSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros característicos') || '';
+    levelUpSubclassSkill=''; levelUpSubclassTool=''; levelUpManeuvers=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Maniobras de maestro del combate') || '';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
@@ -2200,6 +2205,21 @@ import SPELLS from './spells.json';
     const uniqueRepeatChoices=new Set(repeatChoiceKeys).size===repeatChoiceKeys.length;
     const retainedInvocations=invocationChoices.filter(choice=>oldInvocations.some(old=>normalizeLevelText(old)===normalizeLevelText(choice))).length;
     if(needsWarlockInvocations && (!Number.isFinite(invocationTarget)||invocationChoices.length!==invocationTarget||!invocationChoicesValid||!uniqueRepeatChoices||(oldInvocations.length>0&&retainedInvocations<oldInvocations.length-1))) { notice='Registra '+invocationTarget+' invocaciones válidas para tu nivel. Respeta los requisitos del manual; las invocaciones repetibles deben indicar una elección distinta después de dos puntos. Solo puedes sustituir una invocación conocida al subir de nivel.'; return; }
+    const selectedSubclassKey=normalizeLevelText(levelUpSubclass || getCharacterStat(original,'PERSONAJE','Subclase'));
+    const isBattleMaster=className==='Guerrero' && selectedSubclassKey==='maestrodelcombate';
+    const isFeyWanderer=className==='Explorador' && selectedSubclassKey==='errantefeerico';
+    const needsBattleMasterTraining=isBattleMaster && nextLevel===3;
+    const needsFeySkill=isFeyWanderer && nextLevel===3;
+    const currentSkillChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Habilidades'));
+    const currentToolChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Herramientas'));
+    if(needsBattleMasterTraining && (!BUILDER_CLASS_SKILLS.Guerrero.options.includes(levelUpSubclassSkill) || currentSkillChoices.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpSubclassSkill)) || !BUILDER_ARTISAN_TOOLS.includes(levelUpSubclassTool) || currentToolChoices.some(tool=>normalizeLevelText(tool)===normalizeLevelText(levelUpSubclassTool)))) { notice='Maestro del combate requiere una habilidad de la lista de guerrero y una herramienta de artesano en las que aún no tengas competencia.'; return; }
+    if(needsFeySkill && (!['Engaño','Interpretación','Persuasión'].includes(levelUpSubclassSkill) || currentSkillChoices.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpSubclassSkill)))) { notice='Glamur sobrenatural requiere elegir Engaño, Interpretación o Persuasión, una habilidad en la que aún no tengas competencia.'; return; }
+    const needsBattleManeuvers=isBattleMaster && [3,7,10,15].includes(nextLevel);
+    const maneuverTarget=nextLevel>=15?9:nextLevel>=10?7:nextLevel>=7?5:3;
+    const maneuverChoices=splitChoiceList(levelUpManeuvers);
+    const oldManeuvers=splitChoiceList(getCharacterStat(original,'RASGOS Y DOTES','Maniobras de maestro del combate'));
+    const retainedManeuvers=maneuverChoices.filter(choice=>oldManeuvers.some(old=>normalizeLevelText(old)===normalizeLevelText(choice))).length;
+    if(needsBattleManeuvers && (maneuverChoices.length!==maneuverTarget || new Set(maneuverChoices.map(choice=>normalizeLevelText(choice))).size!==maneuverTarget || maneuverChoices.some(choice=>!BUILDER_BATTLE_MANEUVER_OPTIONS.some(option=>normalizeLevelText(option)===normalizeLevelText(choice))) || (oldManeuvers.length>0 && retainedManeuvers<oldManeuvers.length-1))) { notice='Registra '+maneuverTarget+' maniobras distintas de Maestro del combate. Al aprender nuevas maniobras solo puedes sustituir una de las que ya conoces.'; return; }
     const needsElementalFury=className==='Druida' && nextLevel===7;
     if(needsElementalFury && !['Golpe primordial','Lanzamiento potente'].includes(levelUpElementalFury)) { notice='Elige Golpe primordial o Lanzamiento potente para Furia elemental.'; return; }
     const needsBlessedStrikes=className==='Clérigo' && nextLevel===7;
@@ -2355,6 +2375,15 @@ import SPELLS from './spells.json';
     if(needsBlessedStrikes) setCharacterStat(updated,'RASGOS Y DOTES','Opción de Golpes benditos',levelUpBlessedStrikes);
     if(needsWizardMastery) { setCharacterStat(updated,'CONJUROS','Maestría sobre conjuros nivel 1',levelUpWizardMastery1); setCharacterStat(updated,'CONJUROS','Maestría sobre conjuros nivel 2',levelUpWizardMastery2); }
     if(needsWizardSignature) setCharacterStat(updated,'CONJUROS','Conjuros característicos',wizardSignatureChoices.join(', '));
+    if(needsBattleMasterTraining || needsFeySkill) {
+      const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
+      setCharacterStat(updated,'COMPETENCIAS','Habilidades',[oldSkills,levelUpSubclassSkill].filter(Boolean).join('; '));
+    }
+    if(needsBattleMasterTraining) {
+      const oldTools=getCharacterStat(updated,'COMPETENCIAS','Herramientas');
+      setCharacterStat(updated,'COMPETENCIAS','Herramientas',[oldTools,levelUpSubclassTool].filter(Boolean).join('; '));
+    }
+    if(needsBattleManeuvers) setCharacterStat(updated,'RASGOS Y DOTES','Maniobras de maestro del combate',maneuverChoices.join(', '));
     if(targetMasteries>0 && masteryChoices.length===targetMasteries) setCharacterStat(updated,'ATAQUES','Maestrías con armas',masteryChoices.join(', '));
 
     const classMagicAbility=(BUILDER_MAGIC_ABILITY as any)[className] || '';
@@ -2438,7 +2467,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2753,6 +2782,17 @@ import SPELLS from './spells.json';
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
                 <label>Invocaciones sobrenaturales (lista completa; repite las que lo permitan con una elección después de dos puntos)<textarea bind:value={levelUpInvocations} rows="3" placeholder="Ej. Pacto de la cadena, Mente sobrenatural, Descarga agónica: Descarga sobrenatural" /></label>
                 <small>Opciones: {BUILDER_WARLOCK_INVOCATIONS.filter(item=>item.level<=(levelUpEntry?.sheet?Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1:1)).map(item=>item.name+' (nivel '+item.level+')').join(' · ')}</small>
+              {/if}
+              {#if levelUpSubclass==='MAESTRO DEL COMBATE' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Habilidad de Estudioso de la guerra<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option>{#each BUILDER_CLASS_SKILLS.Guerrero.options.filter(skill=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Habilidades')).includes(skill)) as skill}<option>{skill}</option>{/each}</select></label>
+                <label>Herramienta de artesano de Estudioso de la guerra<select bind:value={levelUpSubclassTool}><option value="">Elige una herramienta</option>{#each BUILDER_ARTISAN_TOOLS.filter(tool=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Herramientas')).includes(tool)) as tool}<option>{tool}</option>{/each}</select></label>
+              {/if}
+              {#if levelUpSubclass==='ERRANTE FEÉRICO' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Habilidad de Glamur sobrenatural<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option><option>Engaño</option><option>Interpretación</option><option>Persuasión</option></select></label>
+              {/if}
+              {#if levelUpSubclass==='MAESTRO DEL COMBATE' && [3,7,10,15].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
+                <label>Maniobras de Maestro del combate (lista completa)<textarea bind:value={levelUpManeuvers} rows="3" placeholder="Ej. Arremetida, Ataque preciso, Contraataque" /></label>
+                <small>Opciones: {BUILDER_BATTLE_MANEUVER_OPTIONS.join(' · ')}</small>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
                 <label>Furia elemental<select bind:value={levelUpElementalFury}><option value="">Elige una opción</option><option>Golpe primordial</option><option>Lanzamiento potente</option></select></label>
