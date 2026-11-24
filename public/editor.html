@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forja de Aventureros · Organizador de ficha</title>
+<style>
+:root{color-scheme:light;--paper:#f3eee2;--paper2:#e8dfce;--ink:#24231f;--muted:#686052;--line:#c9bea9;--red:#8f3028;--gold:#b18a45;--white:#fffdf8}
+*{box-sizing:border-box}body{margin:0;background:#211f1b;color:var(--ink);font:15px/1.45 system-ui,sans-serif}
+header{background:#171613;color:var(--paper);padding:1.1rem max(1rem,calc((100vw - 1100px)/2));border-bottom:3px solid var(--gold)}
+header small{color:#d6bd87;letter-spacing:.12em;font-weight:700;font-size:.68rem}h1{font:700 1.45rem Georgia,serif;margin:.2rem 0}header p{margin:.2rem 0 0;color:#c8c0b2;font-size:.82rem}
+main{max-width:1100px;margin:1.2rem auto;padding:0 1rem 3rem}.toolbar{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+button,.file-label{border:1px solid var(--line);border-radius:5px;padding:.58rem .8rem;background:var(--paper2);color:var(--ink);font:650 .78rem system-ui;cursor:pointer}
+button.primary{background:var(--red);border-color:var(--red);color:white}button:disabled{opacity:.35;cursor:not-allowed}
+.file-label input{display:none}.status{margin-left:auto;color:#e9d7a9;font-size:.78rem}
+.intro,.empty{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:1.1rem;margin-bottom:1rem}.intro h2,.empty h2{font:700 1.1rem Georgia,serif;margin:0 0 .4rem}.intro p,.empty p{margin:.25rem 0;color:var(--muted);font-size:.85rem}
+.drop{border:1px dashed #a99a7e;border-radius:6px;padding:1rem;text-align:center;margin-top:.8rem;background:rgba(255,255,255,.35);font-size:.82rem;color:var(--muted)}
+.sheet{display:none}.sheet-head{background:var(--paper);border-radius:8px;padding:1rem 1.2rem;margin-bottom:.8rem;border-top:4px solid var(--gold)}.sheet-head h2{font:700 1.55rem Georgia,serif;margin:0}.sheet-meta{color:var(--muted);font-size:.8rem;margin-top:.25rem}
+.section{background:var(--paper);border:1px solid var(--line);border-radius:7px;margin:.7rem 0;overflow:hidden}.section-head{display:flex;align-items:center;gap:.5rem;background:var(--paper2);padding:.65rem .8rem;border-bottom:1px solid var(--line)}.section-head h3{font:700 .9rem system-ui;margin:0;flex:1;text-transform:uppercase;letter-spacing:.04em;color:#765a27}.section-body{padding:.65rem .8rem}
+.node{border-bottom:1px solid rgba(130,112,83,.2);padding:.48rem 0}.node:last-child{border-bottom:0}.node-head{display:flex;align-items:center;gap:.35rem}.key{font-size:.78rem;font-weight:700;color:#554b3d;min-width:130px;overflow-wrap:anywhere}.value{flex:1;min-width:0}
+input,textarea{width:100%;border:1px solid #d3c8b4;border-radius:4px;background:var(--white);padding:.42rem .5rem;color:var(--ink);font: .82rem/1.4 system-ui,sans-serif}textarea{min-height:3rem;resize:vertical}
+.item{border:1px solid #d6cbb7;border-radius:5px;padding:.55rem .65rem;margin:.45rem 0;background:rgba(255,255,255,.38)}.item-title{display:flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;color:var(--red);margin-bottom:.3rem}.item-title span{flex:1}.move{padding:.22rem .42rem;font-size:.68rem;min-width:28px}
+.object-children{padding-left:.6rem;border-left:2px solid #d7c7a8;margin:.25rem 0 .2rem .2rem}
+.hint{font-size:.72rem;color:var(--muted);margin:.4rem 0}.raw{margin-top:1rem}.raw summary{cursor:pointer;color:#e6d8bb;font-size:.8rem}.raw textarea{min-height:220px;margin-top:.5rem;font-family:ui-monospace,monospace;font-size:.72rem}
+@media(max-width:600px){.status{width:100%;margin-left:0}.key{min-width:95px}.node-head{align-items:flex-start}.toolbar button,.file-label{flex:1;text-align:center}}
+</style>
+</head>
+<body>
+<header><small>FORJA DE AVENTUREROS · D&D 2024</small><h1>Organizador de fichas</h1><p>Visualiza, edita y ordena tu personaje antes de importarlo en Owlbear Rodeo.</p></header>
+<main>
+<div class="toolbar">
+<label class="file-label">Abrir ficha JSON<input id="file" type="file" accept=".json,application/json"></label>
+<button id="export" class="primary" disabled>Exportar JSON</button>
+<button id="reset" disabled>Deshacer cambios</button>
+<button id="new" disabled>Volver a importar</button>
+<span id="status" class="status">Esperando archivo JSON</span>
+</div>
+<section class="intro" id="welcome"><h2>Importa tu ficha</h2><p>Selecciona el archivo JSON que exportaste desde la Forja de Aventureros. El contenido se procesa localmente en este navegador; no se envía a ningún servidor.</p><div class="drop" id="drop">También puedes arrastrar y soltar aquí el archivo .json.</div></section>
+<section class="sheet" id="sheet"><div class="sheet-head"><h2 id="charname">Personaje</h2><div class="sheet-meta" id="charinfo"></div></div><div id="sections"></div><p class="hint">Usa las flechas para cambiar el orden de los elementos de una lista. Los cambios se conservan al exportar el JSON.</p></section>
+<details class="raw"><summary>Ver o editar el JSON completo</summary><textarea id="raw" spellcheck="false"></textarea><div style="display:flex;gap:.5rem;margin-top:.5rem"><button id="applyraw">Aplicar JSON</button><button id="copyraw">Copiar JSON</button></div></details>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let data=null,original=null;
+const labels={identity:"Identidad",abilities:"Características",abilityChecks:"Pruebas de característica",combat:"Combate",proficiencies:"Competencias",traits:"Rasgos y dotes",attacks:"Ataques",spellcasting:"Conjuros",equipment:"Equipo",personality:"Personalidad",notes:"Notas",source:"Origen"};
+const pretty=k=>({str:"Fuerza",dex:"Destreza",con:"Constitución",int:"Inteligencia",wis:"Sabiduría",cha:"Carisma",name:"Nombre",species:"Especie",class:"Clase",subclass:"Subclase",level:"Nivel",background:"Trasfondo",alignment:"Alineamiento",experience:"Experiencia",score:"Puntuación",modifier:"Modificador",armorClass:"Clase de Armadura",initiative:"Iniciativa",speed:"Velocidad",passivePerception:"Percepción pasiva",hitPoints:"Puntos de golpe",maximum:"Máximo",current:"Actual",hitDice:"Dados de golpe",bonus:"Bonificador",savingThrows:"Tiradas de salvación",skills:"Habilidades",armor:"Armaduras",weapons:"Armas",tools:"Herramientas",languages:"Idiomas",other:"Otros",feats:"Dotes",description:"Descripción",attackBonus:"Bonificador de ataque",damage:"Daño",range:"Alcance",properties:"Propiedades",ability:"Característica",attackModifier:"Ataque de conjuro",saveDC:"CD de salvación",cantrips:"Trucos",preparedSpells:"Conjuros preparados",spellSlots:"Espacios de conjuro",carried:"Portado",treasure:"Tesoros",coins:"Monedas",gp:"Oro (po)",sp:"Plata (pp)",cp:"Cobre (pc)",traits:"Rasgos",ideal:"Ideal",bond:"Vínculo",flaw:"Defecto",format:"Formato"}[k]||k.replace(/([A-Z])/g," $1").replace(/^./,s=>s.toUpperCase()));
+function safe(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function setPath(path,value){let x=data;for(let i=0;i<path.length-1;i++)x=x[path[i]];x[path[path.length-1]]=value;refreshHeader();$('raw').value=JSON.stringify(data,null,2);}
+function parseValue(text,old){if(typeof old==="number"){const n=Number(text);return Number.isFinite(n)?n:text;}if(typeof old==="boolean")return text==="true";return text;}
+function control(value,path){const wrap=document.createElement("div");wrap.className="value";if(value===null||["string","number","boolean"].includes(typeof value)){const el=(String(value??"").length>75||String(value??"").includes("\n"))?document.createElement("textarea"):document.createElement("input");el.value=value===null?"":String(value);el.addEventListener("change",()=>setPath(path,parseValue(el.value,value)));wrap.append(el);return wrap;}return renderNode(value,path);}
+function renderNode(value,path){const box=document.createElement("div");if(Array.isArray(value)){value.forEach((item,i)=>{const card=document.createElement("div");card.className="item";const title=document.createElement("div");title.className="item-title";const caption=document.createElement("span");caption.textContent=Array.isArray(item)?("Grupo "+(i+1)):((item&&typeof item==="object")?(item.name||item.title||("Elemento "+(i+1))):("Elemento "+(i+1)));title.append(caption);for(const [txt,delta] of [["↑",-1],["↓",1]]){const b=document.createElement("button");b.className="move";b.textContent=txt;b.disabled=i+delta<0||i+delta>=value.length;b.addEventListener("click",()=>{const a=value.slice();[a[i],a[i+delta]]=[a[i+delta],a[i]];setPath(path,a);render();});title.append(b);}card.append(title);card.append(control(item,[...path,i]));box.append(card);});if(!value.length){const p=document.createElement("p");p.className="hint";p.textContent="Lista vacía";box.append(p);}return box;}
+if(value&&typeof value==="object"){Object.keys(value).forEach(key=>{const row=document.createElement("div");row.className="node";const head=document.createElement("div");head.className="node-head";const k=document.createElement("div");k.className="key";k.textContent=pretty(key);head.append(k);if(value[key]===null||["string","number","boolean"].includes(typeof value[key]))head.append(control(value[key],[...path,key]));row.append(head);if(value[key]&&typeof value[key]==="object"){const nested=renderNode(value[key],[...path,key]);nested.classList.add("object-children");row.append(nested);}box.append(row);});}return box;}
+function render(){if(!data)return;const host=$("sections");host.innerHTML="";const groups=Object.keys(data);groups.forEach(key=>{const sec=document.createElement("section");sec.className="section";const h=document.createElement("div");h.className="section-head";const title=document.createElement("h3");title.textContent=labels[key]||pretty(key);h.append(title);sec.append(h);const body=document.createElement("div");body.className="section-body";body.append(renderNode(data[key],[key]));sec.append(body);host.append(sec);});refreshHeader();$("raw").value=JSON.stringify(data,null,2);}
+function refreshHeader(){const id=data?.identity||{};$("charname").textContent=id.name||"Personaje";$("charinfo").textContent=[id.species,id.class,id.subclass,id.level?"Nivel "+id.level:null].filter(Boolean).join(" · ");}
+function loadObject(obj){if(!obj||typeof obj!=="object"||Array.isArray(obj))throw Error("El archivo debe contener un objeto JSON.");if(!obj.identity||!obj.abilities)throw Error("El JSON no parece una ficha de la Forja: faltan identity o abilities.");data=structuredClone(obj);original=structuredClone(obj);$("welcome").style.display="none";$("sheet").style.display="block";$("export").disabled=false;$("reset").disabled=false;$("new").disabled=false;$("status").textContent="Ficha cargada · "+(obj.identity.name||"Personaje");render();}
+function readFile(file){if(!file)return;file.text().then(t=>loadObject(JSON.parse(t))).catch(e=>alert("No se pudo importar la ficha: "+e.message));}
+$("file").addEventListener("change",e=>readFile(e.target.files[0]));
+$("drop").addEventListener("dragover",e=>{e.preventDefault();e.currentTarget.style.background="#e8dfce";});
+$("drop").addEventListener("dragleave",e=>e.currentTarget.style.background="");
+$("drop").addEventListener("drop",e=>{e.preventDefault();e.currentTarget.style.background="";readFile(e.dataTransfer.files[0]);});
+$("export").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=((data.identity?.name||"personaje").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9_-]+/gi,"-").toLowerCase())+".json";a.click();URL.revokeObjectURL(url);$("status").textContent="JSON exportado correctamente";});
+$("reset").addEventListener("click",()=>{data=structuredClone(original);render();$("status").textContent="Cambios deshechos";});
+$("new").addEventListener("click",()=>{$("file").click();});
+$("applyraw").addEventListener("click",()=>{try{loadObject(JSON.parse($("raw").value));$("status").textContent="JSON actualizado";}catch(e){alert("JSON no válido: "+e.message);}});
+$("copyraw").addEventListener("click",async()=>{await navigator.clipboard.writeText(JSON.stringify(data,null,2));$("status").textContent="JSON copiado";});
+</script>
+</body></html>
