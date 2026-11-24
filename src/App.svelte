@@ -26,503 +26,703 @@
   const CHEST_LOOT = [
   {
     "number": 1,
-    "category": "Equipo",
-    "name": "Abrojos"
+    "category": "Consumible",
+    "name": "Antorcha",
+    "price": 0.01,
+    "priceLabel": "1 pc"
   },
   {
     "number": 2,
-    "category": "Equipo",
-    "name": "Aceite (frasco)"
+    "category": "Munición",
+    "name": "20 balas de honda",
+    "price": 0.04,
+    "priceLabel": "4 pc"
   },
   {
     "number": 3,
-    "category": "Equipo",
-    "name": "Ácido (vial)"
+    "category": "Consumible",
+    "name": "Aceite (frasco)",
+    "price": 0.1,
+    "priceLabel": "10 pc"
   },
   {
     "number": 4,
     "category": "Equipo",
-    "name": "Agua bendita (frasco)"
+    "name": "Bolas de metal (bolsa)",
+    "price": 0.1,
+    "priceLabel": "10 pc"
   },
   {
     "number": 5,
     "category": "Equipo",
-    "name": "Aljaba"
+    "name": "Escalera (3 m)",
+    "price": 0.1,
+    "priceLabel": "10 pc"
   },
   {
     "number": 6,
-    "category": "Equipo",
-    "name": "Antitoxina"
+    "category": "Arma",
+    "name": "Honda",
+    "price": 0.1,
+    "priceLabel": "10 pc"
   },
   {
     "number": 7,
-    "category": "Equipo",
-    "name": "Antorcha"
+    "category": "Arma",
+    "name": "Bastón",
+    "price": 0.2,
+    "priceLabel": "20 pc"
   },
   {
     "number": 8,
-    "category": "Equipo",
-    "name": "Ariete portátil"
+    "category": "Arma",
+    "name": "Garrote grande",
+    "price": 0.2,
+    "priceLabel": "20 pc"
   },
   {
     "number": 9,
     "category": "Equipo",
-    "name": "Barril"
+    "name": "Yesquero",
+    "price": 0.5,
+    "priceLabel": "50 pc"
   },
   {
     "number": 10,
     "category": "Equipo",
-    "name": "Bolas de metal"
+    "name": "Manta",
+    "price": 0.5,
+    "priceLabel": "50 pc"
   },
   {
     "number": 11,
     "category": "Equipo",
-    "name": "Bolsa"
+    "name": "Frasco de aceite x5",
+    "price": 0.5,
+    "priceLabel": "50 pc"
   },
   {
     "number": 12,
-    "category": "Equipo",
-    "name": "Botella de cristal"
+    "category": "Arma",
+    "name": "Jabalina",
+    "price": 0.5,
+    "priceLabel": "50 pc"
   },
   {
     "number": 13,
     "category": "Equipo",
-    "name": "Cadena"
+    "name": "Abrojos (bolsa)",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 14,
     "category": "Equipo",
-    "name": "Campana"
+    "name": "Cuerda de cáñamo (15 m)",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 15,
-    "category": "Canalizador",
-    "name": "Bastón arcano"
+    "category": "Equipo",
+    "name": "Red",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 16,
-    "category": "Canalizador",
-    "name": "Cristal arcano"
+    "category": "Equipo",
+    "name": "Capa",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 17,
-    "category": "Canalizador",
-    "name": "Orbe arcano"
+    "category": "Equipo",
+    "name": "Martillo",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 18,
-    "category": "Canalizador",
-    "name": "Vara arcana"
+    "category": "Munición",
+    "name": "20 flechas",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 19,
-    "category": "Canalizador",
-    "name": "Varita arcana"
+    "category": "Munición",
+    "name": "20 virotes",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 20,
-    "category": "Canalizador",
-    "name": "Bastón de madera druídico"
+    "category": "Arma",
+    "name": "Lanza",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 21,
-    "category": "Canalizador",
-    "name": "Rama de muérdago"
+    "category": "Equipo",
+    "name": "Campana de alarma",
+    "price": 1,
+    "priceLabel": "1 po"
   },
   {
     "number": 22,
-    "category": "Canalizador",
-    "name": "Varita de tejo"
+    "category": "Equipo",
+    "name": "Palanqueta",
+    "price": 2,
+    "priceLabel": "2 po"
   },
   {
     "number": 23,
     "category": "Equipo",
-    "name": "Cantimplora"
+    "name": "Garfio",
+    "price": 2,
+    "priceLabel": "2 po"
   },
   {
     "number": 24,
     "category": "Equipo",
-    "name": "Catalejo"
+    "name": "Pico de minero",
+    "price": 2,
+    "priceLabel": "2 po"
   },
   {
     "number": 25,
     "category": "Equipo",
-    "name": "Cerradura con llave"
+    "name": "Pala",
+    "price": 2,
+    "priceLabel": "2 po"
   },
   {
     "number": 26,
-    "category": "Equipo",
-    "name": "Cesta"
+    "category": "Arma",
+    "name": "Daga",
+    "price": 2,
+    "priceLabel": "2 po"
   },
   {
     "number": 27,
     "category": "Equipo",
-    "name": "Cofre pequeño"
+    "name": "Grilletes",
+    "price": 2,
+    "priceLabel": "2 po"
   },
   {
     "number": 28,
     "category": "Equipo",
-    "name": "Cordel (3 m)"
+    "name": "Cuerno",
+    "price": 3,
+    "priceLabel": "3 po"
   },
   {
     "number": 29,
-    "category": "Equipo",
-    "name": "Cubo"
+    "category": "Monedas",
+    "name": "Puñado de 5 monedas de oro",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 30,
     "category": "Equipo",
-    "name": "Cuerda (15 m)"
+    "name": "Cadena (3 m)",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 31,
     "category": "Equipo",
-    "name": "Disfraz"
+    "name": "Trampa de caza",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 32,
     "category": "Equipo",
-    "name": "Escalera"
+    "name": "Espejo de acero",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 33,
     "category": "Equipo",
-    "name": "Espejo de acero"
+    "name": "Lámpara",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 34,
-    "category": "Equipo",
-    "name": "Estuche para mapas o pergaminos"
+    "category": "Arma",
+    "name": "Hacha de mano",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 35,
-    "category": "Equipo",
-    "name": "Frasco de tinta"
+    "category": "Arma",
+    "name": "Maza",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 36,
-    "category": "Equipo",
-    "name": "Jarra de cerámica"
+    "category": "Arma",
+    "name": "Tridente",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 37,
-    "category": "Equipo",
-    "name": "Jarra de cerveza"
+    "category": "Armadura",
+    "name": "Armadura acolchada",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 38,
-    "category": "Equipo",
-    "name": "Lámpara"
+    "category": "Herramienta",
+    "name": "Suministros de herborista",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 39,
     "category": "Equipo",
-    "name": "Linterna de ojo de buey"
+    "name": "Kit de sanador",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 40,
     "category": "Equipo",
-    "name": "Linterna sorda"
+    "name": "Bolsa de abrojos reforzada",
+    "price": 5,
+    "priceLabel": "5 po"
   },
   {
     "number": 41,
-    "category": "Equipo",
-    "name": "Lupa"
+    "category": "Monedas",
+    "name": "Pequeño montículo de 10 monedas de oro",
+    "price": 10,
+    "priceLabel": "10 po"
   },
   {
     "number": 42,
     "category": "Equipo",
-    "name": "Manta"
+    "name": "Linterna sorda",
+    "price": 10,
+    "priceLabel": "10 po"
   },
   {
     "number": 43,
     "category": "Equipo",
-    "name": "Martillo"
+    "name": "Linterna de ojo de buey",
+    "price": 10,
+    "priceLabel": "10 po"
   },
   {
     "number": 44,
     "category": "Equipo",
-    "name": "Mochila"
+    "name": "Cuerda de seda (15 m)",
+    "price": 10,
+    "priceLabel": "10 po"
   },
   {
     "number": 45,
-    "category": "Equipo",
-    "name": "Olla de hierro"
+    "category": "Arma",
+    "name": "Espada corta",
+    "price": 10,
+    "priceLabel": "10 po"
   },
   {
     "number": 46,
-    "category": "Equipo",
-    "name": "Pala"
+    "category": "Arma",
+    "name": "Hacha de batalla",
+    "price": 10,
+    "priceLabel": "10 po"
   },
   {
     "number": 47,
-    "category": "Equipo",
-    "name": "Palanqueta"
+    "category": "Armadura",
+    "name": "Escudo",
+    "price": 10,
+    "priceLabel": "10 po"
   },
   {
     "number": 48,
-    "category": "Equipo",
-    "name": "Papel (10 hojas)"
+    "category": "Armadura",
+    "name": "Armadura de cuero",
+    "price": 10,
+    "priceLabel": "10 po"
   },
   {
     "number": 49,
-    "category": "Equipo",
-    "name": "Pergamino (10 hojas)"
+    "category": "Monedas",
+    "name": "Montículo de 15 monedas de oro",
+    "price": 15,
+    "priceLabel": "15 po"
   },
   {
     "number": 50,
-    "category": "Equipo",
-    "name": "Petate"
+    "category": "Arma",
+    "name": "Espada larga",
+    "price": 15,
+    "priceLabel": "15 po"
   },
   {
     "number": 51,
-    "category": "Equipo",
-    "name": "Raciones (5 días)"
+    "category": "Arma",
+    "name": "Martillo de guerra",
+    "price": 15,
+    "priceLabel": "15 po"
   },
   {
     "number": 52,
-    "category": "Equipo",
-    "name": "Saco"
+    "category": "Monedas",
+    "name": "Montículo de 20 monedas de oro",
+    "price": 20,
+    "priceLabel": "20 po"
   },
   {
     "number": 53,
-    "category": "Equipo",
-    "name": "Tienda para dos personas"
+    "category": "Monedas",
+    "name": "Montículo de 25 monedas de oro",
+    "price": 25,
+    "priceLabel": "25 po"
   },
   {
     "number": 54,
-    "category": "Equipo",
-    "name": "Túnica o ropa común"
+    "category": "Consumible",
+    "name": "Frasco de ácido",
+    "price": 25,
+    "priceLabel": "25 po"
   },
   {
     "number": 55,
-    "category": "Equipo",
-    "name": "Yesquero"
+    "category": "Consumible",
+    "name": "Frasco de agua bendita",
+    "price": 25,
+    "priceLabel": "25 po"
   },
   {
     "number": 56,
-    "category": "Herramienta",
-    "name": "Herramientas de ladrón"
+    "category": "Arma",
+    "name": "Ballesta ligera",
+    "price": 25,
+    "priceLabel": "25 po"
   },
   {
     "number": 57,
-    "category": "Herramienta",
-    "name": "Herramientas de albañil"
+    "category": "Arma",
+    "name": "Arco corto",
+    "price": 25,
+    "priceLabel": "25 po"
   },
   {
     "number": 58,
     "category": "Herramienta",
-    "name": "Herramientas de alfarero"
+    "name": "Herramientas de ladrón",
+    "price": 25,
+    "priceLabel": "25 po"
   },
   {
     "number": 59,
-    "category": "Herramienta",
-    "name": "Herramientas de carpintero"
+    "category": "Equipo",
+    "name": "Kit de escalada",
+    "price": 25,
+    "priceLabel": "25 po"
   },
   {
     "number": 60,
-    "category": "Herramienta",
-    "name": "Herramientas de cartógrafo"
+    "category": "Equipo",
+    "name": "Kit de disfraz",
+    "price": 25,
+    "priceLabel": "25 po"
   },
   {
     "number": 61,
-    "category": "Herramienta",
-    "name": "Herramientas de herrero"
+    "category": "Monedas",
+    "name": "Montículo de 30 monedas de oro",
+    "price": 30,
+    "priceLabel": "30 po"
   },
   {
     "number": 62,
-    "category": "Herramienta",
-    "name": "Herramientas de joyero"
+    "category": "Monedas",
+    "name": "Montículo de 40 monedas de oro",
+    "price": 40,
+    "priceLabel": "40 po"
   },
   {
     "number": 63,
-    "category": "Herramienta",
-    "name": "Herramientas de peletero"
+    "category": "Armadura",
+    "name": "Armadura de cuero tachonado",
+    "price": 45,
+    "priceLabel": "45 po"
   },
   {
     "number": 64,
-    "category": "Herramienta",
-    "name": "Herramientas de pintor"
+    "category": "Monedas",
+    "name": "Montículo de 50 monedas de oro",
+    "price": 50,
+    "priceLabel": "50 po"
   },
   {
     "number": 65,
-    "category": "Herramienta",
-    "name": "Herramientas de vidriero"
+    "category": "Consumible",
+    "name": "Fuego de alquimista (frasco)",
+    "price": 50,
+    "priceLabel": "50 po"
   },
   {
     "number": 66,
-    "category": "Herramienta",
-    "name": "Suministros de alquimista"
+    "category": "Armadura",
+    "name": "Camisote de malla",
+    "price": 50,
+    "priceLabel": "50 po"
   },
   {
     "number": 67,
-    "category": "Herramienta",
-    "name": "Suministros de cervecero"
+    "category": "Armadura",
+    "name": "Cota de escamas",
+    "price": 50,
+    "priceLabel": "50 po"
   },
   {
     "number": 68,
-    "category": "Herramienta",
-    "name": "Suministros de calígrafo"
+    "category": "Poción",
+    "name": "Poción de curación",
+    "price": 50,
+    "priceLabel": "50 po"
   },
   {
     "number": 69,
     "category": "Herramienta",
-    "name": "Suministros de herborista"
+    "name": "Suministros de alquimista",
+    "price": 50,
+    "priceLabel": "50 po"
   },
   {
     "number": 70,
-    "category": "Herramienta",
-    "name": "Suministros de venenos"
+    "category": "Monedas",
+    "name": "Montículo de 60 monedas de oro",
+    "price": 60,
+    "priceLabel": "60 po"
   },
   {
     "number": 71,
-    "category": "Instrumento",
-    "name": "Flauta"
+    "category": "Pergamino",
+    "name": "Pergamino de conjuro de nivel 1",
+    "price": 60,
+    "priceLabel": "60 po"
   },
   {
     "number": 72,
-    "category": "Instrumento",
-    "name": "Laúd"
+    "category": "Monedas",
+    "name": "Montículo de 75 monedas de oro",
+    "price": 75,
+    "priceLabel": "75 po"
   },
   {
     "number": 73,
-    "category": "Instrumento",
-    "name": "Lira"
+    "category": "Armadura",
+    "name": "Cota de malla",
+    "price": 75,
+    "priceLabel": "75 po"
   },
   {
     "number": 74,
-    "category": "Instrumento",
-    "name": "Tambor"
+    "category": "Poción",
+    "name": "Poción de escalada",
+    "price": 75,
+    "priceLabel": "75 po"
   },
   {
     "number": 75,
-    "category": "Instrumento",
-    "name": "Cuerno"
+    "category": "Monedas",
+    "name": "Montículo de 100 monedas de oro",
+    "price": 100,
+    "priceLabel": "100 po"
   },
   {
     "number": 76,
-    "category": "Arma",
-    "name": "Daga"
+    "category": "Consumible",
+    "name": "Veneno básico (vial)",
+    "price": 100,
+    "priceLabel": "100 po"
   },
   {
     "number": 77,
-    "category": "Arma",
-    "name": "Hacha de mano"
+    "category": "Poción",
+    "name": "Poción de respiración acuática",
+    "price": 100,
+    "priceLabel": "100 po"
   },
   {
     "number": 78,
-    "category": "Arma",
-    "name": "Maza"
+    "category": "Pergamino",
+    "name": "Pergamino de conjuro de nivel 2",
+    "price": 120,
+    "priceLabel": "120 po"
   },
   {
     "number": 79,
-    "category": "Arma",
-    "name": "Lanza"
+    "category": "Monedas",
+    "name": "Montículo de 125 monedas de oro",
+    "price": 125,
+    "priceLabel": "125 po"
   },
   {
     "number": 80,
-    "category": "Arma",
-    "name": "Bastón"
+    "category": "Monedas",
+    "name": "Montículo de 150 monedas de oro",
+    "price": 150,
+    "priceLabel": "150 po"
   },
   {
     "number": 81,
-    "category": "Arma",
-    "name": "Espada corta"
+    "category": "Monedas",
+    "name": "Montículo de 200 monedas de oro",
+    "price": 200,
+    "priceLabel": "200 po"
   },
   {
     "number": 82,
-    "category": "Arma",
-    "name": "Espada larga"
+    "category": "Pergamino",
+    "name": "Pergamino de conjuro de nivel 3",
+    "price": 240,
+    "priceLabel": "240 po"
   },
   {
     "number": 83,
-    "category": "Arma",
-    "name": "Hacha de batalla"
+    "category": "Poción",
+    "name": "Poción de resistencia al fuego",
+    "price": 300,
+    "priceLabel": "300 po"
   },
   {
     "number": 84,
-    "category": "Arma",
-    "name": "Martillo de guerra"
+    "category": "Poción",
+    "name": "Poción de resistencia al frío",
+    "price": 300,
+    "priceLabel": "300 po"
   },
   {
     "number": 85,
-    "category": "Arma",
-    "name": "Arco corto"
+    "category": "Poción",
+    "name": "Poción de resistencia al rayo",
+    "price": 300,
+    "priceLabel": "300 po"
   },
   {
     "number": 86,
-    "category": "Arma",
-    "name": "Ballesta ligera"
+    "category": "Poción",
+    "name": "Poción de resistencia al ácido",
+    "price": 300,
+    "priceLabel": "300 po"
   },
   {
     "number": 87,
-    "category": "Arma",
-    "name": "Honda"
+    "category": "Poción",
+    "name": "Poción de resistencia al veneno",
+    "price": 300,
+    "priceLabel": "300 po"
   },
   {
     "number": 88,
-    "category": "Arma",
-    "name": "Jabalina"
+    "category": "Poción",
+    "name": "Poción de resistencia al trueno",
+    "price": 300,
+    "priceLabel": "300 po"
   },
   {
     "number": 89,
-    "category": "Arma",
-    "name": "Tridente"
+    "category": "Poción",
+    "name": "Poción de resistencia al daño necrótico",
+    "price": 300,
+    "priceLabel": "300 po"
   },
   {
     "number": 90,
-    "category": "Arma",
-    "name": "Garrote grande"
+    "category": "Poción",
+    "name": "Poción de resistencia al daño radiante",
+    "price": 300,
+    "priceLabel": "300 po"
   },
   {
     "number": 91,
     "category": "Armadura",
-    "name": "Escudo"
+    "name": "Coraza",
+    "price": 400,
+    "priceLabel": "400 po"
   },
   {
     "number": 92,
-    "category": "Armadura",
-    "name": "Armadura acolchada"
+    "category": "Poción",
+    "name": "Poción de curación superior",
+    "price": 500,
+    "priceLabel": "500 po"
   },
   {
     "number": 93,
-    "category": "Armadura",
-    "name": "Armadura de cuero"
+    "category": "Poción",
+    "name": "Poción de fuerza de gigante de las colinas",
+    "price": 500,
+    "priceLabel": "500 po"
   },
   {
     "number": 94,
-    "category": "Armadura",
-    "name": "Armadura de cuero tachonado"
+    "category": "Poción",
+    "name": "Poción de curación mayor",
+    "price": 500,
+    "priceLabel": "500 po"
   },
   {
     "number": 95,
     "category": "Armadura",
-    "name": "Camisote de malla"
+    "name": "Media armadura",
+    "price": 750,
+    "priceLabel": "750 po"
   },
   {
     "number": 96,
     "category": "Armadura",
-    "name": "Cota de escamas"
+    "name": "Armadura de placas",
+    "price": 1500,
+    "priceLabel": "1.500 po"
   },
   {
     "number": 97,
-    "category": "Armadura",
-    "name": "Cota de malla"
+    "category": "Poción",
+    "name": "Poción de velocidad",
+    "price": 4000,
+    "priceLabel": "4.000 po"
   },
   {
     "number": 98,
-    "category": "Armadura",
-    "name": "Coraza"
+    "category": "Poción",
+    "name": "Poción de invisibilidad",
+    "price": 5000,
+    "priceLabel": "5.000 po"
   },
   {
     "number": 99,
-    "category": "Armadura",
-    "name": "Armadura de placas"
+    "category": "Poción",
+    "name": "Poción de vuelo",
+    "price": 5000,
+    "priceLabel": "5.000 po"
   },
   {
     "number": 100,
-    "category": "Armadura",
-    "name": "Armadura de pieles"
+    "category": "Poción",
+    "name": "Poción de curación suprema",
+    "price": 50000,
+    "priceLabel": "50.000 po"
   }
 ];
   let lastChestRoll: { number: number; category: string; name: string } | null = null;
@@ -847,14 +1047,14 @@
       </section>
       <section class="panel chest-panel">
         <div class="section-heading"><h2>Cofres</h2><span class="count">1d100</span></div>
-        <p class="muted">Tabla de botín mundano para cofres. Cada tirada selecciona uno de los 100 objetos.</p>
+        <p class="muted">Tabla de botín con objetos útiles en combate, ordenados por precio ascendente.</p>
         <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 1d100</button></div>
         {#if lastChestRoll}
           <div class="chest-result"><span class="chest-result-number">Resultado {lastChestRoll.number}</span><strong>{lastChestRoll.name}</strong><span>{lastChestRoll.category}</span></div>
         {/if}
-        <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>d100</th><th>Objeto</th><th>Categoría</th></tr></thead><tbody>
+        <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>d100</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
           {#each CHEST_LOOT as item}
-            <tr class:chest-selected={lastChestRoll?.number === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td></tr>
+            <tr class:chest-selected={lastChestRoll?.number === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td><td>{item.priceLabel}</td></tr>
           {/each}
         </tbody></table></div>
       </section>
