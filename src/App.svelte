@@ -793,6 +793,66 @@
       traits: 'Sobrevuelo: no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo.',
       attacks: [{name:'Mordisco', bonus:'+4', reach:'5 pies', damage:'1 perforante + 5 (2d4) de veneno'}],
       role: 'Atacante voladora rápida; puede entrar, atacar y alejarse.'
+    },
+    {
+      name: 'Araña lobo gigante', english: 'Giant Wolf Spider', type: 'Bestia mediana', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
+      ac: 13, initiative: '+3 (13)', hp: '11 (2d8 + 2)', speed: '40 pies, trepar 40 pies',
+      abilities: 'Fue 12 (+1) · Des 16 (+3) · Con 13 (+1) · Int 3 (−4) · Sab 12 (+1) · Car 4 (−3)',
+      skills: 'Percepción +3, Sigilo +7', senses: 'Vista ciega 10 pies, visión en la oscuridad 60 pies; Percepción pasiva 13', languages: '—',
+      traits: 'Trepar por arañas: puede trepar superficies difíciles, incluso techos, sin pruebas de característica.',
+      attacks: [{name:'Mordisco', bonus:'+5', reach:'5 pies', damage:'5 (1d4 + 3) perforante + 5 (2d4) de veneno'}],
+      role: 'Emboscadora; trepa por paredes y techos para atacar desde ángulos inesperados.'
+    },
+    {
+      name: 'Espada voladora animada', english: 'Animated Flying Sword', type: 'Constructo pequeño', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
+      ac: 17, initiative: '+4 (14)', hp: '14 (4d6)', speed: '5 pies, volar 50 pies (flotar)',
+      abilities: 'Fue 12 (+1) · Des 15 (+2) · Con 11 (+0) · Int 1 (−5) · Sab 5 (−3) · Car 1 (−5)',
+      skills: 'Salvación de Destreza +4', senses: 'Vista ciega 60 pies; Percepción pasiva 7', languages: '—',
+      traits: 'Inmunidades al daño: veneno y psíquico. Inmunidades a estados: hechizado, ensordecido, agotamiento, asustado, paralizado, petrificado y envenenado.',
+      attacks: [{name:'Tajo', bonus:'+4', reach:'5 pies', damage:'6 (1d8 + 2) cortante'}],
+      role: 'Atacante voladora con CA alta; puede atravesar obstáculos y presionar a personajes aislados.'
+    },
+    {
+      name: 'Esqueleto', english: 'Skeleton', type: 'Muerto viviente mediano', alignment: 'Legal malvado', cr: '1/4 (50 PX)',
+      ac: 14, initiative: '+3 (13)', hp: '13 (2d8 + 4)', speed: '30 pies',
+      abilities: 'Fue 10 (+0) · Des 16 (+3) · Con 15 (+2) · Int 6 (−2) · Sab 8 (−1) · Car 5 (−3)',
+      skills: '—', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 9', languages: 'Comprende común y otro idioma, pero no puede hablar',
+      traits: 'Vulnerabilidad al daño contundente. Inmunidad al daño de veneno e inmunidad a los estados agotamiento y envenenado.',
+      attacks: [
+        {name:'Espada corta', bonus:'+5', reach:'5 pies', damage:'6 (1d6 + 3) perforante'},
+        {name:'Arco corto', bonus:'+5', reach:'80/320 pies', damage:'6 (1d6 + 3) perforante'}
+      ],
+      role: 'Combatiente versátil; puede mantener distancia con el arco o bloquear pasillos con la espada.'
+    },
+    {
+      name: 'Lobo', english: 'Wolf', type: 'Bestia mediana', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
+      ac: 12, initiative: '+2 (12)', hp: '11 (2d8 + 2)', speed: '40 pies',
+      abilities: 'Fue 14 (+2) · Des 15 (+2) · Con 12 (+1) · Int 3 (−4) · Sab 12 (+1) · Car 6 (−2)',
+      skills: 'Percepción +5, Sigilo +4', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 15', languages: '—',
+      traits: 'Tácticas de grupo: tiene ventaja en las tiradas de ataque contra una criatura si al menos un aliado del lobo está a 5 pies de ella y no está incapacitado.',
+      attacks: [{name:'Mordisco', bonus:'+4', reach:'5 pies', damage:'5 (1d6 + 2) perforante; si el objetivo es Mediano o menor, queda derribado'}],
+      role: 'Cazador de manada; derriba a los aventureros y aprovecha los ataques coordinados.'
+    },
+    {
+      name: 'Rana gigante', english: 'Giant Frog', type: 'Bestia mediana', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
+      ac: 11, initiative: '+1 (11)', hp: '18 (4d8)', speed: '30 pies, nadar 30 pies',
+      abilities: 'Fue 12 (+1) · Des 13 (+1) · Con 11 (+0) · Int 2 (−4) · Sab 10 (+0) · Car 3 (−4)',
+      skills: 'Percepción +2, Sigilo +4', senses: 'Visión en la oscuridad 30 pies; Percepción pasiva 12', languages: '—',
+      traits: 'Anfibia: puede respirar aire y agua. Salto parado: salta hasta 20 pies en largo o 10 pies en alto sin carrera.',
+      attacks: [
+        {name:'Mordisco', bonus:'+3', reach:'5 pies', damage:'5 (1d6 + 2) perforante; el objetivo Mediano o menor queda agarrado (CD 11 para escapar)'},
+        {name:'Engullir', bonus:'—', reach:'objetivo Pequeño o menor que tenga agarrado', damage:'lo deja cegado y apresado; al final del siguiente turno de la rana recibe 5 (2d4) de daño ácido y, si sobrevive, es expulsado y queda tumbado'}
+      ],
+      role: 'Control de posición; puede sacar temporalmente a un aventurero del combate al engullirlo.'
+    },
+    {
+      name: 'Zombi', english: 'Zombie', type: 'Muerto viviente mediano', alignment: 'Neutral malvado', cr: '1/4 (50 PX)',
+      ac: 8, initiative: '−2 (8)', hp: '15 (2d8 + 6)', speed: '20 pies',
+      abilities: 'Fue 13 (+1) · Des 6 (−2) · Con 16 (+3) · Int 3 (−4) · Sab 6 (−2) · Car 5 (−3)',
+      skills: 'Salvación de Sabiduría +0', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 8', languages: 'Comprende común y otro idioma, pero no puede hablar',
+      traits: 'Fortaleza de los muertos vivientes: al quedar en 0 PG, realiza una salvación de Constitución CD 5 + el daño recibido; si tiene éxito, queda en 1 PG. No puede usar este rasgo si recibe daño radiante o un golpe crítico. Inmunidad al daño de veneno y a los estados agotamiento y envenenado.',
+      attacks: [{name:'Golpe', bonus:'+3', reach:'5 pies', damage:'5 (1d8 + 1) contundente'}],
+      role: 'Enemigo lento y resistente; puede sobrevivir a un golpe que debería destruirlo y prolongar el combate.'
     }
   ];
 
