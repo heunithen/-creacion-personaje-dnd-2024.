@@ -750,6 +750,11 @@
   let levelUpMetamagic = '';
   let levelUpInvocations = '';
   let levelUpMysticArcanum = '';
+  let levelUpElementalFury = '';
+  let levelUpBlessedStrikes = '';
+  let levelUpWizardMastery1 = '';
+  let levelUpWizardMastery2 = '';
+  let levelUpWizardSignatureSpells = '';
   let levelUpWildShapeForms = '';
   let levelUpWeaponMasteries = '';
   let levelUpSubclass = '';
@@ -1635,6 +1640,9 @@
       getCharacterStat(target,'CONJUROS','Conjuros de trasfondo'),
       getCharacterStat(target,'CONJUROS','Conjuros de dote'),
       getCharacterStat(target,'CONJUROS','Arcanum místico'),
+      getCharacterStat(target,'CONJUROS','Maestría sobre conjuros nivel 1'),
+      getCharacterStat(target,'CONJUROS','Maestría sobre conjuros nivel 2'),
+      getCharacterStat(target,'CONJUROS','Conjuros característicos'),
       getCharacterStat(target,'CONJUROS','Conjuros de nivel 1'),
       getCharacterStat(target,'CONJUROS','Trucos de subclase'),
       getCharacterStat(target,'CONJUROS','Conjuros preparados de subclase'),
@@ -1671,7 +1679,7 @@
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
       general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia','Invocaciones sobrenaturales','Detalles de invocaciones']),
-      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Arcanum místico']),
+      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Arcanum místico','Opción de Furia elemental','Opción de Golpes benditos','Maestría sobre conjuros nivel 1','Maestría sobre conjuros nivel 2','Conjuros característicos']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
       general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})]),
@@ -2071,6 +2079,11 @@ import SPELLS from './spells.json';
     levelUpMetamagic=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opciones de metamagia') || '';
     levelUpInvocations=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Invocaciones sobrenaturales') || ((String(getCharacterStat(entry.sheet,'RASGOS Y DOTES','Rasgos de clase')||'').match(/Invocación sobrenatural:\s*([^\n]+)/i)||[])[1]||'');
     levelUpMysticArcanum=getCharacterStat(entry.sheet,'CONJUROS','Arcanum místico') || '';
+    levelUpElementalFury=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opción de Furia elemental') || '';
+    levelUpBlessedStrikes=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opción de Golpes benditos') || '';
+    levelUpWizardMastery1=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 1') || '';
+    levelUpWizardMastery2=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 2') || '';
+    levelUpWizardSignatureSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros característicos') || '';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
@@ -2185,6 +2198,20 @@ import SPELLS from './spells.json';
     const uniqueRepeatChoices=new Set(repeatChoiceKeys).size===repeatChoiceKeys.length;
     const retainedInvocations=invocationChoices.filter(choice=>oldInvocations.some(old=>normalizeLevelText(old)===normalizeLevelText(choice))).length;
     if(needsWarlockInvocations && (!Number.isFinite(invocationTarget)||invocationChoices.length!==invocationTarget||!invocationChoicesValid||!uniqueRepeatChoices||(oldInvocations.length>0&&retainedInvocations<oldInvocations.length-1))) { notice='Registra '+invocationTarget+' invocaciones válidas para tu nivel. Respeta los requisitos del manual; las invocaciones repetibles deben indicar una elección distinta después de dos puntos. Solo puedes sustituir una invocación conocida al subir de nivel.'; return; }
+    const needsElementalFury=className==='Druida' && nextLevel===7;
+    if(needsElementalFury && !['Golpe primordial','Lanzamiento potente'].includes(levelUpElementalFury)) { notice='Elige Golpe primordial o Lanzamiento potente para Furia elemental.'; return; }
+    const needsBlessedStrikes=className==='Clérigo' && nextLevel===7;
+    if(needsBlessedStrikes && !['Golpe divino','Lanzamiento potente'].includes(levelUpBlessedStrikes)) { notice='Elige Golpe divino o Lanzamiento potente para Golpes benditos.'; return; }
+    const wizardBookForChoices=[...splitChoiceList(getCharacterStat(original,'CONJUROS','Libro de conjuros')),...splitChoiceList(levelUpWizardBookAdditions)];
+    const validWizardBookSpell=(name:string,level:number,actionOnly:boolean=false)=>{
+      const spell=getSpellRecord(name);
+      return Boolean(spell && spell.level===level && spell.classes.some((value:string)=>normalizeLevelText(value)==='mago') && (!actionOnly || normalizeLevelText(spell.castingTime)==='accion'));
+    };
+    const needsWizardMastery=className==='Mago' && nextLevel===18;
+    if(needsWizardMastery && (!wizardBookForChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(levelUpWizardMastery1)) || !wizardBookForChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(levelUpWizardMastery2)) || !validWizardBookSpell(levelUpWizardMastery1,1,true) || !validWizardBookSpell(levelUpWizardMastery2,2,true))) { notice='Maestría sobre conjuros requiere un conjuro de nivel 1 y otro de nivel 2 de tu libro, ambos con tiempo de lanzamiento de una acción.'; return; }
+    const needsWizardSignature=className==='Mago' && nextLevel===20;
+    const wizardSignatureChoices=splitChoiceList(levelUpWizardSignatureSpells);
+    if(needsWizardSignature && (wizardSignatureChoices.length!==2 || new Set(wizardSignatureChoices.map(name=>normalizeLevelText(name))).size!==2 || wizardSignatureChoices.some(name=>!wizardBookForChoices.some(bookName=>normalizeLevelText(bookName)===normalizeLevelText(name)) || !validWizardBookSpell(name,3)))) { notice='Conjuros característicos requiere dos conjuros de nivel 3 distintos que estén en tu libro de conjuros.'; return; }
     const needsMetamagic=className==='Hechicero' && nextLevel>=2;
     const metamagicChoices=splitChoiceList(levelUpMetamagic);
     const oldMetamagicChoices=splitChoiceList(getCharacterStat(original,'RASGOS Y DOTES','Opciones de metamagia'));
@@ -2322,6 +2349,10 @@ import SPELLS from './spells.json';
       setCharacterStat(updated,'RASGOS Y DOTES','Detalles de invocaciones',invocationChoices.map(builderWarlockInvocationDescription).join('\n\n'));
     }
     if(needsMysticArcanum) setCharacterStat(updated,'CONJUROS','Arcanum místico',arcanumChoices.join(', '));
+    if(needsElementalFury) setCharacterStat(updated,'RASGOS Y DOTES','Opción de Furia elemental',levelUpElementalFury);
+    if(needsBlessedStrikes) setCharacterStat(updated,'RASGOS Y DOTES','Opción de Golpes benditos',levelUpBlessedStrikes);
+    if(needsWizardMastery) { setCharacterStat(updated,'CONJUROS','Maestría sobre conjuros nivel 1',levelUpWizardMastery1); setCharacterStat(updated,'CONJUROS','Maestría sobre conjuros nivel 2',levelUpWizardMastery2); }
+    if(needsWizardSignature) setCharacterStat(updated,'CONJUROS','Conjuros característicos',wizardSignatureChoices.join(', '));
     if(targetMasteries>0 && masteryChoices.length===targetMasteries) setCharacterStat(updated,'ATAQUES','Maestrías con armas',masteryChoices.join(', '));
 
     const classMagicAbility=(BUILDER_MAGIC_ABILITY as any)[className] || '';
@@ -2405,7 +2436,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2720,6 +2751,19 @@ import SPELLS from './spells.json';
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
                 <label>Invocaciones sobrenaturales (lista completa; repite las que lo permitan con una elección después de dos puntos)<textarea bind:value={levelUpInvocations} rows="3" placeholder="Ej. Pacto de la cadena, Mente sobrenatural, Descarga agónica: Descarga sobrenatural" /></label>
                 <small>Opciones: {BUILDER_WARLOCK_INVOCATIONS.filter(item=>item.level<=Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).map(item=>item.name+' (nivel '+item.level+')').join(' · ')}</small>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
+                <label>Furia elemental<select bind:value={levelUpElementalFury}><option value="">Elige una opción</option><option>Golpe primordial</option><option>Lanzamiento potente</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
+                <label>Golpes benditos<select bind:value={levelUpBlessedStrikes}><option value="">Elige una opción</option><option>Golpe divino</option><option>Lanzamiento potente</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===18}
+                <label>Maestría sobre conjuros: conjuro de nivel 1 del libro<input bind:value={levelUpWizardMastery1} placeholder="Conjuro de nivel 1 con lanzamiento de una acción" /></label>
+                <label>Maestría sobre conjuros: conjuro de nivel 2 del libro<input bind:value={levelUpWizardMastery2} placeholder="Conjuro de nivel 2 con lanzamiento de una acción" /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===20}
+                <label>Conjuros característicos (dos conjuros de nivel 3 de tu libro)<input bind:value={levelUpWizardSignatureSpells} placeholder="Conjuro 1, Conjuro 2" /></label>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
                 <label>Opciones de metamagia (lista completa; puedes sustituir una al subir de nivel)<input bind:value={levelUpMetamagic} placeholder="Ej. Conjuro cuidadoso, Conjuro sutil" /></label>
