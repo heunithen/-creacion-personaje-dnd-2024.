@@ -741,7 +741,102 @@
   }
 
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Monstruos ordenados'];
+  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Monstruos ordenados', 'Crear personaje'];
+  type BuilderData = {
+    name: string; player: string; className: string; species: string; background: string;
+    alignment: string; method: string; abilities: Record<string, number>; feat: string;
+    skills: string; tools: string; equipment: string; traits: string; spells: string; notes: string;
+  };
+  let builderStep = 0;
+  let builderPreview: RawSheet | null = null;
+  let builderData: BuilderData = {
+    name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
+    alignment: 'Neutral', method: 'standard',
+    abilities: { Fuerza: 15, Destreza: 14, Constitución: 13, Inteligencia: 12, Sabiduría: 10, Carisma: 8 },
+    feat: 'Alerta', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
+  };
+  const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
+  const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Gigante (Goliat)','Mediano','Humano','Orco','Tiefling'];
+  const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
+  const BUILDER_FEATS = ['Alerta','Artesano','Curandero','Iniciado en la magia (Bardo)','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Músico','Suerte','Atacante salvaje','Habilidoso','Peleador de taberna'];
+  const BUILDER_CLASS_FEATURES: Record<string,string> = {
+    'Bárbaro':'Furia; Defensa sin armadura',
+    'Bardo':'Inspiración bárdica; Lanzamiento de conjuros',
+    'Brujo':'Invocaciones sobrenaturales; Magia del pacto',
+    'Clérigo':'Lanzamiento de conjuros; Orden divina',
+    'Druida':'Druidismo; Orden primigenia; Lanzamiento de conjuros',
+    'Explorador':'Enemigo predilecto; Maestría con armas; Lanzamiento de conjuros',
+    'Guerrero':'Estilo de combate; Segundo aliento; Maestría con armas',
+    'Hechicero':'Lanzamiento de conjuros; Hechicería innata',
+    'Mago':'Lanzamiento de conjuros; Adepto ritual; Recuperación arcana',
+    'Monje':'Artes marciales; Defensa sin armadura',
+    'Paladín':'Imposición de manos; Lanzamiento de conjuros; Maestría con armas',
+    'Pícaro':'Pericia; Ataque furtivo; Maestría con armas; Jerga de ladrones'
+  };
+  const BUILDER_SPECIES_TRAITS: Record<string,string> = {
+    'Aasimar':'Tipo de criatura: Humanoide. Resistencia necrótica y radiante; Manos sanadoras; Portador de luz; Revelación celestial.',
+    'Dracónido':'Tipo de criatura: Humanoide. Ascendencia dracónica; Arma de aliento; Resistencia dracónica.',
+    'Enano':'Tipo de criatura: Humanoide. Visión en la oscuridad; Resistencia enana; Aguante enano.',
+    'Elfo':'Tipo de criatura: Humanoide. Visión en la oscuridad; Linaje élfico; Sentidos agudos; Trance.',
+    'Gnomo':'Tipo de criatura: Humanoide. Visión en la oscuridad; Astucia gnómica.',
+    'Gigante (Goliat)':'Tipo de criatura: Humanoide. Ascendencia gigante; Atletismo poderoso.',
+    'Mediano':'Tipo de criatura: Humanoide. Afortunado; Valentía; Agilidad mediana.',
+    'Humano':'Tipo de criatura: Humanoide. Ingenioso; Habilidoso; Versátil.',
+    'Orco':'Tipo de criatura: Humanoide. Adrenalina; Visión en la oscuridad; Aguante implacable.',
+    'Tiefling':'Tipo de criatura: Humanoide. Visión en la oscuridad; Legado infernal.'
+  };
+  const BUILDER_HIT_DIE: Record<string,number> = {'Bárbaro':12,'Guerrero':10,'Paladín':10,'Explorador':10,'Bardo':8,'Brujo':8,'Clérigo':8,'Druida':8,'Hechicero':6,'Mago':6,'Monje':8,'Pícaro':8};
+  const BUILDER_PRIMARY: Record<string,string> = {'Bárbaro':'Fuerza','Bardo':'Carisma','Brujo':'Carisma','Clérigo':'Sabiduría','Druida':'Sabiduría','Explorador':'Destreza o Sabiduría','Guerrero':'Fuerza o Destreza','Hechicero':'Carisma','Mago':'Inteligencia','Monje':'Destreza y Sabiduría','Paladín':'Fuerza y Carisma','Pícaro':'Destreza'};
+  const BUILDER_STANDARD = [15,14,13,12,10,8];
+  const BUILDER_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+  function builderModifier(score:number) { return Math.floor((score - 10) / 2); }
+  function builderNext() { if (builderStep < 6) builderStep += 1; }
+  function builderBack() { if (builderStep > 0) builderStep -= 1; }
+  function buildLevelOneSheet() {
+    const b = builderData;
+    const mod = (n:number) => (builderModifier(n) >= 0 ? '+' : '') + builderModifier(n);
+    const con = Number(b.abilities.Constitución) || 10;
+    const hp = (BUILDER_HIT_DIE[b.className] || 8) + builderModifier(con);
+    const proficiency = '+2';
+    const features = [BUILDER_CLASS_FEATURES[b.className] || '', BUILDER_SPECIES_TRAITS[b.species] || '', b.traits].filter(Boolean).join('\n');
+    const general = (name:string, values:string[]) => ({
+      heading: { id: 1, name, stats: values.map((label,i)=>({id:i+1,name:label,value:''})) },
+      values: { id: 2, name:'VALORES', stats: values.map((_,i)=>({id:i+1,name:'✎',value:''})) }
+    });
+    const pairs = [
+      general('PERSONAJE',['Nombre','Clase','Subclase','Nivel','Especie','Trasfondo','Alineamiento','Experiencia','Jugador']),
+      general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
+      general('COMBATE',['Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones']),
+      general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
+      general('RASGOS Y DOTES',['Rasgos de clase (nivel 1)','Rasgos de especie','Dote de origen','Otros rasgos']),
+      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro']),
+      general('EQUIPO',['Equipo inicial','Monedas']),
+      general('HISTORIA',['Notas'])
+    ];
+    const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
+    put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (nivel 1)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
+    BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(b.abilities[a])+' ('+mod(Number(b.abilities[a]))+')'));
+    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,2,'Por calcular según armadura'); put(2,3,mod(Number(b.abilities.Destreza))); put(2,4,'30 pies (ajustar por especie)'); put(2,5,proficiency); put(2,6,'Fuerza '+mod(Number(b.abilities.Fuerza))+' · Destreza '+mod(Number(b.abilities.Destreza))+' · Constitución '+mod(con)+' · Inteligencia '+mod(Number(b.abilities.Inteligencia))+' · Sabiduría '+mod(Number(b.abilities.Sabiduría))+' · Carisma '+mod(Number(b.abilities.Carisma)));
+    put(3,0,b.skills || 'Seleccionar según clase y trasfondo'); put(3,1,b.tools || 'Según trasfondo'); put(3,2,'Según clase'); put(3,3,'Según clase'); put(3,4,'Común y los idiomas otorgados por trasfondo/especie');
+    put(4,0,BUILDER_CLASS_FEATURES[b.className] || ''); put(4,1,BUILDER_SPECIES_TRAITS[b.species] || ''); put(4,2,b.feat); put(4,3,b.traits || '—');
+    put(5,0,'Según clase'); put(5,1,'8 + bonificador de competencia + modificador de aptitud mágica'); put(5,2,'Bonificador de competencia + modificador de aptitud mágica'); put(5,3,'Seleccionar según clase'); put(5,4,b.spells || 'Seleccionar según clase'); put(5,5,'Según clase');
+    put(6,0,b.equipment || 'Equipo inicial A de clase y trasfondo'); put(6,1,'Según equipo inicial');
+    put(7,0,b.notes || '—');
+    return {id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente del GM. Revisión final pendiente de completar los campos específicos de clase y equipo.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
+  }
+  function finishBuilder() {
+    builderPreview = buildLevelOneSheet();
+    builderStep = 6;
+  }
+  function downloadBuilderSheet() {
+    if (!builderPreview) return;
+    const json = JSON.stringify(builderPreview,null,2);
+    const blob = new Blob([json],{type:'application/json;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download=(builderPreview.name || 'personaje').replace(/[^a-z0-9_-]+/gi,'-')+'.json'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
   const MONSTERS = [
     {
       name: 'Cultista', english: 'Cultist', type: 'Humanoide mediano o pequeño', alignment: 'Neutral', cr: '1/8 (25 PX)',
@@ -1276,6 +1371,70 @@
           </section>
           {#if notice}<p class="muted" role="status">{notice}</p>{/if}
         </section>
+      {:else if masterTab === 'Crear personaje'}
+        <section class="panel builder-panel">
+          <div class="section-heading"><h2>Crear personaje · Nivel 1</h2><span class="count">Paso {builderStep + 1} de 7</span></div>
+          {#if !builderPreview || builderStep < 6}
+            <div class="builder-progress"><span style="width:{((builderStep + 1) / 7) * 100}%"></span></div>
+            {#if builderStep === 0}
+              <h3>1. Identidad</h3><p class="muted">Datos básicos del personaje.</p>
+              <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre" /></label>
+              <label>Jugador<input bind:value={builderData.player} placeholder="Nombre del jugador (opcional)" /></label>
+              <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
+            {:else if builderStep === 1}
+              <h3>2. Clase</h3><p class="muted">Todas las clases del Manual del Jugador 2024. Se aplican únicamente los rasgos que se obtienen a nivel 1.</p>
+              <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
+              <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1.</small></div>
+            {:else if builderStep === 2}
+              <h3>3. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
+              <label>Especie<select bind:value={builderData.species}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
+              <div class="builder-info"><strong>Rasgos de especie</strong><p>{BUILDER_SPECIES_TRAITS[builderData.species]}</p></div>
+            {:else if builderStep === 3}
+              <h3>4. Trasfondo</h3><p class="muted">El trasfondo determina competencias, equipo y una dote de origen.</p>
+              <label>Trasfondo<select bind:value={builderData.background}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
+              <label>Dote de origen<select bind:value={builderData.feat}>{#each BUILDER_FEATS as item}<option>{item}</option>{/each}</select></label>
+              <div class="builder-info"><small>La lista muestra las dotes de origen elegibles para un personaje de nivel 1. Las dotes con requisito de nivel superior no se ofrecen.</small></div>
+            {:else if builderStep === 4}
+              <h3>5. Puntuaciones de característica</h3>
+              <label>Método<select bind:value={builderData.method}><option value="standard">Conjunto estándar (15, 14, 13, 12, 10, 8)</option><option value="manual">Asignación manual</option></select></label>
+              <p class="muted">Asigna las seis puntuaciones. Los modificadores se calcularán automáticamente.</p>
+              {#each BUILDER_ABILITY_NAMES as ability}
+                <label>{ability}<select bind:value={builderData.abilities[ability]}>{#each (builderData.method === 'standard' ? BUILDER_STANDARD : Array.from({length:13},(_,i)=>8+i)) as score}<option value={score}>{score} ({builderModifier(score) >= 0 ? '+' : ''}{builderModifier(score)})</option>{/each}</select></label>
+              {/each}
+            {:else if builderStep === 5}
+              <h3>6. Competencias, rasgos y equipo</h3>
+              <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
+              <label>Habilidades competentes<textarea bind:value={builderData.skills} rows="2" placeholder="Selecciona las habilidades que concede la clase y el trasfondo" /></label>
+              <label>Herramientas e idiomas<textarea bind:value={builderData.tools} rows="2" placeholder="Herramientas, idiomas adicionales..." /></label>
+              <label>Rasgos y elecciones de clase<textarea bind:value={builderData.traits} rows="3" placeholder="Opciones de rasgos de nivel 1, invocación, orden divina, etc." /></label>
+              <label>Equipo inicial<textarea bind:value={builderData.equipment} rows="3" placeholder="Equipo de clase y trasfondo" /></label>
+              <label>Trucos y conjuros de nivel 1<textarea bind:value={builderData.spells} rows="3" placeholder="Solo si la clase puede lanzar conjuros a nivel 1" /></label>
+              <label>Notas<textarea bind:value={builderData.notes} rows="2" /></label>
+            {/if}
+            <div class="builder-actions">
+              {#if builderStep > 0}<button class="secondary" on:click={builderBack}>Anterior</button>{/if}
+              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" on:click={finishBuilder}>Generar ficha de nivel 1</button>{/if}
+            </div>
+          {:else}
+            <div class="section-heading"><h3>Personaje generado</h3><span class="count">Nivel 1</span></div>
+            <div class="character-sheet gm-character-sheet">
+              <div class="sheet-banner"><h2>{builderPreview.name}</h2></div>
+              <div class="sheet-grid">
+                {#each sectionPairs(builderPreview.sections || []) as pair}
+                  <section class="sheet-section {sectionClass(pair.heading.name)}">
+                    <div class="sheet-section-title"><h3>{pair.heading.name}</h3></div>
+                    <div class="stats-list">{#each pair.heading.stats || [] as stat,i}<div class="sheet-stat"><span>{stat.name}</span><strong>{displayValue(pair.values?.stats?.[i]?.value) || '—'}</strong></div>{/each}</div>
+                  </section>
+                {/each}
+              </div>
+            </div>
+            <div class="builder-actions">
+              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
+              <button class="primary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
+              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 0; builderData = {name:'',player:'',className:'Guerrero',species:'Humano',background:'Soldado',alignment:'Neutral',method:'standard',abilities:{Fuerza:15,Destreza:14,Constitución:13,Inteligencia:12,Sabiduría:10,Carisma:8},feat:'Alerta',skills:'',tools:'',equipment:'',traits:'',spells:'',notes:''}; }}>Crear otro personaje</button>
+            </div>
+          {/if}
+        </section>
       {:else if masterTab === 'Cofres'}
         <section class="panel chest-panel">
           <div class="section-heading"><h2>Cofres</h2><span class="count">10d10 · 10–100</span></div>
@@ -1461,6 +1620,7 @@
 
 <style>
   :global(:root){--paper:#f3eee2;--paper-deep:#e8dfce;--ink:#24231f;--ink-soft:#5e594f;--rule:#c9bea9;--red:#8f3028;--gold:#b18a45}
+  .builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#fffdf8;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#e8dfce;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(255,255,255,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}.builder-panel .sheet-grid{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat strong{white-space:pre-wrap;overflow-wrap:anywhere}
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
