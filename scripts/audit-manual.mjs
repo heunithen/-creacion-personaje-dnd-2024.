@@ -19,6 +19,8 @@ const report = (name, ok, detail = '') => {
 };
 
 report('warlock-cantrip-replacement', app.includes("isWarlockSpellProgression && oldClassCantripNames.length") && app.includes("puedes sustituir uno al subir de nivel"), 'El Brujo puede sustituir un truco en cada subida de nivel.');
+report('cleric-cantrip-replacement', app.includes("isClericCantripProgression=className==='Clérigo' && nextLevel>=2") && app.includes('Al subir de nivel de clérigo puedes sustituir como máximo un truco') && app.includes("getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo'"), 'El Clérigo puede revisar sus trucos en cada subida y sustituir como máximo uno.');
+report('cleric-protector-proficiencies', app.includes("b.className==='Clérigo' && b.classSpecialChoice==='Protector'?'Armaduras ligeras, medias y pesadas; escudos'") && app.includes("b.className==='Clérigo' && b.classSpecialChoice==='Protector'?'Armas sencillas y marciales'"), 'Protector registra armaduras pesadas y armas marciales en la ficha.');
 report('warlock-spell-replacement', app.includes("isWarlockSpellProgression && oldClassSpellNames.length") && app.includes("solo puedes sustituir un conjuro que ya conozcas"), 'El Brujo puede sustituir como máximo un conjuro conocido por nivel.');
 const escapeRegExp = (value) => value.replace(/[|\\{}()[\]^$+*?.-]/g, '\\$&');
 const classNames = Object.keys(progression.classes ?? {});
