@@ -3078,7 +3078,7 @@ import SPELLS from './spells.json';
               {/if}
               <label>Competencias o elecciones adicionales<textarea bind:value={builderData.skills} rows="3" placeholder="Solo beneficios adicionales que no estén recogidos en las opciones anteriores" /></label>
               <label>Notas<textarea bind:value={builderData.notes} rows="3" placeholder="Notas opcionales del personaje" /></label>
-              <div class="builder-info"><strong>Resumen de equipo elegido</strong><p>Trasfondo: {builderData.backgroundEquipment === 'A' ? BUILDER_BACKGROUND_DATA[builderData.background].equipmentA : '50 po en monedas'}</p><p>Clase: {builderData.classEquipmentChoice === 'A' ? BUILDER_CLASS_DATA[builderData.className].equipmentA : builderData.classEquipmentChoice === 'C' ? '155 po en monedas' : BUILDER_CLASS_DATA[builderData.className].equipmentB + ' en monedas'}</p></div>
+              <div class="builder-info"><strong>Resumen de equipo elegido</strong><p>Trasfondo: {builderData.backgroundEquipment === 'A' ? BUILDER_BACKGROUND_DATA[builderData.background].equipmentA : '50 po en monedas'}</p><p>Clase: {builderData.classEquipmentChoice === 'A' ? BUILDER_CLASS_DATA[builderData.className].equipmentA : builderData.classEquipmentChoice === 'C' ? '155 po en monedas' : builderData.className === 'Guerrero' ? BUILDER_CLASS_DATA[builderData.className].equipmentB : BUILDER_CLASS_DATA[builderData.className].equipmentB + ' en monedas'}</p></div>
 
             {/if}
             
