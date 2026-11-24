@@ -1386,7 +1386,7 @@
     }).join('\n\n');
   }
   function equipmentLines(value:string): string {
-    return String(value||'').replace(/\.$/,'').split(',').map(item=>item.trim()).filter(Boolean)
+    return String(value||'').replace(/\b\d+\s*po\b/gi,'').replace(/\.$/,'').split(',').map(item=>item.trim()).filter(Boolean)
       .filter(item=>!(/^\d+\s*po$/i.test(item))).map(item=>'• '+item).join('\n') || '—';
   }
   function refreshDerivedCharacterSheet(target:RawSheet) {
@@ -1481,8 +1481,8 @@
     put(4,0,features); put(4,1,BUILDER_SPECIES_TRAITS[b.species] || ''); put(4,2,[b.feat, b.backgroundFeatChoices.length ? 'Opciones de dote: ' + b.backgroundFeatChoices.join(', ') : '', builderMagicInitiateClass(b.feat) ? 'Iniciado en la magia (' + builderMagicInitiateClass(b.feat) + '): trucos ' + b.backgroundMagicCantrips.join(', ') + '; conjuro ' + b.backgroundMagicSpell + '; aptitud ' + b.backgroundMagicAbility : '', b.species === 'Humano' ? 'Dote adicional: ' + b.speciesExtraFeat : '', b.speciesFeatChoices.length ? 'Opciones de dote adicional: ' + b.speciesFeatChoices.join(', ') : '', builderMagicInitiateClass(b.speciesExtraFeat) && b.species === 'Humano' ? 'Iniciado en la magia adicional: trucos ' + b.speciesMagicCantrips.join(', ') + '; conjuro ' + b.speciesMagicSpell + '; aptitud ' + b.speciesFeatMagicAbility : ''].filter(Boolean).join('; ')); put(4,3,b.traits || '—');
     const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(finalAbilities[magicAbility])) : 0; const classLevelOne = (LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]; const classResources = classLevelOne?.resources || {}; const classSlots = Object.entries(classResources).filter(([key,value]:any)=>/^Espacios nivel|^Espacios de conjuro$|^Nivel de los espacios$/.test(key) && value && value!=='—').map(([key,value]:any)=>key+': '+value).join(' · '); put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(10 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,[...b.selectedCantrips, ...speciesCantrips, ...b.backgroundMagicCantrips, ...(b.species === 'Humano' ? b.speciesMagicCantrips : []), ...b.warlockTomeCantrips].join(', ') || (classData.cantrips ? 'Faltan por elegir ' + classData.cantrips + ' trucos' : 'No obtiene trucos de clase a nivel 1')); put(5,4,(b.className === 'Mago' ? 'Libro: ' + b.wizardSpellbook.join(', ') + '. Preparados: ' : '') + ([...b.selectedSpells, b.backgroundMagicSpell, ...(b.species === 'Humano' ? [b.speciesMagicSpell] : []), ...(b.className === 'Explorador' ? ['Marca del cazador (siempre preparado)'] : []), ...(b.species === 'Gnomo' && b.speciesChoice === 'Gnomo de los bosques' ? ['Hablar con los animales (siempre preparado)'] : []), ...(b.className === 'Brujo' && b.classSpecialChoice === 'Pacto del grimorio' ? b.warlockTomeRituals : []), ...(b.className === 'Brujo' && b.classSpecialChoice === 'Pacto de la cadena' ? ['Encontrar familiar (Pacto de la cadena)'] : [])].filter(Boolean).join(', ') || (classData.spells ? 'Faltan por elegir ' + classData.spells + ' conjuros' : 'No tiene conjuros de clase a nivel 1'))); put(5,5,classSlots || '—'); put(5,6,classResources['Trucos'] || '—'); put(5,7,classResources['Conjuros preparados'] || '—'); put(5,8,classSlots || '—');
     const backgroundEquipmentText=b.backgroundEquipment==='B'?'50 po':BUILDER_BACKGROUND_DATA[b.background].equipmentA;
-    put(6,0,[classEquipment, classEquipmentDetail, b.backgroundEquipment === 'B' ? 'Trasfondo: 50 po en lugar del paquete A.' : backgroundData.equipmentA, b.equipment].filter(Boolean).join(' '));
-    const goldTotal=[classEquipment,backgroundEquipmentText].join(' ').match(/\d+\s*po/gi)?.reduce((sum:string,coin:string)=>sum+Number(coin.match(/\d+/)?.[0]||0),0) || 0;
+    put(6,0,[classEquipment, classEquipmentDetail, b.backgroundEquipment === 'B' ? 'Trasfondo: 50 po en lugar del paquete A.' : BUILDER_BACKGROUND_DATA[b.background].equipmentA, b.equipment].filter(Boolean).join(' '));
+    const goldTotal=[classEquipment,backgroundEquipmentText].join(' ').match(/\d+\s*po/gi)?.reduce((sum:number,coin:string)=>sum+Number(coin.match(/\d+/)?.[0]||0),0) || 0;
     put(6,1,goldTotal+' po (monedas iniciales de ambos paquetes)');
     put(7,0,''); put(7,1,''); put(7,2,''); put(7,3,''); put(7,4,''); put(7,5,''); put(7,6,b.notes || '');
     const backgroundData=BUILDER_BACKGROUND_DATA[b.background];
@@ -1504,8 +1504,8 @@
     put(inventoryIndex,1,equipmentLines(b.backgroundEquipment==='B'?'50 po':backgroundData.equipmentA));
     put(inventoryIndex,2,equipmentLines(b.equipment));
     const attacksIndex=detailIndex('ATAQUES');
-    const backgroundEquipmentText=b.backgroundEquipment==='B'?'':backgroundData.equipmentA;
-    const equipmentText=[classEquipment,backgroundEquipmentText,b.equipment].join(' ').toLocaleLowerCase('es');
+    const backgroundItemsText=b.backgroundEquipment==='B'?'':backgroundData.equipmentA;
+    const equipmentText=[classEquipment,backgroundItemsText,b.equipment].join(' ').toLocaleLowerCase('es');
     const weaponNames=BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>equipmentText.includes(weapon.toLocaleLowerCase('es')));
     put(attacksIndex,0,weaponNames.join(', ')||'No se identificaron armas individuales en el paquete seleccionado.');
     put(attacksIndex,1,b.weaponMasteries.join(', ')||'—');
@@ -2720,7 +2720,7 @@ import SPELLS from './spells.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.35</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.36</span></footer>
 </div>
 
 <style>
