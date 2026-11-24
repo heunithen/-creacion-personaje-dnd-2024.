@@ -1492,7 +1492,9 @@
               </div>
               {#if importOpen}
                 <div class="import-box">
-                  <label>Archivo<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
+                  <label>Archivo JSON<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
+                  <label>Pegar texto de Fast Character<textarea class="fast-import-text" rows="9" bind:value={fastCharacterText} placeholder="Pega aquí el texto completo copiado desde fastcharacter.com"></textarea></label>
+                  <button class="primary" type="button" on:click={convertFastCharacter}>Convertir y cargar personaje</button>
                   <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
                 </div>
               {/if}
