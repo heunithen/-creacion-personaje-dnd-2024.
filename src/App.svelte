@@ -2293,9 +2293,12 @@ import SPELLS from './spells.json';
     const currentWizardBook=splitChoiceList(oldBookText);
     const wizardBookAdditions=splitChoiceList(levelUpWizardBookAdditions);
     if(className==='Mago') {
-      if(wizardBookAdditions.length!==2) { notice='El mago debe añadir exactamente dos conjuros a su libro en cada subida de nivel.'; return; }
+      if(wizardBookAdditions.length!==2 || new Set(wizardBookAdditions.map(name=>normalizeLevelText(name))).size!==2 || wizardBookAdditions.some(name=>currentWizardBook.some(old=>normalizeLevelText(old)===normalizeLevelText(name)))) { notice='Añade exactamente dos conjuros distintos que todavía no estén en tu libro.'; return; }
       if(wizardBookAdditions.some(name=>!isValidClassSpell(name,'Mago',maxClassSpellLevel)||getSpellRecord(name)?.level===0)) { notice='Los dos conjuros añadidos al libro deben ser conjuros de mago de nivel 1 o superior y no superar el nivel de espacio disponible.'; return; }
-      const availableBook=[...currentWizardBook,...wizardBookAdditions].map(name=>normalizeLevelText(name));
+      if(needsWizardSchoolSpells && (wizardSchoolChoices.length!==wizardSchoolTarget || new Set(wizardSchoolChoices.map(name=>normalizeLevelText(name))).size!==wizardSchoolTarget || oldWizardSchoolSpells.some(old=>!wizardSchoolChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(old))))) { notice='Registra la lista completa de conjuros de tu escuela: '+wizardSchoolTarget+' en total. Conserva todos los que ya habías añadido.'; return; }
+      if(needsWizardSchoolSpells && wizardSchoolChoices.some(name=>{const spell=getSpellRecord(name);return !spell || spell.level===0 || spell.level>maxClassSpellLevel || !spell.classes.some((value:string)=>normalizeLevelText(value)==='mago') || normalizeLevelText(spell.school)!==normalizeLevelText(wizardSchool);})) { notice='Todos los conjuros de escuela deben ser conjuros de mago de nivel 1 o superior, de la escuela '+wizardSchool+', y de un nivel para el que tengas espacios.'; return; }
+      if(needsWizardSchoolSpells && wizardSchoolNewChoices.some(name=>currentWizardBook.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) || wizardBookAdditions.some(old=>normalizeLevelText(old)===normalizeLevelText(name)))) { notice='Los nuevos conjuros de escuela no pueden repetirse ni estar ya en tu libro.'; return; }
+      const availableBook=[...currentWizardBook,...wizardBookAdditions,...wizardSchoolNewChoices].map(name=>normalizeLevelText(name));
       if(classSpellNames.some(name=>!availableBook.includes(normalizeLevelText(name)))) { notice='Todos los conjuros preparados del mago deben estar en su libro de conjuros.'; return; }
     }
 
@@ -2389,13 +2392,26 @@ import SPELLS from './spells.json';
     if(needsElementalFury && !['Golpe primordial','Lanzamiento potente'].includes(levelUpElementalFury)) { notice='Elige Golpe primordial o Lanzamiento potente para Furia elemental.'; return; }
     const needsBlessedStrikes=className==='Clérigo' && nextLevel===7;
     if(needsBlessedStrikes && !['Golpe divino','Lanzamiento potente'].includes(levelUpBlessedStrikes)) { notice='Elige Golpe divino o Lanzamiento potente para Golpes benditos.'; return; }
-    const wizardBookForChoices=[...splitChoiceList(getCharacterStat(original,'CONJUROS','Libro de conjuros')),...splitChoiceList(levelUpWizardBookAdditions),...splitChoiceList(levelUpWizardSchoolSpells)];
+    const wizardSubclassKey=normalizeLevelText(levelUpSubclass || getCharacterStat(original,'PERSONAJE','Subclase'));
+    const wizardSchoolBySubclass:Record<string,string>={abjurador:'Abjuración',adivino:'Adivinación',evocador:'Evocación',ilusionista:'Ilusionismo'};
+    const wizardSchool=wizardSchoolBySubclass[wizardSubclassKey] || '';
+    const wizardSchoolLevels=[3,5,7,9,11,13,15,17];
+    const needsWizardSchoolSpells=className==='Mago' && Boolean(wizardSchool) && wizardSchoolLevels.includes(nextLevel);
+    const oldWizardSchoolSpells=splitChoiceList(getCharacterStat(original,'CONJUROS','Conjuros de escuela'));
+    const wizardSchoolChoices=splitChoiceList(levelUpWizardSchoolSpells);
+    const wizardSchoolTarget=oldWizardSchoolSpells.length+(nextLevel===3?3:1);
+    const wizardSchoolNewChoices=wizardSchoolChoices.filter(name=>!oldWizardSchoolSpells.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+    const wizardBookForChoices=[...currentWizardBook,...wizardBookAdditions,...wizardSchoolChoices];
     const validWizardBookSpell=(name:string,level:number,actionOnly:boolean=false)=>{
       const spell=getSpellRecord(name);
       return Boolean(spell && spell.level===level && spell.classes.some((value:string)=>normalizeLevelText(value)==='mago') && (!actionOnly || normalizeLevelText(spell.castingTime)==='accion'));
     };
     const needsWizardMastery=className==='Mago' && nextLevel===18;
     if(needsWizardMastery && (!wizardBookForChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(levelUpWizardMastery1)) || !wizardBookForChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(levelUpWizardMastery2)) || !validWizardBookSpell(levelUpWizardMastery1,1,true) || !validWizardBookSpell(levelUpWizardMastery2,2,true))) { notice='Maestría sobre conjuros requiere un conjuro de nivel 1 y otro de nivel 2 de tu libro, ambos con tiempo de lanzamiento de una acción.'; return; }
+    const needsWizardIllusionCantrip=className==='Mago' && wizardSubclassKey==='ilusionista' && nextLevel===3;
+    const knownWizardCantrips=splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos'));
+    const alreadyKnowsMinorIllusion=knownWizardCantrips.some(name=>normalizeLevelText(name)==='ilusionmenor');
+    if(needsWizardIllusionCantrip && alreadyKnowsMinorIllusion && (!levelUpWizardIllusionCantrip.trim() || !getSpellRecord(levelUpWizardIllusionCantrip) || getSpellRecord(levelUpWizardIllusionCantrip).level!==0 || !getSpellRecord(levelUpWizardIllusionCantrip).classes.some((value:string)=>normalizeLevelText(value)==='mago') || knownWizardCantrips.some(name=>normalizeLevelText(name)===normalizeLevelText(levelUpWizardIllusionCantrip)))) { notice='Como ya conoces Ilusión menor, elige otro truco de mago que todavía no conozcas.'; return; }
     const needsWizardSignature=className==='Mago' && nextLevel===20;
     const wizardSignatureChoices=splitChoiceList(levelUpWizardSignatureSpells);
     if(needsWizardSignature && (wizardSignatureChoices.length!==2 || new Set(wizardSignatureChoices.map(name=>normalizeLevelText(name))).size!==2 || wizardSignatureChoices.some(name=>!wizardBookForChoices.some(bookName=>normalizeLevelText(bookName)===normalizeLevelText(name)) || !validWizardBookSpell(name,3)))) { notice='Conjuros característicos requiere dos conjuros de nivel 3 distintos que estén en tu libro de conjuros.'; return; }
@@ -2589,6 +2605,12 @@ import SPELLS from './spells.json';
     if(needsElementalFury) setCharacterStat(updated,'RASGOS Y DOTES','Opción de Furia elemental',levelUpElementalFury);
     if(needsBlessedStrikes) setCharacterStat(updated,'RASGOS Y DOTES','Opción de Golpes benditos',levelUpBlessedStrikes);
     if(needsWizardMastery) { setCharacterStat(updated,'CONJUROS','Maestría sobre conjuros nivel 1',levelUpWizardMastery1); setCharacterStat(updated,'CONJUROS','Maestría sobre conjuros nivel 2',levelUpWizardMastery2); }
+    if(needsWizardIllusionCantrip) {
+      const bonusCantrip=alreadyKnowsMinorIllusion?levelUpWizardIllusionCantrip.trim():'Ilusión menor';
+      setCharacterStat(updated,'CONJUROS','Trucos de subclase',bonusCantrip);
+      const allKnownTricks=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos'));
+      if(!allKnownTricks.some(name=>normalizeLevelText(name)===normalizeLevelText(bonusCantrip))) setCharacterStat(updated,'CONJUROS','Trucos',[...allKnownTricks,bonusCantrip].join(', '));
+    }
     if(needsWizardSignature) setCharacterStat(updated,'CONJUROS','Conjuros característicos',wizardSignatureChoices.join(', '));
     if(needsBattleMasterTraining || needsFeySkill) {
       const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
@@ -2641,14 +2663,17 @@ import SPELLS from './spells.json';
         const otherSpells=(className==='Mago'?splitChoiceList(oldPreparedText):combinedSpells).filter(name=>!oldClassSpells.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) && !/^libro:|^preparados:/i.test(name));
         setCharacterStat(updated,'CONJUROS','Conjuros preparados de clase',classSpellNames.join(', '));
         if(className==='Mago') {
-          const newBook=[...currentWizardBook,...wizardBookAdditions];
+          const newBook=[...currentWizardBook,...wizardBookAdditions,...wizardSchoolNewChoices];
           setCharacterStat(updated,'CONJUROS','Libro de conjuros',newBook.join(', '));
+          setCharacterStat(updated,'CONJUROS','Conjuros de escuela',wizardSchoolChoices.join(', '));
           setCharacterStat(updated,'CONJUROS','Conjuros de nivel 1','Libro: '+newBook.join(', ')+'. Preparados: '+[...classSpellNames,...otherSpells].join(', '));
         } else {
           setCharacterStat(updated,'CONJUROS','Conjuros de nivel 1',[...classSpellNames,...otherSpells].join(', '));
         }
       } else if(className==='Mago' && wizardBookAdditions.length) {
-        setCharacterStat(updated,'CONJUROS','Libro de conjuros',[...currentWizardBook,...wizardBookAdditions].join(', '));
+        const newBook=[...currentWizardBook,...wizardBookAdditions,...wizardSchoolNewChoices];
+        setCharacterStat(updated,'CONJUROS','Libro de conjuros',newBook.join(', '));
+        setCharacterStat(updated,'CONJUROS','Conjuros de escuela',wizardSchoolChoices.join(', '));
       }
     }
     if(castingTable && castingRow && numericSubclassCasting) {
@@ -2998,6 +3023,17 @@ import SPELLS from './spells.json';
                 {/if}
                 {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago'}
                   <label>Dos conjuros nuevos para el libro del mago<input bind:value={levelUpWizardBookAdditions} placeholder="Dos conjuros separados por comas" /></label>
+                  {#if levelUpSubclass && [3,5,7,9,11,13,15,17].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
+                    <label>Conjuros de escuela (lista completa)<textarea bind:value={levelUpWizardSchoolSpells} rows="3" placeholder="Registra todos los conjuros de tu escuela; al nivel 3 son tres y después se añade uno al desbloquear cada nuevo nivel de espacios." /></label>
+                    <small>Escuela: {({ABJURADOR:'Abjuración',ADIVINO:'Adivinación',EVOCADOR:'Evocación',ILUSIONISTA:'Ilusionismo'} as Record<string,string>)[levelUpSubclass] || levelUpSubclass}. Conserva los anteriores y añade los nuevos.</small>
+                  {/if}
+                  {#if normalizeLevelText(levelUpSubclass)==='ilusionista' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                    {#if splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos')).some(name=>normalizeLevelText(name)==='ilusionmenor')}
+                      <label>Truco adicional de Ilusionista (porque ya conoces Ilusión menor)<input bind:value={levelUpWizardIllusionCantrip} placeholder="Otro truco de mago que aún no conozcas" /></label>
+                    {:else}
+                      <p class="muted">Ilusión menor se añadirá automáticamente como truco adicional de la subclase; no cuenta para tu límite de trucos.</p>
+                    {/if}
+                  {/if}
                 {/if}
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(feature.description)))}
