@@ -151,7 +151,8 @@ try {
         .filter(([, name]) => name && !name.startsWith(norm('TABLA:')) && !name.startsWith(norm('CONJUROS DEL')) && !name.startsWith(norm('CONJUROS DE')));
       const jsonPairs = (subclassMap[subclassName]?.features ?? [])
         .map((feature) => [Number(feature.level), norm(feature.name)])
-        .filter(([, name]) => !name.startsWith(norm('conjurosdel')));
+        .filter(([, name]) => !name.startsWith(norm('conjurosdel')) &&
+          name !== norm('Conjuros de acechador') && name !== norm('Conjuros de errante feérico'));
       const pairKey = ([level, name]) => level + ':' + name;
       const missing = manualPairs.filter(([level, name]) => !jsonPairs.some(([jsonLevel, jsonName]) =>
         jsonLevel === level && (jsonName.startsWith(name) || name.startsWith(jsonName))));
