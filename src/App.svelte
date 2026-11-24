@@ -741,7 +741,7 @@
   }
 
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Cofres', 'Monstruos ordenados'];
+  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Monstruos ordenados'];
   const MONSTERS = [
     {
       name: 'Cultista', english: 'Cultist', type: 'Humanoide mediano o pequeño', alignment: 'Neutral', cr: '1/8 (25 PX)',
@@ -915,8 +915,8 @@
   }
 
   async function performCustomRoll(group: CustomRoll, roll: RollPart, mode: 'normal' | 'advantage' | 'disadvantage') {
-    if (!obrReady || obrRole !== 'PLAYER') {
-      notice = 'Las tiradas solo pueden enviarse desde la ficha de un jugador dentro de Owlbear Rodeo.';
+    if (!obrReady || (obrRole !== 'PLAYER' && obrRole !== 'GM')) {
+      notice = 'Las tiradas solo pueden enviarse desde Owlbear Rodeo.';
       return;
     }
     try {
@@ -1232,6 +1232,46 @@
               </article>
             {/each}
           {/if}
+        </section>
+      {:else if masterTab === 'Tiradas'}
+        <section class="panel gm-rolls-panel">
+          <div class="section-heading"><h2>Crear tiradas</h2><span class="count">Dice+</span></div>
+          <section class="custom-rolls">
+            {#if customRolls.length}
+              <div class="custom-roll-list">
+                {#each customRolls as group (group.id)}
+                  <article class="custom-roll-card">
+                    <div class="custom-roll-info"><strong>{group.name}</strong><button class="remove-roll" type="button" aria-label="Eliminar grupo" on:click={() => removeCustomRoll(group.id)}>×</button></div>
+                    {#each group.parts as part (part.id)}
+                      <div class="roll-part">
+                        <div class="roll-part-heading"><strong>{part.name}</strong><span class="roll-notation">1d{part.die}{part.bonus === 0 ? '' : (part.bonus > 0 ? '+' : '') + part.bonus}</span></div>
+                        <div class="roll-actions">
+                          <button type="button" on:click={() => performCustomRoll(group, part, 'normal')}>Tirar</button>
+                          <button type="button" on:click={() => performCustomRoll(group, part, 'advantage')}>Ventaja</button>
+                          <button type="button" on:click={() => performCustomRoll(group, part, 'disadvantage')}>Desventaja</button>
+                        </div>
+                      </div>
+                    {/each}
+                  </article>
+                {/each}
+              </div>
+            {:else}<p class="muted">Todavía no hay tiradas guardadas.</p>{/if}
+            <h3>Crear tirada</h3>
+            <form class="roll-creator roll-group-creator" on:submit|preventDefault={addCustomRoll}>
+              <label>Nombre del grupo<input bind:value={newRollName} placeholder="Ej. Ataque con dagas" /></label>
+              {#each newRollParts as part, i (part.id)}
+                <div class="new-roll-part">
+                  <div class="new-roll-part-title"><strong>Tirada {i + 1}</strong>{#if newRollParts.length > 1}<button type="button" class="remove-roll" on:click={() => removeRollPart(part.id)}>×</button>{/if}</div>
+                  <label>Nombre<input bind:value={part.name} placeholder="Ej. Ataque o Daño" /></label>
+                  <label>Dado<select bind:value={part.die}>{#each [4,6,8,10,12,20,100] as die}<option value={die}>d{die}</option>{/each}</select></label>
+                  <label>Bonificador<input type="number" bind:value={part.bonus} /></label>
+                </div>
+              {/each}
+              <button type="button" class="add-roll-part" on:click={addRollPart}>+ Añadir otra tirada</button>
+              <button class="primary" type="submit">Crear grupo</button>
+            </form>
+          </section>
+          {#if notice}<p class="muted" role="status">{notice}</p>{/if}
         </section>
       {:else if masterTab === 'Cofres'}
         <section class="panel chest-panel">
