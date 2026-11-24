@@ -1140,7 +1140,7 @@
   };
 
   const BUILDER_CLASS_FEATURES: Record<string,string> = {
-    'Bárbaro':'Furia; Defensa sin armadura',
+    'Bárbaro':'Defensa sin armadura; Furia; Maestría con armas (elige 2 tipos de armas cuerpo a cuerpo sencillas o marciales)',
     'Bardo':'Inspiración bárdica; Lanzamiento de conjuros',
     'Brujo':'Invocaciones sobrenaturales; Magia del pacto',
     'Clérigo':'Lanzamiento de conjuros; Orden divina',
