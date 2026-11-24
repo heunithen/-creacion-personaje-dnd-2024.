@@ -1275,6 +1275,10 @@
   }
   function builderNext() { if (builderStep < 5) builderStep += 1; }
   function builderBack() { if (builderStep > 0) builderStep -= 1; }
+  const BUILDER_FIXED_SPECIES_SIZE: Record<string,string> = {
+    'Dracónido':'Mediano','Enano':'Mediano','Elfo':'Mediano','Gnomo':'Pequeño',
+    'Goliat':'Mediano','Mediano':'Pequeño','Orco':'Mediano'
+  };
   const SKILL_ABILITY_MAP: Record<string,string> = {
     'Acrobacias':'Destreza','Atletismo':'Fuerza','Conocimiento arcano':'Inteligencia','Engaño':'Carisma',
     'Historia':'Inteligencia','Interpretación':'Carisma','Intimidación':'Carisma','Investigación':'Inteligencia',
@@ -1406,13 +1410,14 @@
     put(speciesIndex,1,BUILDER_SPECIES_TRAITS[b.species]||'—');
     put(speciesIndex,2,b.speciesSkill||'—');
     put(speciesIndex,3,[b.speciesMagicAbility,b.speciesMagicCantrips.join(', '),b.speciesMagicSpell,b.speciesFeatMagicAbility].filter(Boolean).join(' · ')||'—');
-    put(speciesIndex,4,b.speciesSize||'Según especie');
+    put(speciesIndex,4,b.speciesSize||BUILDER_FIXED_SPECIES_SIZE[b.species]||'No indicado');
     const inventoryIndex=detailIndex('INVENTARIO');
     put(inventoryIndex,0,equipmentLines(classEquipment+' '+classEquipmentDetail));
     put(inventoryIndex,1,equipmentLines(b.backgroundEquipment==='B'?'50 po':backgroundData.equipmentA));
     put(inventoryIndex,2,equipmentLines(b.equipment));
     const attacksIndex=detailIndex('ATAQUES');
-    const equipmentText=[classEquipment,backgroundData.equipmentA,b.equipment].join(' ').toLocaleLowerCase('es');
+    const backgroundEquipmentText=b.backgroundEquipment==='B'?'':backgroundData.equipmentA;
+    const equipmentText=[classEquipment,backgroundEquipmentText,b.equipment].join(' ').toLocaleLowerCase('es');
     const weaponNames=BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>equipmentText.includes(weapon.toLocaleLowerCase('es')));
     put(attacksIndex,0,weaponNames.join(', ')||'No se identificaron armas individuales en el paquete seleccionado.');
     put(attacksIndex,1,b.weaponMasteries.join(', ')||'—');
@@ -1772,7 +1777,9 @@ import SPELLS from './spells.json';
     const originFeatText=normalizeLevelText(getCharacterStat(original,'RASGOS Y DOTES','Dote de origen'));
     const additionalFeatText=normalizeLevelText(getCharacterStat(original,'RASGOS Y DOTES','Dotes adicionales'));
     const dwarfBonus=normalizeLevelText(speciesName)==='enano'?1:0;
-    const toughBonus=(originFeatText+' '+additionalFeatText).includes('duro')?2:0;
+    const alreadyTough=(originFeatText+' '+additionalFeatText).includes('duro');
+    const gainsToughNow=normalizeLevelText(levelUpFeat)==='duro' && (needsEpicFeat || (needsASI && levelUpAsiMode==='feat')) && !alreadyTough;
+    const toughBonus=alreadyTough?2:gainsToughNow?2*nextLevel:0;
     hpGain=Math.max(1,hpGain+conMod+dwarfBonus+toughBonus);
 
     const updated=JSON.parse(JSON.stringify(original)) as RawSheet;
@@ -2623,7 +2630,7 @@ import SPELLS from './spells.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.33</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.34</span></footer>
 </div>
 
 <style>
