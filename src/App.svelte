@@ -18,6 +18,7 @@
   let obrRole = '';
   let playerName = '';
   let activeTab = 'Datos';
+  let monsterCrFilter = 'Todos';
   const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
@@ -885,6 +886,7 @@
     if (newRollParts.length > 1) newRollParts = newRollParts.filter(part => part.id !== id);
   }
   const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
+  const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0])))];
 
   function persistCustomRolls() {
     localStorage.setItem('forja-custom-rolls', JSON.stringify(customRolls));
@@ -1293,10 +1295,17 @@
         </section>
       {:else}
         <section class="panel monsters-panel">
-          <div class="section-heading"><h2>Monstruos ordenados</h2><span class="count">6 criaturas · VD 1/8</span></div>
+          <div class="section-heading"><h2>Monstruos ordenados</h2><span class="count">{MONSTERS.filter(monster => monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')).length} criaturas</span></div>
           <p class="muted">Bloques resumidos para consulta rápida durante el combate. Orden alfabético por nombre.</p>
+          <label class="monster-filter">Filtrar por VD
+            <select bind:value={monsterCrFilter}>
+              {#each MONSTER_CR_FILTERS as cr}
+                <option value={cr}>{cr === 'Todos' ? 'Todos los VD' : 'VD ' + cr}</option>
+              {/each}
+            </select>
+          </label>
           <div class="monster-list">
-            {#each MONSTERS as monster}
+            {#each MONSTERS.filter(monster => monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')) as monster}
               <details class="monster-card">
                 <summary>
                   <span class="monster-name">{monster.name}</span>
@@ -1455,6 +1464,8 @@
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
   .monsters-panel{margin-top:.5rem}
+  .monster-filter{display:flex;align-items:center;gap:.65rem;margin:.8rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
+  .monster-filter select{min-width:130px;padding:.45rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#fff;color:var(--ink);font:600 .78rem system-ui,sans-serif}
   .monster-list{display:grid;gap:.55rem}
   .monster-card{border:1px solid var(--rule);border-left:4px solid var(--red);border-radius:5px;background:var(--paper);color:var(--ink);overflow:hidden}
   .monster-card>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.18rem .7rem;align-items:center;padding:.7rem .8rem;cursor:pointer;list-style:none}
