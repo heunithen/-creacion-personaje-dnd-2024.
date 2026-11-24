@@ -129,14 +129,14 @@
   {
     "number": 15,
     "category": "Poción",
-    "name": "Poción de resistencia al daño de fuerza",
+    "name": "Poción de resistencia al rayo",
     "price": 200,
     "priceLabel": "200 po"
   },
   {
     "number": 16,
     "category": "Poción",
-    "name": "Poción de resistencia al daño psíquico",
+    "name": "Poción de resistencia al daño necrótico",
     "price": 200,
     "priceLabel": "200 po"
   },
