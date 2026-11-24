@@ -1068,13 +1068,29 @@
     const abilities: [string,string][] = [];
     const modifiers: [string,string][] = [];
     let current = '';
+    let currentAbilityIndex = -1;
     for (const line of lines) {
       const match = line.match(/^(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+(\d+)$/i);
-      if (match) { current=match[1]; abilities.push([abilityLabels[current],match[2]]); continue; }
+      if (match) {
+        current=match[1];
+        currentAbilityIndex = abilities.length;
+        abilities.push([abilityLabels[current],match[2]]);
+        continue;
+      }
       if (!current) continue;
       const detail=line.match(/^([+\-]?\d+)\s*\.\.\.\s*(.+)$/);
-      if (detail) modifiers.push([abilityLabels[current]+' · '+detail[2].replace(/\s+\*+$/,'').trim(),detail[1]]);
-      else if (/^(COMBAT|FEATURES|Proficiencies|EQUIPMENT)/i.test(line)) current='';
+      if (detail) {
+        const detailName = detail[2].replace(/\s+\*+$/,'').trim();
+        if (/saving throws?/i.test(detailName)) {
+          const entry = abilities[currentAbilityIndex];
+          if (entry) entry[1] += '\nSalvación: ' + detail[1];
+        } else if (/ability modifier/i.test(detailName)) {
+          const entry = abilities[currentAbilityIndex];
+          if (entry) entry[1] += ' (' + detail[1] + ')';
+        } else {
+          modifiers.push([abilityLabels[current]+' · '+detailName,detail[1]]);
+        }
+      } else if (/^(COMBAT|FEATURES|Proficiencies|EQUIPMENT)/i.test(line)) current='';
     }
     if (abilities.length!==6) { notice='No se reconocieron las seis características. Comprueba que pegaste el texto completo de Fast Character.'; return; }
     addPaired('Atributos',abilities);
