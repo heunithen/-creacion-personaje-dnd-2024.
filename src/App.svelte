@@ -1458,10 +1458,60 @@
     const backgroundFeatOk = builderOriginFeatChoicesOk(backgroundFeatName,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell) && builderData.backgroundFeatChoices.every(choice=>backgroundFeatOptions.includes(choice) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice!==builderData.speciesSkill && choice!==builderData.backgroundToolChoice);
     const speciesFeatOptions=builderFeatChoiceOptions(builderData.speciesExtraFeat);
     const speciesFeatOk=builderData.species!=='Humano' || (builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell) && builderData.speciesFeatChoices.every(choice=>speciesFeatOptions.includes(choice) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice!==builderData.speciesSkill && choice!==builderData.backgroundToolChoice && !builderData.backgroundFeatChoices.includes(choice)));
-    return skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && tomeOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && backgroundFeatOk && speciesFeatOk && languagesOk;
+    return Boolean(builderData.name.trim()) && Boolean(builderData.alignment) && skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && tomeOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && backgroundFeatOk && speciesFeatOk && languagesOk;
   }
-  function builderNext() { if (builderStep < 5) builderStep += 1; }
-  function builderBack() { if (builderStep > 0) builderStep -= 1; }
+  type BuilderChoiceField = 'backgroundFeatChoices'|'backgroundMagicCantrips'|'speciesFeatChoices'|'speciesMagicCantrips'|'languages'|'classExpertise'|'weaponMasteries'|'classToolsChoices'|'warlockTomeCantrips'|'warlockTomeRituals'|'selectedCantrips'|'wizardSpellbook'|'selectedSpells';
+  let builderStepError = '';
+  function builderToggleChoice(field:BuilderChoiceField, choice:string, max:number, event:Event) {
+    const current=builderData[field] as string[];
+    const checked=(event.currentTarget as HTMLInputElement).checked;
+    if(checked) { if(current.includes(choice)||current.length>=max) return; builderData={...builderData,[field]:[...current,choice]}; }
+    else builderData={...builderData,[field]:current.filter(value=>value!==choice)};
+    builderStepError='';
+  }
+  function builderStepCanAdvance():boolean {
+    const cls=BUILDER_CLASS_DATA[builderData.className], backgroundFeat=BUILDER_BACKGROUND_DATA[builderData.background].feat, speciesFeat=builderData.speciesExtraFeat;
+    if(builderStep===0) return Boolean(builderData.name.trim()) && Boolean(builderData.alignment);
+    if(builderStep===1) {
+      const choiceOk=BUILDER_SPECIES_CHOICES[builderData.species].length===0 || BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice);
+      const skillOk=!['Elfo','Humano'].includes(builderData.species) || (BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(builderData.speciesSkill));
+      const magicOk=!['Elfo','Gnomo','Tiefling'].includes(builderData.species) || ['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
+      const sizeOk=!['Aasimar','Humano','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesSize);
+      const featOk=builderData.species!=='Humano' || (builderOriginFeatChoicesOk(speciesFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell) && builderData.speciesFeatChoices.every(choice=>builderFeatChoiceOptions(speciesFeat).includes(choice)));
+      return choiceOk&&skillOk&&magicOk&&sizeOk&&featOk;
+    }
+    if(builderStep===2) {
+      const options=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[], toolOk=!options.length||options.includes(builderData.backgroundToolChoice);
+      const featOk=builderOriginFeatChoicesOk(backgroundFeat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell)&&builderData.backgroundFeatChoices.every(choice=>builderFeatChoiceOptions(backgroundFeat).includes(choice));
+      const abilities=BUILDER_BACKGROUND_DATA[builderData.background].abilities;
+      const increasesOk=builderData.abilityIncreaseMode==='two'?abilities.includes(builderData.abilityIncrease2)&&abilities.includes(builderData.abilityIncrease1)&&builderData.abilityIncrease1!==builderData.abilityIncrease2:abilities.includes(builderData.abilityIncrease1)&&abilities.includes(builderData.abilityIncrease2)&&abilities.includes(builderData.abilityIncrease3)&&new Set([builderData.abilityIncrease1,builderData.abilityIncrease2,builderData.abilityIncrease3]).size===3;
+      return toolOk&&featOk&&increasesOk;
+    }
+    if(builderStep===3) {
+      const selectedSkills=builderData.classSkillChoices.filter(Boolean), featSkills=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_SKILL_OPTIONS.includes(choice));
+      const skillsOk=selectedSkills.length===BUILDER_CLASS_SKILLS[builderData.className].count&&new Set(selectedSkills).size===selectedSkills.length&&selectedSkills.every(skill=>BUILDER_CLASS_SKILLS[builderData.className].options.includes(skill)&&!BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill)&&skill!==builderData.speciesSkill&&!featSkills.includes(skill));
+      const masteriesOk=builderData.weaponMasteries.length===cls.weaponCount&&new Set(builderData.weaponMasteries).size===cls.weaponCount;
+      const expectedTools=builderData.className==='Bardo'?3:builderData.className==='Monje'?1:0, toolsOk=builderData.classToolsChoices.length===expectedTools&&new Set(builderData.classToolsChoices).size===expectedTools;
+      const eligibleExpertise=[...BUILDER_BACKGROUND_DATA[builderData.background].skills,...selectedSkills,builderData.speciesSkill,...featSkills], expertiseOk=builderData.className!=='Pícaro'||(builderData.classExpertise.length===2&&new Set(builderData.classExpertise).size===2&&builderData.classExpertise.every(skill=>eligibleExpertise.includes(skill)));
+      const specialOk=cls.specialOptions.length===0||cls.specialOptions.includes(builderData.classSpecialChoice), bonusCantrip=(builderData.className==='Clérigo'&&builderData.classSpecialChoice==='Taumaturgo')||(builderData.className==='Druida'&&builderData.classSpecialChoice==='Naturalista')?1:0;
+      const cantripsOk=builderData.selectedCantrips.length===cls.cantrips+bonusCantrip&&new Set(builderData.selectedCantrips).size===builderData.selectedCantrips.length;
+      const tomeOk=builderData.className!=='Brujo'||builderData.classSpecialChoice!=='Pacto del grimorio'||(builderData.warlockTomeCantrips.length===3&&builderData.warlockTomeRituals.length===2);
+      const spellsOk=builderData.selectedSpells.length===cls.spells, bookOk=cls.spellbook===0||(builderData.wizardSpellbook.length===cls.spellbook&&builderData.selectedSpells.every(spell=>builderData.wizardSpellbook.includes(spell)));
+      return skillsOk&&masteriesOk&&toolsOk&&expertiseOk&&specialOk&&cantripsOk&&tomeOk&&spellsOk&&bookOk;
+    }
+    if(builderStep===4) {
+      const values=Object.values(builderData.abilities).map(Number), sorted=[...values].sort((a,b)=>b-a);
+      return builderData.method==='standard'?JSON.stringify(sorted)===JSON.stringify([15,14,13,12,10,8]):builderData.method==='pointBuy'?values.every(v=>v>=8&&v<=15)&&builderPointCost()===27:builderData.method==='rolled'?builderRolledScores.length===6&&JSON.stringify(sorted)===JSON.stringify([...builderRolledScores].sort((a,b)=>b-a)):BUILDER_ABILITY_NAMES.every(name=>Number.isInteger(Number(builderData.abilities[name]))&&Number(builderData.abilities[name])>=1&&Number(builderData.abilities[name])<=20);
+    }
+    return builderCanFinish();
+  }
+  function builderNext() {
+    if(builderStep<5) {
+      if(!builderStepCanAdvance()) { builderStepError=['Escribe el nombre y elige el alineamiento.','Completa las elecciones obligatorias de la especie.','Completa la dote, herramienta y aumentos del trasfondo.','Completa las competencias, rasgos, conjuros y equipo de la clase.','Revisa las seis puntuaciones según el método elegido.'][builderStep]||'Completa las elecciones obligatorias.'; return; }
+      builderStepError=''; builderStep+=1;
+    }
+  }
+  function builderBack() { if(builderStep>0){builderStep-=1;builderStepError='';} }
   const WEAPON_PROFILES: Record<string,{damage:string;damageType:string;category:'simple'|'martial';ability:'strength'|'dexterity'|'finesse';properties:string}> = {
     'Garrote':{damage:'1d4',damageType:'contundente',category:'simple',ability:'strength',properties:'Ligera'},
     'Daga':{damage:'1d4',damageType:'perforante',category:'simple',ability:'finesse',properties:'Sutil, ligera, arrojadiza (6/18 m)'},
@@ -2878,41 +2928,25 @@ import SPELLS from './spells.json';
           {#if !builderPreview || builderStep < 6}
             <div class="builder-progress"><span style="width:{(Math.min(builderStep + 1, 6) / 6) * 100}%"></span></div>
             {#if builderStep === 0}
-
-              <h3>1. Clase</h3><p class="muted">Todas las clases del Manual del Jugador 2024. Se aplican únicamente los rasgos que se obtienen a nivel 1.</p>
-              <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className} on:change={() => { builderData.classSkillChoices = []; builderData.classToolsChoices = []; builderData.classSpecialChoice = ''; builderData.warlockTomeCantrips = []; builderData.warlockTomeRituals = []; builderData.classExpertise = []; builderData.weaponMasteries = []; builderData.selectedCantrips = []; builderData.selectedSpells = []; builderData.wizardSpellbook = []; builderData.classEquipmentChoice = 'A'; }}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
-              <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
+              <h3>1. Nombre y alineamiento</h3>
+              <p class="muted">Primero define la identidad básica del personaje. El nombre del jugador es opcional.</p>
+              <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre" /></label>
+              <label>Jugador<input bind:value={builderData.player} placeholder="Nombre del jugador (opcional)" /></label>
+              <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
             {:else if builderStep === 1}
 
-              <h3>2. Trasfondo</h3><p class="muted">El trasfondo determina competencias, equipo y una dote de origen.</p>
-              <label>Trasfondo<select bind:value={builderData.background} on:change={() => { builderData.classSkillChoices = []; builderData.backgroundToolChoice = ''; builderData.backgroundFeatChoices = []; builderData.backgroundMagicCantrips = []; builderData.backgroundMagicSpell = ''; builderData.feat = BUILDER_BACKGROUND_DATA[builderData.background].feat; builderData.abilityIncrease2 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[0]; builderData.abilityIncrease1 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[1]; builderData.abilityIncrease3 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[2]; }}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
-              {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
-                <label>Elecciones de la dote {BUILDER_BACKGROUND_DATA[builderData.background].feat} ({builderData.backgroundFeatChoices.length}/3)<select multiple size="7" bind:value={builderData.backgroundFeatChoices}>{#each builderFeatChoiceOptions(BUILDER_BACKGROUND_DATA[builderData.background].feat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<option>{choice}</option>{/each}</select></label>
-              {:else if builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
-                <p class="muted">Lista de Iniciado en la magia: {builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}</p>
-                <label>Aptitud mágica de la dote<select bind:value={builderData.backgroundMagicAbility}><option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option></select></label>
-                <label>Dos trucos de la dote ({builderData.backgroundMagicCantrips.length}/2)<select multiple size="6" bind:value={builderData.backgroundMagicCantrips}>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)].cantrips as spell}<option>{spell}</option>{/each}</select></label>
-                <label>Un conjuro de nivel 1 de la dote<select bind:value={builderData.backgroundMagicSpell}><option value="">Elige un conjuro</option>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)].level1 as spell}<option>{spell}</option>{/each}</select></label>
-              {/if}
-              <div class="builder-info"><strong>Beneficios automáticos del trasfondo</strong><p>Características: {BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')}</p><p>Dote: {BUILDER_BACKGROUND_DATA[builderData.background].feat}</p><p>Habilidades: {BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><p>Herramienta: {BUILDER_BACKGROUND_DATA[builderData.background].tool}</p><p>Equipo A: {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA}</p></div>
-              {#if BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]}
-                <label>Competencia con herramienta del trasfondo<select bind:value={builderData.backgroundToolChoice}><option value="">Elige una opción</option>{#each BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background] as tool}<option>{tool}</option>{/each}</select></label>
-              {/if}
-              <h4>Distribución de los aumentos de característica</h4>
-              <p class="muted">El manual permite aumentar una de las tres características del trasfondo en 2 y otra distinta en 1, o aumentar las tres en 1. No se puede superar 20.</p>
-              <label>Distribución<select bind:value={builderData.abilityIncreaseMode}><option value="two">+2 a una característica y +1 a otra distinta</option><option value="three">+1 a cada una de las tres características</option></select></label>
-              {#if builderData.abilityIncreaseMode === 'two'}
-                <label>Característica que recibe +2<select bind:value={builderData.abilityIncrease2}>{#each BUILDER_BACKGROUND_DATA[builderData.background].abilities as ability}<option>{ability}</option>{/each}</select></label>
-                <label>Característica distinta que recibe +1<select bind:value={builderData.abilityIncrease1}>{#each BUILDER_BACKGROUND_DATA[builderData.background].abilities.filter(a => a !== builderData.abilityIncrease2) as ability}<option>{ability}</option>{/each}</select></label>
-              {:else}
-                <p>{BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')} reciben +1 cada una.</p>
-              {/if}
-              <label>Equipo del trasfondo<select bind:value={builderData.backgroundEquipment}><option value="A">Paquete de equipo A</option><option value="B">50 po en lugar del paquete A</option></select></label>
-              <div class="builder-info"><small>Los aumentos se aplican automáticamente a las puntuaciones base y quedan reflejados en la ficha final.</small></div>
-            {:else if builderStep === 2}
-
-              <h3>3. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
+              <h3>2. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
               <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = ''; builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
+              <div class="name-generator-panel">
+                <div class="name-generator-heading"><strong>Generador de nombres</strong><span>Listas originales por especie</span></div>
+                <div class="name-generator-controls">
+                  <p class="hint">Especie elegida: <strong>{builderData.species}</strong></p>
+                  <label>Sexo<select bind:value={nameGender}><option value="Hombre">Hombre</option><option value="Mujer">Mujer</option><option value="Otro">Otro</option></select></label>
+                </div>
+                <button class="secondary name-generator-button" type="button" on:click={generateCharacterName}>⚄ Generar nombre</button>
+                {#if lastGeneratedName}<p class="generated-name-note">Nombre generado: <strong>{lastGeneratedName}</strong></p>{/if}
+                <p class="hint">Nombres originales inspirados en cada especie; no son una lista oficial del manual.</p>
+              </div>
               {#if BUILDER_SPECIES_CHOICES[builderData.species].length > 0}
                 <label>{builderData.species === 'Dracónido' ? 'Linaje dracónico' : builderData.species === 'Elfo' ? 'Linaje élfico' : builderData.species === 'Gnomo' ? 'Linaje gnomo' : builderData.species === 'Goliat' ? 'Linaje gigante' : 'Legado infernal'}<select bind:value={builderData.speciesChoice}><option value="">Elige una opción</option>{#each BUILDER_SPECIES_CHOICES[builderData.species] as choice}<option>{choice}</option>{/each}</select></label>
               {/if}
@@ -2929,21 +2963,93 @@ import SPELLS from './spells.json';
                 <label>Habilidad adicional humana<select bind:value={builderData.speciesSkill}><option value="">Elige una habilidad</option>{#each ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'] as skill}<option>{skill}</option>{/each}</select></label>
                 <label>Dote de origen adicional humana<select bind:value={builderData.speciesExtraFeat} on:change={() => { builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_FEATS.filter(feat => feat !== BUILDER_BACKGROUND_DATA[builderData.background].feat) as feat}<option>{feat}</option>{/each}</select></label>
                 {#if ['Habilidoso','Fabricante','Músico'].includes(builderData.speciesExtraFeat)}
-                  <label>Elecciones de la dote adicional ({builderData.speciesFeatChoices.length}/3)<select multiple size="7" bind:value={builderData.speciesFeatChoices}>{#each builderFeatChoiceOptions(builderData.speciesExtraFeat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice && !builderData.backgroundFeatChoices.includes(choice)) as choice}<option>{choice}</option>{/each}</select></label>
+                  <label>Elecciones de la dote adicional ({builderData.speciesFeatChoices.length}/3)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Opciones de la dote adicional humana</strong><span>{builderData.speciesFeatChoices.length}/{3}</span></div><div class="builder-checkbox-grid">{#each builderFeatChoiceOptions(builderData.speciesExtraFeat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice && !builderData.backgroundFeatChoices.includes(choice)) as choice}<label class="builder-checkbox"><input type="checkbox" checked={builderData.speciesFeatChoices.includes(choice)} on:change={(event) => builderToggleChoice('speciesFeatChoices',choice,3,event)} disabled={!builderData.speciesFeatChoices.includes(choice) && builderData.speciesFeatChoices.length >= (3)} /><span>{choice}</span></label>{/each}</div></div></label>
                 {:else if builderMagicInitiateClass(builderData.speciesExtraFeat)}
                   <label>Aptitud mágica de la dote adicional<select bind:value={builderData.speciesFeatMagicAbility}><option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option></select></label>
-                  <label>Dos trucos de la dote adicional ({builderData.speciesMagicCantrips.length}/2)<select multiple size="6" bind:value={builderData.speciesMagicCantrips}>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(builderData.speciesExtraFeat)].cantrips as spell}<option>{spell}</option>{/each}</select></label>
+                  <label>Dos trucos de la dote adicional ({builderData.speciesMagicCantrips.length}/2)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Trucos de la dote adicional humana</strong><span>{builderData.speciesMagicCantrips.length}/{2}</span></div><div class="builder-checkbox-grid">{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(builderData.speciesExtraFeat)].cantrips as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.speciesMagicCantrips.includes(spell)} on:change={(event) => builderToggleChoice('speciesMagicCantrips',spell,2,event)} disabled={!builderData.speciesMagicCantrips.includes(spell) && builderData.speciesMagicCantrips.length >= (2)} /><span>{spell}</span></label>{/each}</div></div></label>
                   <label>Un conjuro de nivel 1 de la dote adicional<select bind:value={builderData.speciesMagicSpell}><option value="">Elige un conjuro</option>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(builderData.speciesExtraFeat)].level1 as spell}<option>{spell}</option>{/each}</select></label>
                 {/if}
               {/if}
-              <label>Dos idiomas adicionales (además del común) ({builderData.languages.length}/2)<select multiple size="7" bind:value={builderData.languages}>{#each BUILDER_STANDARD_LANGUAGES as language}<option>{language}</option>{/each}</select></label>
-              {#if builderData.className === 'Pícaro'}
-                <label>Idioma adicional de pícaro ({builderData.rogueLanguage ? 1 : 0}/1)<select bind:value={builderData.rogueLanguage}><option value="">Elige un idioma</option>{#each BUILDER_LANGUAGES.filter(language => !builderData.languages.includes(language) && language !== 'Jerga de ladrones') as language}<option>{language}</option>{/each}</select></label>
-              {/if}
               <div class="builder-info"><strong>Rasgos automáticos de especie</strong><p>{BUILDER_SPECIES_TRAITS[builderData.species]}</p>{#if builderData.speciesChoice}<p>Elección: {builderData.speciesChoice}</p>{/if}</div>
-            {:else if builderStep === 3}
+                        {:else if builderStep === 2}
 
-              <h3>4. Puntuaciones de característica</h3>
+              <h3>3. Trasfondo</h3><p class="muted">El trasfondo determina competencias, equipo y una dote de origen.</p>
+              <label>Trasfondo<select bind:value={builderData.background} on:change={() => { builderData.classSkillChoices = []; builderData.backgroundToolChoice = ''; builderData.backgroundFeatChoices = []; builderData.backgroundMagicCantrips = []; builderData.backgroundMagicSpell = ''; builderData.feat = BUILDER_BACKGROUND_DATA[builderData.background].feat; builderData.abilityIncrease2 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[0]; builderData.abilityIncrease1 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[1]; builderData.abilityIncrease3 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[2]; }}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
+              {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
+                <label>Elecciones de la dote {BUILDER_BACKGROUND_DATA[builderData.background].feat} ({builderData.backgroundFeatChoices.length}/3)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Opciones de la dote del trasfondo</strong><span>{builderData.backgroundFeatChoices.length}/{3}</span></div><div class="builder-checkbox-grid">{#each builderFeatChoiceOptions(BUILDER_BACKGROUND_DATA[builderData.background].feat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<label class="builder-checkbox"><input type="checkbox" checked={builderData.backgroundFeatChoices.includes(choice)} on:change={(event) => builderToggleChoice('backgroundFeatChoices',choice,3,event)} disabled={!builderData.backgroundFeatChoices.includes(choice) && builderData.backgroundFeatChoices.length >= (3)} /><span>{choice}</span></label>{/each}</div></div></label>
+              {:else if builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
+                <p class="muted">Lista de Iniciado en la magia: {builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}</p>
+                <label>Aptitud mágica de la dote<select bind:value={builderData.backgroundMagicAbility}><option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option></select></label>
+                <label>Dos trucos de la dote ({builderData.backgroundMagicCantrips.length}/2)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Trucos de Iniciado en la magia</strong><span>{builderData.backgroundMagicCantrips.length}/{2}</span></div><div class="builder-checkbox-grid">{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)].cantrips as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.backgroundMagicCantrips.includes(spell)} on:change={(event) => builderToggleChoice('backgroundMagicCantrips',spell,2,event)} disabled={!builderData.backgroundMagicCantrips.includes(spell) && builderData.backgroundMagicCantrips.length >= (2)} /><span>{spell}</span></label>{/each}</div></div></label>
+                <label>Un conjuro de nivel 1 de la dote<select bind:value={builderData.backgroundMagicSpell}><option value="">Elige un conjuro</option>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)].level1 as spell}<option>{spell}</option>{/each}</select></label>
+              {/if}
+              <div class="builder-info"><strong>Beneficios automáticos del trasfondo</strong><p>Características: {BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')}</p><p>Dote: {BUILDER_BACKGROUND_DATA[builderData.background].feat}</p><p>Habilidades: {BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><p>Herramienta: {BUILDER_BACKGROUND_DATA[builderData.background].tool}</p><p>Equipo A: {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA}</p></div>
+              {#if BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]}
+                <label>Competencia con herramienta del trasfondo<select bind:value={builderData.backgroundToolChoice}><option value="">Elige una opción</option>{#each BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background] as tool}<option>{tool}</option>{/each}</select></label>
+              {/if}
+              <h4>Distribución de los aumentos de característica</h4>
+              <p class="muted">El manual permite aumentar una de las tres características del trasfondo en 2 y otra distinta en 1, o aumentar las tres en 1. No se puede superar 20.</p>
+              <label>Distribución<select bind:value={builderData.abilityIncreaseMode}><option value="two">+2 a una característica y +1 a otra distinta</option><option value="three">+1 a cada una de las tres características</option></select></label>
+              {#if builderData.abilityIncreaseMode === 'two'}
+                <label>Característica que recibe +2<select bind:value={builderData.abilityIncrease2}>{#each BUILDER_BACKGROUND_DATA[builderData.background].abilities as ability}<option>{ability}</option>{/each}</select></label>
+                <label>Característica distinta que recibe +1<select bind:value={builderData.abilityIncrease1}>{#each BUILDER_BACKGROUND_DATA[builderData.background].abilities.filter(a => a !== builderData.abilityIncrease2) as ability}<option>{ability}</option>{/each}</select></label>
+              {:else}
+                <p>{BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')} reciben +1 cada una.</p>
+              {/if}
+              <div class="builder-info"><strong>Equipo del trasfondo</strong><p><b>A — Equipo:</b> {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA}</p><p><b>B — Oro:</b> 50 po en monedas; no recibes los objetos del paquete A.</p></div>
+              <label>Elección de equipo del trasfondo<select bind:value={builderData.backgroundEquipment}><option value="A">A — Recibir el equipo descrito arriba</option><option value="B">B — Recibir 50 po y ningún objeto del paquete A</option></select></label>
+              <div class="builder-info"><small>Los aumentos se aplican automáticamente a las puntuaciones base y quedan reflejados en la ficha final.</small></div>
+                        {:else if builderStep === 3}
+
+              <h3>4. Clase y competencias</h3><p class="muted">Todas las clases del Manual del Jugador 2024. Se aplican únicamente los rasgos que se obtienen a nivel 1.</p>
+              <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className} on:change={() => { builderData.classSkillChoices = []; builderData.classToolsChoices = []; builderData.classSpecialChoice = ''; builderData.warlockTomeCantrips = []; builderData.warlockTomeRituals = []; builderData.classExpertise = []; builderData.weaponMasteries = []; builderData.selectedCantrips = []; builderData.selectedSpells = []; builderData.wizardSpellbook = []; builderData.classEquipmentChoice = 'A'; }}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
+              <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
+                          <h3>Competencias, rasgos, conjuros y equipo</h3>
+              <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
+              <div class="builder-info"><strong>Habilidades automáticas del trasfondo</strong><p>{BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><strong>Elige {BUILDER_CLASS_SKILLS[builderData.className].count} competencias de clase</strong></div>
+              {#each Array.from({length:BUILDER_CLASS_SKILLS[builderData.className].count},(_,i)=>i) as index}
+                <label>Competencia de clase {index + 1}<select bind:value={builderData.classSkillChoices[index]}><option value="">Selecciona una habilidad</option>{#each BUILDER_CLASS_SKILLS[builderData.className].options.filter(skill => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && skill !== builderData.speciesSkill && ![...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].includes(skill) && !builderData.classSkillChoices.some((chosen,i)=>i !== index && chosen === skill)) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+              {/each}
+              
+              
+              <div class="builder-info"><strong>Rasgos automáticos de {builderData.className}</strong><p>{BUILDER_CLASS_DATA[builderData.className].features}</p><p><strong>Competencias de herramientas:</strong> {BUILDER_CLASS_DATA[builderData.className].tool}</p></div>
+              {#if BUILDER_CLASS_DATA[builderData.className].specialOptions.length > 0}
+                <label>{BUILDER_CLASS_DATA[builderData.className].specialLabel}<select bind:value={builderData.classSpecialChoice}><option value="">Elige una opción</option>{#each BUILDER_CLASS_DATA[builderData.className].specialOptions as option}<option>{option}</option>{/each}</select></label>
+              {/if}
+              {#if builderData.className === 'Pícaro'}
+                <label>Pericia: elige 2 habilidades en las que ya seas competente ({builderData.classExpertise.length}/2)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Pericias</strong><span>{builderData.classExpertise.length}/{2}</span></div><div class="builder-checkbox-grid">{#each [...BUILDER_BACKGROUND_DATA[builderData.background].skills,...builderData.classSkillChoices.filter(Boolean),builderData.speciesSkill,...builderData.backgroundFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice)),...builderData.speciesFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice))].filter(Boolean) as skill}<label class="builder-checkbox"><input type="checkbox" checked={builderData.classExpertise.includes(skill)} on:change={(event) => builderToggleChoice('classExpertise',skill,2,event)} disabled={!builderData.classExpertise.includes(skill) && builderData.classExpertise.length >= (2)} /><span>{skill}</span></label>{/each}</div></div></label>
+              {/if}
+              {#if BUILDER_CLASS_DATA[builderData.className].weaponCount > 0}
+                <label>Maestrías con armas ({BUILDER_CLASS_DATA[builderData.className].weaponCount})<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Maestrías con armas</strong><span>{builderData.weaponMasteries.length}/{BUILDER_CLASS_DATA[builderData.className].weaponCount}</span></div><div class="builder-checkbox-grid">{#each BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon => builderData.className !== 'Bárbaro' || !['Arco corto','Ballesta ligera','Dardo','Honda','Arco largo','Ballesta de mano','Ballesta pesada','Cerbatana','Mosquete','Pistola'].includes(weapon)).filter(weapon => builderData.className !== 'Pícaro' || ['Bastón','Daga','Garrote','Garrote grande','Hacha de mano','Hoz','Jabalina','Lanza','Martillo ligero','Maza','Arco corto','Ballesta ligera','Dardo','Honda','Cimitarra','Espada corta','Estoque','Látigo','Ballesta de mano'].includes(weapon)) as weapon}<label class="builder-checkbox"><input type="checkbox" checked={builderData.weaponMasteries.includes(weapon)} on:change={(event) => builderToggleChoice('weaponMasteries',weapon,BUILDER_CLASS_DATA[builderData.className].weaponCount,event)} disabled={!builderData.weaponMasteries.includes(weapon) && builderData.weaponMasteries.length >= (BUILDER_CLASS_DATA[builderData.className].weaponCount)} /><span>{weapon}</span></label>{/each}</div></div></label>
+                <small class="muted">Selecciona los tipos de arma indicados por tu clase. Las opciones se guardan en la ficha.</small>
+              {/if}
+              {#if builderData.className === 'Bardo'}
+                <label>Instrumentos musicales competentes ({builderData.classToolsChoices.length}/3)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Competencias con herramientas</strong><span>{builderData.classToolsChoices.length}/{builderData.className === 'Bardo' ? 3 : 1}</span></div><div class="builder-checkbox-grid">{#each BUILDER_MUSICAL_INSTRUMENTS.filter(tool => !builderData.backgroundFeatChoices.includes(tool) && !builderData.speciesFeatChoices.includes(tool) && tool !== builderData.backgroundToolChoice) as tool}<label class="builder-checkbox"><input type="checkbox" checked={builderData.classToolsChoices.includes(tool)} on:change={(event) => builderToggleChoice('classToolsChoices',tool,builderData.className === 'Bardo' ? 3 : 1,event)} disabled={!builderData.classToolsChoices.includes(tool) && builderData.classToolsChoices.length >= (builderData.className === 'Bardo' ? 3 : 1)} /><span>{tool}</span></label>{/each}</div></div></label>
+              {:else if builderData.className === 'Monje'}
+                <label>Competencia con herramientas ({builderData.classToolsChoices.length}/1)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Competencias con herramientas</strong><span>{builderData.classToolsChoices.length}/{builderData.className === 'Bardo' ? 3 : 1}</span></div><div class="builder-checkbox-grid">{#each [...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS].filter(tool => !builderData.backgroundFeatChoices.includes(tool) && !builderData.speciesFeatChoices.includes(tool) && tool !== builderData.backgroundToolChoice) as tool}<label class="builder-checkbox"><input type="checkbox" checked={builderData.classToolsChoices.includes(tool)} on:change={(event) => builderToggleChoice('classToolsChoices',tool,builderData.className === 'Bardo' ? 3 : 1,event)} disabled={!builderData.classToolsChoices.includes(tool) && builderData.classToolsChoices.length >= (builderData.className === 'Bardo' ? 3 : 1)} /><span>{tool}</span></label>{/each}</div></div></label>
+              {/if}
+              
+              <div class="builder-info"><strong>Equipo inicial de {builderData.className}</strong><p><b>A — Equipo:</b> {BUILDER_CLASS_DATA[builderData.className].equipmentA}</p><p><b>B — Oro:</b> {BUILDER_CLASS_DATA[builderData.className].equipmentB}; no recibes los objetos del paquete A.</p>{#if builderData.className === 'Guerrero'}<p><b>C — Oro:</b> 155 po; no recibes los objetos de A ni B.</p>{/if}</div>
+              <label>Elección de equipo de clase<select bind:value={builderData.classEquipmentChoice}><option value="A">A — Recibir el equipo descrito arriba</option><option value="B">B — Recibir {BUILDER_CLASS_DATA[builderData.className].equipmentB} en monedas</option>{#if builderData.className === 'Guerrero'}<option value="C">C — Recibir 155 po en monedas</option>{/if}</select></label>
+              {#if builderData.className === 'Brujo' && builderData.classSpecialChoice === 'Pacto del grimorio'}
+                <div class="builder-info"><strong>Pacto del grimorio</strong><p>Elige tres trucos y dos conjuros de nivel 1 con la etiqueta de ritual. Estos se añaden a los beneficios de tu invocación.</p></div>
+                <label>Trucos del grimorio ({builderData.warlockTomeCantrips.length}/3)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Trucos del grimorio</strong><span>{builderData.warlockTomeCantrips.length}/{3}</span></div><div class="builder-checkbox-grid">{#each BUILDER_TOME_CANTRIPS.filter(spell => !builderData.selectedCantrips.includes(spell)) as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.warlockTomeCantrips.includes(spell)} on:change={(event) => builderToggleChoice('warlockTomeCantrips',spell,3,event)} disabled={!builderData.warlockTomeCantrips.includes(spell) && builderData.warlockTomeCantrips.length >= (3)} /><span>{spell}</span></label>{/each}</div></div></label>
+                <label>Conjuros rituales de nivel 1 ({builderData.warlockTomeRituals.length}/2)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Conjuros rituales del grimorio</strong><span>{builderData.warlockTomeRituals.length}/{2}</span></div><div class="builder-checkbox-grid">{#each BUILDER_TOME_RITUALS.filter(spell => !builderData.selectedSpells.includes(spell)) as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.warlockTomeRituals.includes(spell)} on:change={(event) => builderToggleChoice('warlockTomeRituals',spell,2,event)} disabled={!builderData.warlockTomeRituals.includes(spell) && builderData.warlockTomeRituals.length >= (2)} /><span>{spell}</span></label>{/each}</div></div></label>
+              {/if}
+              {#if BUILDER_CLASS_DATA[builderData.className].cantrips > 0}
+                <label>Trucos ({builderData.selectedCantrips.length}/{BUILDER_CLASS_DATA[builderData.className].cantrips + ((builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista') ? 1 : 0)})<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Trucos de clase</strong><span>{builderData.selectedCantrips.length}/{BUILDER_CLASS_DATA[builderData.className].cantrips + (((builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista')) ? 1 : 0)}</span></div><div class="builder-checkbox-grid">{#each BUILDER_SPELL_LISTS[builderData.className].cantrips as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.selectedCantrips.includes(spell)} on:change={(event) => builderToggleChoice('selectedCantrips',spell,BUILDER_CLASS_DATA[builderData.className].cantrips + (((builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista')) ? 1 : 0),event)} disabled={!builderData.selectedCantrips.includes(spell) && builderData.selectedCantrips.length >= (BUILDER_CLASS_DATA[builderData.className].cantrips + (((builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista')) ? 1 : 0))} /><span>{spell}</span></label>{/each}</div></div></label>
+              {/if}
+              {#if BUILDER_CLASS_DATA[builderData.className].spells > 0}
+                {#if builderData.className === 'Mago'}
+                  <label>Libro de conjuros: elige 6 conjuros de nivel 1 ({builderData.wizardSpellbook.length}/6)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Libro de conjuros</strong><span>{builderData.wizardSpellbook.length}/{6}</span></div><div class="builder-checkbox-grid">{#each BUILDER_SPELL_LISTS.Mago.level1 as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.wizardSpellbook.includes(spell)} on:change={(event) => builderToggleChoice('wizardSpellbook',spell,6,event)} disabled={!builderData.wizardSpellbook.includes(spell) && builderData.wizardSpellbook.length >= (6)} /><span>{spell}</span></label>{/each}</div></div></label>
+                  <label>Conjuros preparados ({builderData.selectedSpells.length}/4)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Conjuros de nivel 1 preparados</strong><span>{builderData.selectedSpells.length}/{builderData.className === 'Mago' ? 4 : BUILDER_CLASS_DATA[builderData.className].spells}</span></div><div class="builder-checkbox-grid">{#each builderData.wizardSpellbook as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.selectedSpells.includes(spell)} on:change={(event) => builderToggleChoice('selectedSpells',spell,builderData.className === 'Mago' ? 4 : BUILDER_CLASS_DATA[builderData.className].spells,event)} disabled={!builderData.selectedSpells.includes(spell) && builderData.selectedSpells.length >= (builderData.className === 'Mago' ? 4 : BUILDER_CLASS_DATA[builderData.className].spells)} /><span>{spell}</span></label>{/each}</div></div></label>
+                {:else}
+                  <label>Conjuros de nivel 1 preparados ({builderData.selectedSpells.length}/{BUILDER_CLASS_DATA[builderData.className].spells})<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Conjuros de nivel 1 preparados</strong><span>{builderData.selectedSpells.length}/{builderData.className === 'Mago' ? 4 : BUILDER_CLASS_DATA[builderData.className].spells}</span></div><div class="builder-checkbox-grid">{#each BUILDER_SPELL_LISTS[builderData.className].level1 as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.selectedSpells.includes(spell)} on:change={(event) => builderToggleChoice('selectedSpells',spell,builderData.className === 'Mago' ? 4 : BUILDER_CLASS_DATA[builderData.className].spells,event)} disabled={!builderData.selectedSpells.includes(spell) && builderData.selectedSpells.length >= (builderData.className === 'Mago' ? 4 : BUILDER_CLASS_DATA[builderData.className].spells)} /><span>{spell}</span></label>{/each}</div></div></label>
+                {/if}
+              {/if}
+            {:else if builderStep === 4}
+
+              <h3>5. Puntuaciones de característica</h3>
               <p class="muted">Elige uno de los métodos del manual. Los aumentos de característica del trasfondo se aplican después y se muestran en el resultado.</p>
               <label>Método para determinar las puntuaciones<select bind:value={builderData.method} on:change={builderSetAbilityMethod}><option value="standard">Arreglo estándar (15, 14, 13, 12, 10, 8)</option><option value="pointBuy">Compra de puntos (27 puntos)</option><option value="rolled">Tirada (4d6, descartar el menor)</option><option value="free">Creación libre (valores personalizados)</option></select></label>
               {#if builderData.method === 'rolled'}
@@ -2963,74 +3069,21 @@ import SPELLS from './spells.json';
                 <p class="hint">Asigna manualmente cualquier puntuación entre 1 y 20. Este método no aplica límites de arreglo estándar ni compra de puntos.</p>
               {/if}
               <div class="builder-info"><strong>Resultado con los aumentos del trasfondo</strong>{#each BUILDER_ABILITY_NAMES as ability}<p>{ability}: {builderData.abilities[ability]} → {builderAdjustedAbilities()[ability]}</p>{/each}</div>
-            {:else if builderStep === 4}
-              <h3>5. Alineamiento</h3>
-              <p class="muted">Elige la actitud moral y ética que guía las decisiones de tu personaje.</p>
-              <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
-            {:else if builderStep === 5}
-
-              <h3>6. Detalles del personaje</h3><p class="muted">Completa la identidad de tu aventurero. La especie ya fue elegida en el paso anterior.</p>
-              <div class="name-generator-panel">
-                <div class="name-generator-heading"><strong>Generador de nombres</strong><span>Listas originales por especie</span></div>
-                <div class="name-generator-controls">
-                  <p class="hint">Especie elegida: <strong>{builderData.species}</strong></p>
-                  <label>Sexo<select bind:value={nameGender}><option value="Hombre">Hombre</option><option value="Mujer">Mujer</option><option value="Otro">Otro</option></select></label>
-                </div>
-                <button class="secondary name-generator-button" type="button" on:click={generateCharacterName}>⚄ Generar nombre</button>
-                {#if lastGeneratedName}<p class="generated-name-note">Nombre generado: <strong>{lastGeneratedName}</strong></p>{/if}
-                <p class="hint">Nombres originales inspirados en cada especie; no son una lista oficial del manual.</p>
-              </div>
-              <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre" /></label>
-              <label>Jugador<input bind:value={builderData.player} placeholder="Nombre del jugador (opcional)" /></label>
-
-              <h3>Competencias, rasgos, conjuros y equipo</h3>
-              <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
-              <div class="builder-info"><strong>Habilidades automáticas del trasfondo</strong><p>{BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><strong>Elige {BUILDER_CLASS_SKILLS[builderData.className].count} competencias de clase</strong></div>
-              {#each Array.from({length:BUILDER_CLASS_SKILLS[builderData.className].count},(_,i)=>i) as index}
-                <label>Competencia de clase {index + 1}<select bind:value={builderData.classSkillChoices[index]}><option value="">Selecciona una habilidad</option>{#each BUILDER_CLASS_SKILLS[builderData.className].options.filter(skill => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && skill !== builderData.speciesSkill && ![...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].includes(skill) && !builderData.classSkillChoices.some((chosen,i)=>i !== index && chosen === skill)) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
-              {/each}
-              
-              
-              <div class="builder-info"><strong>Rasgos automáticos de {builderData.className}</strong><p>{BUILDER_CLASS_DATA[builderData.className].features}</p><p><strong>Competencias de herramientas:</strong> {BUILDER_CLASS_DATA[builderData.className].tool}</p></div>
-              {#if BUILDER_CLASS_DATA[builderData.className].specialOptions.length > 0}
-                <label>{BUILDER_CLASS_DATA[builderData.className].specialLabel}<select bind:value={builderData.classSpecialChoice}><option value="">Elige una opción</option>{#each BUILDER_CLASS_DATA[builderData.className].specialOptions as option}<option>{option}</option>{/each}</select></label>
-              {/if}
+                        {:else if builderStep === 5}
+              <h3>6. Idiomas y ajustes finales</h3>
+              <p class="muted">Elige los dos idiomas adicionales del personaje y revisa cualquier detalle que no haya quedado registrado en las opciones anteriores.</p>
+              <label>Dos idiomas adicionales (además del común) ({builderData.languages.length}/2)<div class="builder-choice-field"><div class="builder-choice-heading"><strong>Idiomas adicionales</strong><span>{builderData.languages.length}/{2}</span></div><div class="builder-checkbox-grid">{#each BUILDER_STANDARD_LANGUAGES as language}<label class="builder-checkbox"><input type="checkbox" checked={builderData.languages.includes(language)} on:change={(event) => builderToggleChoice('languages',language,2,event)} disabled={!builderData.languages.includes(language) && builderData.languages.length >= (2)} /><span>{language}</span></label>{/each}</div></div></label>
               {#if builderData.className === 'Pícaro'}
-                <label>Pericia: elige 2 habilidades en las que ya seas competente ({builderData.classExpertise.length}/2)<select multiple size="6" bind:value={builderData.classExpertise}>{#each [...BUILDER_BACKGROUND_DATA[builderData.background].skills,...builderData.classSkillChoices.filter(Boolean),builderData.speciesSkill,...builderData.backgroundFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice)),...builderData.speciesFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice))].filter(Boolean) as skill}<option>{skill}</option>{/each}</select></label>
+                <label>Idioma adicional de pícaro ({builderData.rogueLanguage ? 1 : 0}/1)<select bind:value={builderData.rogueLanguage}><option value="">Elige un idioma</option>{#each BUILDER_LANGUAGES.filter(language => !builderData.languages.includes(language) && language !== 'Jerga de ladrones') as language}<option>{language}</option>{/each}</select></label>
               {/if}
-              {#if BUILDER_CLASS_DATA[builderData.className].weaponCount > 0}
-                <label>Maestrías con armas ({BUILDER_CLASS_DATA[builderData.className].weaponCount})<select multiple size="6" bind:value={builderData.weaponMasteries}>{#each BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon => builderData.className !== 'Bárbaro' || !['Arco corto','Ballesta ligera','Dardo','Honda','Arco largo','Ballesta de mano','Ballesta pesada','Cerbatana','Mosquete','Pistola'].includes(weapon)).filter(weapon => builderData.className !== 'Pícaro' || ['Bastón','Daga','Garrote','Garrote grande','Hacha de mano','Hoz','Jabalina','Lanza','Martillo ligero','Maza','Arco corto','Ballesta ligera','Dardo','Honda','Cimitarra','Espada corta','Estoque','Látigo','Ballesta de mano'].includes(weapon)) as weapon}<option>{weapon}</option>{/each}</select></label>
-                <small class="muted">Selecciona los tipos de arma indicados por tu clase. Las opciones se guardan en la ficha.</small>
-              {/if}
-              {#if builderData.className === 'Bardo'}
-                <label>Instrumentos musicales competentes ({builderData.classToolsChoices.length}/3)<select multiple size="6" bind:value={builderData.classToolsChoices}>{#each BUILDER_MUSICAL_INSTRUMENTS.filter(tool => !builderData.backgroundFeatChoices.includes(tool) && !builderData.speciesFeatChoices.includes(tool) && tool !== builderData.backgroundToolChoice) as tool}<option>{tool}</option>{/each}</select></label>
-              {:else if builderData.className === 'Monje'}
-                <label>Competencia con herramientas ({builderData.classToolsChoices.length}/1)<select multiple size="6" bind:value={builderData.classToolsChoices}>{#each [...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS].filter(tool => !builderData.backgroundFeatChoices.includes(tool) && !builderData.speciesFeatChoices.includes(tool) && tool !== builderData.backgroundToolChoice) as tool}<option>{tool}</option>{/each}</select></label>
-              {/if}
-              
-              <label>Equipo inicial de clase<select bind:value={builderData.classEquipmentChoice}><option value="A">Paquete A: {BUILDER_CLASS_DATA[builderData.className].equipmentA}</option><option value="B">Paquete B: {BUILDER_CLASS_DATA[builderData.className].equipmentB}</option>{#if builderData.className === 'Guerrero'}<option value="C">Paquete C: 155 po</option>{/if}</select></label>
-              {#if builderData.className === 'Brujo' && builderData.classSpecialChoice === 'Pacto del grimorio'}
-                <div class="builder-info"><strong>Pacto del grimorio</strong><p>Elige tres trucos y dos conjuros de nivel 1 con la etiqueta de ritual. Estos se añaden a los beneficios de tu invocación.</p></div>
-                <label>Trucos del grimorio ({builderData.warlockTomeCantrips.length}/3)<select multiple size="8" bind:value={builderData.warlockTomeCantrips}>{#each BUILDER_TOME_CANTRIPS.filter(spell => !builderData.selectedCantrips.includes(spell)) as spell}<option>{spell}</option>{/each}</select></label>
-                <label>Conjuros rituales de nivel 1 ({builderData.warlockTomeRituals.length}/2)<select multiple size="8" bind:value={builderData.warlockTomeRituals}>{#each BUILDER_TOME_RITUALS.filter(spell => !builderData.selectedSpells.includes(spell)) as spell}<option>{spell}</option>{/each}</select></label>
-              {/if}
-              {#if BUILDER_CLASS_DATA[builderData.className].cantrips > 0}
-                <label>Trucos ({builderData.selectedCantrips.length}/{BUILDER_CLASS_DATA[builderData.className].cantrips + ((builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista') ? 1 : 0)})<select multiple size="7" bind:value={builderData.selectedCantrips}>{#each BUILDER_SPELL_LISTS[builderData.className].cantrips as spell}<option>{spell}</option>{/each}</select></label>
-              {/if}
-              {#if BUILDER_CLASS_DATA[builderData.className].spells > 0}
-                {#if builderData.className === 'Mago'}
-                  <label>Libro de conjuros: elige 6 conjuros de nivel 1 ({builderData.wizardSpellbook.length}/6)<select multiple size="8" bind:value={builderData.wizardSpellbook}>{#each BUILDER_SPELL_LISTS.Mago.level1 as spell}<option>{spell}</option>{/each}</select></label>
-                  <label>Conjuros preparados ({builderData.selectedSpells.length}/4)<select multiple size="8" bind:value={builderData.selectedSpells}>{#each builderData.wizardSpellbook as spell}<option>{spell}</option>{/each}</select></label>
-                {:else}
-                  <label>Conjuros de nivel 1 preparados ({builderData.selectedSpells.length}/{BUILDER_CLASS_DATA[builderData.className].spells})<select multiple size="8" bind:value={builderData.selectedSpells}>{#each BUILDER_SPELL_LISTS[builderData.className].level1 as spell}<option>{spell}</option>{/each}</select></label>
-                {/if}
-              {/if}
-              <label>Competencias o elecciones adicionales<textarea bind:value={builderData.skills} rows="2" placeholder="Solo beneficios adicionales que no estén recogidos arriba" /></label>
-              
-              <label>Notas<textarea bind:value={builderData.notes} rows="2" /></label>
+              <label>Competencias o elecciones adicionales<textarea bind:value={builderData.skills} rows="3" placeholder="Solo beneficios adicionales que no estén recogidos en las opciones anteriores" /></label>
+              <label>Notas<textarea bind:value={builderData.notes} rows="3" placeholder="Notas opcionales del personaje" /></label>
+              <div class="builder-info"><strong>Resumen de equipo elegido</strong><p>Trasfondo: {builderData.backgroundEquipment === 'A' ? BUILDER_BACKGROUND_DATA[builderData.background].equipmentA : '50 po en monedas'}</p><p>Clase: {builderData.classEquipmentChoice === 'A' ? BUILDER_CLASS_DATA[builderData.className].equipmentA : builderData.classEquipmentChoice === 'C' ? '155 po en monedas' : BUILDER_CLASS_DATA[builderData.className].equipmentB + ' en monedas'}</p></div>
+
             {/if}
             
-<div class="builder-actions">
+{#if builderStepError}<p class="builder-step-error" role="alert">{builderStepError}</p>{/if}
+            <div class="builder-actions">
               {#if builderStep > 0}<button class="secondary" on:click={builderBack}>Anterior</button>{/if}
               {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" on:click={finishBuilder} disabled={!builderCanFinish()}>Generar ficha de nivel 1</button>{/if}
             </div>
@@ -3573,6 +3626,18 @@ import SPELLS from './spells.json';
     :global(.sheet-tabs button){padding:.55rem .7rem!important}
   }
 
+
+  .builder-choice-field{display:grid;gap:.45rem;margin:.7rem 0;padding:.7rem;border:1px solid #76212a;border-radius:7px;background:#100c0d}
+  .builder-choice-heading{display:flex;justify-content:space-between;gap:.7rem;align-items:center;color:#fff;font:.75rem/1.4 system-ui,sans-serif}
+  .builder-choice-heading span{color:#ff9ba4;font-weight:700;white-space:nowrap}
+  .builder-checkbox-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.35rem}
+  .builder-checkbox{display:flex;align-items:center;gap:.55rem;min-width:0;padding:.5rem .6rem;border:1px solid #432127;border-radius:5px;background:#0b0b0b;color:#eee;font:.76rem/1.35 system-ui,sans-serif;cursor:pointer}
+  .builder-checkbox input{flex:0 0 auto;width:1rem;height:1rem;accent-color:#d32638}
+  .builder-checkbox:has(input:checked){border-color:#c52b3b;background:#241014}
+  .builder-checkbox:has(input:disabled):not(:has(input:checked)){opacity:.48;cursor:not-allowed}
+  .builder-step-error{padding:.7rem .85rem;border:1px solid #b52a38;border-radius:6px;background:#260c11;color:#ffc1c6;font:.78rem/1.5 system-ui,sans-serif}
+  .builder-panel .builder-info p{overflow-wrap:anywhere}
+  @media(max-width:560px){.builder-checkbox-grid{grid-template-columns:1fr}}
 
   /* Glosario de reglas compartido entre jugador y narrador */
   :global(.rules-panel){display:grid;gap:.8rem}
