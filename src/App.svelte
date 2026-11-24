@@ -825,11 +825,11 @@
   const BUILDER_CLASS_DATA: Record<string,{equipmentA:string;equipmentB:string;features:string;tool:string;weaponCount:number;cantrips:number;spells:number;slots:number;spellbook:number;specialLabel:string;specialOptions:string[]}> = {
     'Bárbaro':{equipmentA:'Hacha a dos manos, 4 hachas de mano, paquete de explorador y 15 po.',equipmentB:'75 po.',features:'Defensa sin armadura; Furia (2 usos, daño +2 y resistencia a daño contundente, cortante y perforante); Maestría con armas (elige 2 tipos de armas).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:2,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'',specialOptions:[]},
     'Bardo':{equipmentA:'Armadura de cuero, 2 dagas, un instrumento musical, paquete de artista y 19 po.',equipmentB:'90 po.',features:'Inspiración bárdica (d6; usos iguales al modificador de Carisma, mínimo 1); Lanzamiento de conjuros.',tool:'Elige 3 instrumentos musicales.',weaponCount:0,cantrips:2,spells:4,slots:2,spellbook:0,specialLabel:'Instrumentos musicales',specialOptions:[]},
-    'Brujo':{equipmentA:'Armadura de cuero, hoz, 2 dagas, canalizador arcano (orbe), libro de conocimiento oculto, paquete de erudito y 15 po.',equipmentB:'100 po.',features:'Invocaciones sobrenaturales (elige 1); Magia del pacto (2 trucos, 2 conjuros preparados y 1 espacio de nivel 1).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:2,spells:2,slots:1,spellbook:0,specialLabel:'Invocación sobrenatural',specialOptions:['Armadura de sombras','Explosión agonizante','Máscara de muchos rostros','Ojos del guardián de las runas','Pacto del grimorio','Salto sobrenatural','Vigor infernal']},
+    'Brujo':{equipmentA:'Armadura de cuero, hoz, 2 dagas, canalizador arcano (orbe), libro de conocimiento oculto, paquete de erudito y 15 po.',equipmentB:'100 po.',features:'Invocaciones sobrenaturales (elige 1); Magia del pacto (2 trucos, 2 conjuros preparados y 1 espacio de nivel 1).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:2,spells:2,slots:1,spellbook:0,specialLabel:'Invocación sobrenatural',specialOptions:['Armadura de sombras','Mente sobrenatural','Pacto de la cadena','Pacto del filo','Pacto del grimorio']},
     'Clérigo':{equipmentA:'Camisa de malla, escudo, maza, paquete de sacerdote, símbolo sagrado y 7 po.',equipmentB:'110 po.',features:'Lanzamiento de conjuros (3 trucos, 4 conjuros preparados y 2 espacios de nivel 1); Orden divina.',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:3,spells:4,slots:2,spellbook:0,specialLabel:'Orden divina',specialOptions:['Protector','Taumaturgo']},
     'Druida':{equipmentA:'Armadura de cuero, escudo, hoz, canalizador druídico (bastón), paquete de explorador, útiles de herborista y 9 po.',equipmentB:'50 po.',features:'Lanzamiento de conjuros (2 trucos, 4 conjuros preparados y 2 espacios de nivel 1); Druídico; Orden primigenia.',tool:'Útiles de herborista.',weaponCount:0,cantrips:2,spells:4,slots:2,spellbook:0,specialLabel:'Orden primigenia',specialOptions:['Guardián','Naturalista']},
     'Explorador':{equipmentA:'Armadura de cuero tachonado, cimitarra, espada corta, arco largo, 20 flechas, aljaba, canalizador druídico (rama de muérdago), paquete de explorador y 7 po.',equipmentB:'150 po.',features:'Lanzamiento de conjuros (2 conjuros preparados y 2 espacios de nivel 1); Enemigo predilecto (Marca del cazador siempre preparada); Maestría con armas (2 tipos).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:2,cantrips:0,spells:2,slots:2,spellbook:0,specialLabel:'',specialOptions:[]},
-    'Guerrero':{equipmentA:'Cota de malla, espadón, mangual, 8 jabalinas, paquete de explorador de mazmorras y 4 po.',equipmentB:'Alternativa B: armadura de cuero tachonado, cimitarra, espada corta, arco largo, 20 flechas, aljaba, paquete de explorador de mazmorras y 11 po. Alternativa C: 155 po.',features:'Estilo de combate (elige una dote de estilo de combate); Maestría con armas (3 tipos); Tomar aliento (2 usos).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:3,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'Estilo de combate',specialOptions:['Arquero','Combate con armas arrojadizas','Combate con dos armas','Combate sin armas','Defensa','Duelo','Intercepción','Protección','Combate con armas grandes']},
+    'Guerrero':{equipmentA:'Cota de malla, espadón, mangual, 8 jabalinas, paquete de explorador de mazmorras y 4 po.',equipmentB:'Armadura de cuero tachonado, cimitarra, espada corta, arco largo, 20 flechas, aljaba, paquete de explorador de mazmorras y 11 po.',features:'Estilo de combate (elige una dote de estilo de combate); Maestría con armas (3 tipos); Tomar aliento (2 usos).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:3,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'Estilo de combate',specialOptions:['Arquero','Combate con armas arrojadizas','Combate con dos armas','Combate sin armas','Defensa','Duelo','Intercepción','Protección','Combate con armas grandes']},
     'Hechicero':{equipmentA:'Lanza, 2 dagas, canalizador arcano (cristal), paquete de explorador de mazmorras y 28 po.',equipmentB:'50 po.',features:'Lanzamiento de conjuros (4 trucos, 2 conjuros preparados y 2 espacios de nivel 1); Hechicería innata.',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:4,spells:2,slots:2,spellbook:0,specialLabel:'',specialOptions:[]},
     'Mago':{equipmentA:'2 dagas, canalizador arcano (bastón), libro de conjuros, paquete de erudito, túnica y 5 po.',equipmentB:'55 po.',features:'Lanzamiento de conjuros (3 trucos, libro con 6 conjuros de nivel 1, 4 preparados y 2 espacios); Adepto en rituales; Recuperación arcana.',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:3,spells:4,slots:2,spellbook:6,specialLabel:'',specialOptions:[]},
     'Monje':{equipmentA:'Lanza, 5 dagas, herramientas de artesano o instrumento musical elegido, paquete de explorador y 11 po.',equipmentB:'50 po.',features:'Artes marciales; Defensa sin armadura.',tool:'Elige herramientas de artesano o un instrumento musical.',weaponCount:0,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'Competencia con herramientas',specialOptions:['Herramientas de alfarero','Herramientas de carpintero','Herramientas de cartógrafo','Herramientas de zapatero','Instrumento musical']},
@@ -873,6 +873,17 @@
     return result;
   }
   function builderModifier(score:number) { return Math.floor((score - 10) / 2); }
+  function builderCanFinish() {
+    const cls = BUILDER_CLASS_DATA[builderData.className];
+    const skillsOk = builderData.classSkillChoices.filter(Boolean).length === BUILDER_CLASS_SKILLS[builderData.className].count;
+    const masteriesOk = builderData.weaponMasteries.length === cls.weaponCount;
+    const specialOk = cls.specialOptions.length === 0 || Boolean(builderData.classSpecialChoice);
+    const cantripsOk = builderData.selectedCantrips.length === cls.cantrips;
+    const spellsOk = builderData.selectedSpells.length === cls.spells;
+    const bookOk = cls.spellbook === 0 || builderData.wizardSpellbook.length === cls.spellbook;
+    const abilitiesOk = builderData.method !== 'manual' || builderPointCost() === 27;
+    return skillsOk && masteriesOk && specialOk && cantripsOk && spellsOk && bookOk && abilitiesOk;
+  }
   function builderNext() { if (builderStep < 6) builderStep += 1; }
   function builderBack() { if (builderStep > 0) builderStep -= 1; }
   function buildLevelOneSheet() {
@@ -1478,7 +1489,7 @@
               <div class="builder-info"><strong>Rasgos de especie</strong><p>{BUILDER_SPECIES_TRAITS[builderData.species]}</p></div>
             {:else if builderStep === 3}
               <h3>4. Trasfondo</h3><p class="muted">El trasfondo determina competencias, equipo y una dote de origen.</p>
-              <label>Trasfondo<select bind:value={builderData.background} on:change={() => { builderData.feat = BUILDER_BACKGROUND_DATA[builderData.background].feat; builderData.abilityIncrease2 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[0]; builderData.abilityIncrease1 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[1]; builderData.abilityIncrease3 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[2]; }}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
+              <label>Trasfondo<select bind:value={builderData.background} on:change={() => { builderData.classSkillChoices = []; builderData.feat = BUILDER_BACKGROUND_DATA[builderData.background].feat; builderData.abilityIncrease2 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[0]; builderData.abilityIncrease1 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[1]; builderData.abilityIncrease3 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[2]; }}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
               <div class="builder-info"><strong>Beneficios automáticos del trasfondo</strong><p>Características: {BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')}</p><p>Dote: {BUILDER_BACKGROUND_DATA[builderData.background].feat}</p><p>Habilidades: {BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><p>Herramienta: {BUILDER_BACKGROUND_DATA[builderData.background].tool}</p><p>Equipo A: {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA}</p></div>
               <h4>Distribución de los aumentos de característica</h4>
               <p class="muted">El manual permite aumentar una de las tres características del trasfondo en 2 y otra distinta en 1, o aumentar las tres en 1. No se puede superar 20.</p>
@@ -1507,6 +1518,7 @@
               {#each Array.from({length:BUILDER_CLASS_SKILLS[builderData.className].count},(_,i)=>i) as index}
                 <label>Competencia de clase {index + 1}<select bind:value={builderData.classSkillChoices[index]}><option value="">Selecciona una habilidad</option>{#each BUILDER_CLASS_SKILLS[builderData.className].options.filter(skill => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && !builderData.classSkillChoices.some((chosen,i)=>i !== index && chosen === skill)) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
               {/each}
+              {#if !builderCanFinish()}<p class="builder-error">Completa todas las elecciones obligatorias: habilidades, maestrías, rasgos de clase, trucos, conjuros y presupuesto de características.</p>{/if}
               <label>Competencias adicionales otorgadas por rasgos<textarea bind:value={builderData.skills} rows="2" placeholder="Solo si otra elección de clase o especie concede más competencias" /></label>
               <div class="builder-info"><strong>Rasgos automáticos de {builderData.className}</strong><p>{BUILDER_CLASS_DATA[builderData.className].features}</p><p><strong>Competencias de herramientas:</strong> {BUILDER_CLASS_DATA[builderData.className].tool}</p></div>
               {#if BUILDER_CLASS_DATA[builderData.className].specialOptions.length > 0}
@@ -1539,7 +1551,7 @@
             {/if}
             <div class="builder-actions">
               {#if builderStep > 0}<button class="secondary" on:click={builderBack}>Anterior</button>{/if}
-              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" on:click={finishBuilder}>Generar ficha de nivel 1</button>{/if}
+              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" disabled={!builderCanFinish()} on:click={finishBuilder}>Generar ficha de nivel 1</button>{/if}
             </div>
           {:else}
             <div class="section-heading"><h3>Personaje generado</h3><span class="count">Nivel 1</span></div>
@@ -1557,7 +1569,7 @@
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
               <button class="primary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
-              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 0; builderData = {name:'',player:'',className:'Guerrero',species:'Humano',background:'Soldado',alignment:'Neutral',method:'standard',abilities:{Fuerza:15,Destreza:14,Constitución:13,Inteligencia:12,Sabiduría:10,Carisma:8},feat:'Atacante salvaje',abilityIncreaseMode:'two',abilityIncrease2:'Fuerza',abilityIncrease1:'Destreza',abilityIncrease3:'Constitución',backgroundEquipment:'A',skills:'',tools:'',equipment:'',traits:'',spells:'',notes:''}; }}>Crear otro personaje</button>
+              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 0; builderData = {name:'',player:'',className:'Guerrero',species:'Humano',background:'Soldado',alignment:'Neutral',method:'standard',abilities:{Fuerza:15,Destreza:14,Constitución:13,Inteligencia:12,Sabiduría:10,Carisma:8},feat:'Atacante salvaje',abilityIncreaseMode:'two',abilityIncrease2:'Fuerza',abilityIncrease1:'Destreza',abilityIncrease3:'Constitución',backgroundEquipment:'A',classEquipmentChoice:'A',classSkillChoices:[],classToolsChoices:[],classSpecialChoice:'',weaponMasteries:[],selectedCantrips:[],selectedSpells:[],wizardSpellbook:[],skills:'',tools:'',equipment:'',traits:'',spells:'',notes:''}; }}>Crear otro personaje</button>
             </div>
           {/if}
         </section>
@@ -1741,7 +1753,7 @@
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.13</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.14</span></footer>
 </div>
 
 <style>
