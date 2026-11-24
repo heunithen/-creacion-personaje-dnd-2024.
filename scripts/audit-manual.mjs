@@ -63,7 +63,9 @@ try {
   report('Rasgos de clase cotejados con el texto del manual', missingClass.length === 0 && extraClass.length === 0,
     'Faltan=' + JSON.stringify(missingClass) + '; sobran=' + JSON.stringify(extraClass));
 
-  const subclassText = findSection(manualClass, 'SUBCLASES DE BÁRBARO', '\nBARDO\n\nTABLA: Atributos básicos de bardo');
+  const subclassStart = manualClass.indexOf('SUBCLASES DE BÁRBARO');
+  if (subclassStart < 0) throw new Error('No se encontró SUBCLASES DE BÁRBARO en el manual.');
+  const subclassText = manualClass.slice(subclassStart);
   const manualSubclassSections = [...subclassText.matchAll(/^(SENDA DEL [^\n]+)$/gm)];
   const jsonSubclassMap = subclasses.classes[className] ?? {};
   const manualSubclassNames = manualSubclassSections.map((m) => m[1].trim());
