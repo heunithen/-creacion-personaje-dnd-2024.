@@ -1194,7 +1194,7 @@
     {#if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{playerName || 'Jugador'}</span></nav>{/if}
   </header>
 
-  <main class="main">
+  <main class="main" class:gm-layout={obrRole === 'GM'}>
     {#if obrRole === 'GM'}
       <nav class="master-tabs" role="tablist" aria-label="Herramientas del director">
         {#each masterTabs as tab}
@@ -1495,7 +1495,15 @@
   .story-section{border-top-color:#7b5d70}
   .general-section{border-top-color:#8b8171}
   .import-character-panel{margin-bottom:.8rem}
-  .gm-sheet-details{flex-basis:100%;margin-top:.7rem}.gm-sheet-details summary{cursor:pointer;color:var(--accent,#d6b66d);padding:.5rem 0}
+  .main.gm-layout{max-width:1180px}
+  .gm-sheet-details{grid-column:1/-1;width:100%;min-width:0;margin-top:.7rem}
+  .gm-sheet-details summary{cursor:pointer;color:#d2b27c;padding:.7rem .2rem;font:600 .85rem system-ui,sans-serif}
+  .gm-sheet-details[open]{width:100%;min-width:0}
+  .gm-sheet-details[open] .gm-character-sheet{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+  .roster-panel{width:100%;min-width:0}
+  .roster-panel .character-card{grid-template-columns:30px minmax(0,1fr);align-items:start}
+  .roster-panel .card-identity{min-width:0}
+
   .gm-character-sheet{margin-top:.8rem;padding:1rem;box-shadow:none}
   .gm-character-sheet .sheet-grid{grid-template-columns:minmax(0,1fr);gap:1rem}
   .gm-character-sheet .sheet-section{padding:1rem 1.1rem .9rem;border-radius:7px}
