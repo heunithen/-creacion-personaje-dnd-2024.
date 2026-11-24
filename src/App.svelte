@@ -2185,13 +2185,15 @@ import SPELLS from './spells.json';
     };
     const invocationCounts=new Map<string,number>();
     const invocationChoicesValid=parsedInvocations.every(item=>{
-      if(!item.data||nextLevel<item.data.level)return false;
+      const data=item.data;
+      if(!data||nextLevel<data.level)return false;
       const base=normalizeLevelText(item.name);const count=(invocationCounts.get(base)||0)+1;invocationCounts.set(base,count);
-      if(count>1&&!item.data.repeatable)return false;
-      if(item.data.repeatable&&!item.choice)return false;
-      if(item.data.choice==='feat'&&(!BUILDER_FEATS.some(feat=>normalizeLevelText(feat)===normalizeLevelText(item.choice))))return false;
-      if(item.data.cantrip&&!knownWarlockCantrips.some(cantrip=>normalizeLevelText(cantrip)===normalizeLevelText(item.choice)&&qualifiesCantrip(cantrip,item.data.cantrip)))return false;
-      if(item.data.pact&&!invocationBaseNames.includes(normalizeLevelText(item.data.pact)))return false;
+      if(count>1&&!data.repeatable)return false;
+      if(data.repeatable&&!item.choice)return false;
+      if(!data.repeatable&&item.choice)return false;
+      if(data.choice==='feat'&&!BUILDER_FEATS.some(feat=>normalizeLevelText(feat)===normalizeLevelText(item.choice)))return false;
+      if(data.cantrip&&!knownWarlockCantrips.some(cantrip=>normalizeLevelText(cantrip)===normalizeLevelText(item.choice)&&qualifiesCantrip(cantrip,data.cantrip!)))return false;
+      if(data.pact&&!invocationBaseNames.includes(normalizeLevelText(data.pact)))return false;
       return true;
     });
     const repeatChoiceKeys=parsedInvocations.filter(item=>item.data?.repeatable).map(item=>normalizeLevelText(item.name)+':'+normalizeLevelText(item.choice));
@@ -2750,7 +2752,7 @@ import SPELLS from './spells.json';
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
                 <label>Invocaciones sobrenaturales (lista completa; repite las que lo permitan con una elección después de dos puntos)<textarea bind:value={levelUpInvocations} rows="3" placeholder="Ej. Pacto de la cadena, Mente sobrenatural, Descarga agónica: Descarga sobrenatural" /></label>
-                <small>Opciones: {BUILDER_WARLOCK_INVOCATIONS.filter(item=>item.level<=Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).map(item=>item.name+' (nivel '+item.level+')').join(' · ')}</small>
+                <small>Opciones: {BUILDER_WARLOCK_INVOCATIONS.filter(item=>item.level<=(levelUpEntry?.sheet?Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1:1)).map(item=>item.name+' (nivel '+item.level+')').join(' · ')}</small>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
                 <label>Furia elemental<select bind:value={levelUpElementalFury}><option value="">Elige una opción</option><option>Golpe primordial</option><option>Lanzamiento potente</option></select></label>
