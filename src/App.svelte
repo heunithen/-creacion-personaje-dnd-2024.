@@ -1118,9 +1118,13 @@
     let featureTitle='';let featureBody:string[]=[];
     const flushFeature=()=>{if(featureTitle||featureBody.length)features.push([featureTitle||'Rasgo',featureBody.join(' · ')||featureTitle]);featureTitle='';featureBody=[];};
     for(const line of featureLines){
-      if(/^Proficiencies & Languages/i.test(line)) continue;
+      if(/^Proficiencies & Languages/i.test(line) || profLines.includes(line)) continue;
       if(/Background|Feat|Traits|Class Features|Goliath|Monk Class Features/i.test(line)&&!line.startsWith('•')){
-        flushFeature();featureTitle=line.replace(/\s+\[PHB.*\]$/,'').replace(/:$/,'').trim();
+        flushFeature();
+        const split=line.indexOf(':');
+        featureTitle=(split>0?line.slice(0,split):line).replace(/\s+\[PHB.*\]$/,'').trim();
+        const inlineDescription=split>0?line.slice(split+1).trim():'';
+        if(inlineDescription) featureBody.push(inlineDescription);
       }else{const item=line.replace(/^•\s*/,'').trim();if(item)featureBody.push(item);}
     }
     flushFeature();
