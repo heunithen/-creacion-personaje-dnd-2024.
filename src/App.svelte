@@ -761,6 +761,279 @@
     warlockTomeCantrips: string[]; warlockTomeRituals: string[];
     speciesMagicCantrips: string[]; speciesMagicSpell: string; speciesFeatMagicAbility: string; skills: string; tools: string; equipment: string; traits: string; spells: string; notes: string;
   };
+
+  // Listas originales inspiradas en las tradiciones onomásticas de cada especie.
+  // El Manual del Jugador 2024 no incluye tablas oficiales de nombres.
+  const CHARACTER_NAME_POOLS: Record<string, Record<string, string[]>> = {
+  "Aasimar": {
+    "Hombre": [
+      "Aurelian",
+      "Cael",
+      "Elyon",
+      "Ithriel",
+      "Lucan",
+      "Seraphel"
+    ],
+    "Mujer": [
+      "Aurelia",
+      "Celestine",
+      "Elaria",
+      "Ilyana",
+      "Liora",
+      "Seraphine"
+    ],
+    "Otro": [
+      "Auren",
+      "Caelis",
+      "Elyris",
+      "Iriel",
+      "Lumen",
+      "Solari"
+    ]
+  },
+  "Dracónido": {
+    "Hombre": [
+      "Arjhan",
+      "Balasar",
+      "Kriv",
+      "Rhazien",
+      "Torinn",
+      "Verth"
+    ],
+    "Mujer": [
+      "Akra",
+      "Biri",
+      "Daar",
+      "Kava",
+      "Mishann",
+      "Sora"
+    ],
+    "Otro": [
+      "Arix",
+      "Keth",
+      "Riven",
+      "Sszar",
+      "Vaerix",
+      "Zyr"
+    ]
+  },
+  "Enano": {
+    "Hombre": [
+      "Balin",
+      "Dain",
+      "Eberk",
+      "Fargrim",
+      "Harbek",
+      "Tordek"
+    ],
+    "Mujer": [
+      "Amber",
+      "Diesa",
+      "Eldeth",
+      "Gunnloda",
+      "Kathra",
+      "Vistra"
+    ],
+    "Otro": [
+      "Bryn",
+      "Durna",
+      "Kelda",
+      "Orin",
+      "Runa",
+      "Thrain"
+    ]
+  },
+  "Elfo": {
+    "Hombre": [
+      "Aelar",
+      "Erevan",
+      "Galinndan",
+      "Hadarai",
+      "Immeral",
+      "Theren"
+    ],
+    "Mujer": [
+      "Adrie",
+      "Althaea",
+      "Anastrianna",
+      "Leshanna",
+      "Quelenna",
+      "Shava"
+    ],
+    "Otro": [
+      "Aeris",
+      "Eirian",
+      "Lethar",
+      "Nim",
+      "Sael",
+      "Vaelis"
+    ]
+  },
+  "Gnomo": {
+    "Hombre": [
+      "Alston",
+      "Boddynock",
+      "Fonkin",
+      "Gimble",
+      "Namfoodle",
+      "Zook"
+    ],
+    "Mujer": [
+      "Bimpnottin",
+      "Caramip",
+      "Duvamil",
+      "Loopmottin",
+      "Nissa",
+      "Roywyn"
+    ],
+    "Otro": [
+      "Bree",
+      "Dimble",
+      "Nackle",
+      "Pip",
+      "Quill",
+      "Wizzle"
+    ]
+  },
+  "Goliat": {
+    "Hombre": [
+      "Aukan",
+      "Eglath",
+      "Gae-Al",
+      "Ilikan",
+      "Kavaki",
+      "Thalai"
+    ],
+    "Mujer": [
+      "Araki",
+      "Bera",
+      "Golka",
+      "Ira",
+      "Keothi",
+      "Manath"
+    ],
+    "Otro": [
+      "Asha",
+      "Eryx",
+      "Kori",
+      "Maka",
+      "Rokan",
+      "Tala"
+    ]
+  },
+  "Mediano": {
+    "Hombre": [
+      "Alton",
+      "Beau",
+      "Cade",
+      "Eldon",
+      "Garret",
+      "Milo"
+    ],
+    "Mujer": [
+      "Andry",
+      "Bree",
+      "Callie",
+      "Kithri",
+      "Lidda",
+      "Rosie"
+    ],
+    "Otro": [
+      "Ash",
+      "Bramble",
+      "Merry",
+      "Perrin",
+      "Reed",
+      "Tumble"
+    ]
+  },
+  "Humano": {
+    "Hombre": [
+      "Aldric",
+      "Darian",
+      "Edric",
+      "Gareth",
+      "Jonas",
+      "Tomas"
+    ],
+    "Mujer": [
+      "Alda",
+      "Elena",
+      "Isabel",
+      "Mara",
+      "Sofia",
+      "Talia"
+    ],
+    "Otro": [
+      "Ari",
+      "Ciel",
+      "Morgan",
+      "Noa",
+      "Ren",
+      "Sasha"
+    ]
+  },
+  "Orco": {
+    "Hombre": [
+      "Drog",
+      "Grommash",
+      "Korg",
+      "Mauhur",
+      "Thokk",
+      "Urzog"
+    ],
+    "Mujer": [
+      "Baggi",
+      "Eri",
+      "Grisha",
+      "Myev",
+      "Neega",
+      "Ovak"
+    ],
+    "Otro": [
+      "Ashnak",
+      "Gor",
+      "Krag",
+      "Ruk",
+      "Sharn",
+      "Zog"
+    ]
+  },
+  "Tiefling": {
+    "Hombre": [
+      "Akmenos",
+      "Damaks",
+      "Kairon",
+      "Morthos",
+      "Therai",
+      "Zariel"
+    ],
+    "Mujer": [
+      "Akta",
+      "Bryseis",
+      "Criella",
+      "Lerissa",
+      "Makaria",
+      "Nemeia"
+    ],
+    "Otro": [
+      "Astar",
+      "Ixis",
+      "Keryx",
+      "Nym",
+      "Riven",
+      "Zareth"
+    ]
+  }
+};
+  let nameGender = 'Hombre';
+  let lastGeneratedName = '';
+  function generateCharacterName() {
+    const options = CHARACTER_NAME_POOLS[builderData.species]?.[nameGender] || CHARACTER_NAME_POOLS['Humano'][nameGender];
+    const name = options[Math.floor(Math.random() * options.length)];
+    builderData.name = name;
+    lastGeneratedName = name;
+  }
   let builderStep = 0;
   let builderPreview: RawSheet | null = null;
   let builderData: BuilderData = {
@@ -1446,6 +1719,16 @@ import SPELLS from './spells.json';
             <div class="builder-progress"><span style="width:{((builderStep + 1) / 7) * 100}%"></span></div>
             {#if builderStep === 0}
               <h3>1. Identidad</h3><p class="muted">Datos básicos del personaje.</p>
+              <div class="name-generator-panel">
+                <div class="name-generator-heading"><strong>Generador de nombres</strong><span>Listas originales por especie</span></div>
+                <div class="name-generator-controls">
+                  <label>Especie<select bind:value={builderData.species}>{#each BUILDER_SPECIES as species}<option value={species}>{species}</option>{/each}</select></label>
+                  <label>Sexo<select bind:value={nameGender}><option value="Hombre">Hombre</option><option value="Mujer">Mujer</option><option value="Otro">Otro</option></select></label>
+                </div>
+                <button class="secondary name-generator-button" type="button" on:click={generateCharacterName}>⚄ Generar nombre</button>
+                {#if lastGeneratedName}<p class="generated-name-note">Nombre generado: <strong>{lastGeneratedName}</strong></p>{/if}
+                <p class="hint">Nombres originales inspirados en cada especie; no son una lista oficial del manual.</p>
+              </div>
               <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre" /></label>
               <label>Jugador<input bind:value={builderData.player} placeholder="Nombre del jugador (opcional)" /></label>
               <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
@@ -1713,7 +1996,8 @@ import SPELLS from './spells.json';
       {#if sheet}
         <article class="character-sheet">
           <header class="sheet-banner">
-            <h1 class="character-name">{sheet.name || 'Personaje'}</h1>
+            <div class="sheet-banner-copy"><span class="sheet-kicker">FORJA DE AVENTUREROS · D&D 2024</span><h1 class="character-name">{sheet.name || 'Personaje'}</h1><span class="sheet-subtitle">Hoja de aventurero</span></div>
+            <div class="sheet-banner-emblem" aria-hidden="true">✦</div>
           </header>
           <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha">
             {#each tabs as tab}<button class:active={activeTab === tab} role="tab" aria-selected={activeTab === tab} on:click={() => activeTab = tab}>{tab}</button>{/each}
@@ -2006,5 +2290,60 @@ import SPELLS from './spells.json';
   :global(.character-sheet .features-section .sheet-stat strong){background:#151010!important}
   :global(.character-sheet .editable:hover){background:#1a1011!important;border-color:#8c2732!important}
   @media(max-width:560px){:global(.spell-filters){grid-template-columns:1fr}}
+
+
+  /* Generador de nombres y rediseño de la hoja de personaje */
+  :global(.name-generator-panel){margin:1rem 0 1.1rem;padding:1rem;border:1px solid #76212a;border-left:3px solid #d32638;border-radius:8px;background:linear-gradient(135deg,#16090b,#090909)}
+  :global(.name-generator-heading){display:flex;justify-content:space-between;gap:.7rem;align-items:center;margin-bottom:.35rem}
+  :global(.name-generator-heading strong){color:#fff;font-size:.9rem}
+  :global(.name-generator-heading span){color:#c6a1a4;font-size:.68rem}
+  :global(.name-generator-controls){display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  :global(.name-generator-controls label){margin:.5rem 0;font-size:.72rem}
+  :global(.name-generator-button){width:100%;margin:.35rem 0 .1rem;padding:.7rem 1rem!important;font-weight:700}
+  :global(.generated-name-note){margin:.55rem 0;color:#d8c6c8;font-size:.78rem}
+  :global(.generated-name-note strong){color:#ff9ba4;font-size:1rem}
+  :global(.name-generator-panel .hint){margin:.5rem 0 0;font-size:.68rem}
+  :global(.character-sheet){padding:clamp(.8rem,2.5vw,1.5rem)!important;border:1px solid #632029!important;border-radius:13px!important;background:linear-gradient(160deg,#101010 0%,#080808 65%,#10090a 100%)!important;box-shadow:0 16px 38px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.035)!important}
+  :global(.character-sheet > .sheet-banner){display:flex!important;align-items:center!important;justify-content:space-between!important;gap:1rem!important;padding:1rem 1.1rem!important;margin:0 0 1rem!important;border:1px solid #76212a!important;border-left:4px solid #d32638!important;border-radius:9px!important;background:linear-gradient(110deg,#210b0f,#0b0b0b 72%)!important;text-align:left!important}
+  :global(.sheet-banner-copy){min-width:0;display:flex;flex-direction:column;gap:.25rem}
+  :global(.sheet-kicker){font:700 .58rem/1.3 system-ui,sans-serif;letter-spacing:.17em;color:#e35b67}
+  :global(.character-sheet > .sheet-banner .character-name){width:auto!important;margin:0!important;padding:0!important;color:#fff!important;text-align:left!important;font:700 clamp(1.25rem,4vw,1.8rem)/1.2 Georgia,serif!important;overflow-wrap:anywhere}
+  :global(.sheet-subtitle){font:500 .68rem system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#a99b9d}
+  :global(.sheet-banner-emblem){flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;border:1px solid #9c2936;border-radius:50%;background:#18090c;color:#ff7884;font-size:1.5rem;box-shadow:0 0 20px #9f182b30}
+  :global(.sheet-tabs){gap:.45rem!important;padding:.25rem .1rem .8rem!important;margin-bottom:1rem!important;border-bottom:1px solid #632029!important}
+  :global(.sheet-tabs button){padding:.62rem .85rem!important;border:1px solid #4d1b21!important;border-radius:7px!important;background:#111!important;color:#c9bfc0!important;font:650 .72rem system-ui,sans-serif!important}
+  :global(.sheet-tabs button.active){background:linear-gradient(135deg,#a81727,#70121e)!important;border-color:#ed4352!important;color:#fff!important;box-shadow:0 4px 14px #a8172730}
+  :global(.sheet-grid){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.85rem!important;align-items:stretch!important}
+  :global(.sheet-section){min-width:0;padding:.9rem!important;border:1px solid #3e2024!important;border-top:3px solid #a92332!important;border-radius:9px!important;background:linear-gradient(145deg,#111,#090909)!important;box-shadow:0 5px 14px #0005}
+  :global(.sheet-section-title){padding-bottom:.6rem!important;margin-bottom:.45rem!important;border-bottom:1px solid #462027!important}
+  :global(.sheet-section-title h3),:global(.sheet-section-title .section-name){color:#ff9ba4!important;font:750 .76rem/1.35 system-ui,sans-serif!important;letter-spacing:.09em!important;text-transform:uppercase}
+  :global(.stats-list){gap:0!important}
+  :global(.sheet-stat){grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;gap:.65rem!important;align-items:center!important;padding:.52rem .25rem!important;border-bottom:1px solid #292023!important}
+  :global(.sheet-stat:last-child){border-bottom:0!important}
+  :global(.sheet-stat .stat-label),:global(.sheet-stat span){color:#bcb2b4!important;font:600 .7rem/1.4 system-ui,sans-serif!important}
+  :global(.sheet-stat .stat-value),:global(.sheet-stat strong){min-width:0;color:#f4eeee!important;font:500 .78rem/1.5 system-ui,sans-serif!important;overflow-wrap:anywhere!important}
+  :global(.sheet-stat textarea.stat-value){background:#0d0d0d!important;border:1px solid #352126!important;border-radius:5px!important;padding:.45rem!important}
+  :global(.attributes-section){grid-column:1/-1!important;border-top-color:#e03a49!important;background:linear-gradient(145deg,#160d0f,#0b0b0b)!important}
+  :global(.attributes-section .stats-list){grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:.55rem!important}
+  :global(.attributes-section .sheet-stat){display:flex!important;flex-direction:column!important;justify-content:center!important;gap:.2rem!important;padding:.7rem .3rem!important;border:1px solid #51232a!important;border-radius:7px!important;background:#0c0c0c!important;text-align:center!important}
+  :global(.attributes-section .stat-label){font-size:.65rem!important;letter-spacing:.08em;text-transform:uppercase}
+  :global(.attributes-section .stat-value),:global(.attributes-section .sheet-stat strong){font:700 1.2rem/1.2 Georgia,serif!important;color:#fff!important;text-align:center!important}
+  :global(.combat-section){border-top-color:#d43a49!important}
+  :global(.features-section .sheet-stat){grid-template-columns:1fr!important;gap:.25rem!important;align-items:start!important}
+  :global(.features-section .sheet-stat strong),:global(.features-section .stat-value){display:block;padding:.45rem .55rem!important;border:1px solid #3d2428!important;border-radius:5px;background:#0d0d0d!important}
+  :global(.gm-character-sheet){padding:1rem!important}
+  :global(.gm-character-sheet .sheet-grid){grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.8rem!important}
+  :global(.gm-character-sheet .sheet-stat){grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)!important;align-items:start!important;padding:.5rem .2rem!important}
+  :global(.gm-character-sheet .sheet-stat strong){padding:0!important;background:transparent!important}
+  :global(.gm-character-sheet .attributes-section .stats-list){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  :global(.gm-character-sheet .attributes-section .sheet-stat){align-items:center!important}
+  @media(max-width:650px){
+    :global(.name-generator-controls){grid-template-columns:1fr 1fr}
+    :global(.sheet-grid),:global(.gm-character-sheet .sheet-grid){grid-template-columns:minmax(0,1fr)!important}
+    :global(.attributes-section .stats-list),:global(.gm-character-sheet .attributes-section .stats-list){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+    :global(.character-sheet > .sheet-banner){padding:.8rem!important}
+    :global(.sheet-banner-emblem){width:36px;height:36px;flex-basis:36px}
+    :global(.sheet-tabs button){padding:.55rem .7rem!important}
+  }
 
 </style>
