@@ -745,6 +745,8 @@
   type BuilderData = {
     name: string; player: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
+    abilityIncreaseMode: 'two' | 'three'; abilityIncrease2: string; abilityIncrease1: string;
+    abilityIncrease3: string; backgroundEquipment: 'A' | 'B';
     skills: string; tools: string; equipment: string; traits: string; spells: string; notes: string;
   };
   let builderStep = 0;
@@ -753,12 +755,31 @@
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
     alignment: 'Neutral', method: 'standard',
     abilities: { Fuerza: 15, Destreza: 14, Constitución: 13, Inteligencia: 12, Sabiduría: 10, Carisma: 8 },
-    feat: 'Alerta', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
+    feat: 'Alerta', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
   };
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
   const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
   const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Bardo)','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Matón de taberna','Músico','Sanador'];
+  const BUILDER_BACKGROUND_DATA: Record<string,{abilities:string[];feat:string;skills:string[];tool:string;equipmentA:string}> = {
+    'Acólito':{abilities:['Inteligencia','Sabiduría','Carisma'],feat:'Iniciado en la magia (Clérigo)',skills:['Perspicacia','Religión'],tool:'Suministros de calígrafo',equipmentA:'Suministros de calígrafo, libro de oraciones, 10 hojas de pergamino, símbolo sagrado, túnica y 8 po.'},
+    'Animador':{abilities:['Fuerza','Destreza','Carisma'],feat:'Músico',skills:['Acrobacias','Interpretación'],tool:'Un instrumento musical a elección',equipmentA:'Un instrumento musical, 2 disfraces, espejo, perfume, ropas de viaje y 11 po.'},
+    'Artesano':{abilities:['Fuerza','Destreza','Inteligencia'],feat:'Fabricante',skills:['Investigación','Persuasión'],tool:'Un tipo de herramientas de artesano a elección',equipmentA:'Herramientas de artesano elegidas, 2 bolsas, ropas de viaje y 32 po.'},
+    'Campesino':{abilities:['Fuerza','Constitución','Sabiduría'],feat:'Duro',skills:['Naturaleza','Trato con animales'],tool:'Herramientas de carpintero',equipmentA:'Hoz, herramientas de carpintero, útiles de sanador, olla de hierro, pala, ropas de viaje y 30 po.'},
+    'Charlatán':{abilities:['Destreza','Constitución','Carisma'],feat:'Habilidoso',skills:['Engaño','Juego de manos'],tool:'Útiles para falsificar',equipmentA:'Útiles para falsificar, disfraz, ropas de calidad y 15 po.'},
+    'Comerciante':{abilities:['Constitución','Inteligencia','Carisma'],feat:'Afortunado',skills:['Persuasión','Trato con animales'],tool:'Herramientas de navegante',equipmentA:'Herramientas de navegante, 2 bolsas, ropas de viaje y 22 po.'},
+    'Criminal':{abilities:['Destreza','Constitución','Inteligencia'],feat:'Alerta',skills:['Juego de manos','Sigilo'],tool:'Herramientas de ladrón',equipmentA:'2 dagas, herramientas de ladrón, 2 bolsas, palanqueta, ropas de viaje y 16 po.'},
+    'Ermitaño':{abilities:['Constitución','Sabiduría','Carisma'],feat:'Sanador',skills:['Medicina','Religión'],tool:'Útiles de herborista',equipmentA:'Bastón, útiles de herborista, 3 frascos de aceite, lámpara, libro de filosofía, petate, ropas de viaje y 16 po.'},
+    'Erudito':{abilities:['Constitución','Inteligencia','Sabiduría'],feat:'Iniciado en la magia (Mago)',skills:['Conocimiento arcano','Historia'],tool:'Suministros de calígrafo',equipmentA:'Bastón, suministros de calígrafo, libro de historia, 8 hojas de pergamino, túnica y 8 po.'},
+    'Escriba':{abilities:['Destreza','Inteligencia','Sabiduría'],feat:'Habilidoso',skills:['Investigación','Percepción'],tool:'Suministros de calígrafo',equipmentA:'Suministros de calígrafo, 3 frascos de aceite, lámpara, 12 hojas de pergamino, ropas de calidad y 23 po.'},
+    'Guardia':{abilities:['Fuerza','Inteligencia','Sabiduría'],feat:'Alerta',skills:['Atletismo','Percepción'],tool:'Un tipo de juego a elección',equipmentA:'Lanza, ballesta ligera, 20 virotes, un juego elegido, aljaba, esposas, linterna sorda, ropas de viaje y 12 po.'},
+    'Guía':{abilities:['Destreza','Constitución','Sabiduría'],feat:'Iniciado en la magia (Druida)',skills:['Sigilo','Supervivencia'],tool:'Herramientas de cartógrafo',equipmentA:'Arco corto, 20 flechas, herramientas de cartógrafo, aljaba, petate, tienda, ropas de viaje y 3 po.'},
+    'Marinero':{abilities:['Fuerza','Destreza','Sabiduría'],feat:'Matón de taberna',skills:['Acrobacias','Percepción'],tool:'Herramientas de navegante',equipmentA:'Daga, herramientas de navegante, cuerda, ropas de viaje y 20 po.'},
+    'Noble':{abilities:['Fuerza','Inteligencia','Carisma'],feat:'Habilidoso',skills:['Historia','Persuasión'],tool:'Un tipo de juego a elección',equipmentA:'Un juego elegido, perfume, ropas de calidad y 29 po.'},
+    'Soldado':{abilities:['Fuerza','Destreza','Constitución'],feat:'Atacante salvaje',skills:['Atletismo','Intimidación'],tool:'Un tipo de juego a elección',equipmentA:'Lanza, arco corto, 20 flechas, aljaba, un juego elegido, útiles de sanador, ropas de viaje y 14 po.'},
+    'Vagabundo':{abilities:['Destreza','Sabiduría','Carisma'],feat:'Afortunado',skills:['Perspicacia','Sigilo'],tool:'Herramientas de ladrón',equipmentA:'2 dagas, herramientas de ladrón, un juego a elección, 2 bolsas, petate, ropas de viaje y 16 po.'}
+  };
+
   const BUILDER_CLASS_FEATURES: Record<string,string> = {
     'Bárbaro':'Furia; Defensa sin armadura',
     'Bardo':'Inspiración bárdica; Lanzamiento de conjuros',
@@ -806,13 +827,27 @@
   const BUILDER_PRIMARY: Record<string,string> = {'Bárbaro':'Fuerza','Bardo':'Carisma','Brujo':'Carisma','Clérigo':'Sabiduría','Druida':'Sabiduría','Explorador':'Destreza o Sabiduría','Guerrero':'Fuerza o Destreza','Hechicero':'Carisma','Mago':'Inteligencia','Monje':'Destreza y Sabiduría','Paladín':'Fuerza y Carisma','Pícaro':'Destreza'};
   const BUILDER_STANDARD = [15,14,13,12,10,8];
   const BUILDER_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+  const BUILDER_POINT_COST: Record<number,number> = {8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9};
+  function builderPointCost() { return Object.values(builderData.abilities).reduce((sum,value)=>sum+(BUILDER_POINT_COST[Number(value)] ?? 99),0); }
+  function builderRollScores() {
+    const scores = Array.from({length:6},()=>Array.from({length:4},()=>Math.floor(Math.random()*6)+1).sort((a,b)=>b-a).slice(0,3).reduce((a,b)=>a+b,0)).sort((a,b)=>b-a);
+    builderData.abilities = Object.fromEntries(BUILDER_ABILITY_NAMES.map((name,index)=>[name,scores[index]]));
+  }
+  function builderAdjustedAbilities() {
+    const result = {...builderData.abilities};
+    const add = (name:string,amount:number) => { if(name && Object.prototype.hasOwnProperty.call(result,name)) result[name] = Math.min(20,Number(result[name] || 8)+amount); };
+    if(builderData.abilityIncreaseMode === 'two') { add(builderData.abilityIncrease2,2); add(builderData.abilityIncrease1,1); }
+    else { add(builderData.abilityIncrease2,1); add(builderData.abilityIncrease1,1); add(builderData.abilityIncrease3,1); }
+    return result;
+  }
   function builderModifier(score:number) { return Math.floor((score - 10) / 2); }
   function builderNext() { if (builderStep < 6) builderStep += 1; }
   function builderBack() { if (builderStep > 0) builderStep -= 1; }
   function buildLevelOneSheet() {
     const b = builderData;
     const mod = (n:number) => (builderModifier(n) >= 0 ? '+' : '') + builderModifier(n);
-    const con = Number(b.abilities.Constitución) || 10;
+    const finalAbilities = builderAdjustedAbilities();
+    const con = Number(finalAbilities.Constitución) || 10;
     const hp = (BUILDER_HIT_DIE[b.className] || 8) + builderModifier(con);
     const proficiency = '+2';
     const features = [BUILDER_CLASS_FEATURES[b.className] || '', BUILDER_SPECIES_TRAITS[b.species] || '', b.traits].filter(Boolean).join('\n');
@@ -831,13 +866,13 @@
       general('HISTORIA',['Notas'])
     ];
     const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
-    put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (nivel 1)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
-    BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(b.abilities[a])+' ('+mod(Number(b.abilities[a]))+')'));
-    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,2,b.className === 'Bárbaro' ? String(10 + builderModifier(Number(b.abilities.Destreza)) + builderModifier(con))+' (Defensa sin armadura)' : b.className === 'Monje' ? String(10 + builderModifier(Number(b.abilities.Destreza)) + builderModifier(Number(b.abilities.Sabiduría)))+' (Defensa sin armadura)' : String(10 + builderModifier(Number(b.abilities.Destreza)))+' (sin armadura)'); put(2,3,mod(Number(b.abilities.Destreza))); put(2,4,'30 pies'); put(2,5,proficiency); put(2,6,BUILDER_SAVES[b.className] || '—');
-    put(3,0,b.skills || 'Pendiente: elegir las habilidades permitidas por clase y trasfondo'); put(3,1,b.tools || 'Según trasfondo'); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,b.className === 'Bárbaro' || b.className === 'Bardo' || b.className === 'Clérigo' || b.className === 'Druida' || b.className === 'Explorador' || b.className === 'Guerrero' || b.className === 'Paladín' || b.className === 'Pícaro' ? 'Armas sencillas y competencias marciales según clase' : 'Armas sencillas'); put(3,4,'Común y los idiomas otorgados por trasfondo/especie');
+    put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
+    BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(finalAbilities[a])+' ('+mod(Number(finalAbilities[a]))+')'));
+    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,2,b.className === 'Bárbaro' ? String(10 + builderModifier(Number(finalAbilities.Destreza)) + builderModifier(con))+' (Defensa sin armadura)' : b.className === 'Monje' ? String(10 + builderModifier(Number(b.abilities.Destreza)) + builderModifier(Number(finalAbilities.Sabiduría)))+' (Defensa sin armadura)' : String(10 + builderModifier(Number(b.abilities.Destreza)))+' (sin armadura)'); put(2,3,mod(Number(b.abilities.Destreza))); put(2,4,'30 pies'); put(2,5,proficiency); put(2,6,BUILDER_SAVES[b.className] || '—');
+    put(3,0,[...BUILDER_BACKGROUND_DATA[b.background].skills, b.skills].filter(Boolean).join('; ')); put(3,1,[BUILDER_BACKGROUND_DATA[b.background].tool, b.tools].filter(Boolean).join('; ')); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,b.className === 'Bárbaro' || b.className === 'Bardo' || b.className === 'Clérigo' || b.className === 'Druida' || b.className === 'Explorador' || b.className === 'Guerrero' || b.className === 'Paladín' || b.className === 'Pícaro' ? 'Armas sencillas y competencias marciales según clase' : 'Armas sencillas'); put(3,4,'Común y los idiomas otorgados por trasfondo/especie');
     put(4,0,BUILDER_CLASS_FEATURES[b.className] || ''); put(4,1,BUILDER_SPECIES_TRAITS[b.species] || ''); put(4,2,b.feat); put(4,3,b.traits || '—');
-    const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(b.abilities[magicAbility])) : 0; put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(10 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,b.className === 'Bárbaro' || b.className === 'Guerrero' || b.className === 'Monje' || b.className === 'Pícaro' ? 'No obtiene trucos a nivel 1 por clase' : 'Elegir según lista de clase'); put(5,4,b.spells || 'Pendiente: seleccionar de la lista de conjuros de nivel 1 de la clase'); put(5,5,'Según clase');
-    put(6,0,b.equipment || 'Equipo inicial A de clase y trasfondo'); put(6,1,'Según equipo inicial');
+    const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(finalAbilities[magicAbility])) : 0; put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(10 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,b.className === 'Bárbaro' || b.className === 'Guerrero' || b.className === 'Monje' || b.className === 'Pícaro' ? 'No obtiene trucos a nivel 1 por clase' : 'Elegir según lista de clase'); put(5,4,b.spells || 'Pendiente: seleccionar de la lista de conjuros de nivel 1 de la clase'); put(5,5,'Según clase');
+    put(6,0,[BUILDER_BACKGROUND_DATA[b.background].equipmentA, b.backgroundEquipment === 'B' ? 'Alternativa del trasfondo: 50 po (sustituye el equipo del trasfondo).' : '', b.equipment].filter(Boolean).join(' ')); put(6,1,'Según equipo inicial');
     put(7,0,b.notes || '—');
     return {id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente del GM. Revisión final pendiente de completar los campos específicos de clase y equipo.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
   }
@@ -1408,23 +1443,35 @@
               <div class="builder-info"><strong>Rasgos de especie</strong><p>{BUILDER_SPECIES_TRAITS[builderData.species]}</p></div>
             {:else if builderStep === 3}
               <h3>4. Trasfondo</h3><p class="muted">El trasfondo determina competencias, equipo y una dote de origen.</p>
-              <label>Trasfondo<select bind:value={builderData.background}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
-              <label>Dote de origen<select bind:value={builderData.feat}>{#each BUILDER_FEATS as item}<option>{item}</option>{/each}</select></label>
-              <div class="builder-info"><small>La lista muestra las dotes de origen elegibles para un personaje de nivel 1. Las dotes con requisito de nivel superior no se ofrecen.</small></div>
+              <label>Trasfondo<select bind:value={builderData.background} on:change={() => { builderData.feat = BUILDER_BACKGROUND_DATA[builderData.background].feat; builderData.abilityIncrease2 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[0]; builderData.abilityIncrease1 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[1]; builderData.abilityIncrease3 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[2]; }}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
+              <div class="builder-info"><strong>Beneficios automáticos del trasfondo</strong><p>Características: {BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')}</p><p>Dote: {BUILDER_BACKGROUND_DATA[builderData.background].feat}</p><p>Habilidades: {BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><p>Herramienta: {BUILDER_BACKGROUND_DATA[builderData.background].tool}</p><p>Equipo A: {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA}</p></div>
+              <h4>Distribución de los aumentos de característica</h4>
+              <p class="muted">El manual permite aumentar una de las tres características del trasfondo en 2 y otra distinta en 1, o aumentar las tres en 1. No se puede superar 20.</p>
+              <label>Distribución<select bind:value={builderData.abilityIncreaseMode}><option value="two">+2 a una característica y +1 a otra distinta</option><option value="three">+1 a cada una de las tres características</option></select></label>
+              {#if builderData.abilityIncreaseMode === 'two'}
+                <label>Característica que recibe +2<select bind:value={builderData.abilityIncrease2}>{#each BUILDER_BACKGROUND_DATA[builderData.background].abilities as ability}<option>{ability}</option>{/each}</select></label>
+                <label>Característica distinta que recibe +1<select bind:value={builderData.abilityIncrease1}>{#each BUILDER_BACKGROUND_DATA[builderData.background].abilities.filter(a => a !== builderData.abilityIncrease2) as ability}<option>{ability}</option>{/each}</select></label>
+              {:else}
+                <p>{BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')} reciben +1 cada una.</p>
+              {/if}
+              <label>Equipo del trasfondo<select bind:value={builderData.backgroundEquipment}><option value="A">Paquete de equipo A</option><option value="B">50 po en lugar del paquete A</option></select></label>
+              <div class="builder-info"><small>Los aumentos se aplican automáticamente a las puntuaciones base y quedan reflejados en la ficha final.</small></div>
             {:else if builderStep === 4}
               <h3>5. Puntuaciones de característica</h3>
-              <label>Método<select bind:value={builderData.method}><option value="standard">Conjunto estándar (15, 14, 13, 12, 10, 8)</option><option value="manual">Compra por puntos (27 puntos; falta validación de presupuesto)</option></select></label>
-              <p class="muted">Asigna las seis puntuaciones. Los modificadores se calcularán automáticamente.</p>
+              <label>Método para generar las puntuaciones<select bind:value={builderData.method}><option value="standard">Conjunto estándar (15, 14, 13, 12, 10, 8)</option><option value="manual">Compra por puntos (27 puntos)</option><option value="rolled">Generación aleatoria (4d6, descartar el menor; seis veces)</option></select></label>
+              {#if builderData.method === 'rolled'}<button class="secondary" type="button" on:click={builderRollScores}>Generar seis puntuaciones con 4d6</button>{:else if builderData.method === 'standard'}<p class="muted">Distribuye una vez cada valor: 15, 14, 13, 12, 10 y 8.</p>{:else}<p class="muted">Tienes 27 puntos. Costes: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9.</p><p><strong>Puntos utilizados: {builderPointCost()} / 27</strong></p>{#if builderPointCost() > 27}<p class="builder-error">Has superado el presupuesto de 27 puntos.</p>{/if}{/if}
+              <p class="muted">Asigna las seis puntuaciones base. Después se aplican los aumentos elegidos en el trasfondo.</p>
               {#each BUILDER_ABILITY_NAMES as ability}
-                <label>{ability}<select bind:value={builderData.abilities[ability]}>{#each (builderData.method === 'standard' ? BUILDER_STANDARD.filter(score => !BUILDER_ABILITY_NAMES.some(other => other !== ability && Number(builderData.abilities[other]) === score)) : Array.from({length:8},(_,i)=>8+i)) as score}<option value={score}>{score} ({builderModifier(score) >= 0 ? '+' : ''}{builderModifier(score)})</option>{/each}</select></label>
+                <label>{ability}<select bind:value={builderData.abilities[ability]}>{#each (builderData.method === 'standard' ? BUILDER_STANDARD.filter(score => !BUILDER_ABILITY_NAMES.some(other => other !== ability && Number(builderData.abilities[other]) === score)) : builderData.method === 'manual' ? Array.from({length:8},(_,i)=>8+i) : Array.from({length:8},(_,i)=>8+i)) as score}<option value={score}>{score} ({builderModifier(score) >= 0 ? '+' : ''}{builderModifier(score)})</option>{/each}</select></label>
               {/each}
+              <div class="builder-info"><strong>Resultado con los aumentos del trasfondo</strong>{#each BUILDER_ABILITY_NAMES as ability}<p>{ability}: {builderData.abilities[ability]} → {builderAdjustedAbilities()[ability]}</p>{/each}</div>
             {:else if builderStep === 5}
               <h3>6. Competencias, rasgos y equipo</h3>
               <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
               <label>Habilidades competentes<textarea bind:value={builderData.skills} rows="2" placeholder="Selecciona las habilidades que concede la clase y el trasfondo" /></label>
               <label>Herramientas e idiomas<textarea bind:value={builderData.tools} rows="2" placeholder="Herramientas, idiomas adicionales..." /></label>
               <label>Rasgos y elecciones de clase<textarea bind:value={builderData.traits} rows="3" placeholder="Opciones de rasgos de nivel 1, invocación, orden divina, etc." /></label>
-              <label>Equipo inicial<textarea bind:value={builderData.equipment} rows="3" placeholder="Equipo de clase y trasfondo" /></label>
+              <label>Equipo inicial de clase<textarea bind:value={builderData.equipment} rows="3" placeholder="Añade aquí las elecciones y el equipo que concede la clase" /></label>
               <label>Trucos y conjuros de nivel 1<textarea bind:value={builderData.spells} rows="3" placeholder="Solo si la clase puede lanzar conjuros a nivel 1" /></label>
               <label>Notas<textarea bind:value={builderData.notes} rows="2" /></label>
             {/if}
@@ -1448,7 +1495,7 @@
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
               <button class="primary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
-              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 0; builderData = {name:'',player:'',className:'Guerrero',species:'Humano',background:'Soldado',alignment:'Neutral',method:'standard',abilities:{Fuerza:15,Destreza:14,Constitución:13,Inteligencia:12,Sabiduría:10,Carisma:8},feat:'Alerta',skills:'',tools:'',equipment:'',traits:'',spells:'',notes:''}; }}>Crear otro personaje</button>
+              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 0; builderData = {name:'',player:'',className:'Guerrero',species:'Humano',background:'Soldado',alignment:'Neutral',method:'standard',abilities:{Fuerza:15,Destreza:14,Constitución:13,Inteligencia:12,Sabiduría:10,Carisma:8},feat:'Atacante salvaje',abilityIncreaseMode:'two',abilityIncrease2:'Fuerza',abilityIncrease1:'Destreza',abilityIncrease3:'Constitución',backgroundEquipment:'A',skills:'',tools:'',equipment:'',traits:'',spells:'',notes:''}; }}>Crear otro personaje</button>
             </div>
           {/if}
         </section>
