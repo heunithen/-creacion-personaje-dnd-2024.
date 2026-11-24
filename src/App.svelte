@@ -886,7 +886,7 @@
     if (newRollParts.length > 1) newRollParts = newRollParts.filter(part => part.id !== id);
   }
   const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
-  const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0])))];
+  const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
 
   function persistCustomRolls() {
     localStorage.setItem('forja-custom-rolls', JSON.stringify(customRolls));
