@@ -764,6 +764,7 @@
   let levelUpWeaponMasteries = '';
   let levelUpSubclass = '';
   let levelUpSubclassVariant = '';
+  let levelUpBarbarianAspect = '';
   let levelUpSubclassCantrips = '';
   let levelUpSubclassSpells = '';
   let levelUpAsiMode = 'asi';
@@ -2161,6 +2162,7 @@ import SPELLS from './spells.json';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
+    levelUpBarbarianAspect = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Aspecto de lo salvaje') || '';
     levelUpSubclassCantrips = getCharacterStat(entry.sheet,'CONJUROS','Trucos de subclase');
     levelUpSubclassSpells = getCharacterStat(entry.sheet,'CONJUROS','Conjuros preparados de subclase');
     levelUpAsiMode = 'asi'; levelUpAbility1 = 'Fuerza'; levelUpAbility2 = 'Destreza';
@@ -2275,6 +2277,8 @@ import SPELLS from './spells.json';
     const retainedInvocations=invocationChoices.filter(choice=>oldInvocations.some(old=>normalizeLevelText(old)===normalizeLevelText(choice))).length;
     if(needsWarlockInvocations && (!Number.isFinite(invocationTarget)||invocationChoices.length!==invocationTarget||!invocationChoicesValid||!uniqueRepeatChoices||(oldInvocations.length>0&&retainedInvocations<oldInvocations.length-1))) { notice='Registra '+invocationTarget+' invocaciones válidas para tu nivel. Respeta los requisitos del manual; las invocaciones repetibles deben indicar una elección distinta después de dos puntos. Solo puedes sustituir una invocación conocida al subir de nivel.'; return; }
     const selectedSubclassKey=normalizeLevelText(levelUpSubclass || getCharacterStat(original,'PERSONAJE','Subclase'));
+    const needsBarbarianWildAspect=className==='Bárbaro' && selectedSubclassKey==='sendadelcorazonsalvaje' && nextLevel===6;
+    if(needsBarbarianWildAspect && !['Búho','Pantera','Salmón'].includes(levelUpBarbarianAspect)) { notice='Elige Búho, Pantera o Salmón para Aspecto de lo salvaje.'; return; }
     const isBattleMaster=className==='Guerrero' && selectedSubclassKey==='maestrodelcombate';
     const isFeyWanderer=className==='Explorador' && selectedSubclassKey==='errantefeerico';
     const needsBattleMasterTraining=isBattleMaster && nextLevel===3;
@@ -2394,6 +2398,12 @@ import SPELLS from './spells.json';
         setCharacterStat(updated,'ATRIBUTOS',ability,formatAbilityScore(value+inc));
       }
     }
+    if(className==='Bárbaro' && nextLevel===20) {
+      for(const ability of ['Fuerza','Constitución']) {
+        const value=getCharacterNumber(updated,'ATRIBUTOS',ability,10);
+        setCharacterStat(updated,'ATRIBUTOS',ability,formatAbilityScore(Math.min(25,value+4)));
+      }
+    }
     // Si la mejora aumenta el modificador de Constitución, el máximo de PG
     // aumenta en 1 por cada nivel, incluido el nivel que acaba de alcanzarse.
     const oldConstitutionMod=Math.floor((getCharacterNumber(original,'ATRIBUTOS','Constitución',10)-10)/2);
@@ -2404,6 +2414,7 @@ import SPELLS from './spells.json';
       setCharacterStat(updated,'COMBATE','Puntos de golpe máximos',(maxAfterLevelUp+constitutionHpAdjustment)+' PG');
       if(oldCurrentHp===oldHp) setCharacterStat(updated,'COMBATE','Puntos de golpe actuales',(oldCurrentHp+hpGain+constitutionHpAdjustment)+' PG');
     }
+    if(needsBarbarianWildAspect) setCharacterStat(updated,'RASGOS Y DOTES','Aspecto de lo salvaje',levelUpBarbarianAspect);
     if (levelUpFeat.trim() && (needsEpicFeat || (needsASI && levelUpAsiMode==='feat'))) {
       const previous=getCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales');
       setCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales',[previous,levelUpFeat.trim()].filter(Boolean).join('; '));
@@ -2536,7 +2547,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2813,6 +2824,9 @@ import SPELLS from './spells.json';
               {/if}
               {#if levelUpSubclass && getSubclassFeaturesForNextLevel(levelUpEntry).length}
                 <div class="subclass-level-preview"><strong>Rasgos de subclase que se incorporarán</strong>{#each getSubclassFeaturesForNextLevel(levelUpEntry) as feature}<div><b>Nivel {feature.level}: {feature.name}</b><p>{feature.description}</p></div>{/each}</div>
+              {/if}
+              {#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='sendadelcorazonsalvaje' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===6}
+                <label>Aspecto de lo salvaje — elige una opción (puedes cambiarla tras un descanso largo)<select bind:value={levelUpBarbarianAspect}><option value="">Elige un aspecto</option><option>Búho</option><option>Pantera</option><option>Salmón</option></select></label>
               {/if}
               {#if levelUpSubclass && getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass).length>1}
                 <label>Elección de la subclase<select bind:value={levelUpSubclassVariant}><option value="">Selecciona una opción</option>{#each getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) as table}<option value={table.name}>{formatSubclassName(table.name)}</option>{/each}</select></label>
