@@ -68,7 +68,7 @@ try {
     const basicRows = Object.fromEntries([...(basicTableMatch?.[1] ?? '').matchAll(/^FILA:\s*([^|]+)\|([^\n]+)$/gim)]
       .map((match) => [norm(match[1]), match[2].trim()]));
     const hitDie = basicRows[norm('Dado de puntos de golpe')] ?? '';
-    report(className + ' · datos básicos y dado de golpe', Boolean(basicTableMatch && /\b1d[46812]\b/i.test(hitDie)),
+    report(className + ' · datos básicos y dado de golpe', Boolean(basicTableMatch && /\b1d(?:4|6|8|10|12)\b/i.test(hitDie)),
       basicTableMatch ? 'Dado=' + hitDie : 'No se pudo extraer la tabla de atributos básicos');
 
     const tableRe = new RegExp('TABLA:\\s*RASGOS DE\\s+' + escapeRegExp(slug) + '\\s*\\n([\\s\\S]*?)FIN DE TABLA', 'i');
@@ -118,20 +118,26 @@ try {
       classFeatureStart >= 0 && subclassTitles.length === 4 && subclassHeadingPositions.length === 4,
       'Subclases JSON=' + subclassTitles.length + '; títulos localizados en manual=' + subclassHeadingPositions.length);
 
-    const manualFeaturePairs = [...classText.matchAll(/^NIVEL\s+(\d+):\s*([^\n]+)/gim)]
-      .map((match) => [Number(match[1]), norm(match[2])]);
-    const normalizedClassText = classText.replace(/\s+/g, ' ');
-    const asiPattern = new RegExp('Vuelves a obtener este rasgo en los niveles de ' + escapeRegExp(slug) + '\\s+([^.]+)\\.', 'i');
-    const asiLevels = normalizedClassText.match(asiPattern)?.[1] ?? '';
-    for (const match of asiLevels.matchAll(/\d+/g)) manualFeaturePairs.push([Number(match[0]), norm('Mejora de característica')]);
-    const jsonFeaturePairs = (classFeatures.classes?.[className] ?? [])
-      .map((feature) => [Number(feature.level), norm(feature.name)]);
-    const pairKey = ([level, name]) => level + ':' + name;
-    const missingFeatures = manualFeaturePairs.filter((pair) => !jsonFeaturePairs.some((item) => pairKey(item) === pairKey(pair)));
-    const extraFeatures = jsonFeaturePairs.filter((pair) => !manualFeaturePairs.some((item) => pairKey(item) === pairKey(pair)));
-    report(className + ' · rasgos de clase y niveles',
-      classFeatureStart >= 0 && missingFeatures.length === 0 && extraFeatures.length === 0,
-      'Faltan=' + JSON.stringify(missingFeatures) + '; sobran=' + JSON.stringify(extraFeatures));
+    const jsonFeatures = classFeatures.classes?.[className] ?? [];
+    const featureMismatches = [];
+    for (const cells of manualRows) {
+      const level = Number(cells[0]);
+      const expectedNames = String(cells[2] ?? '').split(',').map((name) => norm(name)).filter((name) => name && name !== norm('Rasgo de subclase'));
+      const actualNames = jsonFeatures.filter((feature) => Number(feature.level) === level).map((feature) => norm(feature.name));
+      for (const expected of expectedNames) {
+        if (!actualNames.some((actual) => actual.startsWith(expected) || expected.startsWith(actual))) {
+          featureMismatches.push({ level, missing: expected });
+        }
+      }
+      for (const actual of actualNames) {
+        if (!expectedNames.some((expected) => actual.startsWith(expected) || expected.startsWith(actual))) {
+          featureMismatches.push({ level, extra: actual });
+        }
+      }
+    }
+    report(className + ' · rasgos de clase contrastados con la tabla',
+      classFeatureStart >= 0 && featureMismatches.length === 0,
+      'Diferencias=' + JSON.stringify(featureMismatches));
 
     for (const subclassName of subclassTitles) {
       const start = findLinePosition(sectionText, subclassName, Math.max(0, classFeatureStart));
@@ -139,16 +145,23 @@ try {
         .filter((position) => position > start);
       const end = later.length ? Math.min(...later) : sectionText.length;
       const subclassText = start >= 0 ? sectionText.slice(start, end) : '';
-      const manualPairs = [...subclassText.matchAll(/^NIVEL\s+(\d+):\s*([^\n]+)/gim)]
-        .map((match) => [Number(match[1]), norm(match[2])]);
+      const manualPairs = [...subclassText.matchAll(/^\s*NIVEL\s+(\d+):\s*([^\n]+)/gim)]
+        .map((match) => [Number(match[1]), norm(match[2])])
+        .filter(([, name]) => name && !name.startsWith(norm('TABLA:')) && !name.startsWith(norm('CONJUROS DEL')) && !name.startsWith(norm('CONJUROS DE')));
       const jsonPairs = (subclassMap[subclassName]?.features ?? [])
         .map((feature) => [Number(feature.level), norm(feature.name)]);
-      const missing = manualPairs.filter((pair) => !jsonPairs.some((item) => pairKey(item) === pairKey(pair)));
-      const extra = jsonPairs.filter((pair) => !manualPairs.some((item) => pairKey(item) === pairKey(pair)));
+      const pairKey = ([level, name]) => level + ':' + name;
+      const missing = manualPairs.filter(([level, name]) => !jsonPairs.some(([jsonLevel, jsonName]) =>
+        jsonLevel === level && (jsonName.startsWith(name) || name.startsWith(jsonName))));
+      const extra = jsonPairs.filter(([level, name]) => !manualPairs.some(([manualLevel, manualName]) =>
+        manualLevel === level && (name.startsWith(manualName) || manualName.startsWith(name))));
+      const tablesValid = (subclassMap[subclassName]?.tables ?? []).every((table) =>
+        norm(subclassText).includes(norm(table.name)));
       report(className + ' · subclase ' + subclassName,
-        start >= 0 && manualPairs.length > 0 && missing.length === 0 && extra.length === 0,
+        start >= 0 && manualPairs.length > 0 && missing.length === 0 && extra.length === 0 && tablesValid,
         'Manual=' + JSON.stringify(manualPairs) + '; JSON=' + JSON.stringify(jsonPairs) +
-          '; faltan=' + JSON.stringify(missing) + '; sobran=' + JSON.stringify(extra));
+          '; faltan=' + JSON.stringify(missing) + '; sobran=' + JSON.stringify(extra) +
+          '; tablas=' + (tablesValid ? 'OK' : 'no localizadas'));
     }
 
     for (const [subclassName, subclassData] of Object.entries(subclassMap)) {
