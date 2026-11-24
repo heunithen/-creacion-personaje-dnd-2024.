@@ -1803,11 +1803,11 @@ import SPELLS from './spells.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.19</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.20</span></footer>
 </div>
 
 <style>
-  :global(:root){--paper:#f3eee2;--paper-deep:#e8dfce;--ink:#24231f;--ink-soft:#5e594f;--rule:#c9bea9;--red:#8f3028;--gold:#b18a45}
+  :global(:root){--paper:#080808;--paper-deep:#141414;--ink:#f4f1f1;--ink-soft:#c1b9ba;--rule:#76212a;--red:#d52332;--gold:#b52a36}
   .builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#fffdf8;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#e8dfce;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(255,255,255,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}.builder-panel .sheet-grid{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat strong{white-space:pre-wrap;overflow-wrap:anywhere}
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
@@ -1944,4 +1944,67 @@ import SPELLS from './spells.json';
   @media(max-width:650px){.roll-creator{grid-template-columns:1fr 1fr}.roll-creator label:first-child{grid-column:1/-1}.roll-creator button{grid-column:1/-1}}
   @media(max-width:560px){.sheet-grid{grid-template-columns:1fr}.attributes-section{grid-column:auto}.attributes-section .stats-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(min-width:900px){.sheet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.attributes-section{grid-column:1/-1}}
+
+  /* Tema oscuro carmesí de la extensión */
+  :global(.app-shell),:global(.main){color:#f4f1f1}
+  :global(.topbar){border-bottom:1px solid #74202a}
+  :global(.brand),:global(.brand strong){color:#fff}
+  :global(.brand-mark){color:#ed2637}
+  :global(.panel),:global(.character-sheet),:global(.sheet-section),:global(.custom-rolls),
+  :global(.custom-roll-card),:global(.trait-editor),:global(.import-box),:global(.new-roll-part),
+  :global(.spell-card),:global(.monster-card),:global(.chest-result),:global(.roll-result){
+    background:#090909!important;color:#f3f1f1!important;border-color:#76212a!important
+  }
+  :global(.panel){box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  :global(.sheet-section){border:1px solid #76212a!important;border-top:3px solid #c32232!important}
+  :global(.section-heading h2),:global(.panel h2),:global(.sheet-section-title h3),
+  :global(.section-name),:global(.monster-heading h3),:global(.custom-rolls h3),
+  :global(.trait-group h3),:global(.character-name){color:#fff!important}
+  :global(label),:global(.stat-label),:global(.stat-value),:global(.sheet-stat strong),
+  :global(.character-sheet),:global(.spell-details),:global(.monster-statblock),
+  :global(.trait-view strong),:global(.roll-part-heading strong){color:#eee!important}
+  :global(.muted),:global(.hint),:global(.spell-subtitle),:global(.monster-subtitle),
+  :global(.monster-source),:global(.spell-source),:global(.sheet-notes){color:#bcb5b6!important}
+  :global(input),:global(textarea),:global(select),:global(.builder-panel input),
+  :global(.builder-panel select),:global(.builder-panel textarea){
+    background:#111!important;color:#f5f2f2!important;border:1px solid #76212a!important
+  }
+  :global(input::placeholder),:global(textarea::placeholder){color:#8c8586!important}
+  :global(input:focus),:global(textarea:focus),:global(select:focus),:global(.editable:focus){
+    outline:1px solid #ef3344!important;border-color:#ef3344!important;background:#151010!important
+  }
+  :global(.master-tabs),:global(.sheet-tabs){border-bottom-color:#76212a}
+  :global(.master-tabs button),:global(.sheet-tabs button),:global(.player-tabs button),
+  :global(.character-tabs button),:global(.secondary),:global(.roll-actions button),
+  :global(.roll-creator button),:global(.add-roll-part){
+    background:#111!important;color:#eee!important;border:1px solid #76212a!important
+  }
+  :global(.master-tabs button.active),:global(.sheet-tabs button.active),
+  :global(.player-tabs button.active),:global(.character-tabs button.active){
+    background:#a81727!important;border-color:#ed3343!important;color:#fff!important
+  }
+  :global(.primary){background:#a81727!important;border:1px solid #ed3343!important;color:#fff!important}
+  :global(.primary:hover){background:#c11d30!important}
+  :global(.danger-text),:global(.remove-roll){color:#ff6570!important}
+  :global(.spell-level),:global(.monster-cr),:global(.count),:global(.free-tag){
+    background:#160a0c!important;border-color:#a72a37!important;color:#ffb5ba!important
+  }
+  :global(.spell-meta),:global(.monster-combat-grid div),:global(.monster-attacks),
+  :global(.monster-role),:global(.builder-info),:global(.builder-progress){
+    background:#121010!important;border-color:#76212a!important;color:#eee!important
+  }
+  :global(.builder-progress span){background:#d32638!important}
+  :global(.roll-notation){background:#17090b!important;border-color:#a72a37!important;color:#fff!important}
+  :global(.chest-table-wrap){border-color:#76212a!important}
+  :global(.chest-table){background:#090909!important;color:#eee!important}
+  :global(.chest-table th){background:#1a090c!important;color:#fff!important}
+  :global(.chest-table td){border-bottom-color:#4c1a20!important;color:#ddd!important}
+  :global(.chest-selected){background:#49121a!important;color:#fff!important}
+  :global(.toast){background:#1b090c!important;border-color:#a72a37!important;color:#fff!important}
+  :global(.sheet-stat),:global(.roll-entry),:global(.trait-view),:global(.traits-preview){border-color:#4d1b21!important}
+  :global(.gm-sheet-details summary),:global(.monster-source summary){color:#ff7a84!important}
+  :global(.character-sheet .features-section .sheet-stat strong){background:#151010!important}
+  :global(.character-sheet .editable:hover){background:#1a1011!important;border-color:#8c2732!important}
+  @media(max-width:560px){:global(.spell-filters){grid-template-columns:1fr}}
+
 </style>

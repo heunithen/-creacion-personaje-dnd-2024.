@@ -20,3 +20,29 @@ select{display:block;width:100%;margin-top:8px;padding:12px 13px;background:#141
 @media(max-width:650px){.character-tabs{grid-template-columns:repeat(4,minmax(112px,1fr));overflow-x:auto;padding-bottom:6px}.character-tabs button{font-size:11px;padding:10px 7px}}
 
 .add-trait{margin:0 0 18px}.trait-editor{background:#24221e;border:1px solid #514638;border-radius:9px;padding:16px;margin:14px 0}.trait-editor-head{display:flex;justify-content:space-between;align-items:center;color:#d8c8ad;font-size:12px}.trait-editor label{margin:12px 0}.traits-preview{border-top:1px solid #39352e;margin-top:26px;padding-top:22px}.trait-group{margin-top:18px}.trait-group h3{font:400 17px 'Libre Baskerville',serif;color:#d6b47b;margin:0 0 8px}.trait-view{padding:12px 0;border-top:1px solid #39352e}.trait-view strong{font-size:13px;color:#eee5d7}.trait-view p{white-space:pre-wrap;font-size:12px;line-height:1.6;color:#aaa195;margin:7px 0 0}.trait-level{margin-left:10px;color:#bd955a;font-size:10px}
+
+/* Paleta negra y roja para la extensión */
+:root{color-scheme:dark;color:#f3f1f1;background:#050505}
+body{background:radial-gradient(ellipse at 50% -15%,#19090b 0,#090909 42%,#030303 85%);color:#f3f1f1}
+.app-shell{color:#f3f1f1}
+.topbar{border-bottom:1px solid #76212a}
+.brand{color:#fff}.brand-mark{color:#ed2637}
+.topbar nav button,.secondary{background:#101010;border:1px solid #76212a;color:#eee}
+.topbar nav button.active{background:#a81727;border-color:#ed3343;color:#fff}
+.panel{background:#090909;border:1px solid #76212a;color:#f3f1f1;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.section-heading h2,.panel h2{color:#fff}
+label{color:#e8e3e3}
+input,textarea,select{background:#111;border:1px solid #76212a;color:#f5f2f2}
+input:focus,textarea:focus,select:focus{border-color:#ef3344;outline:1px solid #ef3344}
+input::placeholder,textarea::placeholder{color:#8c8586}
+.primary{background:#a81727;border:1px solid #ed3343;color:#fff}
+.primary:hover{background:#c11d30}
+.player-tabs button{background:#111;border:1px solid #76212a;color:#eee}
+.player-tabs button.active{background:#a81727;border-color:#ed3343;color:#fff}
+.character-card,.monster-card,.trait-editor,.import-box{background:#090909;border:1px solid #76212a;color:#eee}
+.character-card p,.monster-card p,.hint,.muted{color:#bcb5b6}
+.roll-entry,.trait-view,.traits-preview{border-color:#4d1b21}
+.roll-entry-top strong,.trait-view strong{color:#f3f1f1}
+.roll-result b,.trait-group h3{color:#ff7a84}
+.toast{background:#1b090c;border:1px solid #a72a37;color:#fff}
+footer{border-top:1px solid #76212a;color:#93898a}
