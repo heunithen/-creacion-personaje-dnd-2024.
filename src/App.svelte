@@ -1325,7 +1325,7 @@ import SPELLS from './spells.json';
     (spellSchoolFilter === 'Todas' || spell.school === spellSchoolFilter) &&
     (!spellSearch.trim() || (spell.name + ' ' + spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es')))
   );
-  const RULE_CATEGORIES = ['Todas', 'General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro'];
+  const RULE_CATEGORIES = ['Todas', 'General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro', 'Abreviatura'];
   $: filteredRules = RULES.filter(rule =>
     (rulesCategoryFilter === 'Todas' || rule.category === rulesCategoryFilter) &&
     (!rulesSearch.trim() || (rule.name + ' ' + rule.description + ' ' + rule.category).toLocaleLowerCase('es').includes(rulesSearch.trim().toLocaleLowerCase('es')))

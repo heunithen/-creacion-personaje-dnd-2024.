@@ -96,6 +96,14 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "ÁREAS DE CONOCIMIENTO",
+    "category": "General",
+    "description": "Habilidad | Áreas\nConocimiento arcano | Conjuros, objetos mágicos, símbolos sobrenaturales, tradiciones mágicas, planos de existencia y determinadas criaturas (aberraciones, autómatas, elementales, feéricos y monstruosidades)\nHistoria | Acontecimientos y personajes históricos, civilizaciones antiguas, guerras y determinadas criaturas (gigantes y humanoides)\nInvestigación | Trampas, códigos, enigmas y artilugios\nNaturaleza | Terreno, flora, clima y determinadas criaturas (bestias, cienos, dragones y plantas)\nReligión | Deidades, jerarquías religiosas y ritos, símbolos sagrados, sectas y determinadas criaturas (celestiales, infernales y muertos vivientes)",
+    "pdfPage": 370,
+    "printedPage": 368,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "ARMA",
     "category": "General",
     "description": "Un arma es un objeto que pertenece a la categoría de\narmas sencillas o marciales. Consulta también el capítulo 6\n(“Armas”).",
@@ -192,6 +200,14 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "BC",
+    "category": "Abreviatura",
+    "description": "Bonificador por competencia",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "BUSCAR",
     "category": "Acción",
     "description": "Cuando llevas a cabo la acción de buscar, realizas una\nprueba de Sabiduría para distinguir algo que no resulta\nevidente. La tabla “Búsqueda” indica las habilidades que\nse pueden aplicar al usar esta acción, en función de lo que\ntrates de detectar.",
@@ -205,6 +221,22 @@
     "description": "Habilidad | Objeto de detección\nMedicina | Dolencia o causa de la muerte de una criatura\nPercepción | Criatura u objeto ocultos\nPerspicacia | Estado mental de una criatura\nSupervivencia | Huellas o alimentos",
     "pdfPage": 365,
     "printedPage": 363,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "C",
+    "category": "Abreviatura",
+    "description": "Concentración",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CA",
+    "category": "Abreviatura",
+    "description": "Clase de armadura",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -248,6 +280,30 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "Car",
+    "category": "Abreviatura",
+    "description": "Carisma",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CB",
+    "category": "Abreviatura",
+    "description": "Caótico bueno",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CD",
+    "category": "Abreviatura",
+    "description": "Clase de dificultad",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "CEGADO",
     "category": "Estado",
     "description": "Mientras tengas el estado de cegado, experimentarás los\nsiguientes efectos:\nNo puedes ver. No puedes ver y fallas automáticamente\ntodas las pruebas de característica que requieran la vista.\nAtaques afectados. Las tiradas de ataque contra ti tienen\nventaja y tus tiradas de ataque tienen desventaja.",
@@ -272,11 +328,35 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "CLASE DE ARMADURA DE OBJETOS",
+    "category": "General",
+    "description": "CA | Sustancia\n11 | Tela, papel, cuerda\n13 | Cristal, vidrio, hielo\n15 | Madera\n17 | Piedra\n19 | Hierro, acero\n21 | Mithral\n23 | Adamantina\n\nPuntos de golpe. Un objeto se destruye cuando sus\npuntos de golpe se reducen a 0. La tabla “Puntos de\ngolpe de objetos” sugiere puntos de golpe para objetos\nfrágiles y resistentes de tamaño Grande o más pequeño.\nPara asignar puntos de golpe a un objeto Enorme\no Gargantuesco, divídelo en secciones Grandes o más\npequeñas y lleva la cuenta de cada una por separado.\nCada DM determina si destruir parte de un objeto hará\nque se desmorone por completo.",
+    "pdfPage": 375,
+    "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "CLASE DE DIFICULTAD",
     "category": "General",
     "description": "Una clase de dificultad (CD) es el número objetivo de una\nprueba de característica o de una tirada de salvación.\nConsulta también el capítulo 1 (“Las pruebas con d20”).",
     "pdfPage": 366,
     "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CM",
+    "category": "Abreviatura",
+    "description": "Caótico malvado",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CN",
+    "category": "Abreviatura",
+    "description": "Caótico neutral",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -293,6 +373,14 @@
     "description": "Si tienes competencia en algo o con algo, puedes sumar\ntu bonificador por competencia a cualquier prueba con\nd20 que hagas con ese elemento. Una criatura puede\ntener competencia en una habilidad o tirada de salvación,\no con un arma o herramienta. Consulta también el\ncapítulo 1 (“Competencia”).",
     "pdfPage": 366,
     "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "Con",
+    "category": "Abreviatura",
+    "description": "Constitución",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -317,6 +405,22 @@
     "description": "Un cono es un área de efecto que se extiende en líneas\nrectas desde un punto de origen en la dirección que elija\nsu creador. El ancho del cono en un punto cualquiera\na lo largo de su extensión es igual a la distancia entre\ndicho punto y el origen. Por ejemplo, un cono tiene un\nancho de 4,5 m en un punto a lo largo de su extensión\nque esté a 4,5 m del punto de origen. El efecto que crea\nun cono especifica su extensión máxima.\nEl punto de origen de un cono no está incluido en el área\nde efecto, salvo que su creador decida lo contrario.",
     "pdfPage": 366,
     "printedPage": 364,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CONSUMO DE AGUA AL DÍA",
+    "category": "General",
+    "description": "Tamaño | Agua\nDiminuto | 1 l\nPequeño | 4 l\nMediano | 4 l\nGrande | 16 l\nEnorme | 64 l\nGargantuesco | 256 l",
+    "pdfPage": 368,
+    "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "CONSUMO DE ALIMENTOS AL DÍA",
+    "category": "General",
+    "description": "Tamaño | Alimentos\nDiminuto | 125 g\nPequeño | 0,5 kg\nMediano | 0,5 kg\nGrande | 2 kg\nEnorme | 8 kg\nGargantuesco | 32 kg",
+    "pdfPage": 368,
+    "printedPage": 366,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -384,6 +488,14 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "Des",
+    "category": "Abreviatura",
+    "description": "Destreza",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "DESCANSO CORTO",
     "category": "General",
     "description": "Un descanso corto es un periodo de inactividad de 1 hora\nen el que una criatura no hace nada más extenuante que\nleer, charlar, comer o montar guardia. Para comenzar un\ndescanso corto, debes tener al menos 1 punto de golpe.\nBeneficios del descanso. Tras finalizar el descanso\nobtendrás los siguientes beneficios:\nGastar dados de puntos de golpe. Puedes gastar uno\no más dados de puntos de golpe para recuperar puntos\nde golpe. Por cada dado de puntos de golpe que gastes\nde esta forma, tira el dado y suma tu modificador por\nConstitución al resultado. Recuperas una cantidad de\npuntos de golpe equivalente al total obtenido (con un\nmínimo de 1). Puedes decidir si gastas otro dado de\npuntos de golpe tras cada tirada.\nRasgo especial. Algunos rasgos se recargan con\nun descanso corto. Si tienes uno de estos rasgos,\nse recargará de la forma que indique su descripción.\nInterrumpir el descanso. Un descanso corto se puede\ninterrumpir de las siguientes formas:\n+ si se tira iniciativa;\n+ si se lanza un conjuro que no sea un truco;\n+ si se sufre daño.\nUn descanso corto interrumpido no otorga ningún\nbeneficio.",
@@ -408,25 +520,9 @@
     "source": "Manual del Jugador 2024"
   },
   {
-    "name": "CONSUMO DE AGUA AL DÍA",
-    "category": "General",
-    "description": "Tamaño | Agua\nDiminuto | 1 l\nPequeño | 4 l\nMediano | 4 l\nGrande | 16 l\nEnorme | 64 l\nGargantuesco | 256 l",
-    "pdfPage": 368,
-    "printedPage": 366,
-    "source": "Manual del Jugador 2024"
-  },
-  {
     "name": "DESNUTRICIÓN",
     "category": "Peligro",
     "description": "Las criaturas necesitan cierta cantidad de alimentos\nal día en función de su tamaño, como se muestra en la\ntabla “Consumo de alimentos al día”. Si una criatura\ncome, pero ingiere menos de la mitad de los alimentos\nque necesita al día, deberá superar una tirada de salvación\nde Constitución con CD 10 o sumará 1 nivel de cansancio\nal final del día. Si una criatura no come nada durante\n5 días, sumará automáticamente 1 nivel de cansancio\nal final del quinto día y un nivel adicional al final de\ncada día posterior sin comer.\nEl cansancio causado por la desnutrición no puede\neliminarse hasta que la criatura coma la cantidad completa\nde alimentos necesarios al día. Consulta también\n“Cansancio”.",
-    "pdfPage": 368,
-    "printedPage": 366,
-    "source": "Manual del Jugador 2024"
-  },
-  {
-    "name": "CONSUMO DE ALIMENTOS AL DÍA",
-    "category": "General",
-    "description": "Tamaño | Alimentos\nDiminuto | 125 g\nPequeño | 0,5 kg\nMediano | 0,5 kg\nGrande | 2 kg\nEnorme | 8 kg\nGargantuesco | 32 kg",
     "pdfPage": 368,
     "printedPage": 366,
     "source": "Manual del Jugador 2024"
@@ -445,6 +541,14 @@
     "description": "Si tienes desventaja en una prueba con d20, tira 2d20\ny utiliza el resultado más bajo. Una tirada no puede\nverse afectada por más de una desventaja, y una ventaja\ny una desventaja en la misma tirada se anulan entre sí.\nConsulta también el capítulo 1 (“Las pruebas con d20”).",
     "pdfPage": 368,
     "printedPage": 366,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "DM",
+    "category": "Abreviatura",
+    "description": "Dungeon Master",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -568,11 +672,11 @@
     "source": "Manual del Jugador 2024"
   },
   {
-    "name": "ÁREAS DE CONOCIMIENTO",
-    "category": "General",
-    "description": "Habilidad | Áreas\nConocimiento arcano | Conjuros, objetos mágicos, símbolos sobrenaturales, tradiciones mágicas, planos de existencia y determinadas criaturas (aberraciones, autómatas, elementales, feéricos y monstruosidades)\nHistoria | Acontecimientos y personajes históricos, civilizaciones antiguas, guerras y determinadas criaturas (gigantes y humanoides)\nInvestigación | Trampas, códigos, enigmas y artilugios\nNaturaleza | Terreno, flora, clima y determinadas criaturas (bestias, cienos, dragones y plantas)\nReligión | Deidades, jerarquías religiosas y ritos, símbolos sagrados, sectas y determinadas criaturas (celestiales, infernales y muertos vivientes)",
-    "pdfPage": 370,
-    "printedPage": 368,
+    "name": "Fue",
+    "category": "Abreviatura",
+    "description": "Fuerza",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -648,14 +752,6 @@
     "source": "Manual del Jugador 2024"
   },
   {
-    "name": "PRUEBAS DE INFLUENCIA",
-    "category": "General",
-    "description": "Prueba de característica | Interacción\nCarisma (Engaño) | Engañar a un monstruo que te entienda.\nCarisma (Interpretación) | Entretener a un monstruo.\nCarisma (Intimidación) | Intimidar a un monstruo.\nCarisma (Persuasión) | Persuadir a un monstruo que te entienda.\nSabiduría (Trato con animales) | Convencer poco a poco a una bestia o monstruosidad.",
-    "pdfPage": 371,
-    "printedPage": 369,
-    "source": "Manual del Jugador 2024"
-  },
-  {
     "name": "INICIATIVA",
     "category": "General",
     "description": "La iniciativa determina el orden de los turnos durante\nel combate. Las reglas del combate del capítulo 1 explican\ncómo tirar iniciativa.\nA veces, los DM pueden hacer que los combatientes\nutilicen sus puntuaciones de iniciativa en vez de tirar\niniciativa. Tu puntuación de iniciativa es igual a 10 más tu\nmodificador por Destreza. Si tienes ventaja en las tiradas\nde iniciativa, aumenta tu puntuación de iniciativa en 5.\nSi, por el contrario, tienes desventaja en estas tiradas,\nreduce esa puntuación en 5. Consulta también el capítulo 1\n(“Combate”).",
@@ -680,11 +776,27 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "Int",
+    "category": "Abreviatura",
+    "description": "Inteligencia",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "INVISIBLE",
     "category": "Estado",
     "description": "Mientras tengas el estado de invisible, experimentarás\nlos siguientes efectos:\nSorpresa. Si tienes el estado de invisible cuando tiras\niniciativa, tendrás ventaja en la tirada.\nOculto. No te afecta ningún efecto que requiera ver\na su objetivo, salvo que el creador del efecto pueda verte\nde alguna forma. Cualquier equipo que vistas o lleves\ncontigo también se oculta.\nAtaques afectados. Las tiradas de ataque contra ti tienen\ndesventaja y tus tiradas de ataque tienen ventaja. Si una\ncriatura puede verte de alguna forma, no obtienes este\nbeneficio contra esa criatura.",
     "pdfPage": 371,
     "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "LB",
+    "category": "Abreviatura",
+    "description": "Legal bueno",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -712,6 +824,22 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "LM",
+    "category": "Abreviatura",
+    "description": "Legal malvado",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "LN",
+    "category": "Abreviatura",
+    "description": "Legal neutral",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "LUZ BRILLANTE",
     "category": "General",
     "description": "La luz brillante es la iluminación normal. Consulta también\nel capítulo 1 (“Exploración”).",
@@ -725,6 +853,14 @@
     "description": "Una zona con luz tenue está ligeramente oscura.\nConsulta también “Ligeramente oscuro” y el capítulo 1\n(“Exploración”).",
     "pdfPage": 372,
     "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "M",
+    "category": "Abreviatura",
+    "description": "Componente material",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -776,11 +912,35 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "N",
+    "category": "Abreviatura",
+    "description": "Neutral",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "NADAR",
     "category": "General",
     "description": "Cuando nadas, cada metro de movimiento te cuesta 1 m\nadicional (2 m adicionales en terreno difícil). Ignoras este\ncoste adicional si tienes una velocidad nadando y la usas\npara nadar. Si tu DM lo cree conveniente, para recorrer\ncualquier distancia por aguas revueltas podría tener que\nsuperarse una prueba de Fuerza (Atletismo) con CD 15.",
     "pdfPage": 372,
     "printedPage": 370,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "NB",
+    "category": "Abreviatura",
+    "description": "Neutral bueno",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "NM",
+    "category": "Abreviatura",
+    "description": "Neutral malvado",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -821,6 +981,22 @@
     "description": "Mientras tengas el estado de paralizado, experimentarás\nlos siguientes efectos:\nIncapacitado. Tienes el estado de incapacitado.\nVelocidad 0. Tu velocidad es 0 y no puede aumentar.\nTiradas de salvación afectadas. Fallas automáticamente\nlas tiradas de salvación de Fuerza y Destreza.\nAtaques afectados. Las tiradas de ataque contra ti tienen\nventaja.\nCríticos automáticos. Cualquier tirada de ataque que te\nacierte es un crítico si el atacante está a 1,5 m o menos de ti.",
     "pdfPage": 373,
     "printedPage": 371,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "pc",
+    "category": "Abreviatura",
+    "description": "Pieza(s) de cobre",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "pe",
+    "category": "Abreviatura",
+    "description": "Pieza(s) de electro",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -880,11 +1056,51 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "pg",
+    "category": "Abreviatura",
+    "description": "Punto(s) de golpe",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PNJ",
+    "category": "Abreviatura",
+    "description": "Personaje no jugador",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "po",
+    "category": "Abreviatura",
+    "description": "Pieza(s) de oro",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "POSESIÓN",
     "category": "General",
     "description": "Algunos efectos hacen que una criatura sea poseída por\notra criatura o entidad. Un efecto de posesión define cómo\nfunciona la misma. Una posesión se puede prevenir con\nel conjuro protección contra el bien y el mal y deshacer con\nel conjuro disipar el bien y el mal.",
     "pdfPage": 374,
     "printedPage": 372,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "pp",
+    "category": "Abreviatura",
+    "description": "Pieza(s) de plata",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "ppt",
+    "category": "Abreviatura",
+    "description": "Pieza(s) de platino",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -912,6 +1128,14 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "PRUEBAS DE INFLUENCIA",
+    "category": "General",
+    "description": "Prueba de característica | Interacción\nCarisma (Engaño) | Engañar a un monstruo que te entienda.\nCarisma (Interpretación) | Entretener a un monstruo.\nCarisma (Intimidación) | Intimidar a un monstruo.\nCarisma (Persuasión) | Persuadir a un monstruo que te entienda.\nSabiduría (Trato con animales) | Convencer poco a poco a una bestia o monstruosidad.",
+    "pdfPage": 371,
+    "printedPage": 369,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "PUNTOS DE EXPERIENCIA",
     "category": "General",
     "description": "A medida que los personajes superan desafíos y completan\naventuras, ganan puntos de experiencia (PX) otorgados\npor su Dungeon Master. Cuando el total de PX de un\npersonaje supera ciertos umbrales, el personaje sube de\nnivel. La Guía del Dungeon Master explica cómo se otorgan\nlos PX. Consulta también el capítulo 2 (“Progresión de\nniveles”).",
@@ -928,6 +1152,14 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "PUNTOS DE GOLPE DE OBJETOS",
+    "category": "General",
+    "description": "Tamaño | Frágil | Resistente\nDiminuto (botella, cerradura) | 2 (1d4) | 5 (2d4)\nPequeño (cofre, laúd) | 3 (1d6) | 10 (3d6)\nMediano (barril, candelabro) | 4 (1d8) | 18 (4d8)\nGrande (carreta, mesa de comedor) | 5 (1d10) | 27 (5d10)\n\nTipos de daño y objetos. Los objetos tienen inmunidad\nal daño psíquico y de veneno. Cada DM puede decidir que\ndeterminados tipos de daño sean más o menos efectivos\ncontra un objeto. Por ejemplo, el daño contundente\nsirve para destrozar cosas a golpes, pero no para cortar.\nLos objetos de papel o tela pueden ser vulnerables al daño\nde fuego.\nUmbral de daño. Los objetos de gran tamaño, como\nlos muros de un castillo, suelen tener una resistencia\nmayor, lo que se representa mediante un umbral de daño.\nConsulta también “Umbral de daño”.\nSin puntuaciones de característica. Los objetos no\ntienen puntuaciones de característica, salvo que una\nregla les asigne puntuaciones. Al no tener puntuaciones\nde característica, los objetos no pueden hacer pruebas\nde característica y fallan todas las tiradas de salvación.",
+    "pdfPage": 376,
+    "printedPage": 374,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "PUNTOS DE GOLPE TEMPORALES",
     "category": "General",
     "description": "Algunos efectos otorgan puntos de golpe temporales,\nque evitan la pérdida de puntos de golpe reales.\nConsulta también el capítulo 1 (“Daño y curación”).\nPUNTUACIÓN DE CARACTERÍSTICA",
@@ -941,6 +1173,22 @@
     "description": "Las criaturas tienen seis puntuaciones de característica:\nFuerza, Destreza, Constitución, Inteligencia, Sabiduría\ny Carisma, que tienen su modificador correspondiente.\nSuma el modificador cuando hagas una prueba con d20\ncon la característica que corresponda o cuando una\nregla te lo pida. Consulta también el capítulo 1 (“Las seis\ncaracterísticas”).",
     "pdfPage": 375,
     "printedPage": 373,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "PX",
+    "category": "Abreviatura",
+    "description": "Punto(s) de experiencia",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "R",
+    "category": "Abreviatura",
+    "description": "Ritual",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -984,19 +1232,19 @@
     "source": "Manual del Jugador 2024"
   },
   {
-    "name": "CLASE DE ARMADURA DE OBJETOS",
-    "category": "General",
-    "description": "CA | Sustancia\n11 | Tela, papel, cuerda\n13 | Cristal, vidrio, hielo\n15 | Madera\n17 | Piedra\n19 | Hierro, acero\n21 | Mithral\n23 | Adamantina\n\nPuntos de golpe. Un objeto se destruye cuando sus\npuntos de golpe se reducen a 0. La tabla “Puntos de\ngolpe de objetos” sugiere puntos de golpe para objetos\nfrágiles y resistentes de tamaño Grande o más pequeño.\nPara asignar puntos de golpe a un objeto Enorme\no Gargantuesco, divídelo en secciones Grandes o más\npequeñas y lleva la cuenta de cada una por separado.\nCada DM determina si destruir parte de un objeto hará\nque se desmorone por completo.",
-    "pdfPage": 375,
-    "printedPage": 373,
+    "name": "S",
+    "category": "Abreviatura",
+    "description": "Componente somático",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
-    "name": "PUNTOS DE GOLPE DE OBJETOS",
-    "category": "General",
-    "description": "Tamaño | Frágil | Resistente\nDiminuto (botella, cerradura) | 2 (1d4) | 5 (2d4)\nPequeño (cofre, laúd) | 3 (1d6) | 10 (3d6)\nMediano (barril, candelabro) | 4 (1d8) | 18 (4d8)\nGrande (carreta, mesa de comedor) | 5 (1d10) | 27 (5d10)\n\nTipos de daño y objetos. Los objetos tienen inmunidad\nal daño psíquico y de veneno. Cada DM puede decidir que\ndeterminados tipos de daño sean más o menos efectivos\ncontra un objeto. Por ejemplo, el daño contundente\nsirve para destrozar cosas a golpes, pero no para cortar.\nLos objetos de papel o tela pueden ser vulnerables al daño\nde fuego.\nUmbral de daño. Los objetos de gran tamaño, como\nlos muros de un castillo, suelen tener una resistencia\nmayor, lo que se representa mediante un umbral de daño.\nConsulta también “Umbral de daño”.\nSin puntuaciones de característica. Los objetos no\ntienen puntuaciones de característica, salvo que una\nregla les asigne puntuaciones. Al no tener puntuaciones\nde característica, los objetos no pueden hacer pruebas\nde característica y fallan todas las tiradas de salvación.",
-    "pdfPage": 376,
-    "printedPage": 374,
+    "name": "Sab",
+    "category": "Abreviatura",
+    "description": "Sabiduría",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
@@ -1168,11 +1416,27 @@
     "source": "Manual del Jugador 2024"
   },
   {
+    "name": "V",
+    "category": "Abreviatura",
+    "description": "Componente verbal",
+    "pdfPage": 362,
+    "printedPage": 360,
+    "source": "Manual del Jugador 2024"
+  },
+  {
     "name": "VALOR DE DESAFÍO",
     "category": "General",
     "description": "El valor de desafío (VD) resume la amenaza que supone un\nmonstruo para un grupo de cuatro personajes jugadores.\nCompara el VD del monstruo con el nivel de los personajes.\nSi el VD es superior, el monstruo seguramente suponga un\npeligro. Si el VD es inferior, el monstruo probablemente\nno sea una gran amenaza. No obstante, las circunstancias\ny la cantidad de personajes jugadores pueden alterar\nconsiderablemente lo peligroso que puede ser un monstruo\nen realidad. La Guía del Dungeon Master explica cómo\nusar el VD al planear posibles encuentros de combate.\nConsulta también “Perfil”.",
     "pdfPage": 378,
     "printedPage": 376,
+    "source": "Manual del Jugador 2024"
+  },
+  {
+    "name": "VD",
+    "category": "Abreviatura",
+    "description": "Valor de desafío",
+    "pdfPage": 362,
+    "printedPage": 360,
     "source": "Manual del Jugador 2024"
   },
   {
