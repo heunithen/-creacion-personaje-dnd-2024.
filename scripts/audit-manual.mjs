@@ -141,7 +141,8 @@ try {
 
     for (const subclassName of subclassTitles) {
       const start = findLinePosition(sectionText, subclassName, Math.max(0, classFeatureStart));
-      const later = subclassTitles.map((title) => findLinePosition(sectionText, title, start + subclassName.length))
+      const later = subclassTitles.filter((title) => title !== subclassName)
+        .map((title) => findLinePosition(sectionText, title, start + subclassName.length))
         .filter((position) => position > start);
       const end = later.length ? Math.min(...later) : sectionText.length;
       const subclassText = start >= 0 ? sectionText.slice(start, end) : '';
@@ -150,7 +151,7 @@ try {
         .filter(([, name]) => name && !name.startsWith(norm('TABLA:')) && !name.startsWith(norm('CONJUROS DEL')) && !name.startsWith(norm('CONJUROS DE')));
       const jsonPairs = (subclassMap[subclassName]?.features ?? [])
         .map((feature) => [Number(feature.level), norm(feature.name)])
-        .filter(([, name]) => !name.startsWith(norm('conjuros')));
+        .filter(([, name]) => !name.startsWith(norm('conjurosdel')));
       const pairKey = ([level, name]) => level + ':' + name;
       const missing = manualPairs.filter(([level, name]) => !jsonPairs.some(([jsonLevel, jsonName]) =>
         jsonLevel === level && (jsonName.startsWith(name) || name.startsWith(jsonName))));
