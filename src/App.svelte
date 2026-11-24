@@ -1146,7 +1146,6 @@
     'Orco':'Tipo de criatura: Humanoide. Aguante incansable; Descarga de adrenalina; Visión en la oscuridad 36 m.',
     'Tiefling':'Tipo de criatura: Humanoide. Legado infernal; Presencia sobrenatural (truco taumaturgia); Visión en la oscuridad 18 m.'
   };
-  const BUILDER_CLASS_DATA: Record<string,{equipmentA:string;equipmentB:string;features:string;tool:string;weaponCount:number;cantrips:number;spells:number;slots:number;spellbook:number;specialLabel:string;specialOptions:string[]}> = {
   function builderSpeciesChoiceDescription(species:string,choice:string): string {
     const dragonDamage:Record<string,string>={Azul:'relámpago',Blanco:'frío',Bronce:'relámpago',Cobre:'ácido',Negro:'ácido',Oro:'fuego',Oropel:'fuego',Plata:'frío',Rojo:'fuego',Verde:'veneno'};
     if(species==='Dracónido' && dragonDamage[choice]) return 'Linaje dracónico · '+choice+': resistencia al daño de '+dragonDamage[choice]+'. Ataque de aliento: 1d10 de '+dragonDamage[choice+'']+'; cono de 4,5 m o línea de 9 m × 1,5 m, salvación de Destreza CD 8 + Constitución + bonificador por competencia, mitad de daño si se supera. Usos iguales al bonificador por competencia por descanso largo. El daño aumenta a 2d10 en nivel 5, 3d10 en nivel 11 y 4d10 en nivel 17.';
@@ -1175,6 +1174,7 @@
     }
     return '';
   }
+  const BUILDER_CLASS_DATA: Record<string,{equipmentA:string;equipmentB:string;features:string;tool:string;weaponCount:number;cantrips:number;spells:number;slots:number;spellbook:number;specialLabel:string;specialOptions:string[]}> = {
     'Bárbaro':{equipmentA:'Hacha a dos manos, 4 hachas de mano, paquete de explorador y 15 po.',equipmentB:'75 po.',features:'Defensa sin armadura; Furia (2 usos, daño +2 y resistencia a daño contundente, cortante y perforante); Maestría con armas (elige 2 tipos de armas).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:2,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'',specialOptions:[]},
     'Bardo':{equipmentA:'Armadura de cuero, 2 dagas, un instrumento musical, paquete de artista y 19 po.',equipmentB:'90 po.',features:'Inspiración bárdica (d6; usos iguales al modificador de Carisma, mínimo 1); Lanzamiento de conjuros.',tool:'Elige 3 instrumentos musicales.',weaponCount:0,cantrips:2,spells:4,slots:2,spellbook:0,specialLabel:'Instrumentos musicales',specialOptions:[]},
     'Brujo':{equipmentA:'Armadura de cuero, hoz, 2 dagas, canalizador arcano (orbe), libro de conocimiento oculto, paquete de erudito y 15 po.',equipmentB:'100 po.',features:'Invocaciones sobrenaturales (elige 1); Magia del pacto (2 trucos, 2 conjuros preparados y 1 espacio de nivel 1).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:2,spells:2,slots:1,spellbook:0,specialLabel:'Invocación sobrenatural',specialOptions:['Armadura de sombras','Mente sobrenatural','Pacto de la cadena','Pacto del filo','Pacto del grimorio']},
