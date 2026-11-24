@@ -848,7 +848,7 @@
   const BUILDER_ARMOR: Record<string,string> = {
     'Bárbaro':'Armaduras ligeras y medias; escudos','Bardo':'Armaduras ligeras',
     'Brujo':'Armaduras ligeras','Clérigo':'Armaduras ligeras y medias; escudos (según orden divina)',
-    'Druida':'Armaduras ligeras y medias; escudos','Explorador':'Armaduras ligeras y medias; escudos',
+    'Druida':'Armaduras ligeras y escudos (Guardián obtiene armaduras medias)','Explorador':'Armaduras ligeras y medias; escudos',
     'Guerrero':'Todas las armaduras y escudos','Hechicero':'Ninguna','Mago':'Ninguna',
     'Monje':'Ninguna','Paladín':'Todas las armaduras y escudos','Pícaro':'Armaduras ligeras'
   };
@@ -871,6 +871,25 @@
     if(builderData.abilityIncreaseMode === 'two') { add(builderData.abilityIncrease2,2); add(builderData.abilityIncrease1,1); }
     else { add(builderData.abilityIncrease2,1); add(builderData.abilityIncrease1,1); add(builderData.abilityIncrease3,1); }
     return result;
+  }
+  function builderStartingAC() {
+    const dex = builderModifier(Number(builderAdjustedAbilities().Destreza));
+    const wis = builderModifier(Number(builderAdjustedAbilities().Sabiduría));
+    const cls = builderData.className;
+    if (builderData.classEquipmentChoice !== 'A' && !(cls === 'Guerrero' && builderData.classEquipmentChoice === 'B')) {
+      return cls === 'Bárbaro' ? 10 + dex + builderModifier(Number(builderAdjustedAbilities().Constitución))
+        : cls === 'Monje' ? 10 + dex + wis : 10 + dex;
+    }
+    if (cls === 'Bárbaro') return 10 + dex + builderModifier(Number(builderAdjustedAbilities().Constitución));
+    if (cls === 'Monje') return 10 + dex + wis;
+    if (cls === 'Clérigo') return 15 + Math.min(2,dex);
+    if (cls === 'Druida') return 13 + dex;
+    if (cls === 'Paladín') return 18;
+    if (cls === 'Guerrero' && builderData.classEquipmentChoice === 'A') return 16;
+    if (cls === 'Guerrero' && builderData.classEquipmentChoice === 'B') return 12 + dex;
+    if (cls === 'Explorador') return 12 + dex;
+    if (cls === 'Bardo' || cls === 'Brujo' || cls === 'Pícaro') return 11 + dex;
+    return 10 + dex;
   }
   function builderModifier(score:number) { return Math.floor((score - 10) / 2); }
   function builderCanFinish() {
@@ -914,7 +933,7 @@
     const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
     put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
     BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(finalAbilities[a])+' ('+mod(Number(finalAbilities[a]))+')'));
-    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,2,b.className === 'Bárbaro' ? String(10 + builderModifier(Number(finalAbilities.Destreza)) + builderModifier(con))+' (Defensa sin armadura)' : b.className === 'Monje' ? String(10 + builderModifier(Number(finalAbilities.Destreza)) + builderModifier(Number(finalAbilities.Sabiduría)))+' (Defensa sin armadura)' : String(10 + builderModifier(Number(finalAbilities.Destreza)))+' (sin armadura)'); put(2,3,mod(Number(finalAbilities.Destreza))); put(2,4,'30 pies'); put(2,5,proficiency); put(2,6,BUILDER_SAVES[b.className] || '—');
+    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,2,String(builderStartingAC())+' (según equipo inicial y rasgos)'); put(2,3,mod(Number(finalAbilities.Destreza))); put(2,4,'30 pies'); put(2,5,proficiency); put(2,6,BUILDER_SAVES[b.className] || '—');
     put(3,0,[...BUILDER_BACKGROUND_DATA[b.background].skills, ...b.classSkillChoices.filter(Boolean), b.skills].filter(Boolean).join('; ')); put(3,1,[BUILDER_BACKGROUND_DATA[b.background].tool, classData.tool, b.tools].filter(x=>x && x !== 'Ninguna competencia con herramientas de clase.').join('; ') || '—'); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,b.className === 'Bárbaro' || b.className === 'Explorador' || b.className === 'Guerrero' || b.className === 'Paladín' ? 'Armas sencillas y marciales' : b.className === 'Pícaro' ? 'Armas sencillas y marciales ligeras o sutiles' : 'Armas sencillas'); put(3,4,'Común y los idiomas otorgados por trasfondo/especie');
     put(4,0,features); put(4,1,BUILDER_SPECIES_TRAITS[b.species] || ''); put(4,2,b.feat); put(4,3,b.traits || '—');
     const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(finalAbilities[magicAbility])) : 0; put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(10 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,b.selectedCantrips.join(', ') || (classData.cantrips ? 'Faltan por elegir ' + classData.cantrips + ' trucos' : 'No obtiene trucos de clase a nivel 1')); put(5,4,(b.className === 'Mago' ? 'Libro: ' + b.wizardSpellbook.join(', ') + '. Preparados: ' : '') + (b.selectedSpells.join(', ') || (classData.spells ? 'Faltan por elegir ' + classData.spells + ' conjuros' : 'No tiene conjuros de clase a nivel 1'))); put(5,5,classData.slots ? classData.slots + ' espacios de nivel 1' : '—');
