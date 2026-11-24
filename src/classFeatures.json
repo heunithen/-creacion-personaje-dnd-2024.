@@ -63,6 +63,11 @@
         "description": "Como parte de la acción adicional para dejarte llevar por\nla furia, puedes moverte hasta la mitad de tu velocidad."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los niveles\nde bárbaro 8, 12 y 16."
+      },
+      {
         "level": 9,
         "name": "GOLPE BRUTAL",
         "description": "Si utilizas Ataque temerario, puedes renunciar\na cualquier ventaja en una tirada de ataque de tu\nelección basada en la Fuerza en tu turno. La tirada de\nataque elegida no debe tener desventaja. Si la tirada de\nataque elegida acierta, el objetivo sufre 1d10 de daño\nadicional del mismo tipo que inflija el arma o el ataque\nsin armas y puedes causar un efecto de Golpe brutal de\ntu elección. Tienes las siguientes opciones de efectos.\nGolpe enérgico. El objetivo es empujado 4,5 m respecto\na ti en línea recta. Luego puedes moverte hasta la mitad\nde tu velocidad directamente hacia el objetivo sin\nprovocar ataques de oportunidad.\nGolpe ralentizador. La velocidad del objetivo se\nreduce en 4,5 m hasta el principio de tu siguiente turno.\nUn objetivo solo puede sufrir un golpe ralentizador cada\nvez: el más reciente."
@@ -73,6 +78,11 @@
         "description": "Tu furia te permite seguir luchando incluso tras\nsufrir heridas graves. Si tus puntos de golpe se\nreducen a 0 mientras estás enfurecido, pero no mueres\ninmediatamente, puedes hacer una tirada de salvación\nde Constitución con CD 10. Si la superas, tus puntos\nde golpe pasarán a ser una cantidad igual al doble de\ntu nivel de bárbaro.\nSiempre que uses este rasgo después de la primera vez,\nla CD aumenta en 5. Tras finalizar un descanso corto\no largo, la CD vuelve a ser 10."
       },
       {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los niveles\nde bárbaro 8, 12 y 16."
+      },
+      {
         "level": 13,
         "name": "GOLPE BRUTAL MEJORADO",
         "description": "Has perfeccionado tus formas de atacar con fiereza.\nEntre las opciones de Golpe brutal se encuentran ahora\nlos siguientes efectos:\nGolpe abrumador. El objetivo tiene desventaja en la\nsiguiente tirada de salvación que haga y no puede llevar\na cabo ataques de oportunidad hasta el principio de tu\nsiguiente turno.\nGolpe desgarrador. Antes del principio de tu siguiente\nturno, la próxima tirada de ataque realizada por otra\ncriatura contra el objetivo obtiene un bonificador de +5.\nUna tirada de ataque puede obtener solo un bonificador\nde un golpe desgarrador."
@@ -81,6 +91,11 @@
         "level": 15,
         "name": "FURIA PERSISTENTE",
         "description": "Cuando tires iniciativa, puedes recuperar todos los usos\ngastados de la furia. Tras recuperar los usos de la furia de\nesta manera, no podrás volver a hacerlo hasta que finalices\nun descanso largo.\nAdemás, tu furia es tan intensa que ahora dura\n10 minutos sin necesidad de hacer nada para prolongarla\nde un asalto a otro. Tu furia termina antes si recibes el\nestado de inconsciente (no solo el de incapacitado) o te\npones una armadura pesada."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los niveles\nde bárbaro 8, 12 y 16."
       },
       {
         "level": 17,
@@ -145,9 +160,29 @@
         "description": "Puedes emplear notas musicales o palabras de poder para\ninterrumpir los efectos que afectan a la mente. Si tú o una\ncriatura que esté a 9 m o menos de ti falláis una tirada\nde salvación contra un efecto que aplique el estado de\nasustado o hechizado, puedes llevar a cabo una reacción\npara que se repita la tirada de salvación, y la nueva tirada\ntendrá ventaja."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de bardo."
+      },
+      {
+        "level": 9,
+        "name": "Pericia",
+        "description": "Ganas pericia (consulta el glosario de reglas) en dos\nde tus competencias en habilidades de tu elección.\nSe recomiendan Interpretación y Persuasión si eres\ncompetente en ellas.\nEn el nivel 9 de bardo ganas pericia en otras dos\ncompetencias de tu elección."
+      },
+      {
         "level": 10,
         "name": "SECRETOS MÁGICOS",
         "description": "Has aprendido secretos de diversas tradiciones mágicas.\nCada vez que alcances un nivel de bardo (incluido este)\ny aumente la cantidad de conjuros preparados de la tabla\n“Rasgos de bardo”, podrás elegir cualquiera de los nuevos\nconjuros preparados de entre las listas de conjuros de bardo,\nclérigo, druida y mago. Los conjuros elegidos contarán\ncomo conjuros de bardo para ti (consulta las listas de\nconjuros en la sección de la clase correspondiente). Además,\ncuando sustituyas un conjuro preparado para esta clase,\npodrás hacerlo con un conjuro de esas listas."
+      },
+      {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de bardo."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de bardo."
       },
       {
         "level": 18,
@@ -192,9 +227,24 @@
         "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de brujo."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de brujo."
+      },
+      {
         "level": 9,
         "name": "CONTACTAR PATRÓN",
         "description": "Antes solías ponerte en contacto con tu patrón a través de\nintermediarios. Ahora puedes comunicarte directamente,\nya que siempre tienes el conjuro contactar con otro plano\npreparado. Con este rasgo, puedes lanzar el conjuro sin\ngastar un espacio de conjuro para contactar con tu patrón\ny superas automáticamente la tirada de salvación del\nconjuro.\nCuando lances el conjuro con este rasgo, no podrás\nvolver a hacerlo de esta forma hasta que finalices un\ndescanso largo."
+      },
+      {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de brujo."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de brujo."
       },
       {
         "level": 19,
@@ -244,14 +294,29 @@
         "description": "Te imbuyes de poder divino en la batalla. Obtienes una de\nlas siguientes opciones, a tu elección (si obtienes cualquiera\nde ellas por una subclase de clérigo de un libro antiguo,\nutiliza solo la opción que escojas para este rasgo).\nGolpe divino. Una vez en cada uno de tus turnos, cuando\naciertes a una criatura con una tirada de ataque usando\nun arma, podrás hacer que el objetivo sufra 1d8 de daño\nnecrótico o radiante adicional (a tu elección).\nLanzamiento potente. Sumas tu modificador por Sabiduría\nal daño que causas con cualquier truco de clérigo."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de clérigo."
+      },
+      {
         "level": 10,
         "name": "INTERCESIÓN DIVINA",
         "description": "Puedes recurrir a tu deidad o panteón para que intervenga\nen tu nombre. Como acción de magia, elige cualquier\nconjuro de clérigo de nivel 5 o inferior que no requiera\nuna reacción para lanzarlo. Como parte de la misma\nacción, lanzas ese conjuro sin gastar un espacio de\nconjuro o sin necesidad de componentes materiales.\nNo podrás volver a utilizar este rasgo hasta que finalices\nun descanso largo."
       },
       {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de clérigo."
+      },
+      {
         "level": 14,
         "name": "GOLPES BENDITOS MEJORADOS",
         "description": "La opción elegida para Golpes benditos se vuelve más\npoderosa.\nGolpe divino. El daño adicional de tu Golpe divino\naumenta a 2d8.\nLanzamiento potente. Cuando lances un truco de clérigo\ny causes daño a una criatura con él, podrás transmitir\nvitalidad a ti o a otra criatura que esté a 18 m o menos de ti;\nse concederá una cantidad de puntos de golpe temporales\nigual al doble de tu modificador por Sabiduría."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de clérigo."
       },
       {
         "level": 19,
@@ -267,13 +332,13 @@
     "Druida": [
       {
         "level": 1,
-        "name": "LANZAMIENTO DE CONJUROS",
-        "description": "Has aprendido a lanzar conjuros estudiando las fuerzas\nmísticas de la naturaleza. Consulta el capítulo 7 para ver\nlas reglas sobre el lanzamiento de conjuros. La información\npresentada a continuación detalla cómo usar esas reglas con\nlos conjuros de druida, que encontrarás más adelante en\nla lista de conjuros de druida de la descripción de la clase.\nTrucos. Conoces dos trucos de tu elección escogidos de\nentre los de la lista de conjuros de druida. Se recomiendan\ncrear llama y saber druídico.\nCada vez que subas un nivel de druida, puedes sustituir\nuno de tus trucos por otro truco de tu elección de la lista\nde conjuros de druida.\nCuando alcances los niveles 4 y 10 de druida, aprenderás\notro truco de tu elección de la lista de conjuros de druida,\ncomo se muestra en la columna “Trucos” de la tabla\n“Rasgos de druida”.\nEspacios de conjuro. La tabla “Rasgos de druida”\nmuestra cuántos espacios de conjuro tienes para lanzar\ntus conjuros de nivel 1 y superiores. Recuperas todos\nlos espacios utilizados tras finalizar un descanso largo.\nConjuros preparados de nivel 1 y superiores. Preparas\nuna serie de conjuros de nivel 1 y superiores, que son\nlos que podrás lanzar con este rasgo. Para empezar,\nelige cuatro conjuros de nivel 1 de la lista de conjuros\nde druida. Se recomiendan curar heridas, encantar animal,\nfuego feérico y ola atronadora.\nEl número de conjuros de tu lista aumenta conforme\nsubes de nivel de druida, como se muestra en la columna\n“Conjuros preparados” de la tabla “Rasgos de druida”.\nCuando ese número aumente, elige conjuros adicionales\nde la lista de conjuros de druida hasta que el número de\nconjuros de tu lista coincida con el número de la tabla.\nEstos conjuros deben ser de un nivel para el que tengas\nespacios de conjuro. Por ejemplo, si eres une druide de\nnivel 3, podrías preparar cualquier combinación de seis\nconjuros de nivel 1 o 2.\nSi otro rasgo de druida te proporciona conjuros que\nsiempre tienes preparados, esos conjuros no cuentan\npara el total que puedes preparar con este rasgo, pero\nsí que cuentan como conjuros de druida para ti.\nCambiar los conjuros preparados. Tras finalizar un\ndescanso largo, puedes cambiar los conjuros que tienes\npreparados sustituyendo los que quieras por otros\nconjuros de druida para los que tengas espacios de\nconjuro.\nAptitud mágica. La Sabiduría es tu aptitud mágica\nen lo que respecta a tus conjuros de druida.\nCanalizador mágico. Puedes utilizar un canalizador\ndruídico como canalizador mágico para tus conjuros\nde druida.\n\nINICIO PÁGINA PDF: 94\nTABLA: Rasgos de druida\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Forma salvaje | Trucos | Conjuros preparados | Espacios nivel 1 | Espacios nivel 2 | Espacios nivel 3 | Espacios nivel 4 | Espacios nivel 5 | Espacios nivel 6 | Espacios nivel 7 | Espacios nivel 8 | Espacios nivel 9\nFILA: 1 | +2 | Lanzamiento de conjuros, Druídico, Orden primigenia | — | 2 | 4 | 2 | — | — | — | — | — | — | — | —\nFILA: 2 | +2 | Compañero salvaje, Forma salvaje | 2 | 2 | 5 | 3 | — | — | — | — | — | — | — | —\nFILA: 3 | +2 | Subclase de druida | 2 | 2 | 6 | 4 | 2 | — | — | — | — | — | — | —\nFILA: 4 | +2 | Mejora de característica | 2 | 3 | 7 | 4 | 3 | — | — | — | — | — | — | —\nFILA: 5 | +3 | Resurgimiento salvaje | 2 | 3 | 9 | 4 | 3 | 2 | — | — | — | — | — | —\nFILA: 6 | +3 | Rasgo de subclase | 3 | 3 | 10 | 4 | 3 | 3 | — | — | — | — | — | —\nFILA: 7 | +3 | Furia elemental | 3 | 3 | 11 | 4 | 3 | 3 | 1 | — | — | — | — | —\nFILA: 8 | +3 | Mejora de característica | 3 | 3 | 12 | 4 | 3 | 3 | 2 | — | — | — | — | —\nFILA: 9 | +4 | — | 3 | 3 | 14 | 4 | 3 | 3 | 3 | 1 | — | — | — | —\nFILA: 10 | +4 | Rasgo de subclase | 3 | 4 | 15 | 4 | 3 | 3 | 3 | 2 | — | — | — | —\nFILA: 11 | +4 | — | 3 | 4 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 12 | +4 | Mejora de característica | 3 | 4 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 13 | +5 | — | 3 | 4 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 14 | +5 | Rasgo de subclase | 3 | 4 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 15 | +5 | Furia elemental mejorada | 3 | 4 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 16 | +5 | Mejora de característica | 3 | 4 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 17 | +6 | — | 4 | 4 | 19 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | 1\nFILA: 18 | +6 | Conjurar como bestia | 4 | 4 | 20 | 4 | 3 | 3 | 3 | 3 | 1 | 1 | 1 | 1\nFILA: 19 | +6 | Don épico | 4 | 4 | 21 | 4 | 3 | 3 | 3 | 3 | 2 | 1 | 1 | 1\nFILA: 20 | +6 | Archidruida | 4 | 4 | 22 | 4 | 3 | 3 | 3 | 3 | 2 | 2 | 1 | 1\nFIN DE TABLA"
+        "name": "DRUÍDICO",
+        "description": "Sabes druídico, el idioma secreto de los druidas. Mientras\naprendías esta lengua antigua, accediste a la magia para\ncomunicarte con los animales, por lo que siempre tienes\nel conjuro hablar con los animales preparado.\nPuedes utilizar el druídico para dejar mensajes ocultos.\nTanto tú como cualquiera que conozca este idioma\nos percataréis de inmediato de la presencia de estos\nmensajes. Los demás deberán superar una prueba de\nInteligencia (Investigación) con CD 15 para detectarlos,\npero no podrán descifrarlos sin recurrir a la magia."
       },
       {
         "level": 1,
-        "name": "DRUÍDICO",
-        "description": "Sabes druídico, el idioma secreto de los druidas. Mientras\naprendías esta lengua antigua, accediste a la magia para\ncomunicarte con los animales, por lo que siempre tienes\nel conjuro hablar con los animales preparado.\nPuedes utilizar el druídico para dejar mensajes ocultos.\nTanto tú como cualquiera que conozca este idioma\nos percataréis de inmediato de la presencia de estos\nmensajes. Los demás deberán superar una prueba de\nInteligencia (Investigación) con CD 15 para detectarlos,\npero no podrán descifrarlos sin recurrir a la magia."
+        "name": "LANZAMIENTO DE CONJUROS",
+        "description": "Has aprendido a lanzar conjuros estudiando las fuerzas\nmísticas de la naturaleza. Consulta el capítulo 7 para ver\nlas reglas sobre el lanzamiento de conjuros. La información\npresentada a continuación detalla cómo usar esas reglas con\nlos conjuros de druida, que encontrarás más adelante en\nla lista de conjuros de druida de la descripción de la clase.\nTrucos. Conoces dos trucos de tu elección escogidos de\nentre los de la lista de conjuros de druida. Se recomiendan\ncrear llama y saber druídico.\nCada vez que subas un nivel de druida, puedes sustituir\nuno de tus trucos por otro truco de tu elección de la lista\nde conjuros de druida.\nCuando alcances los niveles 4 y 10 de druida, aprenderás\notro truco de tu elección de la lista de conjuros de druida,\ncomo se muestra en la columna “Trucos” de la tabla\n“Rasgos de druida”.\nEspacios de conjuro. La tabla “Rasgos de druida”\nmuestra cuántos espacios de conjuro tienes para lanzar\ntus conjuros de nivel 1 y superiores. Recuperas todos\nlos espacios utilizados tras finalizar un descanso largo.\nConjuros preparados de nivel 1 y superiores. Preparas\nuna serie de conjuros de nivel 1 y superiores, que son\nlos que podrás lanzar con este rasgo. Para empezar,\nelige cuatro conjuros de nivel 1 de la lista de conjuros\nde druida. Se recomiendan curar heridas, encantar animal,\nfuego feérico y ola atronadora.\nEl número de conjuros de tu lista aumenta conforme\nsubes de nivel de druida, como se muestra en la columna\n“Conjuros preparados” de la tabla “Rasgos de druida”.\nCuando ese número aumente, elige conjuros adicionales\nde la lista de conjuros de druida hasta que el número de\nconjuros de tu lista coincida con el número de la tabla.\nEstos conjuros deben ser de un nivel para el que tengas\nespacios de conjuro. Por ejemplo, si eres une druide de\nnivel 3, podrías preparar cualquier combinación de seis\nconjuros de nivel 1 o 2.\nSi otro rasgo de druida te proporciona conjuros que\nsiempre tienes preparados, esos conjuros no cuentan\npara el total que puedes preparar con este rasgo, pero\nsí que cuentan como conjuros de druida para ti.\nCambiar los conjuros preparados. Tras finalizar un\ndescanso largo, puedes cambiar los conjuros que tienes\npreparados sustituyendo los que quieras por otros\nconjuros de druida para los que tengas espacios de\nconjuro.\nAptitud mágica. La Sabiduría es tu aptitud mágica\nen lo que respecta a tus conjuros de druida.\nCanalizador mágico. Puedes utilizar un canalizador\ndruídico como canalizador mágico para tus conjuros\nde druida.\n\nINICIO PÁGINA PDF: 94\nTABLA: Rasgos de druida\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Forma salvaje | Trucos | Conjuros preparados | Espacios nivel 1 | Espacios nivel 2 | Espacios nivel 3 | Espacios nivel 4 | Espacios nivel 5 | Espacios nivel 6 | Espacios nivel 7 | Espacios nivel 8 | Espacios nivel 9\nFILA: 1 | +2 | Lanzamiento de conjuros, Druídico, Orden primigenia | — | 2 | 4 | 2 | — | — | — | — | — | — | — | —\nFILA: 2 | +2 | Compañero salvaje, Forma salvaje | 2 | 2 | 5 | 3 | — | — | — | — | — | — | — | —\nFILA: 3 | +2 | Subclase de druida | 2 | 2 | 6 | 4 | 2 | — | — | — | — | — | — | —\nFILA: 4 | +2 | Mejora de característica | 2 | 3 | 7 | 4 | 3 | — | — | — | — | — | — | —\nFILA: 5 | +3 | Resurgimiento salvaje | 2 | 3 | 9 | 4 | 3 | 2 | — | — | — | — | — | —\nFILA: 6 | +3 | Rasgo de subclase | 3 | 3 | 10 | 4 | 3 | 3 | — | — | — | — | — | —\nFILA: 7 | +3 | Furia elemental | 3 | 3 | 11 | 4 | 3 | 3 | 1 | — | — | — | — | —\nFILA: 8 | +3 | Mejora de característica | 3 | 3 | 12 | 4 | 3 | 3 | 2 | — | — | — | — | —\nFILA: 9 | +4 | — | 3 | 3 | 14 | 4 | 3 | 3 | 3 | 1 | — | — | — | —\nFILA: 10 | +4 | Rasgo de subclase | 3 | 4 | 15 | 4 | 3 | 3 | 3 | 2 | — | — | — | —\nFILA: 11 | +4 | — | 3 | 4 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 12 | +4 | Mejora de característica | 3 | 4 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 13 | +5 | — | 3 | 4 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 14 | +5 | Rasgo de subclase | 3 | 4 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 15 | +5 | Furia elemental mejorada | 3 | 4 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 16 | +5 | Mejora de característica | 3 | 4 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 17 | +6 | — | 4 | 4 | 19 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | 1\nFILA: 18 | +6 | Conjurar como bestia | 4 | 4 | 20 | 4 | 3 | 3 | 3 | 3 | 1 | 1 | 1 | 1\nFILA: 19 | +6 | Don épico | 4 | 4 | 21 | 4 | 3 | 3 | 3 | 3 | 2 | 1 | 1 | 1\nFILA: 20 | +6 | Archidruida | 4 | 4 | 22 | 4 | 3 | 3 | 3 | 3 | 2 | 2 | 1 | 1\nFIN DE TABLA"
       },
       {
         "level": 1,
@@ -311,9 +376,24 @@
         "description": "El poder de los elementos fluye por ti. Obtienes una de las\nsiguientes opciones, a tu elección.\nGolpe primordial. Una vez en cada uno de tus turnos,\ncuando aciertes a una criatura con una tirada de ataque\nusando un arma o un ataque de una bestia en Forma\nsalvaje, podrás hacer que el objetivo sufra 1d8 de daño de\nfrío, fuego, relámpago o trueno adicional (elígelo cuando\naciertes).\nLanzamiento potente. Sumas tu modificador por Sabiduría\nal daño que causas con cualquier truco de druida."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de druida."
+      },
+      {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de druida."
+      },
+      {
         "level": 15,
         "name": "FURIA ELEMENTAL MEJORADA",
         "description": "La opción elegida para Furia elemental se vuelve más\npoderosa, como se detalla a continuación.\nGolpe primordial. El daño adicional de tu Golpe\nprimordial aumenta a 2d8.\nLanzamiento potente. Cuando lances un truco de druida\ncon un alcance de 3 m o más, el alcance del conjuro\naumentará en 90 m."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de druida."
       },
       {
         "level": 18,
@@ -334,13 +414,13 @@
     "Explorador": [
       {
         "level": 1,
-        "name": "LANZAMIENTO DE CONJUROS",
-        "description": "Has aprendido a canalizar la esencia mágica de la\nnaturaleza para lanzar conjuros. Consulta el capítulo 7\npara ver las reglas sobre el lanzamiento de conjuros.\nLa información presentada a continuación detalla\ncómo usar esas reglas con los conjuros de explorador,\nque encontrarás más adelante en la lista de conjuros\nde explorador de la descripción de la clase.\nEspacios de conjuro. La tabla “Rasgos de explorador”\nmuestra cuántos espacios de conjuro tienes para lanzar\ntus conjuros de nivel 1 y superiores. Recuperas todos\nlos espacios utilizados tras finalizar un descanso largo.\nConjuros preparados de nivel 1 y superiores. Preparas\nuna serie de conjuros de nivel 1 y superiores, que son los\nque podrás lanzar con este rasgo. Para empezar, elige dos\nconjuros de explorador de nivel 1. Se recomiendan curar\nheridas y golpe apresador.\nEl número de conjuros de tu lista aumenta conforme\nsubes de nivel de explorador, como se muestra en la\ncolumna “Conjuros preparados” de la tabla “Rasgos de\nexplorador”. Cuando ese número aumente, elige conjuros\nde explorador adicionales hasta que el número de conjuros\nde tu lista coincida con el número de la tabla “Rasgos de\nexplorador”. Estos conjuros deben ser de un nivel para\nel que tengas espacios de conjuro. Por ejemplo, si eres\nune exploradore de nivel 5, podrías preparar cualquier\ncombinación de seis conjuros de explorador de nivel 1 o 2.\nSi otro rasgo de explorador te proporciona conjuros que\nsiempre tienes preparados, esos conjuros no cuentan para\nel total que puedes preparar con este rasgo, pero sí que\ncuentan como conjuros de explorador para ti.\nCambiar los conjuros preparados. Tras finalizar un\ndescanso largo, puedes sustituir un conjuro de tu lista\npor otro conjuro de explorador para el que tengas espacios\nde conjuro.\nAptitud mágica. La Sabiduría es tu aptitud mágica\nen lo que respecta a tus conjuros de explorador.\nCanalizador mágico. Puedes utilizar un canalizador\ndruídico como canalizador mágico para tus conjuros\nde explorador."
+        "name": "ENEMIGO PREDILECTO",
+        "description": "Siempre tienes el conjuro marca del cazador preparado.\nPuedes lanzarlo dos veces sin gastar un espacio de conjuro\ny recuperas todos los usos de esta capacidad tras finalizar\nun descanso largo.\nLa cantidad de veces que puedes lanzar el conjuro sin\ngastar un espacio aumenta según alcanzas ciertos niveles\nde explorador, como se muestra en la columna “Enemigo\npredilecto” de la tabla “Rasgos de explorador”.\n\nINICIO PÁGINA PDF: 106\nTABLA: RASGOS DE EXPLORADOR\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Enemigo predilecto | Conjuros preparados | Espacios nivel 1 | Espacios nivel 2 | Espacios nivel 3 | Espacios nivel 4 | Espacios nivel 5\nFILA: 1 | +2 | Lanzamiento de conjuros, Enemigo predilecto, Maestría con armas | 2 | 2 | 2 | — | — | — | —\nFILA: 2 | +2 | Estilo de combate, Explorador hábil | 2 | 3 | 2 | — | — | — | —\nFILA: 3 | +2 | Subclase de explorador | 2 | 4 | 3 | — | — | — | —\nFILA: 4 | +2 | Mejora de característica | 2 | 5 | 3 | — | — | — | —\nFILA: 5 | +3 | Ataque adicional | 3 | 6 | 4 | 2 | — | — | —\nFILA: 6 | +3 | Errante | 3 | 6 | 4 | 2 | — | — | —\nFILA: 7 | +3 | Rasgo de subclase | 3 | 7 | 4 | 3 | — | — | —\nFILA: 8 | +3 | Mejora de característica | 3 | 7 | 4 | 3 | — | — | —\nFILA: 9 | +4 | Pericia | 4 | 9 | 4 | 3 | 2 | — | —\nFILA: 10 | +4 | Infatigable | 4 | 9 | 4 | 3 | 2 | — | —\nFILA: 11 | +4 | Rasgo de subclase | 4 | 10 | 4 | 3 | 3 | — | —\nFILA: 12 | +4 | Mejora de característica | 4 | 10 | 4 | 3 | 3 | — | —\nFILA: 13 | +5 | Cazador persistente | 5 | 11 | 4 | 3 | 3 | 1 | —\nFILA: 14 | +5 | Velo de la naturaleza | 5 | 11 | 4 | 3 | 3 | 1 | —\nFILA: 15 | +5 | Rasgo de subclase | 5 | 12 | 4 | 3 | 3 | 2 | —\nFILA: 16 | +5 | Mejora de característica | 5 | 12 | 4 | 3 | 3 | 2 | —\nFILA: 17 | +6 | Cazador preciso | 6 | 14 | 4 | 3 | 3 | 3 | 1\nFILA: 18 | +6 | Sentidos salvajes | 6 | 14 | 4 | 3 | 3 | 3 | 1\nFILA: 19 | +6 | Don épico | 6 | 15 | 4 | 3 | 3 | 3 | 2\nFILA: 20 | +6 | Azote de enemigos | 6 | 15 | 4 | 3 | 3 | 3 | 2\nFIN DE TABLA"
       },
       {
         "level": 1,
-        "name": "ENEMIGO PREDILECTO",
-        "description": "Siempre tienes el conjuro marca del cazador preparado.\nPuedes lanzarlo dos veces sin gastar un espacio de conjuro\ny recuperas todos los usos de esta capacidad tras finalizar\nun descanso largo.\nLa cantidad de veces que puedes lanzar el conjuro sin\ngastar un espacio aumenta según alcanzas ciertos niveles\nde explorador, como se muestra en la columna “Enemigo\npredilecto” de la tabla “Rasgos de explorador”.\n\nINICIO PÁGINA PDF: 106\nTABLA: RASGOS DE EXPLORADOR\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Enemigo predilecto | Conjuros preparados | Espacios nivel 1 | Espacios nivel 2 | Espacios nivel 3 | Espacios nivel 4 | Espacios nivel 5\nFILA: 1 | +2 | Lanzamiento de conjuros, Enemigo predilecto, Maestría con armas | 2 | 2 | 2 | — | — | — | —\nFILA: 2 | +2 | Estilo de combate, Explorador hábil | 2 | 3 | 2 | — | — | — | —\nFILA: 3 | +2 | Subclase de explorador | 2 | 4 | 3 | — | — | — | —\nFILA: 4 | +2 | Mejora de característica | 2 | 5 | 3 | — | — | — | —\nFILA: 5 | +3 | Ataque adicional | 3 | 6 | 4 | 2 | — | — | —\nFILA: 6 | +3 | Errante | 3 | 6 | 4 | 2 | — | — | —\nFILA: 7 | +3 | Rasgo de subclase | 3 | 7 | 4 | 3 | — | — | —\nFILA: 8 | +3 | Mejora de característica | 3 | 7 | 4 | 3 | — | — | —\nFILA: 9 | +4 | Pericia | 4 | 9 | 4 | 3 | 2 | — | —\nFILA: 10 | +4 | Infatigable | 4 | 9 | 4 | 3 | 2 | — | —\nFILA: 11 | +4 | Rasgo de subclase | 4 | 10 | 4 | 3 | 3 | — | —\nFILA: 12 | +4 | Mejora de característica | 4 | 10 | 4 | 3 | 3 | — | —\nFILA: 13 | +5 | Cazador persistente | 5 | 11 | 4 | 3 | 3 | 1 | —\nFILA: 14 | +5 | Velo de la naturaleza | 5 | 11 | 4 | 3 | 3 | 1 | —\nFILA: 15 | +5 | Rasgo de subclase | 5 | 12 | 4 | 3 | 3 | 2 | —\nFILA: 16 | +5 | Mejora de característica | 5 | 12 | 4 | 3 | 3 | 2 | —\nFILA: 17 | +6 | Cazador preciso | 6 | 14 | 4 | 3 | 3 | 3 | 1\nFILA: 18 | +6 | Sentidos salvajes | 6 | 14 | 4 | 3 | 3 | 3 | 1\nFILA: 19 | +6 | Don épico | 6 | 15 | 4 | 3 | 3 | 3 | 2\nFILA: 20 | +6 | Azote de enemigos | 6 | 15 | 4 | 3 | 3 | 3 | 2\nFIN DE TABLA"
+        "name": "LANZAMIENTO DE CONJUROS",
+        "description": "Has aprendido a canalizar la esencia mágica de la\nnaturaleza para lanzar conjuros. Consulta el capítulo 7\npara ver las reglas sobre el lanzamiento de conjuros.\nLa información presentada a continuación detalla\ncómo usar esas reglas con los conjuros de explorador,\nque encontrarás más adelante en la lista de conjuros\nde explorador de la descripción de la clase.\nEspacios de conjuro. La tabla “Rasgos de explorador”\nmuestra cuántos espacios de conjuro tienes para lanzar\ntus conjuros de nivel 1 y superiores. Recuperas todos\nlos espacios utilizados tras finalizar un descanso largo.\nConjuros preparados de nivel 1 y superiores. Preparas\nuna serie de conjuros de nivel 1 y superiores, que son los\nque podrás lanzar con este rasgo. Para empezar, elige dos\nconjuros de explorador de nivel 1. Se recomiendan curar\nheridas y golpe apresador.\nEl número de conjuros de tu lista aumenta conforme\nsubes de nivel de explorador, como se muestra en la\ncolumna “Conjuros preparados” de la tabla “Rasgos de\nexplorador”. Cuando ese número aumente, elige conjuros\nde explorador adicionales hasta que el número de conjuros\nde tu lista coincida con el número de la tabla “Rasgos de\nexplorador”. Estos conjuros deben ser de un nivel para\nel que tengas espacios de conjuro. Por ejemplo, si eres\nune exploradore de nivel 5, podrías preparar cualquier\ncombinación de seis conjuros de explorador de nivel 1 o 2.\nSi otro rasgo de explorador te proporciona conjuros que\nsiempre tienes preparados, esos conjuros no cuentan para\nel total que puedes preparar con este rasgo, pero sí que\ncuentan como conjuros de explorador para ti.\nCambiar los conjuros preparados. Tras finalizar un\ndescanso largo, puedes sustituir un conjuro de tu lista\npor otro conjuro de explorador para el que tengas espacios\nde conjuro.\nAptitud mágica. La Sabiduría es tu aptitud mágica\nen lo que respecta a tus conjuros de explorador.\nCanalizador mágico. Puedes utilizar un canalizador\ndruídico como canalizador mágico para tus conjuros\nde explorador."
       },
       {
         "level": 1,
@@ -378,6 +458,11 @@
         "description": "Tu velocidad aumenta en 3 m si no llevas armadura pesada.\nTambién tienes una velocidad nadando y una velocidad\ntrepando iguales a tu velocidad."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de explorador."
+      },
+      {
         "level": 9,
         "name": "PERICIA",
         "description": "Escoge dos de tus competencias en habilidades con las que\nno tengas pericia. Ganas pericia en esas habilidades.\n\nINICIO PÁGINA PDF: 107"
@@ -388,6 +473,11 @@
         "description": "Las fuerzas primigenias te ayudan ahora en tus viajes,\nlo que te otorga los siguientes beneficios.\nPuntos de golpe temporales. Como acción de magia,\npuedes concederte una cantidad de puntos de golpe\ntemporales igual a 1d8 más tu modificador por Sabiduría\n(mínimo de 1). Puedes usar esta acción una cantidad de\nveces igual a tu modificador por Sabiduría (mínimo una vez)\ny recuperas todos los usos tras finalizar un descanso largo.\nDisminuir cansancio. Tras finalizar un descanso corto,\ntu nivel de cansancio, si lo tienes, se reduce en 1."
       },
       {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de explorador."
+      },
+      {
         "level": 13,
         "name": "CAZADOR PERSISTENTE",
         "description": "Sufrir daño no rompe tu concentración de marca del cazador."
@@ -396,6 +486,11 @@
         "level": 14,
         "name": "VELO DE LA NATURALEZA",
         "description": "Invocas espíritus de la naturaleza para esconderte\nmágicamente. Como acción adicional, puedes otorgarte\nel estado de invisible hasta el final de tu siguiente turno.\nPuedes usar este rasgo una cantidad de veces igual a tu\nmodificador por Sabiduría (mínimo una vez) y recuperas\ntodos los usos tras finalizar un descanso largo."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de explorador."
       },
       {
         "level": 17,
@@ -460,6 +555,16 @@
         "description": "Cuando uses tu rasgo Tomar aliento con una acción\nadicional, podrás moverte hasta la mitad de tu velocidad\nsin provocar ataques de oportunidad."
       },
       {
+        "level": 6,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 6, 8, 12, 14 y 16 de guerrero."
+      },
+      {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 6, 8, 12, 14 y 16 de guerrero."
+      },
+      {
         "level": 9,
         "name": "MAESTRO TÁCTICO",
         "description": "Cuando ataques usando un arma con la que puedas utilizar\nsu propiedad de maestría, puedes sustituir la propiedad\npara ese ataque por la de debilitar, empujar o ralentizar."
@@ -470,9 +575,24 @@
         "description": "Cuando lleves a cabo la acción de atacar en tu turno,\npodrás hacer tres ataques en lugar de uno."
       },
       {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 6, 8, 12, 14 y 16 de guerrero."
+      },
+      {
         "level": 13,
         "name": "ATAQUES ESTUDIADOS",
         "description": "Estudias a tus adversarios y aprendes con cada ataque que\nrealizas. Si haces una tirada de ataque contra una criatura\ny fallas, tendrás ventaja en tu siguiente tirada de ataque\ncontra esa criatura antes del final de tu siguiente turno."
+      },
+      {
+        "level": 14,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 6, 8, 12, 14 y 16 de guerrero."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 6, 8, 12, 14 y 16 de guerrero."
       },
       {
         "level": 19,
@@ -488,13 +608,13 @@
     "Hechicero": [
       {
         "level": 1,
-        "name": "LANZAMIENTO DE CONJUROS",
-        "description": "Recurres a tu magia innata, lo que te permite lanzar\nconjuros. Consulta el capítulo 7 para ver las reglas sobre\nel lanzamiento de conjuros. La información presentada\na continuación detalla cómo usar esas reglas con los\nconjuros de hechicero, que encontrarás más adelante\nen la lista de conjuros de hechicero de la descripción\nde la clase.\nTrucos. Conoces cuatro trucos de hechicero de tu\nelección. Se recomiendan agarre electrizante, estallido\nmágico, luz y prestidigitación. Cada vez que subas un nivel\nde hechicero, puedes sustituir uno de tus trucos de este\nrasgo por otro truco de hechicero de tu elección.\nCuando alcanzas los niveles 4 y 10 de hechicero,\naprendes otro truco de hechicero de tu elección, como\nse muestra en la columna “Trucos” de la tabla “Rasgos\nde hechicero”.\nEspacios de conjuro. La tabla “Rasgos de hechicero”\nmuestra cuántos espacios de conjuro tienes para lanzar\ntus conjuros de nivel 1 y superiores. Recuperas todos\nlos espacios utilizados tras finalizar un descanso largo.\nConjuros preparados de nivel 1 y superiores. Preparas\nuna serie de conjuros de nivel 1 y superiores, que son\nlos que podrás lanzar con este rasgo. Para empezar,\nelige dos conjuros de hechicero de nivel 1. Se recomiendan\ndetectar magia y manos ardientes.\nEl número de conjuros de tu lista aumenta conforme\nsubes de nivel de hechicero, como se muestra en la\ncolumna “Conjuros preparados” de la tabla “Rasgos de\nhechicero”. Cuando ese número aumente, elige conjuros\nde hechicero adicionales hasta que el número de conjuros\nde tu lista coincida con el número de la tabla “Rasgos de\nhechicero”. Estos conjuros deben ser de un nivel para\nel que tengas espacios de conjuro. Por ejemplo, si eres\nun hechicero de nivel 3, podrías preparar cualquier\ncombinación de seis conjuros de hechicero de nivel 1 o 2.\n\nINICIO PÁGINA PDF: 126\nTABLA: RASGOS DE HECHICERO\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Puntos de hechicería | Trucos | Conjuros preparados | Espacios nivel 1 | Espacios nivel 2 | Espacios nivel 3 | Espacios nivel 4 | Espacios nivel 5 | Espacios nivel 6 | Espacios nivel 7 | Espacios nivel 8 | Espacios nivel 9\nFILA: 1 | +2 | Lanzamiento de conjuros, Hechicería innata | — | 4 | 2 | 2 | — | — | — | — | — | — | — | —\nFILA: 2 | +2 | Fuente de magia, Metamagia | 2 | 4 | 4 | 3 | — | — | — | — | — | — | — | —\nFILA: 3 | +2 | Subclase de hechicero | 3 | 4 | 6 | 4 | 2 | — | — | — | — | — | — | —\nFILA: 4 | +2 | Mejora de característica | 4 | 5 | 7 | 4 | 3 | — | — | — | — | — | — | —\nFILA: 5 | +3 | Recuperación mágica | 5 | 5 | 9 | 4 | 3 | 2 | — | — | — | — | — | —\nFILA: 6 | +3 | Rasgo de subclase | 6 | 5 | 10 | 4 | 3 | 3 | — | — | — | — | — | —\nFILA: 7 | +3 | Encarnación mágica | 7 | 5 | 11 | 4 | 3 | 3 | 1 | — | — | — | — | —\nFILA: 8 | +3 | Mejora de característica | 8 | 5 | 12 | 4 | 3 | 3 | 2 | — | — | — | — | —\nFILA: 9 | +4 | — | 9 | 5 | 14 | 4 | 3 | 3 | 3 | 1 | — | — | — | —\nFILA: 10 | +4 | Metamagia | 10 | 6 | 15 | 4 | 3 | 3 | 3 | 2 | — | — | — | —\nFILA: 11 | +4 | — | 11 | 6 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 12 | +4 | Mejora de característica | 12 | 6 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 13 | +5 | — | 13 | 6 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 14 | +5 | Rasgo de subclase | 14 | 6 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 15 | +5 | — | 15 | 6 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 16 | +5 | Mejora de característica | 16 | 6 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 17 | +6 | Metamagia | 17 | 6 | 19 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | 1\nFILA: 18 | +6 | Rasgo de subclase | 18 | 6 | 20 | 4 | 3 | 3 | 3 | 3 | 1 | 1 | 1 | 1\nFILA: 19 | +6 | Don épico | 19 | 6 | 21 | 4 | 3 | 3 | 3 | 3 | 2 | 1 | 1 | 1\nFILA: 20 | +6 | Apoteosis arcana | 20 | 6 | 22 | 4 | 3 | 3 | 3 | 3 | 2 | 2 | 1 | 1\nFIN DE TABLA\n\nSi otro rasgo de hechicero te proporciona conjuros que siempre tienes preparados, esos conjuros no cuentan para el total que puedes preparar con este rasgo, pero sí que cuentan como conjuros de hechicero para ti.\nCambiar los conjuros preparados. Cada vez que subas un nivel de hechicero, puedes sustituir un conjuro de tu lista por otro conjuro de hechicero para el que tengas espacios de conjuro.\nAptitud mágica. El Carisma es tu aptitud mágica en lo que respecta a tus conjuros de hechicero.\nCanalizador mágico. Puedes utilizar un canalizador arcano como canalizador mágico para tus conjuros de hechicero."
+        "name": "HECHICERÍA INNATA",
+        "description": "Un suceso de tu pasado dejó una marca indeleble en ti, llenándote de magia latente. Como acción adicional, puedes desatar esa magia durante 1 minuto, durante el cual obtienes los siguientes beneficios:\n- La CD de salvación de tus conjuros de hechicero aumenta en 1.\n- Tienes ventaja en las tiradas de ataque de los conjuros de hechicero que lances.\nPuedes usar este rasgo dos veces y recuperas todos los usos tras finalizar un descanso largo."
       },
       {
         "level": 1,
-        "name": "HECHICERÍA INNATA",
-        "description": "Un suceso de tu pasado dejó una marca indeleble en ti, llenándote de magia latente. Como acción adicional, puedes desatar esa magia durante 1 minuto, durante el cual obtienes los siguientes beneficios:\n- La CD de salvación de tus conjuros de hechicero aumenta en 1.\n- Tienes ventaja en las tiradas de ataque de los conjuros de hechicero que lances.\nPuedes usar este rasgo dos veces y recuperas todos los usos tras finalizar un descanso largo."
+        "name": "LANZAMIENTO DE CONJUROS",
+        "description": "Recurres a tu magia innata, lo que te permite lanzar\nconjuros. Consulta el capítulo 7 para ver las reglas sobre\nel lanzamiento de conjuros. La información presentada\na continuación detalla cómo usar esas reglas con los\nconjuros de hechicero, que encontrarás más adelante\nen la lista de conjuros de hechicero de la descripción\nde la clase.\nTrucos. Conoces cuatro trucos de hechicero de tu\nelección. Se recomiendan agarre electrizante, estallido\nmágico, luz y prestidigitación. Cada vez que subas un nivel\nde hechicero, puedes sustituir uno de tus trucos de este\nrasgo por otro truco de hechicero de tu elección.\nCuando alcanzas los niveles 4 y 10 de hechicero,\naprendes otro truco de hechicero de tu elección, como\nse muestra en la columna “Trucos” de la tabla “Rasgos\nde hechicero”.\nEspacios de conjuro. La tabla “Rasgos de hechicero”\nmuestra cuántos espacios de conjuro tienes para lanzar\ntus conjuros de nivel 1 y superiores. Recuperas todos\nlos espacios utilizados tras finalizar un descanso largo.\nConjuros preparados de nivel 1 y superiores. Preparas\nuna serie de conjuros de nivel 1 y superiores, que son\nlos que podrás lanzar con este rasgo. Para empezar,\nelige dos conjuros de hechicero de nivel 1. Se recomiendan\ndetectar magia y manos ardientes.\nEl número de conjuros de tu lista aumenta conforme\nsubes de nivel de hechicero, como se muestra en la\ncolumna “Conjuros preparados” de la tabla “Rasgos de\nhechicero”. Cuando ese número aumente, elige conjuros\nde hechicero adicionales hasta que el número de conjuros\nde tu lista coincida con el número de la tabla “Rasgos de\nhechicero”. Estos conjuros deben ser de un nivel para\nel que tengas espacios de conjuro. Por ejemplo, si eres\nun hechicero de nivel 3, podrías preparar cualquier\ncombinación de seis conjuros de hechicero de nivel 1 o 2.\n\nINICIO PÁGINA PDF: 126\nTABLA: RASGOS DE HECHICERO\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Puntos de hechicería | Trucos | Conjuros preparados | Espacios nivel 1 | Espacios nivel 2 | Espacios nivel 3 | Espacios nivel 4 | Espacios nivel 5 | Espacios nivel 6 | Espacios nivel 7 | Espacios nivel 8 | Espacios nivel 9\nFILA: 1 | +2 | Lanzamiento de conjuros, Hechicería innata | — | 4 | 2 | 2 | — | — | — | — | — | — | — | —\nFILA: 2 | +2 | Fuente de magia, Metamagia | 2 | 4 | 4 | 3 | — | — | — | — | — | — | — | —\nFILA: 3 | +2 | Subclase de hechicero | 3 | 4 | 6 | 4 | 2 | — | — | — | — | — | — | —\nFILA: 4 | +2 | Mejora de característica | 4 | 5 | 7 | 4 | 3 | — | — | — | — | — | — | —\nFILA: 5 | +3 | Recuperación mágica | 5 | 5 | 9 | 4 | 3 | 2 | — | — | — | — | — | —\nFILA: 6 | +3 | Rasgo de subclase | 6 | 5 | 10 | 4 | 3 | 3 | — | — | — | — | — | —\nFILA: 7 | +3 | Encarnación mágica | 7 | 5 | 11 | 4 | 3 | 3 | 1 | — | — | — | — | —\nFILA: 8 | +3 | Mejora de característica | 8 | 5 | 12 | 4 | 3 | 3 | 2 | — | — | — | — | —\nFILA: 9 | +4 | — | 9 | 5 | 14 | 4 | 3 | 3 | 3 | 1 | — | — | — | —\nFILA: 10 | +4 | Metamagia | 10 | 6 | 15 | 4 | 3 | 3 | 3 | 2 | — | — | — | —\nFILA: 11 | +4 | — | 11 | 6 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 12 | +4 | Mejora de característica | 12 | 6 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 13 | +5 | — | 13 | 6 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 14 | +5 | Rasgo de subclase | 14 | 6 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 15 | +5 | — | 15 | 6 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 16 | +5 | Mejora de característica | 16 | 6 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 17 | +6 | Metamagia | 17 | 6 | 19 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | 1\nFILA: 18 | +6 | Rasgo de subclase | 18 | 6 | 20 | 4 | 3 | 3 | 3 | 3 | 1 | 1 | 1 | 1\nFILA: 19 | +6 | Don épico | 19 | 6 | 21 | 4 | 3 | 3 | 3 | 3 | 2 | 1 | 1 | 1\nFILA: 20 | +6 | Apoteosis arcana | 20 | 6 | 22 | 4 | 3 | 3 | 3 | 3 | 2 | 2 | 1 | 1\nFIN DE TABLA\n\nSi otro rasgo de hechicero te proporciona conjuros que siempre tienes preparados, esos conjuros no cuentan para el total que puedes preparar con este rasgo, pero sí que cuentan como conjuros de hechicero para ti.\nCambiar los conjuros preparados. Cada vez que subas un nivel de hechicero, puedes sustituir un conjuro de tu lista por otro conjuro de hechicero para el que tengas espacios de conjuro.\nAptitud mágica. El Carisma es tu aptitud mágica en lo que respecta a tus conjuros de hechicero.\nCanalizador mágico. Puedes utilizar un canalizador arcano como canalizador mágico para tus conjuros de hechicero."
       },
       {
         "level": 2,
@@ -527,6 +647,31 @@
         "description": "Si no te quedan usos del rasgo Hechicería innata, puedes\nusarlo si gastas 2 puntos de hechicería cuando empleas\nla acción adicional para activarlo.\nAdemás, mientras tengas activo el rasgo Hechicería\ninnata, puedes usar hasta dos de tus opciones de\nmetamagia en cada conjuro que lances."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de hechicero."
+      },
+      {
+        "level": 10,
+        "name": "Metamagia",
+        "description": "Como la magia fluye desde tu interior, puedes alterar tus\nconjuros y adaptarlos a conveniencia. Consigues dos de\nlas opciones de metamagia de tu elección del apartado\n“Opciones de metamagia” que aparece más adelante en\nla descripción de esta clase. Usarás las opciones elegidas\npara modificar temporalmente los conjuros que lances.\nPara usar una, deberás gastar la cantidad de puntos de\nhechicería que cueste.\nSolo puedes usar una opción de metamagia en un\nconjuro cuando lo lanzas, a menos que se especifique\notra cosa en las opciones.\nCada vez que subas un nivel de hechicero, puedes\nsustituir una de las opciones de metamagia por otra que\nno conozcas. Obtienes dos opciones más en el nivel 10\nde hechicero y otras dos más en el nivel 17."
+      },
+      {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de hechicero."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de hechicero."
+      },
+      {
+        "level": 17,
+        "name": "Metamagia",
+        "description": "Como la magia fluye desde tu interior, puedes alterar tus\nconjuros y adaptarlos a conveniencia. Consigues dos de\nlas opciones de metamagia de tu elección del apartado\n“Opciones de metamagia” que aparece más adelante en\nla descripción de esta clase. Usarás las opciones elegidas\npara modificar temporalmente los conjuros que lances.\nPara usar una, deberás gastar la cantidad de puntos de\nhechicería que cueste.\nSolo puedes usar una opción de metamagia en un\nconjuro cuando lo lanzas, a menos que se especifique\notra cosa en las opciones.\nCada vez que subas un nivel de hechicero, puedes\nsustituir una de las opciones de metamagia por otra que\nno conozcas. Obtienes dos opciones más en el nivel 10\nde hechicero y otras dos más en el nivel 17."
+      },
+      {
         "level": 19,
         "name": "DON ÉPICO",
         "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del viaje dimensional."
@@ -540,13 +685,13 @@
     "Mago": [
       {
         "level": 1,
-        "name": "LANZAMIENTO DE CONJUROS",
-        "description": "Como estudiante de magia arcana que eres, has aprendido\na lanzar conjuros. Consulta el capítulo 7 para ver las\nreglas sobre el lanzamiento de conjuros. La información\npresentada a continuación detalla cómo usar esas reglas\ncon los conjuros de mago, que encontrarás más adelante\nen la lista de conjuros de mago de la descripción de la clase.\nTrucos. Conoces tres trucos de mago de tu elección.\nSe recomiendan luz, mano de mago y rayo de escarcha.\nTras finalizar un descanso largo, puedes sustituir uno\nde tus trucos de este rasgo por otro truco de mago de tu\nelección.\nCuando alcanzas los niveles 4 y 10 de mago, aprendes\notro truco de mago de tu elección, como se muestra en\nla columna “Trucos” de la tabla “Rasgos de mago”.\nLibro de conjuros. Tu aprendizaje de mago culminó con\nla creación de un libro único: tu libro de conjuros. Es un\nobjeto Diminuto que pesa 1,5 kg, contiene 100 páginas\ny solo podéis leerlo tú o alguien que lance identificar.\nTú decides la apariencia y los materiales del libro; por\nejemplo, puede ser un volumen con los cantos cubiertos\nde pan de oro o páginas de vitela cosidas con bramante.\nEl libro contiene los conjuros de nivel 1 y superiores que\nconoces. Empiezas con seis conjuros de mago de nivel 1\nde tu elección. Se recomiendan armadura de mago, caída\nde pluma, detectar magia, dormir, ola atronadora y proyectil\nmágico.\nSiempre que subas un nivel de mago después del 1, añade\ndos conjuros de mago de tu elección a tu libro de conjuros.\nEstos conjuros deben ser de un nivel para el que tengas\nespacios de conjuro, como se indica en la tabla “Rasgos\nde mago”. Los conjuros son el resultado de la investigación\narcana que llevas a cabo de forma habitual.\nEspacios de conjuro. La tabla “Rasgos de mago” muestra\ncuántos espacios de conjuro tienes para lanzar tus conjuros\nde nivel 1 y superiores. Recuperas todos los espacios\nutilizados tras finalizar un descanso largo.\nConjuros preparados de nivel 1 y superiores. Preparas\nuna serie de conjuros de nivel 1 y superiores, que son los\nque podrás lanzar con este rasgo. Para ello, elige cuatro\nconjuros de tu libro de conjuros. Estos conjuros deben\nser de un nivel para el que tengas espacios de conjuro.\n\nINICIO PÁGINA PDF: 140\nTABLA: RASGOS DE MAGO\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Trucos | Conjuros preparados | Espacios nivel 1 | Espacios nivel 2 | Espacios nivel 3 | Espacios nivel 4 | Espacios nivel 5 | Espacios nivel 6 | Espacios nivel 7 | Espacios nivel 8 | Espacios nivel 9\nFILA: 1 | +2 | Lanzamiento de conjuros, Adepto en rituales, Recuperación arcana | 3 | 4 | 2 | — | — | — | — | — | — | — | —\nFILA: 2 | +2 | Académico | 3 | 5 | 3 | — | — | — | — | — | — | — | —\nFILA: 3 | +2 | Subclase de mago | 3 | 6 | 4 | 2 | — | — | — | — | — | — | —\nFILA: 4 | +2 | Mejora de característica | 4 | 7 | 4 | 3 | — | — | — | — | — | — | —\nFILA: 5 | +3 | Memorizar conjuro | 4 | 9 | 4 | 3 | 2 | — | — | — | — | — | —\nFILA: 6 | +3 | Rasgo de subclase | 4 | 10 | 4 | 3 | 3 | — | — | — | — | — | —\nFILA: 7 | +3 | — | 4 | 11 | 4 | 3 | 3 | 1 | — | — | — | — | —\nFILA: 8 | +3 | Mejora de característica | 4 | 12 | 4 | 3 | 3 | 2 | — | — | — | — | —\nFILA: 9 | +4 | — | 4 | 14 | 4 | 3 | 3 | 3 | 1 | — | — | — | —\nFILA: 10 | +4 | Rasgo de subclase | 5 | 15 | 4 | 3 | 3 | 3 | 2 | — | — | — | —\nFILA: 11 | +4 | — | 5 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 12 | +4 | Mejora de característica | 5 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 13 | +5 | — | 5 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 14 | +5 | Rasgo de subclase | 5 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 15 | +5 | — | 5 | 19 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 16 | +5 | Mejora de característica | 5 | 21 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 17 | +6 | — | 5 | 22 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | 1\nFILA: 18 | +6 | Maestría sobre conjuros | 5 | 23 | 4 | 3 | 3 | 3 | 3 | 1 | 1 | 1 | 1\nFILA: 19 | +6 | Don épico | 5 | 24 | 4 | 3 | 3 | 3 | 3 | 2 | 1 | 1 | 1\nFILA: 20 | +6 | Conjuros característicos | 5 | 25 | 4 | 3 | 3 | 3 | 3 | 2 | 2 | 1 | 1\nFIN DE TABLA\n\nEl número de conjuros de tu lista aumenta conforme\nsubes de nivel de mago, como se muestra en la columna\n“Conjuros preparados” de la tabla “Rasgos de mago”.\nCuando ese número aumente, elige conjuros de mago\nadicionales hasta que el número de conjuros de tu lista\ncoincida con el número de la tabla. Estos conjuros deben\nser de un nivel para el que tengas espacios de conjuro.\nPor ejemplo, si eres une mague de nivel 3, podrías preparar\ncualquier combinación de seis conjuros de nivel 1 o 2 de tu\nlibro de conjuros.\nSi otro rasgo de mago te proporciona conjuros que\nsiempre tienes preparados, esos conjuros no cuentan para\nel total que puedes preparar con este rasgo, pero sí que\ncuentan como conjuros de mago para ti.\nCambiar los conjuros preparados. Tras finalizar un\ndescanso largo, puedes cambiar los conjuros que tienes\npreparados sustituyendo los que quieras por otros de tu\nlibro de conjuros.\nAptitud mágica. La Inteligencia es tu aptitud mágica\nen lo que respecta a tus conjuros de mago.\nCanalizador mágico. Puedes utilizar un canalizador\narcano o tu libro de conjuros como canalizador mágico\npara tus conjuros de mago."
+        "name": "ADEPTO EN RITUALES",
+        "description": "Puedes lanzar de forma ritual cualquier conjuro de mago\nque figure en tu libro de conjuros y esté marcado como\n“ritual”. No necesitas tenerlo preparado, pero debes leerlo\ndel libro para lanzarlo de esta forma."
       },
       {
         "level": 1,
-        "name": "ADEPTO EN RITUALES",
-        "description": "Puedes lanzar de forma ritual cualquier conjuro de mago\nque figure en tu libro de conjuros y esté marcado como\n“ritual”. No necesitas tenerlo preparado, pero debes leerlo\ndel libro para lanzarlo de esta forma."
+        "name": "LANZAMIENTO DE CONJUROS",
+        "description": "Como estudiante de magia arcana que eres, has aprendido\na lanzar conjuros. Consulta el capítulo 7 para ver las\nreglas sobre el lanzamiento de conjuros. La información\npresentada a continuación detalla cómo usar esas reglas\ncon los conjuros de mago, que encontrarás más adelante\nen la lista de conjuros de mago de la descripción de la clase.\nTrucos. Conoces tres trucos de mago de tu elección.\nSe recomiendan luz, mano de mago y rayo de escarcha.\nTras finalizar un descanso largo, puedes sustituir uno\nde tus trucos de este rasgo por otro truco de mago de tu\nelección.\nCuando alcanzas los niveles 4 y 10 de mago, aprendes\notro truco de mago de tu elección, como se muestra en\nla columna “Trucos” de la tabla “Rasgos de mago”.\nLibro de conjuros. Tu aprendizaje de mago culminó con\nla creación de un libro único: tu libro de conjuros. Es un\nobjeto Diminuto que pesa 1,5 kg, contiene 100 páginas\ny solo podéis leerlo tú o alguien que lance identificar.\nTú decides la apariencia y los materiales del libro; por\nejemplo, puede ser un volumen con los cantos cubiertos\nde pan de oro o páginas de vitela cosidas con bramante.\nEl libro contiene los conjuros de nivel 1 y superiores que\nconoces. Empiezas con seis conjuros de mago de nivel 1\nde tu elección. Se recomiendan armadura de mago, caída\nde pluma, detectar magia, dormir, ola atronadora y proyectil\nmágico.\nSiempre que subas un nivel de mago después del 1, añade\ndos conjuros de mago de tu elección a tu libro de conjuros.\nEstos conjuros deben ser de un nivel para el que tengas\nespacios de conjuro, como se indica en la tabla “Rasgos\nde mago”. Los conjuros son el resultado de la investigación\narcana que llevas a cabo de forma habitual.\nEspacios de conjuro. La tabla “Rasgos de mago” muestra\ncuántos espacios de conjuro tienes para lanzar tus conjuros\nde nivel 1 y superiores. Recuperas todos los espacios\nutilizados tras finalizar un descanso largo.\nConjuros preparados de nivel 1 y superiores. Preparas\nuna serie de conjuros de nivel 1 y superiores, que son los\nque podrás lanzar con este rasgo. Para ello, elige cuatro\nconjuros de tu libro de conjuros. Estos conjuros deben\nser de un nivel para el que tengas espacios de conjuro.\n\nINICIO PÁGINA PDF: 140\nTABLA: RASGOS DE MAGO\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Trucos | Conjuros preparados | Espacios nivel 1 | Espacios nivel 2 | Espacios nivel 3 | Espacios nivel 4 | Espacios nivel 5 | Espacios nivel 6 | Espacios nivel 7 | Espacios nivel 8 | Espacios nivel 9\nFILA: 1 | +2 | Lanzamiento de conjuros, Adepto en rituales, Recuperación arcana | 3 | 4 | 2 | — | — | — | — | — | — | — | —\nFILA: 2 | +2 | Académico | 3 | 5 | 3 | — | — | — | — | — | — | — | —\nFILA: 3 | +2 | Subclase de mago | 3 | 6 | 4 | 2 | — | — | — | — | — | — | —\nFILA: 4 | +2 | Mejora de característica | 4 | 7 | 4 | 3 | — | — | — | — | — | — | —\nFILA: 5 | +3 | Memorizar conjuro | 4 | 9 | 4 | 3 | 2 | — | — | — | — | — | —\nFILA: 6 | +3 | Rasgo de subclase | 4 | 10 | 4 | 3 | 3 | — | — | — | — | — | —\nFILA: 7 | +3 | — | 4 | 11 | 4 | 3 | 3 | 1 | — | — | — | — | —\nFILA: 8 | +3 | Mejora de característica | 4 | 12 | 4 | 3 | 3 | 2 | — | — | — | — | —\nFILA: 9 | +4 | — | 4 | 14 | 4 | 3 | 3 | 3 | 1 | — | — | — | —\nFILA: 10 | +4 | Rasgo de subclase | 5 | 15 | 4 | 3 | 3 | 3 | 2 | — | — | — | —\nFILA: 11 | +4 | — | 5 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 12 | +4 | Mejora de característica | 5 | 16 | 4 | 3 | 3 | 3 | 2 | 1 | — | — | —\nFILA: 13 | +5 | — | 5 | 17 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 14 | +5 | Rasgo de subclase | 5 | 18 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | — | —\nFILA: 15 | +5 | — | 5 | 19 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 16 | +5 | Mejora de característica | 5 | 21 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | —\nFILA: 17 | +6 | — | 5 | 22 | 4 | 3 | 3 | 3 | 2 | 1 | 1 | 1 | 1\nFILA: 18 | +6 | Maestría sobre conjuros | 5 | 23 | 4 | 3 | 3 | 3 | 3 | 1 | 1 | 1 | 1\nFILA: 19 | +6 | Don épico | 5 | 24 | 4 | 3 | 3 | 3 | 3 | 2 | 1 | 1 | 1\nFILA: 20 | +6 | Conjuros característicos | 5 | 25 | 4 | 3 | 3 | 3 | 3 | 2 | 2 | 1 | 1\nFIN DE TABLA\n\nEl número de conjuros de tu lista aumenta conforme\nsubes de nivel de mago, como se muestra en la columna\n“Conjuros preparados” de la tabla “Rasgos de mago”.\nCuando ese número aumente, elige conjuros de mago\nadicionales hasta que el número de conjuros de tu lista\ncoincida con el número de la tabla. Estos conjuros deben\nser de un nivel para el que tengas espacios de conjuro.\nPor ejemplo, si eres une mague de nivel 3, podrías preparar\ncualquier combinación de seis conjuros de nivel 1 o 2 de tu\nlibro de conjuros.\nSi otro rasgo de mago te proporciona conjuros que\nsiempre tienes preparados, esos conjuros no cuentan para\nel total que puedes preparar con este rasgo, pero sí que\ncuentan como conjuros de mago para ti.\nCambiar los conjuros preparados. Tras finalizar un\ndescanso largo, puedes cambiar los conjuros que tienes\npreparados sustituyendo los que quieras por otros de tu\nlibro de conjuros.\nAptitud mágica. La Inteligencia es tu aptitud mágica\nen lo que respecta a tus conjuros de mago.\nCanalizador mágico. Puedes utilizar un canalizador\narcano o tu libro de conjuros como canalizador mágico\npara tus conjuros de mago."
       },
       {
         "level": 1,
@@ -572,6 +717,21 @@
         "level": 5,
         "name": "MEMORIZAR CONJURO",
         "description": "Tras finalizar un descanso corto, puedes estudiar tu\nlibro de conjuros y sustituir un conjuro de mago de\nnivel 1 o superior que tengas preparado con tu rasgo\nLanzamiento de conjuros por otro de nivel 1 o superior\ndel libro."
+      },
+      {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de mago."
+      },
+      {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de mago."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de mago."
       },
       {
         "level": 18,
@@ -656,6 +816,11 @@
         "description": "Cuando sufras un efecto que te permita hacer una tirada\nde salvación de Destreza para sufrir solo la mitad de daño,\nno recibes daño alguno si la superas y'solo sufres la mitad\nsi la fallas.\nNo te beneficias de este rasgo si tienes el estado de\nincapacitado."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de monje."
+      },
+      {
         "level": 9,
         "name": "MOVIMIENTO ACROBÁTICO",
         "description": "Mientras no lleves armadura ni portes un escudo, obtienes\nla capacidad de moverte por superficies verticales y sobre\nlíquidos sin caerte."
@@ -671,6 +836,11 @@
         "description": "Tus rasgos Defensa paciente, Paso del viento y Ráfaga\nde golpes obtienen los siguientes beneficios:\nDefensa paciente. Cuando gastes un punto de\nconcentración para usar Defensa paciente, obtienes una\ncantidad de puntos de golpe temporales igual al resultado\nde dos tiradas de tu dado de Artes marciales.\nPaso del viento. Cuando gastes un punto de concentración para usar Paso del viento, puedes elegir una criatura\nvoluntaria Grande o más pequeña que esté a 1,5 m o menos\nde ti. Moverás a la criatura contigo hasta el final de tu\nturno. El movimiento de la criatura no provoca ataques\nde oportunidad.\nRáfaga de golpes. Puedes gastar 1 punto de concentración\npara usar Ráfaga de golpes y hacer tres ataques sin armas\nen lugar de dos."
       },
       {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de monje."
+      },
+      {
         "level": 13,
         "name": "DESVIAR ENERGÍA",
         "description": "Ahora puedes usar tu rasgo Desviar ataques contra\nataques que causen cualquier tipo de daño, no solo\ncontundente, cortante o perforante."
@@ -684,6 +854,11 @@
         "level": 15,
         "name": "CONCENTRACIÓN PERFECTA",
         "description": "Cuando tires iniciativa y no utilices Metabolismo\nasombroso, recuperas los puntos de concentración\ngastados hasta que tengas 4 si te quedan 3 o menos."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de monje."
       },
       {
         "level": 18,
@@ -758,6 +933,11 @@
         "description": "Irradias un aura protectora e invisible en una emanación\nde 3 m que se origina de ti. El aura estará inactiva\nmientras tengas el estado de incapacitado.\nTus aliados dentro del aura y tú obtenéis un bonificador\na las tiradas de salvación igual a tu modificador por\nCarisma (mínimo de +1).\nSi hay otro paladín presente, una criatura solo puede\nbeneficiarse de un Aura de protección a la vez; esa criatura\nelegirá cuál de ellas mientras esté dentro de ambas."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de paladín."
+      },
+      {
         "level": 9,
         "name": "ABJURAR DE LOS ENEMIGOS",
         "description": "Como acción de magia, puedes gastar uno de los usos de\nCanalizar divinidad de esta clase para sobrecoger a tus\nenemigos. Mientras muestras tu símbolo sagrado o arma,\npuedes hacer objetivo a una cantidad de criaturas que\npuedas ver a 18 m o menos de ti igual a tu modificador\npor Carisma (mínimo una criatura). Cada objetivo deberá\nsuperar una tirada de salvación de Sabiduría o tendrá el\nestado de asustado durante 1 minuto o hasta recibir daño.\nMientras esté asustado de esta forma, un objetivo solo\npodrá hacer una de estas opciones en sus turnos: moverse,\nrealizar una acción o realizar una acción adicional."
@@ -773,9 +953,19 @@
         "description": "Ahora, tus golpes tienen un poder sobrenatural. Cuando\naciertes a un objetivo con una tirada de ataque usando un\narma cuerpo a cuerpo o un ataque sin armas, el objetivo\nrecibirá 1d8 de daño radiante adicional."
       },
       {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de paladín."
+      },
+      {
         "level": 14,
         "name": "TOQUE REPARADOR",
         "description": "Cuando uses Imponer las manos sobre una criatura,\ntambién podrás eliminar uno o más de los siguientes\nestados que la afecten: asustado, aturdido, cegado,\nensordecido, hechizado o paralizado. Deberás gastar\n5 puntos de golpe de la reserva de curación de Imponer\nlas manos por cada uno de los estados que elimines,\npero esos puntos gastados no restaurarán puntos de golpe."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de paladín."
       },
       {
         "level": 18,
@@ -840,6 +1030,11 @@
         "description": "Has desarrollado formas astutas de usar tu Ataque furtivo.\nCuando infliges daño de Ataque furtivo, puedes añadir\nuno de los siguientes efectos de Golpe astuto. Cada uno\ntiene un coste en dados que es la cantidad de dados de\ndaño de Ataque furtivo a los que debes renunciar para\nañadir el efecto. Retiras la cantidad de dados antes de tirar\ny el efecto se produce inmediatamente después de que se\ncause el daño del ataque. Por ejemplo, si añades el efecto de\nveneno, quita 1d6 del daño de Ataque furtivo antes de tirar.\nSi un efecto de Golpe astuto requiere una tirada de\nsalvación, la CD es igual a 8 más tu modificador por\nDestreza y tu bonificador por competencia.\nRetirada (coste: 1d6). Justo después del ataque, te mueves\nhasta la mitad de tu velocidad sin provocar ataques de\noportunidad.\nTropiezo (coste: 1d6). Si el objetivo es Grande o más\npequeño, deberá superar una tirada de salvación de\nDestreza o tendrá el estado de derribado.\n\nINICIO PÁGINA PDF: 171\nVeneno (coste: 1d6). Añades una toxina a tu golpe, lo\nque obliga al objetivo a hacer una tirada de salvación de\nConstitución. Si la falla, tendrá el estado de envenenado\ndurante 1 minuto. Al final de cada uno de sus turnos, el\nobjetivo envenenado repetirá la tirada de salvación y,\nsi tiene éxito, se librará del efecto.\nPara usar este efecto, debes llevar contigo unos útiles\nde envenenador."
       },
       {
+        "level": 6,
+        "name": "Pericia",
+        "description": "Ganas pericia en dos de tus competencias en habilidades\nde tu elección. Se recomiendan Juego de manos y Sigilo\nsi eres competente en ellas.\nEn el nivel 6 de pícaro ganas pericia en otras dos\ncompetencias en habilidades de tu elección.\n\nINICIO PÁGINA PDF: 170\nTABLA: RASGOS DE PÍCARO\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Ataque furtivo\nFILA: 1 | +2 | Ataque furtivo, Jerga de ladrones, Maestría con armas, Pericia | 1d6\nFILA: 2 | +2 | Acción astuta | 1d6\nFILA: 3 | +2 | Puntería certera, Subclase de pícaro | 2d6\nFILA: 4 | +2 | Mejora de característica | 2d6\nFILA: 5 | +3 | Esquiva asombrosa, Golpe astuto | 3d6\nFILA: 6 | +3 | Pericia | 3d6\nFILA: 7 | +3 | Evasión, Talentos fiables | 4d6\nFILA: 8 | +3 | Mejora de característica | 4d6\nFILA: 9 | +4 | Rasgo de subclase | 5d6\nFILA: 10 | +4 | Mejora de característica | 5d6\nFILA: 11 | +4 | Golpe astuto mejorado | 6d6\nFILA: 12 | +4 | Mejora de característica | 6d6\nFILA: 13 | +5 | Rasgo de subclase | 7d6\nFILA: 14 | +5 | Golpes taimados | 7d6\nFILA: 15 | +5 | Mente escurridiza | 8d6\nFILA: 16 | +5 | Mejora de característica | 8d6\nFILA: 17 | +6 | Rasgo de subclase | 9d6\nFILA: 18 | +6 | Elusivo | 9d6\nFILA: 19 | +6 | Don épico | 10d6\nFILA: 20 | +6 | Golpe de suerte | 10d6\nFIN DE TABLA"
+      },
+      {
         "level": 7,
         "name": "EVASIÓN",
         "description": "Puedes esquivar con agilidad ciertos peligros. Cuando\nsufras un efecto que te permita hacer una tirada de\nsalvación de Destreza para sufrir solo la mitad de daño,\nno recibes daño alguno si la superas y solo sufres la mitad\nsi la fallas. No puedes usar este rasgo si tienes el estado de\nincapacitado."
@@ -850,9 +1045,24 @@
         "description": "Cuando hagas una prueba de característica que utilice una\nde tus competencias en habilidades o con herramientas,\npuedes sustituir un resultado de 9 o menos en el d20 por\nun 10."
       },
       {
+        "level": 8,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 10, 12 y 16 de pícaro."
+      },
+      {
+        "level": 10,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 10, 12 y 16 de pícaro."
+      },
+      {
         "level": 11,
         "name": "GOLPE ASTUTO MEJORADO",
         "description": "Puedes usar hasta dos efectos de Golpe astuto cuando\ninflijas daño de Ataque furtivo pagando el coste en dados\npor cada efecto."
+      },
+      {
+        "level": 12,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 10, 12 y 16 de pícaro."
       },
       {
         "level": 14,
@@ -863,6 +1073,11 @@
         "level": 15,
         "name": "MENTE ESCURRIDIZA",
         "description": "Tu mente astuta es excepcionalmente difícil de controlar.\nGanas competencia en las tiradas de salvación de\nSabiduría y Carisma."
+      },
+      {
+        "level": 16,
+        "name": "Mejora de característica",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 10, 12 y 16 de pícaro."
       },
       {
         "level": 18,
