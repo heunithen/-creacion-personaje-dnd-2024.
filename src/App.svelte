@@ -1076,7 +1076,7 @@
   const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Iniciado en la magia (Mago)','Matón de taberna','Músico','Sanador'];
   const BUILDER_BACKGROUND_TOOL_OPTIONS: Record<string,string[]> = {
     'Animador':['Chirimía','Cuerno','Dulcémele','Flauta','Flauta de pan','Gaita','Laúd','Lira','Tambor','Viola'],
-    'Artesano':['Herramientas de albañil','Herramientas de alfarero','Herramientas de carpintero','Herramientas de curtidor','Herramientas de ebanista','Herramientas de herrero','Herramientas de manitas','Herramientas de tejedor'],
+    'Artesano':['Herramientas de albañil','Herramientas de alfarero','Herramientas de carpintero','Herramientas de cartógrafo','Herramientas de curtidor','Herramientas de ebanista','Herramientas de herrero','Herramientas de joyero','Herramientas de manitas','Herramientas de soplador de vidrio','Herramientas de tejedor','Herramientas de zapatero'],
     'Guardia':['Ajedrez dragón','Apuesta de los tres dragones','Dados','Naipes'],
     'Noble':['Ajedrez dragón','Apuesta de los tres dragones','Dados','Naipes'],
     'Soldado':['Ajedrez dragón','Apuesta de los tres dragones','Dados','Naipes']
@@ -1193,7 +1193,8 @@
   const BUILDER_LANGUAGES = ['Abisal','Celestial','Dracónico','Druídico','Elfo','Enano','Gigante','Gnomo','Goblin','Habla de las profundidades','Infernal','Infracomún','Jerga de ladrones','Lenguaje de signos común','Mediano','Orco','Primordial','Silvano'];
   const BUILDER_STANDARD_LANGUAGES = ['Dracónico','Elfo','Enano','Gigante','Gnomo','Goblin','Lenguaje de signos común','Mediano','Orco'];
   const BUILDER_SKILL_OPTIONS = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
-  const BUILDER_FEAT_TOOL_OPTIONS = [...BUILDER_ARTISAN_TOOLS,'Suministros de alquimista','Suministros de calígrafo','Suministros de cervecero','Suministros de pintor','Útiles de cocinero','Herramientas de ladrón','Herramientas de navegante','Útiles de envenenador','Útiles de herborista','Útiles para disfrazarse','Útiles para falsificar','Juego','Instrumento musical'];
+  const BUILDER_GAMING_SETS = ['Ajedrez dragón','Apuesta de los tres dragones','Dados','Naipes'];
+  const BUILDER_FEAT_TOOL_OPTIONS = [...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS,...BUILDER_GAMING_SETS,'Suministros de alquimista','Suministros de calígrafo','Suministros de cervecero','Suministros de pintor','Útiles de cocinero','Herramientas de ladrón','Herramientas de navegante','Útiles de envenenador','Útiles de herborista','Útiles para disfrazarse','Útiles para falsificar'];
   function builderFeatChoiceOptions(feat:string) {
     if (feat === 'Habilidoso') return [...BUILDER_SKILL_OPTIONS,...BUILDER_FEAT_TOOL_OPTIONS];
     if (feat === 'Fabricante') return BUILDER_ARTISAN_TOOLS;
