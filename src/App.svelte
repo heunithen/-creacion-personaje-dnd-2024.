@@ -1335,8 +1335,12 @@
   }
   function builderModifier(score:number) { return Math.floor((score - 10) / 2); }
   function builderOriginFeatChoicesOk(feat:string,choices:string[],cantrips:string[],spell:string) {
-    if (['Habilidoso','Fabricante','Músico'].includes(feat)) return choices.length === 3;
-    if (builderMagicInitiateClass(feat)) return cantrips.length === 2 && Boolean(spell);
+    if (['Habilidoso','Fabricante','Músico'].includes(feat)) {
+      const options=builderFeatChoiceOptions(feat);
+      return choices.length===3 && new Set(choices).size===3 && choices.every(choice=>options.includes(choice));
+    }
+    const magicClass=builderMagicInitiateClass(feat);
+    if (magicClass) return cantrips.length===2 && new Set(cantrips).size===2 && cantrips.every(name=>BUILDER_SPELL_LISTS[magicClass].cantrips.includes(name)) && BUILDER_SPELL_LISTS[magicClass].level1.includes(spell);
     return true;
   }
   function builderCanFinish() {
@@ -1344,17 +1348,21 @@
     const selectedClassSkills=builderData.classSkillChoices.filter(Boolean);
     const allFeatSkillChoices=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_SKILL_OPTIONS.includes(choice));
     const skillsOk = selectedClassSkills.length === BUILDER_CLASS_SKILLS[builderData.className].count && new Set(selectedClassSkills).size===selectedClassSkills.length && selectedClassSkills.every(skill=>BUILDER_CLASS_SKILLS[builderData.className].options.includes(skill) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && skill!==builderData.speciesSkill && !allFeatSkillChoices.includes(skill));
-    const masteriesOk = builderData.weaponMasteries.length === cls.weaponCount;
+    const masteriesOk = builderData.weaponMasteries.length === cls.weaponCount && new Set(builderData.weaponMasteries).size===cls.weaponCount && builderData.weaponMasteries.every(name=>BUILDER_WEAPON_MASTERY_OPTIONS.includes(name));
     const expectedTools = builderData.className === 'Bardo' ? 3 : builderData.className === 'Monje' ? 1 : 0;
-    const classToolsOk = builderData.classToolsChoices.length === expectedTools && new Set(builderData.classToolsChoices).size===builderData.classToolsChoices.length;
-    const backgroundToolOk = !BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background] || Boolean(builderData.backgroundToolChoice);
+    const validClassTools=builderData.className==='Bardo'?BUILDER_MUSICAL_INSTRUMENTS:builderData.className==='Monje'?[...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS]:[];
+    const classToolsOk = builderData.classToolsChoices.length === expectedTools && new Set(builderData.classToolsChoices).size===builderData.classToolsChoices.length && builderData.classToolsChoices.every(tool=>validClassTools.includes(tool));
+    const backgroundToolOptions=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
+    const backgroundToolOk = !backgroundToolOptions.length || backgroundToolOptions.includes(builderData.backgroundToolChoice);
     const expertiseOk = builderData.className !== 'Pícaro' || (builderData.classExpertise.length === 2 && new Set(builderData.classExpertise).size===2 && builderData.classExpertise.every(skill => [...BUILDER_BACKGROUND_DATA[builderData.background].skills,...builderData.classSkillChoices,builderData.speciesSkill,...builderData.backgroundFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice)),...builderData.speciesFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice))].includes(skill)));
-    const specialOk = cls.specialOptions.length === 0 || Boolean(builderData.classSpecialChoice);
+    const specialOk = cls.specialOptions.length === 0 || cls.specialOptions.includes(builderData.classSpecialChoice);
     const bonusCantrip = (builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista') ? 1 : 0;
-    const cantripsOk = builderData.selectedCantrips.length === cls.cantrips + bonusCantrip;
-    const tomeOk = builderData.className !== 'Brujo' || builderData.classSpecialChoice !== 'Pacto del grimorio' || (builderData.warlockTomeCantrips.length === 3 && builderData.warlockTomeRituals.length === 2);
-    const spellsOk = builderData.selectedSpells.length === cls.spells;
-    const bookOk = cls.spellbook === 0 || builderData.wizardSpellbook.length === cls.spellbook;
+    const classCantripOptions=BUILDER_SPELL_LISTS[builderData.className]?.cantrips||[];
+    const cantripsOk = builderData.selectedCantrips.length === cls.cantrips + bonusCantrip && new Set(builderData.selectedCantrips).size===builderData.selectedCantrips.length && builderData.selectedCantrips.every(name=>classCantripOptions.includes(name));
+    const tomeOk = builderData.className !== 'Brujo' || builderData.classSpecialChoice !== 'Pacto del grimorio' || (builderData.warlockTomeCantrips.length===3 && new Set(builderData.warlockTomeCantrips).size===3 && builderData.warlockTomeCantrips.every(name=>BUILDER_TOME_CANTRIPS.includes(name) && !builderData.selectedCantrips.includes(name)) && builderData.warlockTomeRituals.length===2 && new Set(builderData.warlockTomeRituals).size===2 && builderData.warlockTomeRituals.every(name=>BUILDER_TOME_RITUALS.includes(name) && !builderData.selectedSpells.includes(name)));
+    const classLevelOneSpells=BUILDER_SPELL_LISTS[builderData.className]?.level1||[];
+    const spellsOk = builderData.selectedSpells.length === cls.spells && new Set(builderData.selectedSpells).size===builderData.selectedSpells.length && builderData.selectedSpells.every(name=>classLevelOneSpells.includes(name));
+    const bookOk = cls.spellbook===0 || (builderData.wizardSpellbook.length===cls.spellbook && new Set(builderData.wizardSpellbook).size===cls.spellbook && builderData.wizardSpellbook.every(name=>BUILDER_SPELL_LISTS.Mago.level1.includes(name)) && builderData.selectedSpells.every(name=>builderData.wizardSpellbook.includes(name)));
     const abilityValues = Object.values(builderData.abilities).map(Number);
     const sortedAbilities = [...abilityValues].sort((a,b)=>b-a);
     const standardOk = JSON.stringify(sortedAbilities) === JSON.stringify([15,14,13,12,10,8]);
@@ -1367,9 +1375,12 @@
     const speciesMagicAbilityOk = !['Elfo','Gnomo','Tiefling'].includes(builderData.species) || ['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
     const speciesSizeOk = !['Aasimar','Humano','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesSize);
     const languagesOk = builderData.languages.length === 2 && new Set(builderData.languages).size===2 && builderData.languages.every(language=>BUILDER_STANDARD_LANGUAGES.includes(language)) && (builderData.className !== 'Pícaro' || (Boolean(builderData.rogueLanguage) && BUILDER_LANGUAGES.includes(builderData.rogueLanguage) && !builderData.languages.includes(builderData.rogueLanguage) && builderData.rogueLanguage!=='Jerga de ladrones'));
-    const humanFeatOk = builderData.species !== 'Humano' || (Boolean(builderData.speciesExtraFeat) && builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell));
-    const backgroundFeatOk = builderOriginFeatChoicesOk(BUILDER_BACKGROUND_DATA[builderData.background].feat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell);
-    return skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && tomeOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && humanFeatOk && backgroundFeatOk && languagesOk;
+    const backgroundFeatName=BUILDER_BACKGROUND_DATA[builderData.background].feat;
+    const backgroundFeatOptions=builderFeatChoiceOptions(backgroundFeatName);
+    const backgroundFeatOk = builderOriginFeatChoicesOk(backgroundFeatName,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell) && builderData.backgroundFeatChoices.every(choice=>backgroundFeatOptions.includes(choice) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice!==builderData.speciesSkill && choice!==builderData.backgroundToolChoice);
+    const speciesFeatOptions=builderFeatChoiceOptions(builderData.speciesExtraFeat);
+    const speciesFeatOk=builderData.species!=='Humano' || (builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell) && builderData.speciesFeatChoices.every(choice=>speciesFeatOptions.includes(choice) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice!==builderData.speciesSkill && choice!==builderData.backgroundToolChoice && !builderData.backgroundFeatChoices.includes(choice)));
+    return skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && tomeOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && humanFeatOk && backgroundFeatOk && speciesFeatOk && languagesOk;
   }
   function builderNext() { if (builderStep < 5) builderStep += 1; }
   function builderBack() { if (builderStep > 0) builderStep -= 1; }
@@ -2699,7 +2710,7 @@ import SPELLS from './spells.json';
                 <label>Habilidad adicional humana<select bind:value={builderData.speciesSkill}><option value="">Elige una habilidad</option>{#each ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'] as skill}<option>{skill}</option>{/each}</select></label>
                 <label>Dote de origen adicional humana<select bind:value={builderData.speciesExtraFeat} on:change={() => { builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_FEATS.filter(feat => feat !== BUILDER_BACKGROUND_DATA[builderData.background].feat) as feat}<option>{feat}</option>{/each}</select></label>
                 {#if ['Habilidoso','Fabricante','Músico'].includes(builderData.speciesExtraFeat)}
-                  <label>Elecciones de la dote adicional ({builderData.speciesFeatChoices.length}/3)<select multiple size="7" bind:value={builderData.speciesFeatChoices}>{#each builderFeatChoiceOptions(builderData.speciesExtraFeat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<option>{choice}</option>{/each}</select></label>
+                  <label>Elecciones de la dote adicional ({builderData.speciesFeatChoices.length}/3)<select multiple size="7" bind:value={builderData.speciesFeatChoices}>{#each builderFeatChoiceOptions(builderData.speciesExtraFeat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice && !builderData.backgroundFeatChoices.includes(choice)) as choice}<option>{choice}</option>{/each}</select></label>
                 {:else if builderMagicInitiateClass(builderData.speciesExtraFeat)}
                   <label>Aptitud mágica de la dote adicional<select bind:value={builderData.speciesFeatMagicAbility}><option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option></select></label>
                   <label>Dos trucos de la dote adicional ({builderData.speciesMagicCantrips.length}/2)<select multiple size="6" bind:value={builderData.speciesMagicCantrips}>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(builderData.speciesExtraFeat)].cantrips as spell}<option>{spell}</option>{/each}</select></label>
