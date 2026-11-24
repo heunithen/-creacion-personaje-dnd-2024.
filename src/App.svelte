@@ -2292,6 +2292,15 @@ import SPELLS from './spells.json';
     const oldBookText=getCharacterStat(original,'CONJUROS','Libro de conjuros') || (String(getCharacterStat(original,'CONJUROS','Conjuros de nivel 1')).match(/Libro:\s*([^.]*)/i)||[])[1] || '';
     const currentWizardBook=splitChoiceList(oldBookText);
     const wizardBookAdditions=splitChoiceList(levelUpWizardBookAdditions);
+    const wizardSubclassKey=normalizeLevelText(levelUpSubclass || getCharacterStat(original,'PERSONAJE','Subclase'));
+    const wizardSchoolBySubclass:Record<string,string>={abjurador:'Abjuración',adivino:'Adivinación',evocador:'Evocación',ilusionista:'Ilusionismo'};
+    const wizardSchool=wizardSchoolBySubclass[wizardSubclassKey] || '';
+    const wizardSchoolLevels=[3,5,7,9,11,13,15,17];
+    const needsWizardSchoolSpells=className==='Mago' && Boolean(wizardSchool) && wizardSchoolLevels.includes(nextLevel);
+    const oldWizardSchoolSpells=splitChoiceList(getCharacterStat(original,'CONJUROS','Conjuros de escuela'));
+    const wizardSchoolChoices=splitChoiceList(levelUpWizardSchoolSpells);
+    const wizardSchoolTarget=oldWizardSchoolSpells.length+(nextLevel===3?3:1);
+    const wizardSchoolNewChoices=wizardSchoolChoices.filter(name=>!oldWizardSchoolSpells.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
     if(className==='Mago') {
       if(wizardBookAdditions.length!==2 || new Set(wizardBookAdditions.map(name=>normalizeLevelText(name))).size!==2 || wizardBookAdditions.some(name=>currentWizardBook.some(old=>normalizeLevelText(old)===normalizeLevelText(name)))) { notice='Añade exactamente dos conjuros distintos que todavía no estén en tu libro.'; return; }
       if(wizardBookAdditions.some(name=>!isValidClassSpell(name,'Mago',maxClassSpellLevel)||getSpellRecord(name)?.level===0)) { notice='Los dos conjuros añadidos al libro deben ser conjuros de mago de nivel 1 o superior y no superar el nivel de espacio disponible.'; return; }
@@ -2392,15 +2401,6 @@ import SPELLS from './spells.json';
     if(needsElementalFury && !['Golpe primordial','Lanzamiento potente'].includes(levelUpElementalFury)) { notice='Elige Golpe primordial o Lanzamiento potente para Furia elemental.'; return; }
     const needsBlessedStrikes=className==='Clérigo' && nextLevel===7;
     if(needsBlessedStrikes && !['Golpe divino','Lanzamiento potente'].includes(levelUpBlessedStrikes)) { notice='Elige Golpe divino o Lanzamiento potente para Golpes benditos.'; return; }
-    const wizardSubclassKey=normalizeLevelText(levelUpSubclass || getCharacterStat(original,'PERSONAJE','Subclase'));
-    const wizardSchoolBySubclass:Record<string,string>={abjurador:'Abjuración',adivino:'Adivinación',evocador:'Evocación',ilusionista:'Ilusionismo'};
-    const wizardSchool=wizardSchoolBySubclass[wizardSubclassKey] || '';
-    const wizardSchoolLevels=[3,5,7,9,11,13,15,17];
-    const needsWizardSchoolSpells=className==='Mago' && Boolean(wizardSchool) && wizardSchoolLevels.includes(nextLevel);
-    const oldWizardSchoolSpells=splitChoiceList(getCharacterStat(original,'CONJUROS','Conjuros de escuela'));
-    const wizardSchoolChoices=splitChoiceList(levelUpWizardSchoolSpells);
-    const wizardSchoolTarget=oldWizardSchoolSpells.length+(nextLevel===3?3:1);
-    const wizardSchoolNewChoices=wizardSchoolChoices.filter(name=>!oldWizardSchoolSpells.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
     const wizardBookForChoices=[...currentWizardBook,...wizardBookAdditions,...wizardSchoolChoices];
     const validWizardBookSpell=(name:string,level:number,actionOnly:boolean=false)=>{
       const spell=getSpellRecord(name);
