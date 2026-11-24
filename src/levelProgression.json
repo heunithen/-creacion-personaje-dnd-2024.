@@ -1,0 +1,3642 @@
+{
+  "source": "D&D 2024 — Manual del Jugador del repositorio",
+  "xp": [
+    0,
+    300,
+    900,
+    2700,
+    6500,
+    14000,
+    23000,
+    34000,
+    48000,
+    64000,
+    85000,
+    100000,
+    120000,
+    140000,
+    165000,
+    195000,
+    225000,
+    265000,
+    305000,
+    355000
+  ],
+  "classes": {
+    "Bárbaro": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "N.º de furias",
+        "Daño por furia",
+        "Maestría con armas"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Defensa sin armadura, Furia, Maestría con armas",
+          "resources": {
+            "N.º de furias": "2",
+            "Daño por furia": "+2",
+            "Maestría con armas": "2"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Ataque temerario, Sentir el peligro",
+          "resources": {
+            "N.º de furias": "2",
+            "Daño por furia": "+2",
+            "Maestría con armas": "2"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Conocimiento primigenio, Subclase de bárbaro",
+          "resources": {
+            "N.º de furias": "3",
+            "Daño por furia": "+2",
+            "Maestría con armas": "2"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "N.º de furias": "3",
+            "Daño por furia": "+2",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Ataque adicional, Movimiento rápido",
+          "resources": {
+            "N.º de furias": "3",
+            "Daño por furia": "+2",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "N.º de furias": "4",
+            "Daño por furia": "+2",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Instinto salvaje, Salto instintivo",
+          "resources": {
+            "N.º de furias": "4",
+            "Daño por furia": "+2",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "N.º de furias": "4",
+            "Daño por furia": "+2",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "Golpe brutal",
+          "resources": {
+            "N.º de furias": "4",
+            "Daño por furia": "+3",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "N.º de furias": "4",
+            "Daño por furia": "+3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "Furia implacable",
+          "resources": {
+            "N.º de furias": "4",
+            "Daño por furia": "+3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "N.º de furias": "5",
+            "Daño por furia": "+3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "Golpe brutal mejorado",
+          "resources": {
+            "N.º de furias": "5",
+            "Daño por furia": "+3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "N.º de furias": "5",
+            "Daño por furia": "+3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "Furia persistente",
+          "resources": {
+            "N.º de furias": "5",
+            "Daño por furia": "+3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "N.º de furias": "5",
+            "Daño por furia": "+4",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "Golpe brutal mejorado",
+          "resources": {
+            "N.º de furias": "6",
+            "Daño por furia": "+4",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Poderío indómito",
+          "resources": {
+            "N.º de furias": "6",
+            "Daño por furia": "+4",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "N.º de furias": "6",
+            "Daño por furia": "+4",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Campeón primordial",
+          "resources": {
+            "N.º de furias": "6",
+            "Daño por furia": "+4",
+            "Maestría con armas": "4"
+          }
+        }
+      ]
+    },
+    "Bardo": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Dado bárdico",
+        "Trucos",
+        "Conjuros preparados",
+        "Espacios nivel 1",
+        "Espacios nivel 2",
+        "Espacios nivel 3",
+        "Espacios nivel 4",
+        "Espacios nivel 5",
+        "Espacios nivel 6",
+        "Espacios nivel 7",
+        "Espacios nivel 8",
+        "Espacios nivel 9"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Inspiración bárdica, Lanzamiento de conjuros",
+          "resources": {
+            "Dado bárdico": "d6",
+            "Trucos": "2",
+            "Conjuros preparados": "4",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Aprendiz de mucho, Pericia",
+          "resources": {
+            "Dado bárdico": "d6",
+            "Trucos": "2",
+            "Conjuros preparados": "5",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Subclase de bardo",
+          "resources": {
+            "Dado bárdico": "d6",
+            "Trucos": "2",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Dado bárdico": "d6",
+            "Trucos": "3",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Fuente de inspiración",
+          "resources": {
+            "Dado bárdico": "d8",
+            "Trucos": "3",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Dado bárdico": "d8",
+            "Trucos": "3",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Contraencantamiento",
+          "resources": {
+            "Dado bárdico": "d8",
+            "Trucos": "3",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Dado bárdico": "d8",
+            "Trucos": "3",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "Pericia",
+          "resources": {
+            "Dado bárdico": "d8",
+            "Trucos": "3",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Secretos mágicos",
+          "resources": {
+            "Dado bárdico": "d10",
+            "Trucos": "4",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Dado bárdico": "d10",
+            "Trucos": "4",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Dado bárdico": "d10",
+            "Trucos": "4",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Dado bárdico": "d10",
+            "Trucos": "4",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Dado bárdico": "d10",
+            "Trucos": "4",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Dado bárdico": "d12",
+            "Trucos": "4",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Dado bárdico": "d12",
+            "Trucos": "4",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "—",
+          "resources": {
+            "Dado bárdico": "d12",
+            "Trucos": "4",
+            "Conjuros preparados": "19",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Inspiración superior",
+          "resources": {
+            "Dado bárdico": "d12",
+            "Trucos": "4",
+            "Conjuros preparados": "20",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Dado bárdico": "d12",
+            "Trucos": "4",
+            "Conjuros preparados": "21",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Palabras de creación",
+          "resources": {
+            "Dado bárdico": "d12",
+            "Trucos": "4",
+            "Conjuros preparados": "22",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "2",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        }
+      ]
+    },
+    "Brujo": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Invocaciones sobrenaturales",
+        "Trucos",
+        "Conjuros preparados",
+        "Espacios de conjuro",
+        "Nivel de los espacios"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Invocaciones sobrenaturales, Magia del pacto",
+          "resources": {
+            "Invocaciones sobrenaturales": "1",
+            "Trucos": "2",
+            "Conjuros preparados": "2",
+            "Espacios de conjuro": "1",
+            "Nivel de los espacios": "1"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Astucia mágica",
+          "resources": {
+            "Invocaciones sobrenaturales": "3",
+            "Trucos": "2",
+            "Conjuros preparados": "3",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "1"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Subclase de brujo",
+          "resources": {
+            "Invocaciones sobrenaturales": "3",
+            "Trucos": "2",
+            "Conjuros preparados": "4",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "2"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Invocaciones sobrenaturales": "3",
+            "Trucos": "3",
+            "Conjuros preparados": "5",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "2"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "—",
+          "resources": {
+            "Invocaciones sobrenaturales": "5",
+            "Trucos": "3",
+            "Conjuros preparados": "6",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "3"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Invocaciones sobrenaturales": "5",
+            "Trucos": "3",
+            "Conjuros preparados": "7",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "3"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "—",
+          "resources": {
+            "Invocaciones sobrenaturales": "6",
+            "Trucos": "3",
+            "Conjuros preparados": "8",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "4"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Invocaciones sobrenaturales": "6",
+            "Trucos": "3",
+            "Conjuros preparados": "9",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "4"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "Contactar patrón",
+          "resources": {
+            "Invocaciones sobrenaturales": "7",
+            "Trucos": "3",
+            "Conjuros preparados": "10",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Invocaciones sobrenaturales": "7",
+            "Trucos": "4",
+            "Conjuros preparados": "10",
+            "Espacios de conjuro": "2",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "Arcanum místico (conjuro de nivel 6)",
+          "resources": {
+            "Invocaciones sobrenaturales": "7",
+            "Trucos": "4",
+            "Conjuros preparados": "11",
+            "Espacios de conjuro": "3",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Invocaciones sobrenaturales": "8",
+            "Trucos": "4",
+            "Conjuros preparados": "11",
+            "Espacios de conjuro": "3",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "Arcanum místico (conjuro de nivel 7)",
+          "resources": {
+            "Invocaciones sobrenaturales": "8",
+            "Trucos": "4",
+            "Conjuros preparados": "12",
+            "Espacios de conjuro": "3",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Invocaciones sobrenaturales": "8",
+            "Trucos": "4",
+            "Conjuros preparados": "12",
+            "Espacios de conjuro": "3",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "Arcanum místico (conjuro de nivel 8)",
+          "resources": {
+            "Invocaciones sobrenaturales": "9",
+            "Trucos": "4",
+            "Conjuros preparados": "13",
+            "Espacios de conjuro": "3",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Invocaciones sobrenaturales": "9",
+            "Trucos": "4",
+            "Conjuros preparados": "13",
+            "Espacios de conjuro": "3",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "Arcanum místico (conjuro de nivel 9)",
+          "resources": {
+            "Invocaciones sobrenaturales": "9",
+            "Trucos": "4",
+            "Conjuros preparados": "14",
+            "Espacios de conjuro": "4",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "—",
+          "resources": {
+            "Invocaciones sobrenaturales": "10",
+            "Trucos": "4",
+            "Conjuros preparados": "14",
+            "Espacios de conjuro": "4",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Invocaciones sobrenaturales": "10",
+            "Trucos": "4",
+            "Conjuros preparados": "15",
+            "Espacios de conjuro": "4",
+            "Nivel de los espacios": "5"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Maestro sobrenatural",
+          "resources": {
+            "Invocaciones sobrenaturales": "10",
+            "Trucos": "4",
+            "Conjuros preparados": "15",
+            "Espacios de conjuro": "4",
+            "Nivel de los espacios": "5"
+          }
+        }
+      ]
+    },
+    "Clérigo": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Canalizar divinidad",
+        "Trucos",
+        "Conjuros preparados",
+        "Espacios nivel 1",
+        "Espacios nivel 2",
+        "Espacios nivel 3",
+        "Espacios nivel 4",
+        "Espacios nivel 5",
+        "Espacios nivel 6",
+        "Espacios nivel 7",
+        "Espacios nivel 8",
+        "Espacios nivel 9"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Lanzamiento de conjuros, Orden divina",
+          "resources": {
+            "Canalizar divinidad": "—",
+            "Trucos": "3",
+            "Conjuros preparados": "4",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Canalizar divinidad",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Trucos": "3",
+            "Conjuros preparados": "5",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Subclase de clérigo",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Trucos": "3",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Trucos": "4",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Abrasar muertos vivientes",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Trucos": "4",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Golpes benditos",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Intercesión divina",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "5",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "5",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "5",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "5",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Golpes benditos mejorados",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "5",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "5",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "5",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Trucos": "5",
+            "Conjuros preparados": "19",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "—",
+          "resources": {
+            "Canalizar divinidad": "4",
+            "Trucos": "5",
+            "Conjuros preparados": "20",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Canalizar divinidad": "4",
+            "Trucos": "5",
+            "Conjuros preparados": "21",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Intercesión divina mayor",
+          "resources": {
+            "Canalizar divinidad": "4",
+            "Trucos": "5",
+            "Conjuros preparados": "22",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "2",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        }
+      ]
+    },
+    "Druida": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Forma salvaje",
+        "Trucos",
+        "Conjuros preparados",
+        "Espacios nivel 1",
+        "Espacios nivel 2",
+        "Espacios nivel 3",
+        "Espacios nivel 4",
+        "Espacios nivel 5",
+        "Espacios nivel 6",
+        "Espacios nivel 7",
+        "Espacios nivel 8",
+        "Espacios nivel 9"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Lanzamiento de conjuros, Druídico, Orden primigenia",
+          "resources": {
+            "Forma salvaje": "—",
+            "Trucos": "2",
+            "Conjuros preparados": "4",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Compañero salvaje, Forma salvaje",
+          "resources": {
+            "Forma salvaje": "2",
+            "Trucos": "2",
+            "Conjuros preparados": "5",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Subclase de druida",
+          "resources": {
+            "Forma salvaje": "2",
+            "Trucos": "2",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Forma salvaje": "2",
+            "Trucos": "3",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Resurgimiento salvaje",
+          "resources": {
+            "Forma salvaje": "2",
+            "Trucos": "3",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "3",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Furia elemental",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "3",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "3",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "3",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "Furia elemental mejorada",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Forma salvaje": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "—",
+          "resources": {
+            "Forma salvaje": "4",
+            "Trucos": "4",
+            "Conjuros preparados": "19",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Conjurar como bestia",
+          "resources": {
+            "Forma salvaje": "4",
+            "Trucos": "4",
+            "Conjuros preparados": "20",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Forma salvaje": "4",
+            "Trucos": "4",
+            "Conjuros preparados": "21",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Archidruida",
+          "resources": {
+            "Forma salvaje": "4",
+            "Trucos": "4",
+            "Conjuros preparados": "22",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "2",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        }
+      ]
+    },
+    "Explorador": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Enemigo predilecto",
+        "Conjuros preparados",
+        "Espacios nivel 1",
+        "Espacios nivel 2",
+        "Espacios nivel 3",
+        "Espacios nivel 4",
+        "Espacios nivel 5"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Lanzamiento de conjuros, Enemigo predilecto, Maestría con armas",
+          "resources": {
+            "Enemigo predilecto": "2",
+            "Conjuros preparados": "2",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Estilo de combate, Explorador hábil",
+          "resources": {
+            "Enemigo predilecto": "2",
+            "Conjuros preparados": "3",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Subclase de explorador",
+          "resources": {
+            "Enemigo predilecto": "2",
+            "Conjuros preparados": "4",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Enemigo predilecto": "2",
+            "Conjuros preparados": "5",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Ataque adicional",
+          "resources": {
+            "Enemigo predilecto": "3",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Errante",
+          "resources": {
+            "Enemigo predilecto": "3",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Enemigo predilecto": "3",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Enemigo predilecto": "3",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "Pericia",
+          "resources": {
+            "Enemigo predilecto": "4",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Infatigable",
+          "resources": {
+            "Enemigo predilecto": "4",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Enemigo predilecto": "4",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Enemigo predilecto": "4",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "Cazador persistente",
+          "resources": {
+            "Enemigo predilecto": "5",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Velo de la naturaleza",
+          "resources": {
+            "Enemigo predilecto": "5",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Enemigo predilecto": "5",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Enemigo predilecto": "5",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "Cazador preciso",
+          "resources": {
+            "Enemigo predilecto": "6",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Sentidos salvajes",
+          "resources": {
+            "Enemigo predilecto": "6",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Enemigo predilecto": "6",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Azote de enemigos",
+          "resources": {
+            "Enemigo predilecto": "6",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2"
+          }
+        }
+      ]
+    },
+    "Guerrero": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Tomar aliento",
+        "Maestría con armas"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Estilo de combate, Maestría con armas, Tomar aliento",
+          "resources": {
+            "Tomar aliento": "2",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Acción súbita (un uso), Mente táctica",
+          "resources": {
+            "Tomar aliento": "2",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Subclase de guerrero",
+          "resources": {
+            "Tomar aliento": "2",
+            "Maestría con armas": "3"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Tomar aliento": "3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Ataque adicional, Desplazamiento táctico",
+          "resources": {
+            "Tomar aliento": "3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Tomar aliento": "3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Tomar aliento": "3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Tomar aliento": "3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "Indómito (un uso), Maestro táctico",
+          "resources": {
+            "Tomar aliento": "3",
+            "Maestría con armas": "4"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "5"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "Dos ataques adicionales",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "5"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "5"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "Ataques estudiados, Indómito (dos usos)",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "5"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "5"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "5"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "6"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "Acción súbita (dos usos), Indómito (tres usos)",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "6"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "6"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "6"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Tres ataques adicionales",
+          "resources": {
+            "Tomar aliento": "4",
+            "Maestría con armas": "6"
+          }
+        }
+      ]
+    },
+    "Hechicero": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Puntos de hechicería",
+        "Trucos",
+        "Conjuros preparados",
+        "Espacios nivel 1",
+        "Espacios nivel 2",
+        "Espacios nivel 3",
+        "Espacios nivel 4",
+        "Espacios nivel 5",
+        "Espacios nivel 6",
+        "Espacios nivel 7",
+        "Espacios nivel 8",
+        "Espacios nivel 9"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Lanzamiento de conjuros, Hechicería innata",
+          "resources": {
+            "Puntos de hechicería": "—",
+            "Trucos": "4",
+            "Conjuros preparados": "2",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Fuente de magia, Metamagia",
+          "resources": {
+            "Puntos de hechicería": "2",
+            "Trucos": "4",
+            "Conjuros preparados": "4",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Subclase de hechicero",
+          "resources": {
+            "Puntos de hechicería": "3",
+            "Trucos": "4",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Puntos de hechicería": "4",
+            "Trucos": "5",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Recuperación mágica",
+          "resources": {
+            "Puntos de hechicería": "5",
+            "Trucos": "5",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Puntos de hechicería": "6",
+            "Trucos": "5",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Encarnación mágica",
+          "resources": {
+            "Puntos de hechicería": "7",
+            "Trucos": "5",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Puntos de hechicería": "8",
+            "Trucos": "5",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Puntos de hechicería": "9",
+            "Trucos": "5",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Metamagia",
+          "resources": {
+            "Puntos de hechicería": "10",
+            "Trucos": "6",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Puntos de hechicería": "11",
+            "Trucos": "6",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Puntos de hechicería": "12",
+            "Trucos": "6",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Puntos de hechicería": "13",
+            "Trucos": "6",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Puntos de hechicería": "14",
+            "Trucos": "6",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Puntos de hechicería": "15",
+            "Trucos": "6",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Puntos de hechicería": "16",
+            "Trucos": "6",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "Metamagia",
+          "resources": {
+            "Puntos de hechicería": "17",
+            "Trucos": "6",
+            "Conjuros preparados": "19",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Puntos de hechicería": "18",
+            "Trucos": "6",
+            "Conjuros preparados": "20",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Puntos de hechicería": "19",
+            "Trucos": "6",
+            "Conjuros preparados": "21",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Apoteosis arcana",
+          "resources": {
+            "Puntos de hechicería": "20",
+            "Trucos": "6",
+            "Conjuros preparados": "22",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "2",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        }
+      ]
+    },
+    "Mago": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Trucos",
+        "Conjuros preparados",
+        "Espacios nivel 1",
+        "Espacios nivel 2",
+        "Espacios nivel 3",
+        "Espacios nivel 4",
+        "Espacios nivel 5",
+        "Espacios nivel 6",
+        "Espacios nivel 7",
+        "Espacios nivel 8",
+        "Espacios nivel 9"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Lanzamiento de conjuros, Adepto en rituales, Recuperación arcana",
+          "resources": {
+            "Trucos": "3",
+            "Conjuros preparados": "4",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Académico",
+          "resources": {
+            "Trucos": "3",
+            "Conjuros preparados": "5",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Subclase de mago",
+          "resources": {
+            "Trucos": "3",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Trucos": "4",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Memorizar conjuro",
+          "resources": {
+            "Trucos": "4",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Trucos": "4",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "—",
+          "resources": {
+            "Trucos": "4",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Trucos": "4",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Trucos": "4",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "—",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "—",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "16",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "—",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "17",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "18",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "—",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "19",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "21",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "—"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "—",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "22",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Maestría sobre conjuros",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "23",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "1",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "24",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "1",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Conjuros característicos",
+          "resources": {
+            "Trucos": "5",
+            "Conjuros preparados": "25",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "3",
+            "Espacios nivel 6": "2",
+            "Espacios nivel 7": "2",
+            "Espacios nivel 8": "1",
+            "Espacios nivel 9": "1"
+          }
+        }
+      ]
+    },
+    "Monje": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Artes marciales",
+        "Puntos de concentración",
+        "Movimiento sin armadura"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Artes marciales, Defensa sin armadura",
+          "resources": {
+            "Artes marciales": "1d6",
+            "Puntos de concentración": "—",
+            "Movimiento sin armadura": "—"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Concentración de monje, Metabolismo asombroso, Movimiento sin armadura",
+          "resources": {
+            "Artes marciales": "1d6",
+            "Puntos de concentración": "2",
+            "Movimiento sin armadura": "+3 m"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Desviar ataques, Subclase de monje",
+          "resources": {
+            "Artes marciales": "1d6",
+            "Puntos de concentración": "3",
+            "Movimiento sin armadura": "+3 m"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Caída lenta, Mejora de característica",
+          "resources": {
+            "Artes marciales": "1d6",
+            "Puntos de concentración": "4",
+            "Movimiento sin armadura": "+3 m"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Ataque adicional, Golpe aturdidor",
+          "resources": {
+            "Artes marciales": "1d8",
+            "Puntos de concentración": "5",
+            "Movimiento sin armadura": "+3 m"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Golpes potenciados, rasgo de subclase",
+          "resources": {
+            "Artes marciales": "1d8",
+            "Puntos de concentración": "6",
+            "Movimiento sin armadura": "+4,5 m"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Evasión",
+          "resources": {
+            "Artes marciales": "1d8",
+            "Puntos de concentración": "7",
+            "Movimiento sin armadura": "+4,5 m"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Artes marciales": "1d8",
+            "Puntos de concentración": "8",
+            "Movimiento sin armadura": "+4,5 m"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "Movimiento acrobático",
+          "resources": {
+            "Artes marciales": "1d8",
+            "Puntos de concentración": "9",
+            "Movimiento sin armadura": "+4,5 m"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Autorrestablecimiento, Concentración agudizada",
+          "resources": {
+            "Artes marciales": "1d8",
+            "Puntos de concentración": "10",
+            "Movimiento sin armadura": "+6 m"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Artes marciales": "1d10",
+            "Puntos de concentración": "11",
+            "Movimiento sin armadura": "+6 m"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Artes marciales": "1d10",
+            "Puntos de concentración": "12",
+            "Movimiento sin armadura": "+6 m"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "Desviar energía",
+          "resources": {
+            "Artes marciales": "1d10",
+            "Puntos de concentración": "13",
+            "Movimiento sin armadura": "+6 m"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Superviviente disciplinado",
+          "resources": {
+            "Artes marciales": "1d10",
+            "Puntos de concentración": "14",
+            "Movimiento sin armadura": "+7,5 m"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "Concentración perfecta",
+          "resources": {
+            "Artes marciales": "1d10",
+            "Puntos de concentración": "15",
+            "Movimiento sin armadura": "+7,5 m"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Artes marciales": "1d10",
+            "Puntos de concentración": "16",
+            "Movimiento sin armadura": "+7,5 m"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Artes marciales": "1d12",
+            "Puntos de concentración": "17",
+            "Movimiento sin armadura": "+7,5 m"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Defensa superior",
+          "resources": {
+            "Artes marciales": "1d12",
+            "Puntos de concentración": "18",
+            "Movimiento sin armadura": "+9 m"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Artes marciales": "1d12",
+            "Puntos de concentración": "19",
+            "Movimiento sin armadura": "+9 m"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Cuerpo y mente",
+          "resources": {
+            "Artes marciales": "1d12",
+            "Puntos de concentración": "20",
+            "Movimiento sin armadura": "+9 m"
+          }
+        }
+      ]
+    },
+    "Paladín": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Canalizar divinidad",
+        "Conjuros preparados",
+        "Espacios nivel 1",
+        "Espacios nivel 2",
+        "Espacios nivel 3",
+        "Espacios nivel 4",
+        "Espacios nivel 5"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Imponer las manos, Lanzamiento de conjuros, Maestría con armas",
+          "resources": {
+            "Canalizar divinidad": "—",
+            "Conjuros preparados": "2",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Castigo de paladín, Estilo de combate",
+          "resources": {
+            "Canalizar divinidad": "—",
+            "Conjuros preparados": "3",
+            "Espacios nivel 1": "2",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Canalizar divinidad, Subclase de paladín",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Conjuros preparados": "4",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Conjuros preparados": "5",
+            "Espacios nivel 1": "3",
+            "Espacios nivel 2": "—",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Ataque adicional, Corcel fiel",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Aura de protección",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Conjuros preparados": "6",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "2",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Conjuros preparados": "7",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "—",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "Abjurar de los enemigos",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Aura de coraje",
+          "resources": {
+            "Canalizar divinidad": "2",
+            "Conjuros preparados": "9",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "2",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "Golpes radiantes",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "10",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "—",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "—",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Toque reparador",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "11",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "1",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "12",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "2",
+            "Espacios nivel 5": "—"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "—",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Expansión de aura",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "14",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "1"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Canalizar divinidad": "3",
+            "Conjuros preparados": "15",
+            "Espacios nivel 1": "4",
+            "Espacios nivel 2": "3",
+            "Espacios nivel 3": "3",
+            "Espacios nivel 4": "3",
+            "Espacios nivel 5": "2"
+          }
+        }
+      ]
+    },
+    "Pícaro": {
+      "columns": [
+        "Nivel",
+        "Bonificador por competencia",
+        "Rasgos de clase",
+        "Ataque furtivo"
+      ],
+      "rows": [
+        {
+          "level": 1,
+          "proficiency": "+2",
+          "features": "Ataque furtivo, Jerga de ladrones, Maestría con armas, Pericia",
+          "resources": {
+            "Ataque furtivo": "1d6"
+          }
+        },
+        {
+          "level": 2,
+          "proficiency": "+2",
+          "features": "Acción astuta",
+          "resources": {
+            "Ataque furtivo": "1d6"
+          }
+        },
+        {
+          "level": 3,
+          "proficiency": "+2",
+          "features": "Puntería certera, Subclase de pícaro",
+          "resources": {
+            "Ataque furtivo": "2d6"
+          }
+        },
+        {
+          "level": 4,
+          "proficiency": "+2",
+          "features": "Mejora de característica",
+          "resources": {
+            "Ataque furtivo": "2d6"
+          }
+        },
+        {
+          "level": 5,
+          "proficiency": "+3",
+          "features": "Esquiva asombrosa, Golpe astuto",
+          "resources": {
+            "Ataque furtivo": "3d6"
+          }
+        },
+        {
+          "level": 6,
+          "proficiency": "+3",
+          "features": "Pericia",
+          "resources": {
+            "Ataque furtivo": "3d6"
+          }
+        },
+        {
+          "level": 7,
+          "proficiency": "+3",
+          "features": "Evasión, Talentos fiables",
+          "resources": {
+            "Ataque furtivo": "4d6"
+          }
+        },
+        {
+          "level": 8,
+          "proficiency": "+3",
+          "features": "Mejora de característica",
+          "resources": {
+            "Ataque furtivo": "4d6"
+          }
+        },
+        {
+          "level": 9,
+          "proficiency": "+4",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Ataque furtivo": "5d6"
+          }
+        },
+        {
+          "level": 10,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Ataque furtivo": "5d6"
+          }
+        },
+        {
+          "level": 11,
+          "proficiency": "+4",
+          "features": "Golpe astuto mejorado",
+          "resources": {
+            "Ataque furtivo": "6d6"
+          }
+        },
+        {
+          "level": 12,
+          "proficiency": "+4",
+          "features": "Mejora de característica",
+          "resources": {
+            "Ataque furtivo": "6d6"
+          }
+        },
+        {
+          "level": 13,
+          "proficiency": "+5",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Ataque furtivo": "7d6"
+          }
+        },
+        {
+          "level": 14,
+          "proficiency": "+5",
+          "features": "Golpes taimados",
+          "resources": {
+            "Ataque furtivo": "7d6"
+          }
+        },
+        {
+          "level": 15,
+          "proficiency": "+5",
+          "features": "Mente escurridiza",
+          "resources": {
+            "Ataque furtivo": "8d6"
+          }
+        },
+        {
+          "level": 16,
+          "proficiency": "+5",
+          "features": "Mejora de característica",
+          "resources": {
+            "Ataque furtivo": "8d6"
+          }
+        },
+        {
+          "level": 17,
+          "proficiency": "+6",
+          "features": "Rasgo de subclase",
+          "resources": {
+            "Ataque furtivo": "9d6"
+          }
+        },
+        {
+          "level": 18,
+          "proficiency": "+6",
+          "features": "Elusivo",
+          "resources": {
+            "Ataque furtivo": "9d6"
+          }
+        },
+        {
+          "level": 19,
+          "proficiency": "+6",
+          "features": "Don épico",
+          "resources": {
+            "Ataque furtivo": "10d6"
+          }
+        },
+        {
+          "level": 20,
+          "proficiency": "+6",
+          "features": "Golpe de suerte",
+          "resources": {
+            "Ataque furtivo": "10d6"
+          }
+        }
+      ]
+    }
+  }
+}

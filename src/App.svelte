@@ -736,6 +736,18 @@
     "priceLabel": "15 po"
   }
 ];
+  import LEVEL_PROGRESSION from './levelProgression.json';
+  let levelUpEntry: RoomEntry | null = null;
+  let levelUpDecision = '';
+  let levelUpSubclass = '';
+  let levelUpAsiMode = 'asi';
+  let levelUpAbility1 = 'Fuerza';
+  let levelUpAbility2 = 'Destreza';
+  let levelUpIncrease1 = '2';
+  let levelUpIncrease2 = '0';
+  let levelUpFeat = '';
+  let levelUpHpMode = 'average';
+  let levelUpHpRoll = '';
   let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
   function rollChestLoot() {
     const dice = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10) + 1);
@@ -1491,6 +1503,114 @@ import SPELLS from './spells.json';
   }
 
 
+  const LEVEL_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+  const LEVEL_HIT_DIE: Record<string,number> = { 'Bárbaro':12,'Guerrero':10,'Paladín':10,'Explorador':10,'Bardo':8,'Brujo':8,'Clérigo':8,'Druida':8,'Monje':8,'Pícaro':8,'Hechicero':6,'Mago':6 };
+  const LEVEL_FIXED_HP: Record<string,number> = { 'Bárbaro':7,'Guerrero':6,'Paladín':6,'Explorador':6,'Bardo':5,'Brujo':5,'Clérigo':5,'Druida':5,'Monje':5,'Pícaro':5,'Hechicero':4,'Mago':4 };
+  function normalizeLevelText(value: unknown) { return String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().trim(); }
+  function getCharacterStat(target: RawSheet, sectionName: string, statName: string): string {
+    const pair = sectionPairs(target.sections || []).find(p => normalizeLevelText(p.heading.name) === normalizeLevelText(sectionName));
+    const index = pair?.heading.stats?.findIndex(st => normalizeLevelText(st.name) === normalizeLevelText(statName)) ?? -1;
+    if (!pair || index < 0) return '';
+    return displayValue(pair.values?.stats?.[index]?.value ?? pair.heading.stats?.[index]?.value);
+  }
+  function setCharacterStat(target: RawSheet, sectionName: string, statName: string, value: string | number) {
+    let pair = sectionPairs(target.sections || []).find(p => normalizeLevelText(p.heading.name) === normalizeLevelText(sectionName));
+    if (!pair) {
+      const heading: RawSection = { id: Date.now(), name: sectionName, stats: [] };
+      const values: RawSection = { id: Date.now()+1, name: 'VALORES', stats: [] };
+      target.sections = [...(target.sections || []), heading, values];
+      pair = { heading, values };
+    }
+    const stats = pair.heading.stats || (pair.heading.stats = []);
+    let index = stats.findIndex(st => normalizeLevelText(st.name) === normalizeLevelText(statName));
+    if (index < 0) {
+      index = stats.length;
+      stats.push({ id:index+1, name:statName, value:'' });
+      if (pair.values) (pair.values.stats || (pair.values.stats=[])).push({id:index+1,name:'✎',value:''});
+    }
+    if (pair.values?.stats?.[index]) pair.values.stats[index].value = value;
+    else stats[index].value = value;
+  }
+  function openLevelUp(entry: RoomEntry) {
+    levelUpEntry = entry; levelUpDecision = ''; levelUpSubclass = ''; levelUpAsiMode = 'asi';
+    levelUpAbility1 = 'Fuerza'; levelUpAbility2 = 'Destreza'; levelUpIncrease1 = '2'; levelUpIncrease2 = '0';
+    levelUpFeat = ''; levelUpHpMode = 'average'; levelUpHpRoll = '';
+  }
+  function closeLevelUp() { levelUpEntry = null; }
+  function applyLevelUp() {
+    if (!levelUpEntry) return;
+    const original = levelUpEntry.sheet;
+    const className = getCharacterStat(original,'PERSONAJE','Clase');
+    const currentLevel = Number(getCharacterStat(original,'PERSONAJE','Nivel')) || 1;
+    const nextLevel = currentLevel + 1;
+    if (nextLevel > 20) { notice = 'El personaje ya alcanzó el nivel 20.'; return; }
+    const classTable = (LEVEL_PROGRESSION as any).classes?.[className];
+    const row = classTable?.rows?.find((r:any) => r.level === nextLevel);
+    if (!row) { notice = 'No se encontró la progresión de esta clase en el manual.'; return; }
+    const features = String(row.features || '').split(',').map((x:string)=>x.trim()).filter((x:string)=>x && x !== '—');
+    const needsSubclass = features.some((x:string)=>normalizeLevelText(x).startsWith('subclase de'));
+    const needsASI = features.some((x:string)=>normalizeLevelText(x).includes('mejora de caracteristica'));
+    const needsEpicFeat = features.some((x:string)=>normalizeLevelText(x)==='don epico');
+    if (needsSubclass && !levelUpSubclass.trim() && !getCharacterStat(original,'PERSONAJE','Subclase')) { notice = 'Indica la subclase que el personaje elige.'; return; }
+    if ((needsEpicFeat || (needsASI && levelUpAsiMode === 'feat')) && !levelUpFeat.trim()) { notice = 'Indica el nombre de la dote elegida.'; return; }
+    if (needsASI && levelUpAsiMode === 'asi') {
+      const inc1=Number(levelUpIncrease1), inc2=Number(levelUpIncrease2);
+      if (![1,2].includes(inc1) || ![0,1,2].includes(inc2) || (inc2>0 && inc1+inc2!==2) || (inc2===0 && inc1!==2) || (inc2>0 && levelUpAbility1===levelUpAbility2)) { notice='La mejora debe ser +2 a una característica o +1 a dos características.'; return; }
+      for (const [ability,inc] of [[levelUpAbility1,inc1],[levelUpAbility2,inc2]] as [string,number][]) {
+        if (!inc) continue;
+        const current=Number(getCharacterStat(original,'ATRIBUTOS',ability));
+        if (!Number.isFinite(current) || current+inc>20) { notice='La mejora no puede superar 20 en '+ability+'.'; return; }
+      }
+    }
+    const constitution=Number(getCharacterStat(original,'ATRIBUTOS','Constitución')) || 10;
+    const conMod=Math.floor((constitution-10)/2);
+    const hitDie=LEVEL_HIT_DIE[className] || 8;
+    let hpGain=LEVEL_FIXED_HP[className] || 5;
+    if (levelUpHpMode === 'roll') {
+      const roll=Number(levelUpHpRoll);
+      if (!Number.isInteger(roll) || roll<1 || roll>hitDie) { notice='Introduce una tirada válida de 1 a '+hitDie+'.'; return; }
+      hpGain=roll;
+    }
+    hpGain=Math.max(1,hpGain+conMod);
+    const updated=JSON.parse(JSON.stringify(original)) as RawSheet;
+    const oldHp=Number(getCharacterStat(updated,'COMBATE','Puntos de golpe máximos')) || 0;
+    const oldHitDice=Number(String(getCharacterStat(updated,'COMBATE','Dados de golpe')).match(/\\d+/)?.[0]) || currentLevel;
+    setCharacterStat(updated,'PERSONAJE','Nivel',nextLevel);
+    setCharacterStat(updated,'PERSONAJE','Experiencia',Number((LEVEL_PROGRESSION as any).xp?.[nextLevel-1] ?? 0));
+    setCharacterStat(updated,'COMBATE','Puntos de golpe máximos',oldHp+hpGain);
+    setCharacterStat(updated,'COMBATE','Dados de golpe',oldHitDice+1+'d'+hitDie);
+    setCharacterStat(updated,'COMBATE','Bonificador por competencia',row.proficiency);
+    if (needsSubclass && levelUpSubclass.trim()) setCharacterStat(updated,'PERSONAJE','Subclase',levelUpSubclass.trim());
+    if (needsASI && levelUpAsiMode==='asi') {
+      for (const [ability,inc] of [[levelUpAbility1,Number(levelUpIncrease1)],[levelUpAbility2,Number(levelUpIncrease2)]] as [string,number][]) {
+        if (!inc) continue;
+        const value=Number(getCharacterStat(updated,'ATRIBUTOS',ability)) || 10;
+        setCharacterStat(updated,'ATRIBUTOS',ability,value+inc);
+      }
+    }
+    if (levelUpFeat.trim() && (needsEpicFeat || (needsASI && levelUpAsiMode==='feat'))) {
+      const previous=getCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales');
+      setCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales',[previous,levelUpFeat.trim()].filter(Boolean).join('; '));
+    }
+    const resourceText=Object.entries(row.resources || {}).filter(([key,value]:any)=>value && value!=='—').map(([key,value])=>key+': '+value).join(' · ');
+    const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(levelUpSubclass.trim()?' · Subclase: '+levelUpSubclass.trim():'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\\n'));
+    setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,features.join(', ') || 'Sin rasgos nuevos indicados');
+    setCharacterStat(updated,'PROGRESIÓN','Recursos según tabla de clase',resourceText || 'Sin cambios de recursos tabulados');
+    const preparedKey=Object.keys(row.resources || {}).find(k=>normalizeLevelText(k)==='conjuros preparados');
+    if (preparedKey) setCharacterStat(updated,'CONJUROS','Conjuros preparados máximos',row.resources[preparedKey]);
+    const slotKeys=Object.keys(row.resources || {}).filter(k=>normalizeLevelText(k).startsWith('espacios'));
+    if (slotKeys.length) setCharacterStat(updated,'CONJUROS','Espacios por nivel',slotKeys.map(k=>k.replace('Espacios ','')+': '+row.resources[k]).join(' · '));
+    const cantripKey=Object.keys(row.resources || {}).find(k=>normalizeLevelText(k)==='trucos');
+    if (cantripKey) setCharacterStat(updated,'CONJUROS','Trucos máximos',row.resources[cantripKey]);
+    const playerId=levelUpEntry.playerId;
+    roomSheets=[...roomSheets.filter(x=>x.playerId!==playerId),{...levelUpEntry,sheet:updated}];
+    void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
+    levelUpEntry=null;
+    notice='Nivel '+nextLevel+' aplicado a '+updated.name+'. El jugador recibirá la actualización en Owlbear Rodeo.';
+  }
+
   function sectionPairs(sections: RawSection[] = []) {
     const result: { heading: RawSection; values?: RawSection }[] = [];
     for (let i = 0; i < sections.length; i++) {
@@ -1643,6 +1763,19 @@ import SPELLS from './spells.json';
             }];
           }
           if (d?.type === 'character-deleted') roomSheets = roomSheets.filter(x => x.playerId !== d.playerId);
+          if (d?.type === 'character-level-up' && d.character && obrRole === 'PLAYER') {
+            void (async () => {
+              try {
+                const ownId = await OBR.player.getId();
+                if (ownId !== d.playerId) return;
+                sheet = d.character as RawSheet;
+                localStorage.setItem('forja-raw-character',JSON.stringify(sheet));
+                await OBR.player.setMetadata({ [KEY]: { character: sheet, playerName, updatedAt: new Date().toISOString() } });
+                await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId:ownId,playerName,character:sheet},{destination:'ALL'});
+                notice = 'El director ha actualizado tu personaje al nivel '+getCharacterStat(sheet,'PERSONAJE','Nivel')+'.';
+              } catch { notice = 'No se pudo recibir la subida de nivel. Importa la ficha actualizada desde el director.'; }
+            })();
+          }
         });
       } catch {
         syncStatus = 'Owlbear está abierto, pero no se pudo leer la sala.';
@@ -1677,6 +1810,7 @@ import SPELLS from './spells.json';
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName}</p></div>
                 <details class="gm-sheet-details">
                   <summary>Ver ficha</summary>
+                  <div class="actions level-up-action"><button class="primary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button></div>
                   <div class="character-sheet gm-character-sheet">
                     <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2></div>
                     <div class="sheet-grid">
@@ -1695,6 +1829,30 @@ import SPELLS from './spells.json';
                 </details>
               </article>
             {/each}
+          {/if}
+          {#if levelUpEntry}
+            <section class="level-up-panel">
+              <div class="section-heading"><h2>Subir nivel · {levelUpEntry.sheet.name}</h2><span class="count">Nivel {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1}</span></div>
+              <p><strong>{getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}</strong> · {(LEVEL_PROGRESSION as any).classes?.[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]?.rows?.find((r:any)=>r.level===Number(getCharacterStat(levelUpEntry!.sheet,'PERSONAJE','Nivel'))+1)?.features || 'Sin rasgos nuevos registrados'}.</p>
+              <label>Método de puntos de golpe<select bind:value={levelUpHpMode}><option value="average">Valor fijo del manual</option><option value="roll">Tirar dado de golpe</option></select></label>
+              {#if levelUpHpMode==='roll'}<label>Resultado del dado (1–{LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8})<input type="number" min="1" max={LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8} bind:value={levelUpHpRoll} /></label>{/if}
+              {#if (LEVEL_PROGRESSION as any).classes?.[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]?.rows?.find((r:any)=>r.level===Number(getCharacterStat(levelUpEntry!.sheet,'PERSONAJE','Nivel'))+1)?.features?.toLowerCase().includes('subclase de')}
+                <label>Subclase elegida<input bind:value={levelUpSubclass} placeholder="Escribe la subclase elegida" /></label>
+              {/if}
+              {#if (LEVEL_PROGRESSION as any).classes?.[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]?.rows?.find((r:any)=>r.level===Number(getCharacterStat(levelUpEntry!.sheet,'PERSONAJE','Nivel'))+1)?.features?.toLowerCase().includes('mejora de característica')}
+                <label>Tipo de mejora<select bind:value={levelUpAsiMode}><option value="asi">Aumentar características</option><option value="feat">Elegir una dote</option></select></label>
+                {#if levelUpAsiMode==='asi'}
+                  <div class="level-up-choice-grid"><label>Primera característica<select bind:value={levelUpAbility1}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease1}><option value="2">+2</option><option value="1">+1</option></select></label></div>
+                  <div class="level-up-choice-grid"><label>Segunda característica<select bind:value={levelUpAbility2}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease2}><option value="0">No aplicar</option><option value="1">+1</option></select></label></div>
+                {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
+              {/if}
+              {#if (LEVEL_PROGRESSION as any).classes?.[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]?.rows?.find((r:any)=>r.level===Number(getCharacterStat(levelUpEntry!.sheet,'PERSONAJE','Nivel'))+1)?.features?.toLowerCase().includes('don épico')}
+                <label>Don épico elegido<input bind:value={levelUpFeat} placeholder="Nombre del don épico" /></label>
+              {/if}
+              <label>Otras decisiones del rasgo (pericia, invocaciones, estilo de combate, conjuros, etc.)<textarea bind:value={levelUpDecision} rows="2" placeholder="Registra las elecciones realizadas para este nivel…" /></label>
+              <p class="muted">Se conservarán los datos existentes. Los rasgos, recursos y decisiones quedarán registrados en Progresión. Especies y trasfondos no avanzan por nivel.</p>
+              <div class="actions"><button class="secondary" on:click={closeLevelUp}>Cancelar</button><button class="primary" on:click={applyLevelUp}>Aplicar subida de nivel</button></div>
+            </section>
           {/if}
         </section>
       {:else if masterTab === 'Tiradas'}
@@ -2179,7 +2337,7 @@ import SPELLS from './spells.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.22</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.28</span></footer>
 </div>
 
 <style>
@@ -2188,7 +2346,7 @@ import SPELLS from './spells.json';
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-  .spells-panel{margin-top:.5rem}
+  .level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#fff;color:#171313;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}.spells-panel{margin-top:.5rem}
   .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
   .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#fff;color:var(--ink);font:500 .82rem system-ui,sans-serif}
   .spell-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
