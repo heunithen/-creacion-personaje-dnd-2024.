@@ -756,9 +756,9 @@
     feat: 'Alerta', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
   };
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
-  const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Gigante (Goliat)','Mediano','Humano','Orco','Tiefling'];
+  const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
   const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
-  const BUILDER_FEATS = ['Alerta','Artesano','Curandero','Iniciado en la magia (Bardo)','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Músico','Suerte','Atacante salvaje','Habilidoso','Peleador de taberna'];
+  const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Bardo)','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Matón de taberna','Músico','Sanador'];
   const BUILDER_CLASS_FEATURES: Record<string,string> = {
     'Bárbaro':'Furia; Defensa sin armadura',
     'Bardo':'Inspiración bárdica; Lanzamiento de conjuros',
@@ -779,13 +779,30 @@
     'Enano':'Tipo de criatura: Humanoide. Visión en la oscuridad; Resistencia enana; Aguante enano.',
     'Elfo':'Tipo de criatura: Humanoide. Visión en la oscuridad; Linaje élfico; Sentidos agudos; Trance.',
     'Gnomo':'Tipo de criatura: Humanoide. Visión en la oscuridad; Astucia gnómica.',
-    'Gigante (Goliat)':'Tipo de criatura: Humanoide. Ascendencia gigante; Atletismo poderoso.',
+    'Goliat':'Tipo de criatura: Humanoide. Ascendencia gigante; Atletismo poderoso.',
     'Mediano':'Tipo de criatura: Humanoide. Afortunado; Valentía; Agilidad mediana.',
     'Humano':'Tipo de criatura: Humanoide. Ingenioso; Habilidoso; Versátil.',
     'Orco':'Tipo de criatura: Humanoide. Adrenalina; Visión en la oscuridad; Aguante implacable.',
     'Tiefling':'Tipo de criatura: Humanoide. Visión en la oscuridad; Legado infernal.'
   };
   const BUILDER_HIT_DIE: Record<string,number> = {'Bárbaro':12,'Guerrero':10,'Paladín':10,'Explorador':10,'Bardo':8,'Brujo':8,'Clérigo':8,'Druida':8,'Hechicero':6,'Mago':6,'Monje':8,'Pícaro':8};
+  const BUILDER_SAVES: Record<string,string> = {
+    'Bárbaro':'Fuerza y Constitución','Bardo':'Destreza y Carisma','Brujo':'Sabiduría y Carisma',
+    'Clérigo':'Sabiduría y Carisma','Druida':'Inteligencia y Sabiduría','Explorador':'Fuerza y Destreza',
+    'Guerrero':'Fuerza y Constitución','Hechicero':'Constitución y Carisma','Mago':'Inteligencia y Sabiduría',
+    'Monje':'Fuerza y Destreza','Paladín':'Sabiduría y Carisma','Pícaro':'Destreza e Inteligencia'
+  };
+  const BUILDER_ARMOR: Record<string,string> = {
+    'Bárbaro':'Armaduras ligeras y medias; escudos','Bardo':'Armaduras ligeras',
+    'Brujo':'Armaduras ligeras','Clérigo':'Armaduras ligeras y medias; escudos (según orden divina)',
+    'Druida':'Armaduras ligeras y medias; escudos','Explorador':'Armaduras ligeras y medias; escudos',
+    'Guerrero':'Todas las armaduras y escudos','Hechicero':'Ninguna','Mago':'Ninguna',
+    'Monje':'Ninguna','Paladín':'Todas las armaduras y escudos','Pícaro':'Armaduras ligeras'
+  };
+  const BUILDER_MAGIC_ABILITY: Record<string,string> = {
+    'Bardo':'Carisma','Brujo':'Carisma','Clérigo':'Sabiduría','Druida':'Sabiduría',
+    'Explorador':'Sabiduría','Hechicero':'Carisma','Mago':'Inteligencia','Paladín':'Carisma'
+  };
   const BUILDER_PRIMARY: Record<string,string> = {'Bárbaro':'Fuerza','Bardo':'Carisma','Brujo':'Carisma','Clérigo':'Sabiduría','Druida':'Sabiduría','Explorador':'Destreza o Sabiduría','Guerrero':'Fuerza o Destreza','Hechicero':'Carisma','Mago':'Inteligencia','Monje':'Destreza y Sabiduría','Paladín':'Fuerza y Carisma','Pícaro':'Destreza'};
   const BUILDER_STANDARD = [15,14,13,12,10,8];
   const BUILDER_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
@@ -816,10 +833,10 @@
     const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
     put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (nivel 1)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
     BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(b.abilities[a])+' ('+mod(Number(b.abilities[a]))+')'));
-    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,2,'Por calcular según armadura'); put(2,3,mod(Number(b.abilities.Destreza))); put(2,4,'30 pies (ajustar por especie)'); put(2,5,proficiency); put(2,6,'Fuerza '+mod(Number(b.abilities.Fuerza))+' · Destreza '+mod(Number(b.abilities.Destreza))+' · Constitución '+mod(con)+' · Inteligencia '+mod(Number(b.abilities.Inteligencia))+' · Sabiduría '+mod(Number(b.abilities.Sabiduría))+' · Carisma '+mod(Number(b.abilities.Carisma)));
-    put(3,0,b.skills || 'Seleccionar según clase y trasfondo'); put(3,1,b.tools || 'Según trasfondo'); put(3,2,'Según clase'); put(3,3,'Según clase'); put(3,4,'Común y los idiomas otorgados por trasfondo/especie');
+    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,2,b.className === 'Bárbaro' ? String(10 + builderModifier(Number(b.abilities.Destreza)) + builderModifier(con))+' (Defensa sin armadura)' : b.className === 'Monje' ? String(10 + builderModifier(Number(b.abilities.Destreza)) + builderModifier(Number(b.abilities.Sabiduría)))+' (Defensa sin armadura)' : String(10 + builderModifier(Number(b.abilities.Destreza)))+' (sin armadura)'); put(2,3,mod(Number(b.abilities.Destreza))); put(2,4,'30 pies'); put(2,5,proficiency); put(2,6,BUILDER_SAVES[b.className] || '—');
+    put(3,0,b.skills || 'Pendiente: elegir las habilidades permitidas por clase y trasfondo'); put(3,1,b.tools || 'Según trasfondo'); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,b.className === 'Bárbaro' || b.className === 'Bardo' || b.className === 'Clérigo' || b.className === 'Druida' || b.className === 'Explorador' || b.className === 'Guerrero' || b.className === 'Paladín' || b.className === 'Pícaro' ? 'Armas sencillas y competencias marciales según clase' : 'Armas sencillas'); put(3,4,'Común y los idiomas otorgados por trasfondo/especie');
     put(4,0,BUILDER_CLASS_FEATURES[b.className] || ''); put(4,1,BUILDER_SPECIES_TRAITS[b.species] || ''); put(4,2,b.feat); put(4,3,b.traits || '—');
-    put(5,0,'Según clase'); put(5,1,'8 + bonificador de competencia + modificador de aptitud mágica'); put(5,2,'Bonificador de competencia + modificador de aptitud mágica'); put(5,3,'Seleccionar según clase'); put(5,4,b.spells || 'Seleccionar según clase'); put(5,5,'Según clase');
+    const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(b.abilities[magicAbility])) : 0; put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(10 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,b.className === 'Bárbaro' || b.className === 'Guerrero' || b.className === 'Monje' || b.className === 'Pícaro' ? 'No obtiene trucos a nivel 1 por clase' : 'Elegir según lista de clase'); put(5,4,b.spells || 'Pendiente: seleccionar de la lista de conjuros de nivel 1 de la clase'); put(5,5,'Según clase');
     put(6,0,b.equipment || 'Equipo inicial A de clase y trasfondo'); put(6,1,'Según equipo inicial');
     put(7,0,b.notes || '—');
     return {id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente del GM. Revisión final pendiente de completar los campos específicos de clase y equipo.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
@@ -1384,7 +1401,7 @@
             {:else if builderStep === 1}
               <h3>2. Clase</h3><p class="muted">Todas las clases del Manual del Jugador 2024. Se aplican únicamente los rasgos que se obtienen a nivel 1.</p>
               <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
-              <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1.</small></div>
+              <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
             {:else if builderStep === 2}
               <h3>3. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
               <label>Especie<select bind:value={builderData.species}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
@@ -1396,10 +1413,10 @@
               <div class="builder-info"><small>La lista muestra las dotes de origen elegibles para un personaje de nivel 1. Las dotes con requisito de nivel superior no se ofrecen.</small></div>
             {:else if builderStep === 4}
               <h3>5. Puntuaciones de característica</h3>
-              <label>Método<select bind:value={builderData.method}><option value="standard">Conjunto estándar (15, 14, 13, 12, 10, 8)</option><option value="manual">Asignación manual</option></select></label>
+              <label>Método<select bind:value={builderData.method}><option value="standard">Conjunto estándar (15, 14, 13, 12, 10, 8)</option><option value="manual">Compra por puntos (27 puntos; falta validación de presupuesto)</option></select></label>
               <p class="muted">Asigna las seis puntuaciones. Los modificadores se calcularán automáticamente.</p>
               {#each BUILDER_ABILITY_NAMES as ability}
-                <label>{ability}<select bind:value={builderData.abilities[ability]}>{#each (builderData.method === 'standard' ? BUILDER_STANDARD : Array.from({length:13},(_,i)=>8+i)) as score}<option value={score}>{score} ({builderModifier(score) >= 0 ? '+' : ''}{builderModifier(score)})</option>{/each}</select></label>
+                <label>{ability}<select bind:value={builderData.abilities[ability]}>{#each (builderData.method === 'standard' ? BUILDER_STANDARD.filter(score => !BUILDER_ABILITY_NAMES.some(other => other !== ability && Number(builderData.abilities[other]) === score)) : Array.from({length:8},(_,i)=>8+i)) as score}<option value={score}>{score} ({builderModifier(score) >= 0 ? '+' : ''}{builderModifier(score)})</option>{/each}</select></label>
               {/each}
             {:else if builderStep === 5}
               <h3>6. Competencias, rasgos y equipo</h3>
@@ -1615,7 +1632,7 @@
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.12</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.13</span></footer>
 </div>
 
 <style>
