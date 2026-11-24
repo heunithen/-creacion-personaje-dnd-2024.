@@ -1275,6 +1275,76 @@
   }
   function builderNext() { if (builderStep < 5) builderStep += 1; }
   function builderBack() { if (builderStep > 0) builderStep -= 1; }
+  const SKILL_ABILITY_MAP: Record<string,string> = {
+    'Acrobacias':'Destreza','Atletismo':'Fuerza','Conocimiento arcano':'Inteligencia','Engaño':'Carisma',
+    'Historia':'Inteligencia','Interpretación':'Carisma','Intimidación':'Carisma','Investigación':'Inteligencia',
+    'Juego de manos':'Destreza','Medicina':'Sabiduría','Naturaleza':'Inteligencia','Perspicacia':'Sabiduría',
+    'Persuasión':'Carisma','Percepción':'Sabiduría','Religión':'Inteligencia','Sigilo':'Destreza',
+    'Supervivencia':'Sabiduría','Trato con animales':'Sabiduría'
+  };
+  function signedBonus(value:number): string { return (value>=0?'+':'')+value; }
+  function getSpellRecord(name:string): any {
+    const clean=String(name||'').replace(/\s*\([^)]*\)\s*$/,'').replace(/^Libro:\s*/i,'').trim();
+    return (SPELLS as any[]).find(spell=>normalizeLevelText(spell.name)===normalizeLevelText(clean)) || null;
+  }
+  function describeSpells(names:string[]): string {
+    const unique=[...new Set(names.map(name=>String(name||'').trim()).filter(Boolean))];
+    return unique.map(name=>{
+      const spell=getSpellRecord(name);
+      if(!spell) return name+'\nDatos descriptivos no disponibles en el catálogo de conjuros.';
+      return spell.name+' · '+(spell.level===0?'Truco':'Nivel '+spell.level)+' · '+spell.school+
+        '\nTiempo: '+(spell.castingTime||'—')+' · Alcance: '+(spell.range||'—')+
+        '\nComponentes: '+(spell.components||'—')+' · Duración: '+(spell.duration||'—')+
+        '\n'+(spell.description||'Descripción no disponible.');
+    }).join('\n\n');
+  }
+  function equipmentLines(value:string): string {
+    return String(value||'').replace(/\.$/,'').split(',').map(item=>item.trim()).filter(Boolean)
+      .filter(item=>!(/^\d+\s*po$/i.test(item))).map(item=>'• '+item).join('\n') || '—';
+  }
+  function refreshDerivedCharacterSheet(target:RawSheet) {
+    const proficiency=Math.max(2,getCharacterNumber(target,'COMBATE','Bonificador por competencia',2));
+    const scores:Record<string,number>={};
+    for(const ability of BUILDER_ABILITY_NAMES) scores[ability]=getCharacterNumber(target,'ATRIBUTOS',ability,10);
+    const skillRaw=getCharacterStat(target,'COMPETENCIAS','Habilidades');
+    const skillText=normalizeLevelText(skillRaw);
+    const expertiseMatch=String(skillRaw).match(/pericia\s*:\s*([^\n;]+)/i);
+    const expertise=normalizeLevelText(expertiseMatch?.[1]||'');
+    for(const [skill,ability] of Object.entries(SKILL_ABILITY_MAP)) {
+      const normalized=normalizeLevelText(skill);
+      const proficient=skillText.includes(normalized);
+      const expert=proficient && expertise.includes(normalized);
+      const modifier=Math.floor((scores[ability]-10)/2)+(proficient?proficiency:0)+(expert?proficiency:0);
+      setCharacterStat(target,'HABILIDADES',skill,signedBonus(modifier)+(expert?' · Pericia':proficient?' · Competente':''));
+    }
+    const savesText=normalizeLevelText(getCharacterStat(target,'COMBATE','Salvaciones'));
+    for(const ability of BUILDER_ABILITY_NAMES) {
+      const proficient=savesText.includes(normalizeLevelText(ability));
+      const modifier=Math.floor((scores[ability]-10)/2)+(proficient?proficiency:0);
+      setCharacterStat(target,'SALVACIONES',ability,signedBonus(modifier)+(proficient?' · Competente':''));
+    }
+    const featText=normalizeLevelText([
+      getCharacterStat(target,'RASGOS Y DOTES','Dote de origen'),
+      getCharacterStat(target,'RASGOS Y DOTES','Dotes adicionales'),
+      getCharacterStat(target,'DOTE Y OPCIONES','Dote de origen')
+    ].join(' '));
+    const initiative=Math.floor((scores.Destreza-10)/2)+(featText.includes('alerta')?proficiency:0);
+    setCharacterStat(target,'COMBATE','Iniciativa',signedBonus(initiative));
+    const perception=Math.floor((scores.Sabiduría-10)/2)+(skillText.includes('percepcion')?proficiency:0)+
+      (expertise.includes('percepcion')&&skillText.includes('percepcion')?proficiency:0);
+    setCharacterStat(target,'COMBATE','Percepción pasiva',10+perception);
+    const spellText=[
+      getCharacterStat(target,'CONJUROS','Trucos'),
+      getCharacterStat(target,'CONJUROS','Conjuros de nivel 1'),
+      getCharacterStat(target,'CONJUROS','Trucos de subclase'),
+      getCharacterStat(target,'CONJUROS','Conjuros preparados de subclase'),
+      getCharacterStat(target,'CONJUROS','Conjuros adicionales de subclase')
+    ].join(',');
+    const spellNames=spellText.replace(/Libro:\s*/gi,'').replace(/Preparados:\s*/gi,'')
+      .split(/[,;\n]+/).map(value=>value.replace(/\s*\([^)]*\)\s*$/,'').trim())
+      .filter(value=>value && !/^(libro:|preparados:)/i.test(value));
+    if(spellNames.length) setCharacterStat(target,'DETALLE DE CONJUROS','Conjuros y descripciones',describeSpells(spellNames));
+  }
   function buildLevelOneSheet() {
     const b = builderData;
     const mod = (n:number) => (builderModifier(n) >= 0 ? '+' : '') + builderModifier(n);
@@ -1302,7 +1372,14 @@
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Notas']),
-      general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})])
+      general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})]),
+      general('HABILIDADES',BUILDER_SKILL_OPTIONS),
+      general('SALVACIONES',BUILDER_ABILITY_NAMES),
+      general('DETALLES DEL TRASFONDO',['Aumentos de característica permitidos','Habilidades','Herramienta','Dote de origen','Equipo del trasfondo']),
+      general('DETALLES DE ESPECIE',['Elección de especie','Rasgos de especie','Competencia adicional','Elecciones mágicas','Tamaño']),
+      general('INVENTARIO',['Equipo de clase','Equipo de trasfondo','Equipo adicional']),
+      general('ATAQUES',['Armas incluidas en el equipo','Maestrías con armas','Competencia con armas']),
+      general('DETALLE DE CONJUROS',['Conjuros y descripciones'])
     ];
     const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
     put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
@@ -1316,12 +1393,41 @@
     const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(finalAbilities[magicAbility])) : 0; const classLevelOne = (LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]; const classResources = classLevelOne?.resources || {}; const classSlots = Object.entries(classResources).filter(([key,value]:any)=>/^Espacios nivel|^Espacios de conjuro$|^Nivel de los espacios$/.test(key) && value && value!=='—').map(([key,value]:any)=>key+': '+value).join(' · '); put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(10 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,[...b.selectedCantrips, ...speciesCantrips, ...b.backgroundMagicCantrips, ...(b.species === 'Humano' ? b.speciesMagicCantrips : []), ...b.warlockTomeCantrips].join(', ') || (classData.cantrips ? 'Faltan por elegir ' + classData.cantrips + ' trucos' : 'No obtiene trucos de clase a nivel 1')); put(5,4,(b.className === 'Mago' ? 'Libro: ' + b.wizardSpellbook.join(', ') + '. Preparados: ' : '') + ([...b.selectedSpells, b.backgroundMagicSpell, ...(b.species === 'Humano' ? [b.speciesMagicSpell] : []), ...(b.className === 'Explorador' ? ['Marca del cazador (siempre preparado)'] : []), ...(b.species === 'Gnomo' && b.speciesChoice === 'Gnomo de los bosques' ? ['Hablar con los animales (siempre preparado)'] : []), ...(b.className === 'Brujo' && b.classSpecialChoice === 'Pacto del grimorio' ? b.warlockTomeRituals : []), ...(b.className === 'Brujo' && b.classSpecialChoice === 'Pacto de la cadena' ? ['Encontrar familiar (Pacto de la cadena)'] : [])].filter(Boolean).join(', ') || (classData.spells ? 'Faltan por elegir ' + classData.spells + ' conjuros' : 'No tiene conjuros de clase a nivel 1'))); put(5,5,classSlots || '—'); put(5,6,classResources['Trucos'] || '—'); put(5,7,classResources['Conjuros preparados'] || '—'); put(5,8,classSlots || '—');
     put(6,0,[classEquipment, classEquipmentDetail, b.backgroundEquipment === 'B' ? 'Trasfondo: 50 po en lugar del paquete A.' : BUILDER_BACKGROUND_DATA[b.background].equipmentA, b.equipment].filter(Boolean).join(' ')); put(6,1,'Monedas incluidas en el equipo inicial');
     put(7,0,b.notes || '—');
-    const progressionIndex = pairs.length-1;
+    const backgroundData=BUILDER_BACKGROUND_DATA[b.background];
+    const detailIndex=(name:string)=>pairs.findIndex(pair=>normalizeLevelText(pair.heading.name)===normalizeLevelText(name));
+    const backgroundIndex=detailIndex('DETALLES DEL TRASFONDO');
+    put(backgroundIndex,0,backgroundData.abilities.join(' / '));
+    put(backgroundIndex,1,backgroundData.skills.join(', '));
+    put(backgroundIndex,2,[backgroundData.tool,b.backgroundToolChoice].filter(Boolean).join(' · '));
+    put(backgroundIndex,3,backgroundData.feat);
+    put(backgroundIndex,4,b.backgroundEquipment==='B'?'50 po en lugar del paquete de equipo A':backgroundData.equipmentA);
+    const speciesIndex=detailIndex('DETALLES DE ESPECIE');
+    put(speciesIndex,0,[b.species,b.speciesChoice].filter(Boolean).join(' · '));
+    put(speciesIndex,1,BUILDER_SPECIES_TRAITS[b.species]||'—');
+    put(speciesIndex,2,b.speciesSkill||'—');
+    put(speciesIndex,3,[b.speciesMagicAbility,b.speciesMagicCantrips.join(', '),b.speciesMagicSpell,b.speciesFeatMagicAbility].filter(Boolean).join(' · ')||'—');
+    put(speciesIndex,4,b.speciesSize||'Según especie');
+    const inventoryIndex=detailIndex('INVENTARIO');
+    put(inventoryIndex,0,equipmentLines(classEquipment+' '+classEquipmentDetail));
+    put(inventoryIndex,1,equipmentLines(b.backgroundEquipment==='B'?'50 po':backgroundData.equipmentA));
+    put(inventoryIndex,2,equipmentLines(b.equipment));
+    const attacksIndex=detailIndex('ATAQUES');
+    const equipmentText=[classEquipment,backgroundData.equipmentA,b.equipment].join(' ').toLocaleLowerCase('es');
+    const weaponNames=BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>equipmentText.includes(weapon.toLocaleLowerCase('es')));
+    put(attacksIndex,0,weaponNames.join(', ')||'No se identificaron armas individuales en el paquete seleccionado.');
+    put(attacksIndex,1,b.weaponMasteries.join(', ')||'—');
+    put(attacksIndex,2,'Bonificador por competencia: '+proficiency+' · Consulta el perfil del arma para su daño y propiedades.');
+    const detailSpellsIndex=detailIndex('DETALLE DE CONJUROS');
+    const progressionIndex = detailIndex('PROGRESIÓN');
     put(progressionIndex,0,'1');
     const levelOneFeatureDetails=getClassFeaturesAtLevel(b.className,1).map((feature:any)=>feature.name+'\n'+feature.description).join('\n\n');
     put(progressionIndex,1,levelOneFeatureDetails || classLevelOne?.features || classData.features || '—');
     Object.entries(classResources).forEach(([key,value],i)=>put(progressionIndex,i+2,String(value)));
-    return {id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente del GM. La sección Progresión contiene los rasgos y valores de clase del nivel actual.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
+    const spellNames=[...b.selectedCantrips,...speciesCantrips,...b.backgroundMagicCantrips,...(b.species==='Humano'?b.speciesMagicCantrips:[]),...b.warlockTomeCantrips,...b.selectedSpells,...b.wizardSpellbook,b.backgroundMagicSpell,...(b.species==='Humano'?[b.speciesMagicSpell]:[]),...(b.className==='Explorador'?['Marca del cazador']:[]),...(b.className==='Brujo'&&b.classSpecialChoice==='Pacto del grimorio'?b.warlockTomeRituals:[])].filter(Boolean);
+    put(detailSpellsIndex,0,describeSpells(spellNames));
+    const result={id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente del GM. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
+    refreshDerivedCharacterSheet(result);
+    return result;
   }
   function finishBuilder() {
     builderPreview = buildLevelOneSheet();
@@ -1662,7 +1768,12 @@ import SPELLS from './spells.json';
       if (!Number.isInteger(roll) || roll<1 || roll>hitDie) { notice='Introduce una tirada válida de 1 a '+hitDie+'.'; return; }
       hpGain=roll;
     }
-    hpGain=Math.max(1,hpGain+conMod);
+    const speciesName=getCharacterStat(original,'PERSONAJE','Especie');
+    const originFeatText=normalizeLevelText(getCharacterStat(original,'RASGOS Y DOTES','Dote de origen'));
+    const additionalFeatText=normalizeLevelText(getCharacterStat(original,'RASGOS Y DOTES','Dotes adicionales'));
+    const dwarfBonus=normalizeLevelText(speciesName)==='enano'?1:0;
+    const toughBonus=(originFeatText+' '+additionalFeatText).includes('duro')?2:0;
+    hpGain=Math.max(1,hpGain+conMod+dwarfBonus+toughBonus);
 
     const updated=JSON.parse(JSON.stringify(original)) as RawSheet;
     const oldHp=getCharacterNumber(updated,'COMBATE','Puntos de golpe máximos',0);
@@ -1767,6 +1878,7 @@ import SPELLS from './spells.json';
       const tableSummary=(subclass.tables || []).map((table:any)=>table.name+'\n'+table.columns.join(' | ')+'\n'+table.rows.map((r:string[])=>r.join(' | ')).join('\n')).join('\n\n');
       if (tableSummary) setCharacterStat(updated,'PROGRESIÓN','Tablas de subclase · '+formatSubclassName(subclass.key),tableSummary);
     }
+    refreshDerivedCharacterSheet(updated);
     const playerId=levelUpEntry.playerId;
     roomSheets=[...roomSheets.filter(x=>x.playerId!==playerId),{...levelUpEntry,sheet:updated}];
     void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
@@ -2511,7 +2623,7 @@ import SPELLS from './spells.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.29</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.33</span></footer>
 </div>
 
 <style>
