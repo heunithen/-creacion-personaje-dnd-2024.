@@ -25,7 +25,6 @@
   let syncInProgress = false;
   let syncPending = false;
   let fileInput: HTMLInputElement;
-  let fastCharacterText = '';
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
   const CHEST_LOOT = [
@@ -1031,138 +1030,6 @@
   }
 
 
-  function cleanFastText(value: string) {
-    return value.replace(/&amp;/g, '&').replace(/&#91;/g, '[').replace(/&#93;/g, ']')
-      .replace(/&nbsp;/g, ' ').replace(/<[^>]*>/g, '').replace(/\*\*/g, '')
-      .replace(/\*/g, '').replace(/_/g, '').trim();
-  }
-
-  function convertFastCharacter() {
-    const source = fastCharacterText.trim();
-    if (!source) { notice = 'Pega primero el texto de Fast Character.'; return; }
-    const lines = source.split(/\r?\n/).map(cleanFastText).filter(Boolean);
-    const get = (label: string) => {
-      const line = lines.find(item => item.toLowerCase().startsWith(label.toLowerCase() + ':'));
-      return line ? line.slice(line.indexOf(':') + 1).trim() : '';
-    };
-    const name = get('Name') || 'Personaje importado';
-    const sections: RawSection[] = [];
-    let sectionId = 1;
-    const addPaired = (title: string, items: [string,string][]) => {
-      const valid = items.filter(([label,value]) => label.trim() && value.trim());
-      if (!valid.length) return;
-      sections.push({id:sectionId++,name:title,stats:valid.map(([label],i)=>({id:i+1,name:label}))});
-      sections.push({id:sectionId++,name:'VALORES',stats:valid.map(([,value],i)=>({id:i+1,name:'',value}))});
-    };
-    const identity: [string,string][] = [
-      ['Raza / ascendencia',get('Race/Ancestry/Heritage')],
-      ['Clase y nivel',get('Class & Level')],['Trasfondo',get('Background')],
-      ['Alineamiento',get('Alignment')],['Experiencia',get('Experience')]
-    ];
-    addPaired('Datos del personaje',identity);
-
-    const abilityLabels: Record<string,string> = {
-      Strength:'Fuerza',Dexterity:'Destreza',Constitution:'Constitución',
-      Intelligence:'Inteligencia',Wisdom:'Sabiduría',Charisma:'Carisma'
-    };
-    const abilities: [string,string][] = [];
-    let current = '';
-    let currentAbilityIndex = -1;
-    for (const line of lines) {
-      const match = line.match(/^(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+(\d+)$/i);
-      if (match) {
-        current=match[1];
-        currentAbilityIndex = abilities.length;
-        abilities.push([abilityLabels[current],match[2]]);
-        continue;
-      }
-      if (!current) continue;
-      const detail=line.match(/^(.+?)\s*\.\.\.\s*(.+)$/);
-      if (detail) {
-        const detailValue = detail[1].trim();
-        const rawName = detail[2].replace(/\s+\*+$/,'').trim();
-        let detailName = rawName;
-        if (/Ability Checks/i.test(rawName)) detailName = 'Pruebas de característica';
-        else if (/Saving Throws?/i.test(rawName)) detailName = 'Salvaciones';
-        else if (/Athletics Skill/i.test(rawName)) detailName = 'Atletismo';
-        else if (/Maximum Carrying Capacity/i.test(rawName)) detailName = 'Capacidad máxima de carga';
-        else if (/Max\. Push or Drag/i.test(rawName)) detailName = 'Empujar o arrastrar máximo';
-        else if (/Maximum Lift/i.test(rawName)) detailName = 'Levantamiento máximo';
-        const entry = abilities[currentAbilityIndex];
-        if (entry) entry[1] += '\\n' + detailName + ': ' + detailValue;
-      } else if (/^(COMBAT|FEATURES|Proficiencies|EQUIPMENT)/i.test(line)) {
-        current = '';
-        currentAbilityIndex = -1;
-      }
-    }
-    if (abilities.length!==6) { notice='No se reconocieron las seis características. Comprueba que pegaste el texto completo de Fast Character.'; return; }
-    addPaired('Atributos',abilities);
-
-    const findStart=(prefix:string)=>lines.findIndex(line=>line.toLowerCase().startsWith(prefix.toLowerCase()));
-    const combatStart=findStart('COMBAT'), featuresStart=findStart('FEATURES, TRAITS'), equipmentStart=findStart('EQUIPMENT & TREASURE');
-    const combatLines=combatStart>=0?lines.slice(combatStart+1,featuresStart>combatStart?featuresStart:lines.length):[];
-    const combat: [string,string][]=[];
-    const attacks: [string,string][]=[];
-    for (const line of combatLines) {
-      let m=line.match(/^(\d+)\s*\.\.\.\s*Passive Perception/i);
-      if(m){combat.push(['Percepción pasiva',m[1]]);continue;}
-      m=line.match(/^([+\-]\d+)\s*\.\.\.\s*Initiative Modifier/i);
-      if(m){combat.push(['Iniciativa',m[1]]);continue;}
-      m=line.match(/^Armor Class\s+(\d+)(.*)$/i);
-      if(m){combat.push(['Clase de armadura',m[1]+(m[2]?' · '+m[2]:'')]);continue;}
-      m=line.match(/^(\d+)\s*ft\.\s*Speed\s*\.\.\.\s*(.*)$/i);
-      if(m){combat.push(['Velocidad',m[1]+' pies · '+m[2]]);continue;}
-      m=line.match(/^(\d+)\s+hit points\s*\.\.\.\s*(.*)$/i);
-      if(m){combat.push(['Puntos de golpe y dados',m[1]+' PG · '+m[2]]);continue;}
-      if(/Attack:|Weapon Attack:/.test(line)){const split=line.indexOf('.');attacks.push([split>0?line.slice(0,split).trim():'Ataque',line]);}
-      else if(/During A Turn:/i.test(line)) attacks.push(['Acciones de combate',line]);
-    }
-    addPaired('Combate',combat);
-    addPaired('Ataques',attacks);
-
-    const profStart=findStart('Proficiencies & Languages'),healerStart=findStart('Healer Feat');
-    const profLines=profStart>=0?lines.slice(profStart+1,healerStart>profStart?healerStart:lines.length):[];
-    const prof: [string,string][]=[];
-    for(const line of profLines){
-      const clean=line.replace(/^•\s*/,'');const split=clean.indexOf(':');
-      if(split>0) prof.push([clean.slice(0,split).trim(),clean.slice(split+1).trim()]);
-      else if(clean) prof.push(['Competencia',clean]);
-    }
-    addPaired('Competencias',prof);
-
-    const featureEnd=equipmentStart>featuresStart&&featuresStart>=0?equipmentStart:lines.length;
-    const featureLines=featuresStart>=0?lines.slice(featuresStart+1,featureEnd):[];
-    const features: [string,string][]=[];
-    let featureTitle='';let featureBody:string[]=[];
-    const flushFeature=()=>{if(featureTitle||featureBody.length)features.push([featureTitle||'Rasgo',featureBody.join(' · ')||featureTitle]);featureTitle='';featureBody=[];};
-    for(const line of featureLines){
-      if(/^Proficiencies & Languages/i.test(line) || profLines.includes(line)) continue;
-      if(/Background|Feat|Traits|Class Features|Goliath|Monk Class Features/i.test(line)&&!line.startsWith('•')){
-        flushFeature();
-        const split=line.indexOf(':');
-        featureTitle=(split>0?line.slice(0,split):line).replace(/\s+\[PHB.*\]$/,'').trim();
-        const inlineDescription=split>0?line.slice(split+1).trim():'';
-        if(inlineDescription) featureBody.push(inlineDescription);
-      }else{const item=line.replace(/^•\s*/,'').trim();if(item)featureBody.push(item);}
-    }
-    flushFeature();
-    addPaired('Rasgos y características',features);
-
-    const equipmentLines=equipmentStart>=0?lines.slice(equipmentStart+1):[];
-    const equipment: [string,string][]=[];
-    for(const line of equipmentLines){
-      const clean=line.replace(/^•\s*/,'');const split=clean.indexOf(':');
-      if(split>0)equipment.push([clean.slice(0,split).trim(),clean.slice(split+1).trim()]);
-      else if(clean)equipment.push(['Equipo',clean]);
-    }
-    addPaired('Equipo e inventario',equipment);
-
-    sheet={id:Date.now(),name,notes:'Importado desde Fast Character',sections};
-    localStorage.setItem('forja-raw-character',JSON.stringify(sheet));
-    scheduleAutoSync();fastCharacterText='';importOpen=false;activeTab='Datos';
-    notice='Personaje convertido y cargado. Revisa la ficha; los datos ahora están organizados en campos individuales.';
-  }
-
   function sectionPairs(sections: RawSection[] = []) {
     const result: { heading: RawSection; values?: RawSection }[] = [];
     for (let i = 0; i < sections.length; i++) {
@@ -1490,8 +1357,6 @@
           {#if importOpen}
             <div class="import-box">
               <label>Archivo JSON<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
-              <label>Pegar texto de Fast Character<textarea class="fast-import-text" rows="9" bind:value={fastCharacterText} placeholder="Pega aquí el texto completo copiado desde fastcharacter.com"></textarea></label>
-              <button class="primary" type="button" on:click={convertFastCharacter}>Convertir y cargar personaje</button>
               <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
             </div>
           {/if}
@@ -1551,8 +1416,6 @@
               {#if importOpen}
                 <div class="import-box">
                   <label>Archivo JSON<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
-                  <label>Pegar texto de Fast Character<textarea class="fast-import-text" rows="9" bind:value={fastCharacterText} placeholder="Pega aquí el texto completo copiado desde fastcharacter.com"></textarea></label>
-                  <button class="primary" type="button" on:click={convertFastCharacter}>Convertir y cargar personaje</button>
                   <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
                 </div>
               {/if}
@@ -1593,7 +1456,7 @@
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.11</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.12</span></footer>
 </div>
 
 <style>
@@ -1684,7 +1547,6 @@
   .story-section{border-top-color:#7b5d70}
   .general-section{border-top-color:#8b8171}
   .import-character-panel{margin-bottom:.8rem}
-  .fast-import-text{display:block;width:100%;box-sizing:border-box;min-height:10rem;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#fffdf8;color:var(--ink);font:.75rem/1.45 system-ui,sans-serif;resize:vertical}
   .main.gm-layout{max-width:1180px}
   .gm-sheet-details{grid-column:1/-1;width:100%;min-width:0;margin-top:.7rem}
   .gm-sheet-details summary{cursor:pointer;color:#d2b27c;padding:.7rem .2rem;font:600 .85rem system-ui,sans-serif}
