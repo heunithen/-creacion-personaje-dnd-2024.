@@ -1967,7 +1967,7 @@ import SPELLS from './spells.json';
     const classOk=spell.classes.some((value:string)=>normalizeLevelText(value)===normalizeLevelText(className));
     return classOk && spell.level<=maxLevel && (expectedLevel===undefined || spell.level===expectedLevel);
   }
-  function isValidWildShapeForm(name:string): boolean {
+  function isValidWildShapeForm(name:string,maxChallengeRating:number=0.25,allowFlight:boolean=false): boolean {
     const monster=MONSTERS.find((item:any)=>normalizeLevelText(item.name)===normalizeLevelText(name));
     if(!monster) return false;
     const lines=String(monster.statBlock||'').split('\n');
@@ -1976,7 +1976,7 @@ import SPELLS from './spells.json';
     const cr=String(monster.cr||'').split(' ')[0];
     const parts=cr.split('/').map(Number);
     const value=parts.length===2?parts[0]/parts[1]:parts[0];
-    return Boolean(typeLine) && Number.isFinite(value) && value<=0.25 && !/\bFly\b/i.test(speedLine);
+    return Boolean(typeLine) && Number.isFinite(value) && value<=maxChallengeRating && (allowFlight || !/\bFly\b/i.test(speedLine));
   }
   function openLevelUp(entry: RoomEntry) {
     levelUpEntry = entry; levelUpDecision = '';
@@ -2086,9 +2086,12 @@ import SPELLS from './spells.json';
     const languageChoices=splitChoiceList(levelUpLanguages);
     const currentLanguages=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Idiomas'));
     if(needsNewLanguages && (languageChoices.length!==2 || new Set(languageChoices.map(x=>normalizeLevelText(x))).size!==2 || languageChoices.some(name=>!BUILDER_LANGUAGES.some(option=>normalizeLevelText(option)===normalizeLevelText(name)) || currentLanguages.some(old=>normalizeLevelText(old)===normalizeLevelText(name))))) { notice='Explorador hábil requiere dos idiomas nuevos y distintos de las listas del manual.'; return; }
-    const needsWildShapeForms=className==='Druida' && nextClassFeatures.some((feature:any)=>normalizeLevelText(feature.description||'').includes('conoces cuatro formas de bestia'));
+    const needsWildShapeForms=className==='Druida' && [2,4,8].includes(nextLevel);
     const wildShapeForms=splitChoiceList(levelUpWildShapeForms);
-    if(needsWildShapeForms && (wildShapeForms.length!==4 || new Set(wildShapeForms.map(x=>normalizeLevelText(x))).size!==4 || wildShapeForms.some(name=>!isValidWildShapeForm(name)))) { notice='Forma salvaje requiere cuatro bestias distintas de VD 1/4 o inferior y sin velocidad volando, según el manual de monstruos.'; return; }
+    const wildShapeTarget=nextLevel===2?4:nextLevel===4?6:8;
+    const wildShapeMaxCR=nextLevel===2?0.25:nextLevel===4?0.5:1;
+    const wildShapeAllowsFlight=nextLevel>=8;
+    if(needsWildShapeForms && (wildShapeForms.length!==wildShapeTarget || new Set(wildShapeForms.map(x=>normalizeLevelText(x))).size!==wildShapeTarget || wildShapeForms.some(name=>!isValidWildShapeForm(name,wildShapeMaxCR,wildShapeAllowsFlight)))) { notice='A nivel '+nextLevel+' Forma salvaje requiere '+wildShapeTarget+' bestias distintas de VD '+(wildShapeMaxCR===0.25?'1/4':wildShapeMaxCR)+' o inferior'+(wildShapeAllowsFlight?' (pueden volar)':' y sin velocidad volando')+'.'; return; }
     const masteryResource=Object.entries(row.resources||{}).find(([key])=>normalizeLevelText(key).includes('maestria con armas'));
     const targetMasteries=masteryResource?Number(masteryResource[1]):0;
     const masteryChoices=splitChoiceList(levelUpWeaponMasteries);
@@ -2576,8 +2579,8 @@ import SPELLS from './spells.json';
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/idiomas conoces dos idiomas/.test(normalizeLevelText(feature.description)))}
                 <label>Dos idiomas nuevos<input bind:value={levelUpLanguages} placeholder="Ej. Dracónico, Gigante" /></label>
               {/if}
-              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.description).includes('conoces cuatro formas de bestia'))}
-                <label>Cuatro formas de bestia conocidas (VD 1/4 o inferior, sin vuelo)<textarea bind:value={levelUpWildShapeForms} rows="2" placeholder="Ej. Wolf, Panther, Giant Wolf Spider, Giant Badger" /></label>
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && [2,4,8].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
+                <label>{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?4:Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?6:8} formas de bestia conocidas (VD {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?'1/4':Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?'1/2':'1'} o inferior{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===8?', se permite vuelo':', sin vuelo'})<textarea bind:value={levelUpWildShapeForms} rows="2" placeholder="Introduce la lista completa de formas conocidas, separadas por comas" /></label>
               {/if}
               {#if Number(getNextLevelRow(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRow(levelUpEntry)?.resources?.['Maestrías con armas']) > splitChoiceList(getCharacterStat(levelUpEntry.sheet,'ATAQUES','Maestrías con armas')).length}
                 <label>Maestrías con armas (lista completa)<input bind:value={levelUpWeaponMasteries} placeholder="Escribe todas las maestrías, separadas por comas" /></label>
