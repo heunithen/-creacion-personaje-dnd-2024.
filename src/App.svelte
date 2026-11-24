@@ -2409,7 +2409,7 @@ import SPELLS from './spells.json';
     const needsWizardMastery=className==='Mago' && nextLevel===18;
     if(needsWizardMastery && (!wizardBookForChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(levelUpWizardMastery1)) || !wizardBookForChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(levelUpWizardMastery2)) || !validWizardBookSpell(levelUpWizardMastery1,1,true) || !validWizardBookSpell(levelUpWizardMastery2,2,true))) { notice='Maestría sobre conjuros requiere un conjuro de nivel 1 y otro de nivel 2 de tu libro, ambos con tiempo de lanzamiento de una acción.'; return; }
     const needsWizardIllusionCantrip=className==='Mago' && wizardSubclassKey==='ilusionista' && nextLevel===3;
-    const knownWizardCantrips=splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos'));
+    const knownWizardCantrips=[...splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos')),...splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos de clase'))];
     const alreadyKnowsMinorIllusion=knownWizardCantrips.some(name=>normalizeLevelText(name)==='ilusionmenor');
     if(needsWizardIllusionCantrip && alreadyKnowsMinorIllusion && (!levelUpWizardIllusionCantrip.trim() || !getSpellRecord(levelUpWizardIllusionCantrip) || getSpellRecord(levelUpWizardIllusionCantrip).level!==0 || !getSpellRecord(levelUpWizardIllusionCantrip).classes.some((value:string)=>normalizeLevelText(value)==='mago') || knownWizardCantrips.some(name=>normalizeLevelText(name)===normalizeLevelText(levelUpWizardIllusionCantrip)))) { notice='Como ya conoces Ilusión menor, elige otro truco de mago que todavía no conozcas.'; return; }
     const needsWizardSignature=className==='Mago' && nextLevel===20;
@@ -2608,7 +2608,7 @@ import SPELLS from './spells.json';
     if(needsWizardIllusionCantrip) {
       const bonusCantrip=alreadyKnowsMinorIllusion?levelUpWizardIllusionCantrip.trim():'Ilusión menor';
       setCharacterStat(updated,'CONJUROS','Trucos de subclase',bonusCantrip);
-      const allKnownTricks=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos'));
+      const allKnownTricks=[...splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos')),...splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos de clase'))];
       if(!allKnownTricks.some(name=>normalizeLevelText(name)===normalizeLevelText(bonusCantrip))) setCharacterStat(updated,'CONJUROS','Trucos',[...allKnownTricks,bonusCantrip].join(', '));
     }
     if(needsWizardSignature) setCharacterStat(updated,'CONJUROS','Conjuros característicos',wizardSignatureChoices.join(', '));
@@ -3028,7 +3028,7 @@ import SPELLS from './spells.json';
                     <small>Escuela: {({ABJURADOR:'Abjuración',ADIVINO:'Adivinación',EVOCADOR:'Evocación',ILUSIONISTA:'Ilusionismo'})[levelUpSubclass] || levelUpSubclass}. Conserva los anteriores y añade los nuevos.</small>
                   {/if}
                   {#if normalizeLevelText(levelUpSubclass)==='ilusionista' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                    {#if splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos')).some(name=>normalizeLevelText(name)==='ilusionmenor')}
+                    {#if ([...splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos')),...splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos de clase'))]).some(name=>normalizeLevelText(name)==='ilusionmenor')}
                       <label>Truco adicional de Ilusionista (porque ya conoces Ilusión menor)<input bind:value={levelUpWizardIllusionCantrip} placeholder="Otro truco de mago que aún no conozcas" /></label>
                     {:else}
                       <p class="muted">Ilusión menor se añadirá automáticamente como truco adicional de la subclase; no cuenta para tu límite de trucos.</p>
