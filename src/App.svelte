@@ -748,6 +748,7 @@
   let levelUpNewSkill = '';
   let levelUpLanguages = '';
   let levelUpMetamagic = '';
+  let levelUpInvocations = '';
   let levelUpWildShapeForms = '';
   let levelUpWeaponMasteries = '';
   let levelUpSubclass = '';
@@ -1195,6 +1196,36 @@
   const BUILDER_STANDARD_LANGUAGES = ['Dracónico','Elfo','Enano','Gigante','Gnomo','Goblin','Lenguaje de signos común','Mediano','Orco'];
   const BUILDER_SKILL_OPTIONS = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
   const BUILDER_METAMAGIC_OPTIONS = ['Conjuro acelerado','Conjuro buscador','Conjuro cuidadoso','Conjuro distante','Conjuro extendido','Conjuro gemelo','Conjuro intensificado','Conjuro potenciado','Conjuro sutil','Conjuro transmutado'];
+  const BUILDER_WARLOCK_INVOCATIONS = [
+    {name:'Armadura de sombras',level:1},
+    {name:'Castigo arcano',level:5,pact:'Pacto del filo'},
+    {name:'Descarga agónica',level:2,repeatable:true,cantrip:'damage'},
+    {name:'Descarga ahuyentadora',level:2,repeatable:true,cantrip:'attack'},
+    {name:'Devorador de vida',level:9,pact:'Pacto del filo'},
+    {name:'Don de las profundidades',level:5},
+    {name:'Don de los protectores',level:9,pact:'Pacto del grimorio'},
+    {name:'Filo sediento',level:5,pact:'Pacto del filo'},
+    {name:'Hoja devoradora',level:12,pact:'Filo sediento'},
+    {name:'Inversión del amo de las cadenas',level:5,pact:'Pacto de la cadena'},
+    {name:'Lanza sobrenatural',level:2,repeatable:true,cantrip:'range'},
+    {name:'Lecciones de los primeros',level:2,repeatable:true,choice:'feat'},
+    {name:'Maestro de las formas innumerables',level:5},
+    {name:'Máscara de los mil rostros',level:2},
+    {name:'Mente sobrenatural',level:1},
+    {name:'Mirada de las dos mentes',level:5},
+    {name:'Pacto de la cadena',level:1},
+    {name:'Pacto del filo',level:1},
+    {name:'Pacto del grimorio',level:1},
+    {name:'Paso ascendente',level:5},
+    {name:'Salto sobrenatural',level:2},
+    {name:'Susurros del sepulcro',level:7},
+    {name:'Uno con las sombras',level:5},
+    {name:'Vigor infernal',level:2},
+    {name:'Visión bruja',level:15},
+    {name:'Visiones brumosas',level:2},
+    {name:'Visiones de reinos remotos',level:9},
+    {name:'Vista del diablo',level:2}
+  ];
   const BUILDER_GAMING_SETS = ['Ajedrez dragón','Apuesta de los tres dragones','Dados','Naipes'];
   const BUILDER_FEAT_TOOL_OPTIONS = [...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS,...BUILDER_GAMING_SETS,'Suministros de alquimista','Suministros de calígrafo','Suministros de cervecero','Suministros de pintor','Útiles de cocinero','Herramientas de ladrón','Herramientas de navegante','Útiles de envenenador','Útiles de herborista','Útiles para disfrazarse','Útiles para falsificar'];
   function builderFeatChoiceOptions(feat:string) {
@@ -1205,6 +1236,41 @@
   }
   function builderMagicInitiateClass(feat:string) {
     return feat.includes('(Clérigo)') ? 'Clérigo' : feat.includes('(Druida)') ? 'Druida' : feat.includes('(Mago)') ? 'Mago' : '';
+  }
+  function builderWarlockInvocationDescription(entry:string): string {
+    const [nameRaw,choiceRaw='']=entry.split(':');
+    const name=nameRaw.trim(),choice=choiceRaw.trim();
+    const descriptions:Record<string,string>={
+      'Armadura de sombras':'Puedes lanzar Armadura de mago sobre ti sin gastar un espacio de conjuro; el conjuro solo te protege mientras no lleves armadura.',
+      'Castigo arcano':'Una vez por turno, cuando aciertas con tu arma de pacto, puedes gastar un espacio de Magia del pacto para infligir 1d8 de daño de fuerza adicional por nivel del espacio y derribar a un objetivo Enorme o menor.',
+      'Descarga agónica':'Añades tu modificador por Carisma a las tiradas de daño del truco de brujo elegido: '+choice+'.',
+      'Descarga ahuyentadora':'Cuando aciertas con el truco de brujo elegido ('+choice+') a una criatura Grande o menor, puedes empujarla hasta 3 m en línea recta alejándola de ti.',
+      'Devorador de vida':'Una vez por turno, cuando aciertas con tu arma de pacto, infliges 1d6 de daño necrótico, psíquico o radiante adicional y puedes gastar un dado de golpe para recuperar PG iguales al resultado más tu modificador por Constitución (mínimo 1).',
+      'Don de las profundidades':'Puedes respirar bajo el agua, obtienes velocidad nadando igual a tu velocidad y puedes lanzar Respirar bajo el agua una vez por descanso largo sin gastar espacio.',
+      'Don de los protectores':'Tu Libro de las sombras puede contener nombres; cuando una criatura inscrita llega a 0 PG sin morir, pasa a tener 1 PG. El efecto se recupera tras un descanso largo.',
+      'Filo sediento':'Obtienes Ataque adicional, pero solo para tu arma de pacto.',
+      'Hoja devoradora':'El Ataque adicional de Filo sediento te permite realizar dos ataques adicionales en lugar de uno.',
+      'Inversión del amo de las cadenas':'Tu familiar obtiene velocidad volando o nadando de 12 m, puede atacar como acción adicional, puede infligir daño necrótico o radiante, usa tu CD de conjuros y puede recibir resistencia al daño mediante tu reacción.',
+      'Lanza sobrenatural':'El alcance del truco de brujo elegido ('+choice+') aumenta en 10 veces tu nivel de brujo.',
+      'Lecciones de los primeros':'Obtienes la dote de origen '+choice+'. Esta invocación puede elegirse varias veces, con una dote distinta cada vez.',
+      'Maestro de las formas innumerables':'Puedes lanzar Alterar el propio aspecto sin gastar un espacio de conjuro.',
+      'Máscara de los mil rostros':'Puedes lanzar Disfrazarse sin gastar un espacio de conjuro.',
+      'Mente sobrenatural':'Tienes ventaja en las tiradas de salvación de Constitución que realices para mantener la concentración.',
+      'Mirada de las dos mentes':'Como acción adicional, tocas a una criatura voluntaria y percibes el mundo a través de sus sentidos; puedes mantener la conexión con acciones adicionales y lanzar conjuros desde tu espacio o el suyo si está a 18 m o menos.',
+      'Pacto de la cadena':'Aprendes Encontrar familiar y puedes lanzarlo como acción de magia sin gastar espacio; puedes elegir una forma especial y renunciar a uno de tus ataques para que el familiar ataque con su reacción.',
+      'Pacto del filo':'Como acción adicional conjuras o vinculas un arma cuerpo a cuerpo sencilla o marcial; tienes competencia, puedes usarla como canalizador y emplear Carisma para ataque y daño. Puedes elegir daño necrótico, psíquico o radiante.',
+      'Pacto del grimorio':'Conjuras tu Libro de las sombras. Eliges tres trucos y dos conjuros de nivel 1 con etiqueta Ritual de cualquier lista; mientras lleves el libro, están preparados y cuentan como conjuros de brujo. Puedes usar el libro como canalizador.',
+      'Paso ascendente':'Puedes lanzar Levitar sobre ti sin gastar un espacio de conjuro.',
+      'Salto sobrenatural':'Puedes lanzar Salto sobre ti sin gastar un espacio de conjuro.',
+      'Susurros del sepulcro':'Puedes lanzar Hablar con los muertos sin gastar un espacio de conjuro.',
+      'Uno con las sombras':'Mientras estés en luz tenue u oscuridad, puedes lanzar Invisibilidad sobre ti sin gastar un espacio de conjuro.',
+      'Vigor infernal':'Puedes lanzar Falsa vida sobre ti sin gastar un espacio de conjuro y obtienes automáticamente el resultado máximo del dado de PG temporales.',
+      'Visión bruja':'Tienes visión verdadera hasta 9 m.',
+      'Visiones brumosas':'Puedes lanzar Imagen silenciosa sin gastar un espacio de conjuro.',
+      'Visiones de reinos remotos':'Puedes lanzar Ojo arcano sin gastar un espacio de conjuro.',
+      'Vista del diablo':'Puedes ver con normalidad en luz tenue y oscuridad, mágicas o no, hasta 36 m.'
+    };
+    return name+': '+(descriptions[name]||'Consulta la descripción de esta invocación en el Manual del Jugador 2024.');
   }
   function builderClassChoiceDescription(className:string,choice:string): string {
     const fightingStyles:Record<string,string>={
@@ -1602,7 +1668,7 @@
       general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
-      general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia']),
+      general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia','Invocaciones sobrenaturales','Detalles de invocaciones']),
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
@@ -1665,6 +1731,7 @@
     const levelOneFeatureDetails=getClassFeaturesAtLevel(b.className,1).map((feature:any)=>feature.name+'\n'+feature.description).join('\n\n');
     put(progressionIndex,1,levelOneFeatureDetails || classLevelOne?.features || classData.features || '—');
     put(4,0,[levelOneFeatureDetails,classChoices,BUILDER_SPECIES_TRAITS[b.species]||'',speciesChoices,b.traits].filter(Boolean).join('\n\n'));
+    put(4,6,b.className==='Brujo'?b.classSpecialChoice:''); put(4,7,b.className==='Brujo'?builderClassChoiceDescription('Brujo',b.classSpecialChoice):'');
     Object.entries(classResources).forEach(([key,value],i)=>put(progressionIndex,i+2,String(value)));
     const spellNames=[...b.selectedCantrips,...speciesCantrips,...(b.species==='Gnomo'&&b.speciesChoice==='Gnomo de los bosques'?['Hablar con los animales']:[]),...b.backgroundMagicCantrips,...(b.species==='Humano'?b.speciesMagicCantrips:[]),...b.warlockTomeCantrips,...b.selectedSpells,...b.wizardSpellbook,b.backgroundMagicSpell,...(b.species==='Humano'?[b.speciesMagicSpell]:[]),...(b.className==='Explorador'?['Marca del cazador']:[]),...(b.className==='Brujo'&&b.classSpecialChoice==='Pacto del grimorio'?b.warlockTomeRituals:[])].filter(Boolean);
     put(detailSpellsIndex,0,describeSpells(spellNames));
@@ -2000,6 +2067,7 @@ import SPELLS from './spells.json';
     levelUpWizardBookAdditions=''; levelUpExpertise=''; levelUpNewSkill=''; levelUpLanguages=''; levelUpWildShapeForms=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Formas salvajes conocidas') || '';
     levelUpWeaponMasteries=getCharacterStat(entry.sheet,'ATAQUES','Maestrías con armas') || '';
     levelUpMetamagic=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opciones de metamagia') || '';
+    levelUpInvocations=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Invocaciones sobrenaturales') || ((getCharacterStat(entry.sheet,'RASGOS Y DOTES','Rasgos de clase').match(/Invocación sobrenatural:\s*([^\n]+)/i)||[])[1]||'');
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
@@ -2077,6 +2145,36 @@ import SPELLS from './spells.json';
 
     const nextClassFeatures=getClassFeaturesAtLevel(className,nextLevel);
     const nextFeatureDescription=nextClassFeatures.map((feature:any)=>feature.description||'').join(' ');
+    const needsWarlockInvocations=className==='Brujo' && nextLevel>=2;
+    const invocationTarget=Number(row.resources?.['Invocaciones sobrenaturales']||0);
+    const invocationChoices=splitChoiceList(levelUpInvocations);
+    const oldInvocationText=getCharacterStat(original,'RASGOS Y DOTES','Invocaciones sobrenaturales') || ((getCharacterStat(original,'RASGOS Y DOTES','Rasgos de clase').match(/Invocación sobrenatural:\s*([^\n]+)/i)||[])[1]||'');
+    const oldInvocations=splitChoiceList(oldInvocationText);
+    const parsedInvocations=invocationChoices.map(entry=>{const parts=entry.split(':');return {entry,name:parts[0].trim(),choice:parts.slice(1).join(':').trim(),data:BUILDER_WARLOCK_INVOCATIONS.find(item=>normalizeLevelText(item.name)===normalizeLevelText(parts[0].trim()))};});
+    const invocationBaseNames=parsedInvocations.map(item=>normalizeLevelText(item.name));
+    const knownWarlockCantrips=splitChoiceList(levelUpClassCantrips || getCharacterStat(original,'CONJUROS','Trucos de clase') || getCharacterStat(original,'CONJUROS','Trucos'));
+    const qualifiesCantrip=(name:string,kind:string)=>{
+      const spell=getSpellRecord(name);if(!spell||spell.level!==0||!spell.classes.some((value:string)=>normalizeLevelText(value)==='brujo'))return false;
+      const desc=String(spell.description||'');const damage=/\d+d\d+/.test(desc)&&normalizeLevelText(desc).includes('dano');
+      const attack=normalizeLevelText(desc).includes('ataque de conjuro');
+      const range=String(spell.range||'').match(/(\d+(?:[.,]\d+)?)\s*m/i);const meters=range?Number(range[1].replace(',','.')):0;
+      return kind==='damage'?damage:kind==='attack'?damage&&attack:damage&&meters>=3;
+    };
+    const invocationCounts=new Map<string,number>();
+    const invocationChoicesValid=parsedInvocations.every(item=>{
+      if(!item.data||nextLevel<item.data.level)return false;
+      const base=normalizeLevelText(item.name);const count=(invocationCounts.get(base)||0)+1;invocationCounts.set(base,count);
+      if(count>1&&!item.data.repeatable)return false;
+      if(item.data.repeatable&&!item.choice)return false;
+      if(item.data.choice==='feat'&&(!BUILDER_FEATS.some(feat=>normalizeLevelText(feat)===normalizeLevelText(item.choice))))return false;
+      if(item.data.cantrip&&!knownWarlockCantrips.some(cantrip=>normalizeLevelText(cantrip)===normalizeLevelText(item.choice)&&qualifiesCantrip(cantrip,item.data.cantrip)))return false;
+      if(item.data.pact&&!invocationBaseNames.includes(normalizeLevelText(item.data.pact)))return false;
+      return true;
+    });
+    const repeatChoiceKeys=parsedInvocations.filter(item=>item.data?.repeatable).map(item=>normalizeLevelText(item.name)+':'+normalizeLevelText(item.choice));
+    const uniqueRepeatChoices=new Set(repeatChoiceKeys).size===repeatChoiceKeys.length;
+    const retainedInvocations=invocationChoices.filter(choice=>oldInvocations.some(old=>normalizeLevelText(old)===normalizeLevelText(choice))).length;
+    if(needsWarlockInvocations && (!Number.isFinite(invocationTarget)||invocationChoices.length!==invocationTarget||!invocationChoicesValid||!uniqueRepeatChoices||(oldInvocations.length>0&&retainedInvocations<oldInvocations.length-1))) { notice='Registra '+invocationTarget+' invocaciones válidas para tu nivel. Respeta los requisitos del manual; las invocaciones repetibles deben indicar una elección distinta después de dos puntos. Solo puedes sustituir una invocación conocida al subir de nivel.'; return; }
     const needsMetamagic=className==='Hechicero' && nextLevel>=2;
     const metamagicChoices=splitChoiceList(levelUpMetamagic);
     const oldMetamagicChoices=splitChoiceList(getCharacterStat(original,'RASGOS Y DOTES','Opciones de metamagia'));
@@ -2209,6 +2307,10 @@ import SPELLS from './spells.json';
     }
     if(needsWildShapeForms) setCharacterStat(updated,'RASGOS Y DOTES','Formas salvajes conocidas',wildShapeForms.join(', '));
     if(needsMetamagic) setCharacterStat(updated,'RASGOS Y DOTES','Opciones de metamagia',metamagicChoices.join(', '));
+    if(needsWarlockInvocations) {
+      setCharacterStat(updated,'RASGOS Y DOTES','Invocaciones sobrenaturales',invocationChoices.join(', '));
+      setCharacterStat(updated,'RASGOS Y DOTES','Detalles de invocaciones',invocationChoices.map(builderWarlockInvocationDescription).join('\n\n'));
+    }
     if(targetMasteries>0 && masteryChoices.length===targetMasteries) setCharacterStat(updated,'ATAQUES','Maestrías con armas',masteryChoices.join(', '));
 
     const classMagicAbility=(BUILDER_MAGIC_ABILITY as any)[className] || '';
@@ -2292,7 +2394,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2600,6 +2702,10 @@ import SPELLS from './spells.json';
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/idiomas conoces dos idiomas/.test(normalizeLevelText(feature.description)))}
                 <label>Dos idiomas nuevos<input bind:value={levelUpLanguages} placeholder="Ej. Dracónico, Gigante" /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
+                <label>Invocaciones sobrenaturales (lista completa; repite las que lo permitan con una elección después de dos puntos)<textarea bind:value={levelUpInvocations} rows="3" placeholder="Ej. Pacto de la cadena, Mente sobrenatural, Descarga agónica: Descarga sobrenatural" /></label>
+                <small>Opciones: {BUILDER_WARLOCK_INVOCATIONS.filter(item=>item.level<=Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).map(item=>item.name+' (nivel '+item.level+')').join(' · ')}</small>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
                 <label>Opciones de metamagia (lista completa; puedes sustituir una al subir de nivel)<input bind:value={levelUpMetamagic} placeholder="Ej. Conjuro cuidadoso, Conjuro sutil" /></label>
