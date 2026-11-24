@@ -746,7 +746,7 @@
     name: string; player: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
     abilityIncreaseMode: 'two' | 'three'; abilityIncrease2: string; abilityIncrease1: string;
-    abilityIncrease3: string; backgroundEquipment: 'A' | 'B';
+    abilityIncrease3: string; backgroundEquipment: 'A' | 'B'; classSkillChoices: string[];
     skills: string; tools: string; equipment: string; traits: string; spells: string; notes: string;
   };
   let builderStep = 0;
@@ -755,12 +755,26 @@
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
     alignment: 'Neutral', method: 'standard',
     abilities: { Fuerza: 15, Destreza: 14, Constitución: 13, Inteligencia: 12, Sabiduría: 10, Carisma: 8 },
-    feat: 'Alerta', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
+    feat: 'Alerta', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', classSkillChoices: [], skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
   };
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
   const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
   const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Bardo)','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Matón de taberna','Músico','Sanador'];
+  const BUILDER_CLASS_SKILLS: Record<string,{count:number;options:string[]}> = {
+    'Bárbaro':{count:2,options:['Atletismo','Intimidación','Naturaleza','Percepción','Supervivencia','Trato con animales']},
+    'Bardo':{count:3,options:['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales']},
+    'Brujo':{count:2,options:['Conocimiento arcano','Engaño','Historia','Intimidación','Investigación','Naturaleza','Religión']},
+    'Clérigo':{count:2,options:['Historia','Medicina','Perspicacia','Persuasión','Religión']},
+    'Druida':{count:2,options:['Conocimiento arcano','Medicina','Naturaleza','Perspicacia','Percepción','Religión','Supervivencia','Trato con animales']},
+    'Explorador':{count:3,options:['Atletismo','Investigación','Naturaleza','Percepción','Perspicacia','Sigilo','Supervivencia','Trato con animales']},
+    'Guerrero':{count:2,options:['Acrobacias','Atletismo','Historia','Intimidación','Perspicacia','Percepción','Supervivencia','Trato con animales']},
+    'Hechicero':{count:2,options:['Conocimiento arcano','Engaño','Intimidación','Persuasión','Perspicacia','Religión']},
+    'Mago':{count:2,options:['Conocimiento arcano','Historia','Investigación','Medicina','Perspicacia','Religión']},
+    'Monje':{count:2,options:['Acrobacias','Atletismo','Historia','Perspicacia','Religión','Sigilo']},
+    'Paladín':{count:2,options:['Atletismo','Intimidación','Medicina','Perspicacia','Persuasión','Religión']},
+    'Pícaro':{count:4,options:['Acrobacias','Atletismo','Engaño','Interpretación','Intimidación','Investigación','Juego de manos','Perspicacia','Persuasión','Percepción','Sigilo'] }
+  };
   const BUILDER_BACKGROUND_DATA: Record<string,{abilities:string[];feat:string;skills:string[];tool:string;equipmentA:string}> = {
     'Acólito':{abilities:['Inteligencia','Sabiduría','Carisma'],feat:'Iniciado en la magia (Clérigo)',skills:['Perspicacia','Religión'],tool:'Suministros de calígrafo',equipmentA:'Suministros de calígrafo, libro de oraciones, 10 hojas de pergamino, símbolo sagrado, túnica y 8 po.'},
     'Animador':{abilities:['Fuerza','Destreza','Carisma'],feat:'Músico',skills:['Acrobacias','Interpretación'],tool:'Un instrumento musical a elección',equipmentA:'Un instrumento musical, 2 disfraces, espejo, perfume, ropas de viaje y 11 po.'},
@@ -869,7 +883,7 @@
     put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
     BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(finalAbilities[a])+' ('+mod(Number(finalAbilities[a]))+')'));
     put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,2,b.className === 'Bárbaro' ? String(10 + builderModifier(Number(finalAbilities.Destreza)) + builderModifier(con))+' (Defensa sin armadura)' : b.className === 'Monje' ? String(10 + builderModifier(Number(b.abilities.Destreza)) + builderModifier(Number(finalAbilities.Sabiduría)))+' (Defensa sin armadura)' : String(10 + builderModifier(Number(b.abilities.Destreza)))+' (sin armadura)'); put(2,3,mod(Number(b.abilities.Destreza))); put(2,4,'30 pies'); put(2,5,proficiency); put(2,6,BUILDER_SAVES[b.className] || '—');
-    put(3,0,[...BUILDER_BACKGROUND_DATA[b.background].skills, b.skills].filter(Boolean).join('; ')); put(3,1,[BUILDER_BACKGROUND_DATA[b.background].tool, b.tools].filter(Boolean).join('; ')); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,b.className === 'Bárbaro' || b.className === 'Bardo' || b.className === 'Clérigo' || b.className === 'Druida' || b.className === 'Explorador' || b.className === 'Guerrero' || b.className === 'Paladín' || b.className === 'Pícaro' ? 'Armas sencillas y competencias marciales según clase' : 'Armas sencillas'); put(3,4,'Común y los idiomas otorgados por trasfondo/especie');
+    put(3,0,[...BUILDER_BACKGROUND_DATA[b.background].skills, ...b.classSkillChoices.filter(Boolean), b.skills].filter(Boolean).join('; ')); put(3,1,[BUILDER_BACKGROUND_DATA[b.background].tool, b.tools].filter(Boolean).join('; ')); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,b.className === 'Bárbaro' || b.className === 'Bardo' || b.className === 'Clérigo' || b.className === 'Druida' || b.className === 'Explorador' || b.className === 'Guerrero' || b.className === 'Paladín' || b.className === 'Pícaro' ? 'Armas sencillas y competencias marciales según clase' : 'Armas sencillas'); put(3,4,'Común y los idiomas otorgados por trasfondo/especie');
     put(4,0,BUILDER_CLASS_FEATURES[b.className] || ''); put(4,1,BUILDER_SPECIES_TRAITS[b.species] || ''); put(4,2,b.feat); put(4,3,b.traits || '—');
     const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(finalAbilities[magicAbility])) : 0; put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(10 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,b.className === 'Bárbaro' || b.className === 'Guerrero' || b.className === 'Monje' || b.className === 'Pícaro' ? 'No obtiene trucos a nivel 1 por clase' : 'Elegir según lista de clase'); put(5,4,b.spells || 'Pendiente: seleccionar de la lista de conjuros de nivel 1 de la clase'); put(5,5,'Según clase');
     put(6,0,[BUILDER_BACKGROUND_DATA[b.background].equipmentA, b.backgroundEquipment === 'B' ? 'Alternativa del trasfondo: 50 po (sustituye el equipo del trasfondo).' : '', b.equipment].filter(Boolean).join(' ')); put(6,1,'Según equipo inicial');
@@ -1468,8 +1482,12 @@
             {:else if builderStep === 5}
               <h3>6. Competencias, rasgos y equipo</h3>
               <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
-              <label>Habilidades competentes<textarea bind:value={builderData.skills} rows="2" placeholder="Selecciona las habilidades que concede la clase y el trasfondo" /></label>
-              <label>Herramientas e idiomas<textarea bind:value={builderData.tools} rows="2" placeholder="Herramientas, idiomas adicionales..." /></label>
+              <div class="builder-info"><strong>Habilidades automáticas del trasfondo</strong><p>{BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><strong>Elige {BUILDER_CLASS_SKILLS[builderData.className].count} competencias de clase</strong></div>
+              {#each Array.from({length:BUILDER_CLASS_SKILLS[builderData.className].count},(_,i)=>i) as index}
+                <label>Competencia de clase {index + 1}<select bind:value={builderData.classSkillChoices[index]}><option value="">Selecciona una habilidad</option>{#each BUILDER_CLASS_SKILLS[builderData.className].options.filter(skill => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && !builderData.classSkillChoices.some((chosen,i)=>i !== index && chosen === skill)) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+              {/each}
+              <label>Competencias adicionales otorgadas por rasgos<textarea bind:value={builderData.skills} rows="2" placeholder="Solo si otra elección de clase o especie concede más competencias" /></label>
+              <label>Herramientas e idiomas adicionales<textarea bind:value={builderData.tools} rows="2" placeholder="Opciones de herramienta, idioma o competencia extra..." /></label>
               <label>Rasgos y elecciones de clase<textarea bind:value={builderData.traits} rows="3" placeholder="Opciones de rasgos de nivel 1, invocación, orden divina, etc." /></label>
               <label>Equipo inicial de clase<textarea bind:value={builderData.equipment} rows="3" placeholder="Añade aquí las elecciones y el equipo que concede la clase" /></label>
               <label>Trucos y conjuros de nivel 1<textarea bind:value={builderData.spells} rows="3" placeholder="Solo si la clase puede lanzar conjuros a nivel 1" /></label>
