@@ -739,6 +739,8 @@
   import LEVEL_PROGRESSION from './levelProgression.json';
   import SUBCLASS_PROGRESSION from './subclassProgression.json';
   import CLASS_FEATURES from './classFeatures.json';
+  import LEVEL_UP_CHOICE_DEFINITIONS from './levelUpChoiceDefinitions.json';
+  import { findLevelUpChoice, getLevelUpChoiceOptions, validateSingleLevelUpChoice, validateMultipleLevelUpChoice, type LevelUpChoiceDefinition } from './levelUpChoiceEngine';
   let levelUpEntry: RoomEntry | null = null;
   let levelUpDecision = '';
   let levelUpClassCantrips = '';
@@ -2285,8 +2287,9 @@ import SPELLS from './spells.json';
     const retainedInvocations=invocationChoices.filter(choice=>oldInvocations.some(old=>normalizeLevelText(old)===normalizeLevelText(choice))).length;
     if(needsWarlockInvocations && (!Number.isFinite(invocationTarget)||invocationChoices.length!==invocationTarget||!invocationChoicesValid||!uniqueRepeatChoices||(oldInvocations.length>0&&retainedInvocations<oldInvocations.length-1))) { notice='Registra '+invocationTarget+' invocaciones válidas para tu nivel. Respeta los requisitos del manual; las invocaciones repetibles deben indicar una elección distinta después de dos puntos. Solo puedes sustituir una invocación conocida al subir de nivel.'; return; }
     const selectedSubclassKey=normalizeLevelText(levelUpSubclass || getCharacterStat(original,'PERSONAJE','Subclase'));
-    const needsBarbarianWildAspect=className==='Bárbaro' && selectedSubclassKey==='sendadelcorazonsalvaje' && nextLevel===6;
-    if(needsBarbarianWildAspect && !['Búho','Pantera','Salmón'].includes(levelUpBarbarianAspect)) { notice='Elige Búho, Pantera o Salmón para Aspecto de lo salvaje.'; return; }
+    const barbarianAspectChoice=findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices as LevelUpChoiceDefinition[],'barbarian.wildHeart.aspect');
+    const needsBarbarianWildAspect=className==='Bárbaro' && selectedSubclassKey===(barbarianAspectChoice?.subclass || '') && nextLevel===barbarianAspectChoice?.level;
+    if(needsBarbarianWildAspect && !validateSingleLevelUpChoice(barbarianAspectChoice,levelUpBarbarianAspect)) { notice='Elige una opción válida para Aspecto de lo salvaje: '+(barbarianAspectChoice?.options||[]).join(', ')+'.'; return; }
     const isBattleMaster=className==='Guerrero' && selectedSubclassKey==='maestrodelcombate';
     const isFeyWanderer=className==='Explorador' && selectedSubclassKey==='errantefeerico';
     const needsBattleMasterTraining=isBattleMaster && nextLevel===3;
@@ -2340,7 +2343,10 @@ import SPELLS from './spells.json';
       if(expertiseChoices.some(skill=>existingExpertise.includes(normalizeLevelText(skill)))) { notice='No puedes elegir una habilidad que ya tenga Pericia.'; return; }
     }
     const needsNewSkill=/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(nextFeatureDescription));
-    if(needsNewSkill && (!levelUpNewSkill || !(BUILDER_CLASS_SKILLS[className]?.options||BUILDER_SKILL_OPTIONS).some((skill:string)=>normalizeLevelText(skill)===normalizeLevelText(levelUpNewSkill)) || proficientSkills.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpNewSkill)))) { notice='Elige una habilidad válida de la lista de '+className+' en la que aún no tengas competencia.'; return; }
+    const barbarianSkillChoice=findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices as LevelUpChoiceDefinition[],'barbarian.primalKnowledge.skill');
+    const skillChoiceDefinition=className==='Bárbaro' && nextLevel===barbarianSkillChoice?.level ? barbarianSkillChoice : undefined;
+    const validNewSkill=skillChoiceDefinition ? validateSingleLevelUpChoice(skillChoiceDefinition,levelUpNewSkill,currentSkillChoices) : Boolean(levelUpNewSkill) && (BUILDER_CLASS_SKILLS[className]?.options||BUILDER_SKILL_OPTIONS).some((skill:string)=>normalizeLevelText(skill)===normalizeLevelText(levelUpNewSkill)) && !proficientSkills.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpNewSkill));
+    if(needsNewSkill && !validNewSkill) { notice='Elige una habilidad válida de la lista de '+className+' en la que aún no tengas competencia.'; return; }
     const needsNewLanguages=/idiomas conoces dos idiomas/.test(normalizeLevelText(nextFeatureDescription));
     const languageChoices=splitChoiceList(levelUpLanguages);
     const currentLanguages=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Idiomas'));
@@ -2354,8 +2360,12 @@ import SPELLS from './spells.json';
     const masteryResource=Object.entries(row.resources||{}).find(([key])=>normalizeLevelText(key).includes('maestria con armas'));
     const targetMasteries=masteryResource?Number(masteryResource[1]):0;
     const masteryChoices=splitChoiceList(levelUpWeaponMasteries);
-    const oldMasteryCount=splitChoiceList(getCharacterStat(original,'ATAQUES','Maestrías con armas')).length;
-    if(targetMasteries>oldMasteryCount && (masteryChoices.length!==targetMasteries || new Set(masteryChoices.map(name=>normalizeLevelText(name))).size!==targetMasteries || masteryChoices.some(name=>!BUILDER_WEAPON_MASTERY_OPTIONS.some((option:string)=>normalizeLevelText(option)===normalizeLevelText(name))) || splitChoiceList(getCharacterStat(original,'ATAQUES','Maestrías con armas')).some(old=>!masteryChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(old))))) { notice='Conserva tus maestrías anteriores y añade las nuevas hasta completar '+targetMasteries+'. No repitas armas.'; return; }
+    const oldMasteryChoices=splitChoiceList(getCharacterStat(original,'ATAQUES','Maestrías con armas'));
+    const oldMasteryCount=oldMasteryChoices.length;
+    const barbarianMasteryChoice=findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices as LevelUpChoiceDefinition[],'barbarian.weaponMastery');
+    const masteryDefinition=className==='Bárbaro'?barbarianMasteryChoice:undefined;
+    const validMasteries=masteryDefinition ? validateMultipleLevelUpChoice(masteryDefinition,masteryChoices,targetMasteries,oldMasteryChoices) : masteryChoices.length===targetMasteries && new Set(masteryChoices.map(name=>normalizeLevelText(name))).size===targetMasteries && masteryChoices.every(name=>BUILDER_WEAPON_MASTERY_OPTIONS.some((option:string)=>normalizeLevelText(option)===normalizeLevelText(name))) && oldMasteryChoices.every(old=>masteryChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(old)));
+    if(targetMasteries>oldMasteryCount && !validMasteries) { notice='Conserva tus maestrías anteriores y añade las nuevas hasta completar '+targetMasteries+'. No repitas armas y elige solo opciones permitidas.'; return; }
     if ((needsEpicFeat || (needsASI && levelUpAsiMode === 'feat')) && !levelUpFeat.trim()) { notice = 'Indica el nombre de la dote elegida.'; return; }
     if(needsEpicFeat && (!BUILDER_EPIC_FEATS.some(feat=>normalizeLevelText(feat)===normalizeLevelText(levelUpFeat)) || !builderEpicFeatAbilities(levelUpFeat).includes(levelUpEpicFeatAbility) || getCharacterNumber(original,'ATRIBUTOS',levelUpEpicFeatAbility,10)>=30)) { notice='Elige un Don épico del manual y una característica permitida que no supere 30.'; return; }
     if (needsASI && levelUpAsiMode === 'asi') {
@@ -2842,8 +2852,9 @@ import SPELLS from './spells.json';
               {#if levelUpSubclass && getSubclassFeaturesForNextLevel(levelUpEntry).length}
                 <div class="subclass-level-preview"><strong>Rasgos de subclase que se incorporarán</strong>{#each getSubclassFeaturesForNextLevel(levelUpEntry) as feature}<div><b>Nivel {feature.level}: {feature.name}</b><p>{feature.description}</p></div>{/each}</div>
               {/if}
-              {#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='sendadelcorazonsalvaje' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===6}
-                <label>Aspecto de lo salvaje — elige una opción (puedes cambiarla tras un descanso largo)<select bind:value={levelUpBarbarianAspect}><option value="">Elige un aspecto</option><option>Búho</option><option>Pantera</option><option>Salmón</option></select></label>
+              {#if findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices,'barbarian.wildHeart.aspect') && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))===findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices,'barbarian.wildHeart.aspect')?.subclass && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices,'barbarian.wildHeart.aspect')?.level}
+                {@const aspectChoice=findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices,'barbarian.wildHeart.aspect')}
+                <label>{aspectChoice?.label} — {aspectChoice?.description}<select bind:value={levelUpBarbarianAspect}><option value="">Elige una opción</option>{#each aspectChoice?.options || [] as option}<option value={option}>{option}</option>{/each}</select></label>
               {/if}
               {#if levelUpSubclass && getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass).length>1}
                 <label>Elección de la subclase<select bind:value={levelUpSubclassVariant}><option value="">Selecciona una opción</option>{#each getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) as table}<option value={table.name}>{formatSubclassName(table.name)}</option>{/each}</select></label>
@@ -2869,7 +2880,8 @@ import SPELLS from './spells.json';
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(feature.description)))}
                 {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
-                  <label>Nueva competencia de Conocimiento primigenio<select bind:value={levelUpNewSkill}><option value="">Elige una habilidad nueva</option>{#each BUILDER_CLASS_SKILLS.Bárbaro.options.filter(skill=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet || {},'COMPETENCIAS','Habilidades')).some(old=>normalizeLevelText(old)===normalizeLevelText(skill))) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+                  {@const primalSkillChoice=findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices,'barbarian.primalKnowledge.skill')}
+                  <label>{primalSkillChoice?.label}<select bind:value={levelUpNewSkill}><option value="">Elige una habilidad nueva</option>{#each getLevelUpChoiceOptions(primalSkillChoice,splitChoiceList(getCharacterStat(levelUpEntry.sheet,'COMPETENCIAS','Habilidades'))) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
                 {:else}
                   <label>Nueva competencia en habilidad<input bind:value={levelUpNewSkill} placeholder="Elige una habilidad de la lista de tu clase" /></label>
                 {/if}
@@ -2919,7 +2931,7 @@ import SPELLS from './spells.json';
               {/if}
               {#if Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']) > splitChoiceList(getCharacterStat(levelUpEntry.sheet,'ATAQUES','Maestrías con armas')).length}
                 {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
-                  <div class="builder-choice-wrapper"><strong>Maestrías con armas: conserva las anteriores y añade las nuevas</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Armas cuerpo a cuerpo sencillas o marciales</strong><span>{splitChoiceList(levelUpWeaponMasteries).length}/{Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])}</span></div><div class="builder-checkbox-grid">{#each BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>!['Arco corto','Ballesta ligera','Dardo','Honda','Arco largo','Ballesta de mano','Ballesta pesada','Cerbatana','Mosquete','Pistola'].includes(weapon)) as weapon}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon))} on:change={(event)=>toggleLevelUpWeaponMastery(weapon,event,Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']))} disabled={!splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon)) && splitChoiceList(levelUpWeaponMasteries).length>=Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])} /><span>{weapon}</span></label>{/each}</div></div></div>
+                  <div class="builder-choice-wrapper"><strong>Maestrías con armas: conserva las anteriores y añade las nuevas</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Armas cuerpo a cuerpo sencillas o marciales</strong><span>{splitChoiceList(levelUpWeaponMasteries).length}/{Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])}</span></div><div class="builder-checkbox-grid">{#each getLevelUpChoiceOptions(findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices,'barbarian.weaponMastery')) as weapon}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon))} on:change={(event)=>toggleLevelUpWeaponMastery(weapon,event,Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']))} disabled={!splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon)) && splitChoiceList(levelUpWeaponMasteries).length>=Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])} /><span>{weapon}</span></label>{/each}</div></div></div>
                 {:else}
                   <label>Maestrías con armas (lista completa)<input bind:value={levelUpWeaponMasteries} placeholder="Escribe todas las maestrías, separadas por comas" /></label>
                 {/if}

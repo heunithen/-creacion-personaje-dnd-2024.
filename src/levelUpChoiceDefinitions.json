@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "source": "D&D 2024 — Manual del Jugador",
+  "choices": [
+    {
+      "id": "barbarian.primalKnowledge.skill",
+      "class": "Bárbaro",
+      "level": 3,
+      "kind": "single",
+      "label": "Nueva competencia de Conocimiento primigenio",
+      "description": "Elige una habilidad de la lista de habilidades del Bárbaro en la que todavía no tengas competencia.",
+      "options": [
+        "Atletismo",
+        "Intimidación",
+        "Naturaleza",
+        "Percepción",
+        "Supervivencia",
+        "Trato con animales"
+      ],
+      "excludeExisting": true,
+      "storage": {
+        "section": "COMPETENCIAS",
+        "field": "Habilidades"
+      }
+    },
+    {
+      "id": "barbarian.weaponMastery",
+      "class": "Bárbaro",
+      "level": "progression",
+      "kind": "multiple",
+      "label": "Maestrías con armas",
+      "description": "Elige tipos de armas cuerpo a cuerpo sencillas o marciales. Conserva las elecciones anteriores; al subir de nivel puedes añadir las nuevas que indique la tabla.",
+      "options": [
+        "Alabarda",
+        "Bastón",
+        "Cimitarra",
+        "Daga",
+        "Espada corta",
+        "Espada larga",
+        "Espadón",
+        "Estoque",
+        "Garrote",
+        "Garrote grande",
+        "Guja",
+        "Hacha a dos manos",
+        "Hacha de mano",
+        "Hacha de guerra",
+        "Hoz",
+        "Jabalina",
+        "Lanza",
+        "Lanza de caballería",
+        "Látigo",
+        "Lucero del alba",
+        "Mangual",
+        "Martillo de guerra",
+        "Martillo ligero",
+        "Maza",
+        "Maza a dos manos",
+        "Pica",
+        "Pico de guerra",
+        "Tridente"
+      ],
+      "countFromResource": "Maestría con armas",
+      "retainExisting": true,
+      "storage": {
+        "section": "ATAQUES",
+        "field": "Maestrías con armas"
+      }
+    },
+    {
+      "id": "barbarian.wildHeart.aspect",
+      "class": "Bárbaro",
+      "subclass": "sendadelcorazonsalvaje",
+      "level": 6,
+      "kind": "single",
+      "label": "Aspecto de lo salvaje",
+      "description": "Elige un aspecto. Puedes cambiarlo tras un descanso largo.",
+      "options": [
+        "Búho",
+        "Pantera",
+        "Salmón"
+      ],
+      "storage": {
+        "section": "RASGOS Y DOTES",
+        "field": "Aspecto de lo salvaje"
+      }
+    }
+  ]
+}
