@@ -814,20 +814,20 @@
   const BUILDER_SPECIES_CHOICES: Record<string,string[]> = {
     'Aasimar':[], 'Dracónido':['Azul','Blanco','Bronce','Cobre','Negro','Oro','Oropel','Plata','Rojo','Verde'],
     'Enano':[], 'Elfo':['Alto elfo','Drow','Elfo de los bosques'], 'Gnomo':['Gnomo de las rocas','Gnomo de los bosques'],
-    'Goliat':['Fuego','Colinas','Nubes','Escarcha','Piedra','Tormentas'], 'Mediano':[], 'Humano':[], 'Orco':[],
+    'Goliat':['Abrasión del fuego','Caída de las colinas','Excursión de las nubes','Frío de la escarcha','Resistencia de la piedra','Trueno de la tormenta'], 'Mediano':[], 'Humano':[], 'Orco':[],
     'Tiefling':['Abisal','Ctónico','Infernal']
   };
   const BUILDER_SPECIES_TRAITS: Record<string,string> = {
-    'Aasimar':'Tipo de criatura: Humanoide. Resistencia necrótica y radiante; Manos sanadoras; Portador de luz; Revelación celestial.',
-    'Dracónido':'Tipo de criatura: Humanoide. Ascendencia dracónica; Arma de aliento; Resistencia dracónica.',
-    'Enano':'Tipo de criatura: Humanoide. Visión en la oscuridad; Resistencia enana; Aguante enano.',
-    'Elfo':'Tipo de criatura: Humanoide. Visión en la oscuridad; Linaje élfico; Sentidos agudos; Trance.',
-    'Gnomo':'Tipo de criatura: Humanoide. Visión en la oscuridad; Astucia gnómica.',
-    'Goliat':'Tipo de criatura: Humanoide. Ascendencia gigante; Atletismo poderoso.',
-    'Mediano':'Tipo de criatura: Humanoide. Afortunado; Valentía; Agilidad mediana.',
-    'Humano':'Tipo de criatura: Humanoide. Ingenioso; Habilidoso; Versátil.',
-    'Orco':'Tipo de criatura: Humanoide. Adrenalina; Visión en la oscuridad; Aguante implacable.',
-    'Tiefling':'Tipo de criatura: Humanoide. Visión en la oscuridad; Legado infernal.'
+    'Aasimar':'Tipo de criatura: Humanoide. Manos curativas; Portador de luz (truco luz); Resistencia celestial (necrótico y radiante); Visión en la oscuridad 18 m; Revelación celestial desde nivel 3.',
+    'Dracónido':'Tipo de criatura: Humanoide. Linaje dracónico; Ataque de aliento; Resistencia al daño del linaje; Visión en la oscuridad 18 m; Vuelo dracónico desde nivel 5.',
+    'Enano':'Tipo de criatura: Humanoide. Afinidad con la piedra; Aguante enano (+1 PG por nivel); Resistencia enana (veneno); Visión en la oscuridad 36 m.',
+    'Elfo':'Tipo de criatura: Humanoide. Linaje feérico; Linaje élfico; Sentidos agudos (elige Percepción, Perspicacia o Supervivencia); Trance; Visión en la oscuridad 18 m.',
+    'Gnomo':'Tipo de criatura: Humanoide. Astucia gnoma; Linaje gnomo; Visión en la oscuridad 18 m.',
+    'Goliat':'Tipo de criatura: Humanoide. Constitución poderosa; Forma grande desde nivel 5; Linaje gigante (elige un beneficio).',
+    'Mediano':'Tipo de criatura: Humanoide. Agilidad de mediano; Fortuna; Sigiloso por naturaleza; Valiente.',
+    'Humano':'Tipo de criatura: Humanoide. Diestro (elige una habilidad); Ingenioso; Versátil (dote de origen adicional).',
+    'Orco':'Tipo de criatura: Humanoide. Aguante incansable; Descarga de adrenalina; Visión en la oscuridad 36 m.',
+    'Tiefling':'Tipo de criatura: Humanoide. Legado infernal; Presencia sobrenatural (truco taumaturgia); Visión en la oscuridad 18 m.'
   };
   const BUILDER_CLASS_DATA: Record<string,{equipmentA:string;equipmentB:string;features:string;tool:string;weaponCount:number;cantrips:number;spells:number;slots:number;spellbook:number;specialLabel:string;specialOptions:string[]}> = {
     'Bárbaro':{equipmentA:'Hacha a dos manos, 4 hachas de mano, paquete de explorador y 15 po.',equipmentB:'75 po.',features:'Defensa sin armadura; Furia (2 usos, daño +2 y resistencia a daño contundente, cortante y perforante); Maestría con armas (elige 2 tipos de armas).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:2,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'',specialOptions:[]},
@@ -921,7 +921,7 @@
     const mod = (n:number) => (builderModifier(n) >= 0 ? '+' : '') + builderModifier(n);
     const finalAbilities = builderAdjustedAbilities();
     const con = Number(finalAbilities.Constitución) || 10;
-    const hp = (BUILDER_HIT_DIE[b.className] || 8) + builderModifier(con);
+    const hp = (BUILDER_HIT_DIE[b.className] || 8) + builderModifier(con) + (b.species === 'Enano' ? 1 : 0) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Duro') ? 2 : 0);
     const proficiency = '+2';
     const classData = BUILDER_CLASS_DATA[b.className];
     const classEquipment = b.classEquipmentChoice === 'B' ? classData.equipmentB : b.classEquipmentChoice === 'C' && b.className === 'Guerrero' ? '155 po.' : classData.equipmentA;
@@ -1519,7 +1519,7 @@
               <h3>3. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
               <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = 'Inteligencia'; builderData.speciesSize = 'Mediano'; builderData.speciesBreathShape = 'Cono'; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               {#if BUILDER_SPECIES_CHOICES[builderData.species].length > 0}
-                <label>{builderData.species === 'Dracónido' ? 'Linaje dracónico' : builderData.species === 'Elfo' ? 'Linaje élfico' : builderData.species === 'Gnomo' ? 'Linaje gnomo' : builderData.species === 'Goliat' ? 'Ascendencia gigante' : 'Legado infernal'}<select bind:value={builderData.speciesChoice}><option value="">Elige una opción</option>{#each BUILDER_SPECIES_CHOICES[builderData.species] as choice}<option>{choice}</option>{/each}</select></label>
+                <label>{builderData.species === 'Dracónido' ? 'Linaje dracónico' : builderData.species === 'Elfo' ? 'Linaje élfico' : builderData.species === 'Gnomo' ? 'Linaje gnomo' : builderData.species === 'Goliat' ? 'Linaje gigante' : 'Legado infernal'}<select bind:value={builderData.speciesChoice}><option value="">Elige una opción</option>{#each BUILDER_SPECIES_CHOICES[builderData.species] as choice}<option>{choice}</option>{/each}</select></label>
               {/if}
               {#if ['Aasimar','Humano','Tiefling'].includes(builderData.species)}
                 <label>Tamaño<select bind:value={builderData.speciesSize}><option>Mediano</option><option>Pequeño</option></select></label>
