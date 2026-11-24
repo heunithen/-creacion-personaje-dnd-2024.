@@ -3025,7 +3025,7 @@ import SPELLS from './spells.json';
                   <label>Dos conjuros nuevos para el libro del mago<input bind:value={levelUpWizardBookAdditions} placeholder="Dos conjuros separados por comas" /></label>
                   {#if levelUpSubclass && [3,5,7,9,11,13,15,17].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
                     <label>Conjuros de escuela (lista completa)<textarea bind:value={levelUpWizardSchoolSpells} rows="3" placeholder="Registra todos los conjuros de tu escuela; al nivel 3 son tres y después se añade uno al desbloquear cada nuevo nivel de espacios." /></label>
-                    <small>Escuela: {({ABJURADOR:'Abjuración',ADIVINO:'Adivinación',EVOCADOR:'Evocación',ILUSIONISTA:'Ilusionismo'} as Record<string,string>)[levelUpSubclass] || levelUpSubclass}. Conserva los anteriores y añade los nuevos.</small>
+                    <small>Escuela: {({ABJURADOR:'Abjuración',ADIVINO:'Adivinación',EVOCADOR:'Evocación',ILUSIONISTA:'Ilusionismo'})[levelUpSubclass] || levelUpSubclass}. Conserva los anteriores y añade los nuevos.</small>
                   {/if}
                   {#if normalizeLevelText(levelUpSubclass)==='ilusionista' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
                     {#if splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos')).some(name=>normalizeLevelText(name)==='ilusionmenor')}
