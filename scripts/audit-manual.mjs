@@ -13,12 +13,13 @@ const warnings = [];
 const checks = [];
 const norm = (value) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-check('warlock-cantrip-replacement', app.includes("isWarlockSpellProgression && oldClassCantripNames.length") && app.includes("puedes sustituir uno al subir de nivel"), 'El Brujo puede sustituir un truco en cada subida de nivel.');
-check('warlock-spell-replacement', app.includes("isWarlockSpellProgression && oldClassSpellNames.length") && app.includes("solo puedes sustituir un conjuro que ya conozcas"), 'El Brujo puede sustituir como máximo un conjuro conocido por nivel.');
 const report = (name, ok, detail = '') => {
   checks.push({ name, status: ok ? 'OK' : 'ERROR', detail });
   if (!ok) errors.push(name + (detail ? ': ' + detail : ''));
 };
+
+report('warlock-cantrip-replacement', app.includes("isWarlockSpellProgression && oldClassCantripNames.length") && app.includes("puedes sustituir uno al subir de nivel"), 'El Brujo puede sustituir un truco en cada subida de nivel.');
+report('warlock-spell-replacement', app.includes("isWarlockSpellProgression && oldClassSpellNames.length") && app.includes("solo puedes sustituir un conjuro que ya conozcas"), 'El Brujo puede sustituir como máximo un conjuro conocido por nivel.');
 const escapeRegExp = (value) => value.replace(/[|\\{}()[\]^$+*?.-]/g, '\\$&');
 const classNames = Object.keys(progression.classes ?? {});
 const manualAttributeTables = [...manual.matchAll(/^TABLA:\s*ATRIBUTOS BÁSICOS DE\s+([^\n]+)$/gim)];
