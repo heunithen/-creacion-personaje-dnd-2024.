@@ -2990,10 +2990,10 @@ import SPELLS from './spells.json';
                 <p class="muted">Los conjuros de dominio o círculo se incorporarán automáticamente desde la tabla de la subclase del manual.</p>
               {/if}
               {#if BUILDER_MAGIC_ABILITY[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' || Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Trucos']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Trucos máximos',0)}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Trucos']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Trucos máximos',0))}
                   <label>Trucos de clase conocidos (lista completa){#if ['Brujo','Clérigo','Druida'].includes(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'))} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos los trucos de clase conocidos, separados por comas" /></label>
                 {/if}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Conjuros preparados']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Conjuros preparados máximos',0)}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Conjuros preparados']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Conjuros preparados máximos',0))}
                   <label>Conjuros de clase preparados/conocidos (lista completa){#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo'} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassSpells} rows="2" placeholder="Escribe la lista completa de conjuros de clase" /></label>
                 {/if}
                 {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago'}
