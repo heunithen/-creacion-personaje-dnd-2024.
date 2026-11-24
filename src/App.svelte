@@ -1217,17 +1217,17 @@
   };
   const BUILDER_WEAPON_PROFICIENCIES: Record<string,string> = {
     'Bárbaro':'Armas sencillas y marciales',
-    'Bardo':'Armas sencillas; ballesta de mano, espada larga, estoque y espada corta',
+    'Bardo':'Armas sencillas',
     'Brujo':'Armas sencillas',
     'Clérigo':'Armas sencillas',
     'Druida':'Armas sencillas',
     'Explorador':'Armas sencillas y marciales',
     'Guerrero':'Armas sencillas y marciales',
-    'Hechicero':'Daga, dardo, honda, bastón y ballesta ligera',
-    'Mago':'Daga, dardo, honda, bastón y ballesta ligera',
+    'Hechicero':'Armas sencillas',
+    'Mago':'Armas sencillas',
     'Monje':'Armas sencillas y armas marciales cuerpo a cuerpo ligeras',
     'Paladín':'Armas sencillas y marciales',
-    'Pícaro':'Armas sencillas; armas marciales sutiles o ligeras; ballesta de mano, espada larga, estoque y espada corta'
+    'Pícaro':'Armas sencillas; armas marciales con propiedad ligera o sutil'
   };
   const BUILDER_ARMOR: Record<string,string> = {
     'Bárbaro':'Armaduras ligeras y medias; escudos','Bardo':'Armaduras ligeras',
@@ -1407,7 +1407,7 @@
   }
   function classWeaponSpecialProficiency(profText:string,profile:any,name:string):boolean {
     const n=normalizeLevelText(name);
-    if(profText.includes('armas marciales sutiles o ligeras')) return profile.category==='martial'&&(/sutil|ligera/i.test(profile.properties)||['ballesta de mano','espada larga','estoque','espada corta'].includes(n));
+    if(profText.includes('armas marciales con propiedad ligera o sutil')) return profile.category==='martial'&&/sutil|ligera/i.test(profile.properties);
     if(profText.includes('armas marciales cuerpo a cuerpo ligeras')) return profile.category==='martial'&&/ligera/i.test(profile.properties);
     return false;
   }
