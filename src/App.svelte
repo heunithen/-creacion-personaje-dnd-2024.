@@ -773,6 +773,7 @@
   let levelUpIncrease1 = '2';
   let levelUpIncrease2 = '0';
   let levelUpFeat = '';
+  let levelUpEpicFeatAbility = 'Fuerza';
   let levelUpHpMode = 'average';
   let levelUpHpRoll = '';
   let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
@@ -1088,6 +1089,13 @@
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
   const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
   const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Iniciado en la magia (Mago)','Matón de taberna','Músico','Sanador'];
+  const BUILDER_EPIC_FEATS = ['Don de la fortaleza','Don de la habilidad','Don de la pericia en combate','Don de la recuperación','Don de la resistencia a energías','Don de la velocidad','Don de la visión verdadera','Don del ataque imparable','Don del destino','Don del espíritu de la noche','Don del recuerdo de conjuros','Don del viaje dimensional'];
+  function builderEpicFeatAbilities(feat:string):string[] {
+    const key=normalizeLevelText(feat);
+    if(key==='don del ataque imparable') return ['Fuerza','Destreza'];
+    if(key==='don del recuerdo de conjuros') return ['Inteligencia','Sabiduría','Carisma'];
+    return BUILDER_ABILITY_NAMES;
+  }
   const BUILDER_BACKGROUND_TOOL_OPTIONS: Record<string,string[]> = {
     'Animador':['Chirimía','Cuerno','Dulcémele','Flauta','Flauta de pan','Gaita','Laúd','Lira','Tambor','Viola'],
     'Artesano':['Herramientas de albañil','Herramientas de alfarero','Herramientas de carpintero','Herramientas de cartógrafo','Herramientas de curtidor','Herramientas de ebanista','Herramientas de herrero','Herramientas de joyero','Herramientas de manitas','Herramientas de soplador de vidrio','Herramientas de tejedor','Herramientas de zapatero'],
@@ -2349,6 +2357,7 @@ import SPELLS from './spells.json';
     const oldMasteryCount=splitChoiceList(getCharacterStat(original,'ATAQUES','Maestrías con armas')).length;
     if(targetMasteries>oldMasteryCount && (masteryChoices.length!==targetMasteries || new Set(masteryChoices.map(name=>normalizeLevelText(name))).size!==targetMasteries || masteryChoices.some(name=>!BUILDER_WEAPON_MASTERY_OPTIONS.some((option:string)=>normalizeLevelText(option)===normalizeLevelText(name))) || splitChoiceList(getCharacterStat(original,'ATAQUES','Maestrías con armas')).some(old=>!masteryChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(old))))) { notice='Conserva tus maestrías anteriores y añade las nuevas hasta completar '+targetMasteries+'. No repitas armas.'; return; }
     if ((needsEpicFeat || (needsASI && levelUpAsiMode === 'feat')) && !levelUpFeat.trim()) { notice = 'Indica el nombre de la dote elegida.'; return; }
+    if(needsEpicFeat && (!BUILDER_EPIC_FEATS.some(feat=>normalizeLevelText(feat)===normalizeLevelText(levelUpFeat)) || !builderEpicFeatAbilities(levelUpFeat).includes(levelUpEpicFeatAbility) || getCharacterNumber(original,'ATRIBUTOS',levelUpEpicFeatAbility,10)>=30)) { notice='Elige un Don épico del manual y una característica permitida que no supere 30.'; return; }
     if (needsASI && levelUpAsiMode === 'asi') {
       const inc1=Number(levelUpIncrease1), inc2=Number(levelUpIncrease2);
       if (![1,2].includes(inc1) || ![0,1,2].includes(inc2) || (inc2>0 && inc1+inc2!==2) || (inc2===0 && inc1!==2) || (inc2>0 && levelUpAbility1===levelUpAbility2)) { notice='La mejora debe ser +2 a una característica o +1 a dos características.'; return; }
@@ -2398,6 +2407,10 @@ import SPELLS from './spells.json';
         setCharacterStat(updated,'ATRIBUTOS',ability,formatAbilityScore(value+inc));
       }
     }
+    if(needsEpicFeat) {
+      const epicAbilityValue=getCharacterNumber(updated,'ATRIBUTOS',levelUpEpicFeatAbility,10);
+      setCharacterStat(updated,'ATRIBUTOS',levelUpEpicFeatAbility,formatAbilityScore(epicAbilityValue+1));
+    }
     if(className==='Bárbaro' && nextLevel===20) {
       for(const ability of ['Fuerza','Constitución']) {
         const value=getCharacterNumber(updated,'ATRIBUTOS',ability,10);
@@ -2418,6 +2431,10 @@ import SPELLS from './spells.json';
     if (levelUpFeat.trim() && (needsEpicFeat || (needsASI && levelUpAsiMode==='feat'))) {
       const previous=getCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales');
       setCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales',[previous,levelUpFeat.trim()].filter(Boolean).join('; '));
+    }
+    if(needsEpicFeat) {
+      const oldOther=getCharacterStat(updated,'RASGOS Y DOTES','Otros rasgos');
+      setCharacterStat(updated,'RASGOS Y DOTES','Otros rasgos',[oldOther,'Don épico: '+levelUpFeat+' · Aumento de característica: '+levelUpEpicFeatAbility+' +1'].filter(Boolean).join('\n\n'));
     }
 
     const resourceEntries=Object.entries(row.resources || {});
@@ -2547,7 +2564,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2915,7 +2932,8 @@ import SPELLS from './spells.json';
                 {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
               {/if}
               {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('don épico')}
-                <label>Don épico elegido<input bind:value={levelUpFeat} placeholder="Nombre del don épico" /></label>
+                <label>Don épico<select bind:value={levelUpFeat}><option value="">Elige un Don épico</option>{#each BUILDER_EPIC_FEATS as feat}<option value={feat}>{feat}</option>{/each}</select></label>
+                <label>Característica que aumenta +1<select bind:value={levelUpEpicFeatAbility}>{#each builderEpicFeatAbilities(levelUpFeat) as ability}<option value={ability}>{ability}</option>{/each}</select></label>
               {/if}
               <label>Otras decisiones del rasgo (pericia, invocaciones, estilo de combate, conjuros, etc.)<textarea bind:value={levelUpDecision} rows="2" placeholder="Registra las elecciones realizadas para este nivel…" /></label>
               <p class="muted">Se conservarán los datos existentes. Los rasgos, recursos, elecciones de clase y desbloqueos de especie quedarán registrados en la ficha.</p>
