@@ -747,6 +747,7 @@
   let levelUpExpertise = '';
   let levelUpNewSkill = '';
   let levelUpLanguages = '';
+  let levelUpMetamagic = '';
   let levelUpWildShapeForms = '';
   let levelUpWeaponMasteries = '';
   let levelUpSubclass = '';
@@ -1193,6 +1194,7 @@
   const BUILDER_LANGUAGES = ['Abisal','Celestial','Dracónico','Druídico','Elfo','Enano','Gigante','Gnomo','Goblin','Habla de las profundidades','Infernal','Infracomún','Jerga de ladrones','Lenguaje de signos común','Mediano','Orco','Primordial','Silvano'];
   const BUILDER_STANDARD_LANGUAGES = ['Dracónico','Elfo','Enano','Gigante','Gnomo','Goblin','Lenguaje de signos común','Mediano','Orco'];
   const BUILDER_SKILL_OPTIONS = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
+  const BUILDER_METAMAGIC_OPTIONS = ['Conjuro acelerado','Conjuro buscador','Conjuro cuidadoso','Conjuro distante','Conjuro extendido','Conjuro gemelo','Conjuro intensificado','Conjuro potenciado','Conjuro sutil','Conjuro transmutado'];
   const BUILDER_GAMING_SETS = ['Ajedrez dragón','Apuesta de los tres dragones','Dados','Naipes'];
   const BUILDER_FEAT_TOOL_OPTIONS = [...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS,...BUILDER_GAMING_SETS,'Suministros de alquimista','Suministros de calígrafo','Suministros de cervecero','Suministros de pintor','Útiles de cocinero','Herramientas de ladrón','Herramientas de navegante','Útiles de envenenador','Útiles de herborista','Útiles para disfrazarse','Útiles para falsificar'];
   function builderFeatChoiceOptions(feat:string) {
@@ -1600,7 +1602,7 @@
       general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
-      general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas']),
+      general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia']),
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
@@ -1997,6 +1999,7 @@ import SPELLS from './spells.json';
     if(!levelUpClassSpells && getCharacterStat(entry.sheet,'PERSONAJE','Clase')==='Mago') levelUpClassSpells=(String(getCharacterStat(entry.sheet,'CONJUROS','Conjuros de nivel 1')).match(/Preparados:\s*([^.]*)/i)||[])[1]||'';
     levelUpWizardBookAdditions=''; levelUpExpertise=''; levelUpNewSkill=''; levelUpLanguages=''; levelUpWildShapeForms=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Formas salvajes conocidas') || '';
     levelUpWeaponMasteries=getCharacterStat(entry.sheet,'ATAQUES','Maestrías con armas') || '';
+    levelUpMetamagic=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opciones de metamagia') || '';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
@@ -2074,6 +2077,12 @@ import SPELLS from './spells.json';
 
     const nextClassFeatures=getClassFeaturesAtLevel(className,nextLevel);
     const nextFeatureDescription=nextClassFeatures.map((feature:any)=>feature.description||'').join(' ');
+    const needsMetamagic=className==='Hechicero' && nextLevel>=2;
+    const metamagicChoices=splitChoiceList(levelUpMetamagic);
+    const oldMetamagicChoices=splitChoiceList(getCharacterStat(original,'RASGOS Y DOTES','Opciones de metamagia'));
+    const metamagicTarget=nextLevel>=17?6:nextLevel>=10?4:2;
+    const retainedMetamagic=metamagicChoices.filter(choice=>oldMetamagicChoices.some(old=>normalizeLevelText(old)===normalizeLevelText(choice))).length;
+    if(needsMetamagic && (metamagicChoices.length!==metamagicTarget || new Set(metamagicChoices.map(choice=>normalizeLevelText(choice))).size!==metamagicTarget || metamagicChoices.some(choice=>!BUILDER_METAMAGIC_OPTIONS.some(option=>normalizeLevelText(option)===normalizeLevelText(choice))) || (oldMetamagicChoices.length>0 && retainedMetamagic<oldMetamagicChoices.length-1))) { notice='Registra '+metamagicTarget+' opciones de metamagia válidas. Al subir de nivel solo puedes sustituir una opción que ya conocías.'; return; }
     const expertiseFeature=nextClassFeatures.some((feature:any)=>normalizeLevelText(feature.name).includes('pericia')) || /ganas pericia/.test(normalizeLevelText(nextFeatureDescription));
     const expertiseCount=nextClassFeatures.reduce((count:number,feature:any)=>{
       const name=normalizeLevelText(feature.name),description=normalizeLevelText(feature.description||'');
@@ -2199,6 +2208,7 @@ import SPELLS from './spells.json';
       setCharacterStat(updated,'COMPETENCIAS','Idiomas',[oldLanguages,...languageChoices].filter(Boolean).join(', '));
     }
     if(needsWildShapeForms) setCharacterStat(updated,'RASGOS Y DOTES','Formas salvajes conocidas',wildShapeForms.join(', '));
+    if(needsMetamagic) setCharacterStat(updated,'RASGOS Y DOTES','Opciones de metamagia',metamagicChoices.join(', '));
     if(targetMasteries>0 && masteryChoices.length===targetMasteries) setCharacterStat(updated,'ATAQUES','Maestrías con armas',masteryChoices.join(', '));
 
     const classMagicAbility=(BUILDER_MAGIC_ABILITY as any)[className] || '';
@@ -2282,7 +2292,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2590,6 +2600,9 @@ import SPELLS from './spells.json';
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/idiomas conoces dos idiomas/.test(normalizeLevelText(feature.description)))}
                 <label>Dos idiomas nuevos<input bind:value={levelUpLanguages} placeholder="Ej. Dracónico, Gigante" /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
+                <label>Opciones de metamagia (lista completa; puedes sustituir una al subir de nivel)<input bind:value={levelUpMetamagic} placeholder="Ej. Conjuro cuidadoso, Conjuro sutil" /></label>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && [2,4,8].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
                 <label>{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?4:Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?6:8} formas de bestia conocidas (VD {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?'1/4':Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?'1/2':'1'} o inferior{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===8?', se permite vuelo':', sin vuelo'})<textarea bind:value={levelUpWildShapeForms} rows="2" placeholder="Introduce la lista completa de formas conocidas, separadas por comas" /></label>
