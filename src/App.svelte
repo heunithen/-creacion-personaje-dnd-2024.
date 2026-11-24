@@ -798,6 +798,18 @@
       role: 'Atacante voladora rápida; puede entrar, atacar y alejarse.'
     },
     {
+      name: 'Araña gigante', english: 'Giant Spider', type: 'Bestia grande', alignment: 'Sin alineamiento', cr: '1 (200 PX)',
+      ac: 14, initiative: '+3 (13)', hp: '26 (4d10 + 4)', speed: '30 pies, trepar 30 pies',
+      abilities: 'Fue 14 (+2) · Des 16 (+3) · Con 12 (+1) · Int 2 (−4) · Sab 11 (+0) · Car 4 (−3)',
+      skills: 'Percepción +4, Sigilo +7', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 14', languages: '—',
+      traits: 'Trepar por arañas: puede trepar superficies difíciles, incluso techos, sin pruebas de característica. Caminante de telarañas: ignora las restricciones de movimiento causadas por telarañas y conoce la ubicación de cualquier criatura en contacto con la misma telaraña.',
+      attacks: [
+        {name:'Mordisco', bonus:'+5', reach:'5 pies', damage:'7 (1d8 + 3) perforante + 7 (2d6) de veneno'},
+        {name:'Telaraña (recarga 5–6)', description:'Una criatura que pueda ver a 60 pies o menos realiza una salvación de Destreza CD 13. Si falla, queda apresada hasta que se destruya la telaraña (CA 10; 5 PG; vulnerabilidad al fuego; inmunidad al veneno y al daño psíquico).'}
+      ],
+      role: 'Controladora y emboscadora; puede apresar a distancia y trepar por paredes y techos.'
+    },
+    {
       name: 'Araña lobo gigante', english: 'Giant Wolf Spider', type: 'Bestia mediana', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
       ac: 13, initiative: '+3 (13)', hp: '11 (2d8 + 2)', speed: '40 pies, trepar 40 pies',
       abilities: 'Fue 12 (+1) · Des 16 (+3) · Con 13 (+1) · Int 3 (−4) · Sab 12 (+1) · Car 4 (−3)',
@@ -1270,7 +1282,11 @@
                   <div class="monster-attacks">
                     <b>Acciones</b>
                     {#each monster.attacks as attack}
-                      <p><strong>{attack.name}.</strong> Ataque {attack.bonus}; alcance {attack.reach}. Daño: {attack.damage}.</p>
+                      {#if attack.description}
+                        <p><strong>{attack.name}.</strong> {attack.description}</p>
+                      {:else}
+                        <p><strong>{attack.name}.</strong> Ataque {attack.bonus}; alcance {attack.reach}. Daño: {attack.damage}.</p>
+                      {/if}
                     {/each}
                   </div>
                   <p class="monster-role"><b>Uso táctico:</b> {monster.role}</p>
