@@ -129,6 +129,73 @@ try {
   report('Subida de nivel contempla Aspecto de lo salvaje',
     app.includes('barbarian.wildHeart.aspect') && app.includes('levelUpBarbarianAspect'));
 
+  const skillBlock = app.match(/const BUILDER_CLASS_SKILLS:[\s\S]*?= \{([\s\S]*?)\n  \};/)?.[1] ?? '';
+  const barbarianSkillLine = skillBlock.match(/'Bárbaro':\{count:(\d+),options:\[([^\]]*)\]\}/);
+  const builderSkills = barbarianSkillLine?.[2].match(/'([^']+)'/g)?.map((value) => value.slice(1, -1)) ?? [];
+  report('Creador: dos habilidades de clase y opciones oficiales',
+    Boolean(barbarianSkillLine && Number(barbarianSkillLine[1]) === 2 &&
+      skillList.every((skill) => builderSkills.some((item) => norm(item) === norm(skill))) && builderSkills.length === 6));
+
+  const builderClassBlock = app.match(/const BUILDER_CLASS_DATA:[\s\S]*?= \{([\s\S]*?)\n  \};/)?.[1] ?? '';
+  const barbarianBuilderLine = builderClassBlock.split('\n').find((line) => line.includes("'Bárbaro':"));
+  report('Creador: equipo A/B, dos maestrías y rasgos iniciales',
+    Boolean(barbarianBuilderLine &&
+      ['Hacha a dos manos','4 hachas de mano','paquete de explorador','15 po','75 po'].every((item) => norm(barbarianBuilderLine).includes(norm(item))) &&
+      /weaponCount:2/.test(barbarianBuilderLine) &&
+      ['Defensa sin armadura','Furia','Maestría con armas'].every((item) => norm(barbarianBuilderLine).includes(norm(item)))));
+
+  const barbarianClassRows = progression.classes[className].rows;
+  const barbarianClassFeatures = classFeatures.classes[className];
+  for (const [subclassName, subclassData] of Object.entries(jsonSubclassMap)) {
+    const simulatedSheet = {
+      level: 0,
+      proficiency: '',
+      classFeatures: [],
+      subclassFeatures: [],
+      resources: {}
+    };
+    let valid = true;
+    for (let level = 1; level <= 20; level++) {
+      const row = barbarianClassRows.find((item) => item.level === level);
+      if (!row) { valid = false; break; }
+      simulatedSheet.level = level;
+      simulatedSheet.proficiency = row.proficiency;
+      simulatedSheet.classFeatures = barbarianClassFeatures
+        .filter((feature) => feature.level <= level)
+        .map((feature) => ({ level: feature.level, name: feature.name, description: feature.description }));
+      simulatedSheet.subclassFeatures = subclassData.features
+        .filter((feature) => feature.level <= level)
+        .map((feature) => ({ level: feature.level, name: feature.name, description: feature.description }));
+      simulatedSheet.resources = { ...row.resources };
+      if (simulatedSheet.level !== level ||
+          simulatedSheet.proficiency !== row.proficiency ||
+          Object.keys(simulatedSheet.resources).length !== 3 ||
+          simulatedSheet.classFeatures.some((feature) => !feature.description) ||
+          simulatedSheet.subclassFeatures.some((feature) => !feature.description)) {
+        valid = false;
+        break;
+      }
+    }
+    const expectedClassCount = barbarianClassFeatures.length;
+    const expectedSubclassCount = subclassData.features.length;
+    valid = valid && simulatedSheet.level === 20 &&
+      simulatedSheet.classFeatures.length === expectedClassCount &&
+      simulatedSheet.subclassFeatures.length === expectedSubclassCount &&
+      simulatedSheet.resources['N.º de furias'] === '6' &&
+      simulatedSheet.resources['Daño por furia'] === '+4' &&
+      simulatedSheet.resources['Maestría con armas'] === '4';
+    report('Simulación de ficha niveles 1–20 · ' + subclassName, Boolean(valid),
+      'Nivel final=' + simulatedSheet.level +
+      '; rasgos de clase=' + simulatedSheet.classFeatures.length +
+      '; rasgos de subclase=' + simulatedSheet.subclassFeatures.length);
+  }
+
+  report('La subida de nivel escribe rasgos, recursos y progresión en la ficha',
+    app.includes("'Rasgos de clase del nivel '+nextLevel") &&
+    app.includes("'Rasgos de subclase acumulados'") &&
+    app.includes("'Recursos según tabla de clase'") &&
+    app.includes("'Nivel de clase',nextLevel"));
+
   const passed = checks.filter((item) => item.status === 'OK').length;
   console.log(JSON.stringify({ audit: 'D&D 2024 · Bárbaro', manual: 'DND_2024_Reglas_del_Manual_del_Jugador.txt', passed, failed: errors.length, checks }, null, 2));
   if (errors.length) {
