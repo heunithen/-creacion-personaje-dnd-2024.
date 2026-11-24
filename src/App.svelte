@@ -23,6 +23,514 @@
   let fileInput: HTMLInputElement;
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
+  const CHEST_LOOT = [
+  {
+    "number": 1,
+    "category": "Equipo",
+    "name": "Abrojos"
+  },
+  {
+    "number": 2,
+    "category": "Equipo",
+    "name": "Aceite (frasco)"
+  },
+  {
+    "number": 3,
+    "category": "Equipo",
+    "name": "Ácido (vial)"
+  },
+  {
+    "number": 4,
+    "category": "Equipo",
+    "name": "Agua bendita (frasco)"
+  },
+  {
+    "number": 5,
+    "category": "Equipo",
+    "name": "Aljaba"
+  },
+  {
+    "number": 6,
+    "category": "Equipo",
+    "name": "Antitoxina"
+  },
+  {
+    "number": 7,
+    "category": "Equipo",
+    "name": "Antorcha"
+  },
+  {
+    "number": 8,
+    "category": "Equipo",
+    "name": "Ariete portátil"
+  },
+  {
+    "number": 9,
+    "category": "Equipo",
+    "name": "Barril"
+  },
+  {
+    "number": 10,
+    "category": "Equipo",
+    "name": "Bolas de metal"
+  },
+  {
+    "number": 11,
+    "category": "Equipo",
+    "name": "Bolsa"
+  },
+  {
+    "number": 12,
+    "category": "Equipo",
+    "name": "Botella de cristal"
+  },
+  {
+    "number": 13,
+    "category": "Equipo",
+    "name": "Cadena"
+  },
+  {
+    "number": 14,
+    "category": "Equipo",
+    "name": "Campana"
+  },
+  {
+    "number": 15,
+    "category": "Canalizador",
+    "name": "Bastón arcano"
+  },
+  {
+    "number": 16,
+    "category": "Canalizador",
+    "name": "Cristal arcano"
+  },
+  {
+    "number": 17,
+    "category": "Canalizador",
+    "name": "Orbe arcano"
+  },
+  {
+    "number": 18,
+    "category": "Canalizador",
+    "name": "Vara arcana"
+  },
+  {
+    "number": 19,
+    "category": "Canalizador",
+    "name": "Varita arcana"
+  },
+  {
+    "number": 20,
+    "category": "Canalizador",
+    "name": "Bastón de madera druídico"
+  },
+  {
+    "number": 21,
+    "category": "Canalizador",
+    "name": "Rama de muérdago"
+  },
+  {
+    "number": 22,
+    "category": "Canalizador",
+    "name": "Varita de tejo"
+  },
+  {
+    "number": 23,
+    "category": "Equipo",
+    "name": "Cantimplora"
+  },
+  {
+    "number": 24,
+    "category": "Equipo",
+    "name": "Catalejo"
+  },
+  {
+    "number": 25,
+    "category": "Equipo",
+    "name": "Cerradura con llave"
+  },
+  {
+    "number": 26,
+    "category": "Equipo",
+    "name": "Cesta"
+  },
+  {
+    "number": 27,
+    "category": "Equipo",
+    "name": "Cofre pequeño"
+  },
+  {
+    "number": 28,
+    "category": "Equipo",
+    "name": "Cordel (3 m)"
+  },
+  {
+    "number": 29,
+    "category": "Equipo",
+    "name": "Cubo"
+  },
+  {
+    "number": 30,
+    "category": "Equipo",
+    "name": "Cuerda (15 m)"
+  },
+  {
+    "number": 31,
+    "category": "Equipo",
+    "name": "Disfraz"
+  },
+  {
+    "number": 32,
+    "category": "Equipo",
+    "name": "Escalera"
+  },
+  {
+    "number": 33,
+    "category": "Equipo",
+    "name": "Espejo de acero"
+  },
+  {
+    "number": 34,
+    "category": "Equipo",
+    "name": "Estuche para mapas o pergaminos"
+  },
+  {
+    "number": 35,
+    "category": "Equipo",
+    "name": "Frasco de tinta"
+  },
+  {
+    "number": 36,
+    "category": "Equipo",
+    "name": "Jarra de cerámica"
+  },
+  {
+    "number": 37,
+    "category": "Equipo",
+    "name": "Jarra de cerveza"
+  },
+  {
+    "number": 38,
+    "category": "Equipo",
+    "name": "Lámpara"
+  },
+  {
+    "number": 39,
+    "category": "Equipo",
+    "name": "Linterna de ojo de buey"
+  },
+  {
+    "number": 40,
+    "category": "Equipo",
+    "name": "Linterna sorda"
+  },
+  {
+    "number": 41,
+    "category": "Equipo",
+    "name": "Lupa"
+  },
+  {
+    "number": 42,
+    "category": "Equipo",
+    "name": "Manta"
+  },
+  {
+    "number": 43,
+    "category": "Equipo",
+    "name": "Martillo"
+  },
+  {
+    "number": 44,
+    "category": "Equipo",
+    "name": "Mochila"
+  },
+  {
+    "number": 45,
+    "category": "Equipo",
+    "name": "Olla de hierro"
+  },
+  {
+    "number": 46,
+    "category": "Equipo",
+    "name": "Pala"
+  },
+  {
+    "number": 47,
+    "category": "Equipo",
+    "name": "Palanqueta"
+  },
+  {
+    "number": 48,
+    "category": "Equipo",
+    "name": "Papel (10 hojas)"
+  },
+  {
+    "number": 49,
+    "category": "Equipo",
+    "name": "Pergamino (10 hojas)"
+  },
+  {
+    "number": 50,
+    "category": "Equipo",
+    "name": "Petate"
+  },
+  {
+    "number": 51,
+    "category": "Equipo",
+    "name": "Raciones (5 días)"
+  },
+  {
+    "number": 52,
+    "category": "Equipo",
+    "name": "Saco"
+  },
+  {
+    "number": 53,
+    "category": "Equipo",
+    "name": "Tienda para dos personas"
+  },
+  {
+    "number": 54,
+    "category": "Equipo",
+    "name": "Túnica o ropa común"
+  },
+  {
+    "number": 55,
+    "category": "Equipo",
+    "name": "Yesquero"
+  },
+  {
+    "number": 56,
+    "category": "Herramienta",
+    "name": "Herramientas de ladrón"
+  },
+  {
+    "number": 57,
+    "category": "Herramienta",
+    "name": "Herramientas de albañil"
+  },
+  {
+    "number": 58,
+    "category": "Herramienta",
+    "name": "Herramientas de alfarero"
+  },
+  {
+    "number": 59,
+    "category": "Herramienta",
+    "name": "Herramientas de carpintero"
+  },
+  {
+    "number": 60,
+    "category": "Herramienta",
+    "name": "Herramientas de cartógrafo"
+  },
+  {
+    "number": 61,
+    "category": "Herramienta",
+    "name": "Herramientas de herrero"
+  },
+  {
+    "number": 62,
+    "category": "Herramienta",
+    "name": "Herramientas de joyero"
+  },
+  {
+    "number": 63,
+    "category": "Herramienta",
+    "name": "Herramientas de peletero"
+  },
+  {
+    "number": 64,
+    "category": "Herramienta",
+    "name": "Herramientas de pintor"
+  },
+  {
+    "number": 65,
+    "category": "Herramienta",
+    "name": "Herramientas de vidriero"
+  },
+  {
+    "number": 66,
+    "category": "Herramienta",
+    "name": "Suministros de alquimista"
+  },
+  {
+    "number": 67,
+    "category": "Herramienta",
+    "name": "Suministros de cervecero"
+  },
+  {
+    "number": 68,
+    "category": "Herramienta",
+    "name": "Suministros de calígrafo"
+  },
+  {
+    "number": 69,
+    "category": "Herramienta",
+    "name": "Suministros de herborista"
+  },
+  {
+    "number": 70,
+    "category": "Herramienta",
+    "name": "Suministros de venenos"
+  },
+  {
+    "number": 71,
+    "category": "Instrumento",
+    "name": "Flauta"
+  },
+  {
+    "number": 72,
+    "category": "Instrumento",
+    "name": "Laúd"
+  },
+  {
+    "number": 73,
+    "category": "Instrumento",
+    "name": "Lira"
+  },
+  {
+    "number": 74,
+    "category": "Instrumento",
+    "name": "Tambor"
+  },
+  {
+    "number": 75,
+    "category": "Instrumento",
+    "name": "Cuerno"
+  },
+  {
+    "number": 76,
+    "category": "Arma",
+    "name": "Daga"
+  },
+  {
+    "number": 77,
+    "category": "Arma",
+    "name": "Hacha de mano"
+  },
+  {
+    "number": 78,
+    "category": "Arma",
+    "name": "Maza"
+  },
+  {
+    "number": 79,
+    "category": "Arma",
+    "name": "Lanza"
+  },
+  {
+    "number": 80,
+    "category": "Arma",
+    "name": "Bastón"
+  },
+  {
+    "number": 81,
+    "category": "Arma",
+    "name": "Espada corta"
+  },
+  {
+    "number": 82,
+    "category": "Arma",
+    "name": "Espada larga"
+  },
+  {
+    "number": 83,
+    "category": "Arma",
+    "name": "Hacha de batalla"
+  },
+  {
+    "number": 84,
+    "category": "Arma",
+    "name": "Martillo de guerra"
+  },
+  {
+    "number": 85,
+    "category": "Arma",
+    "name": "Arco corto"
+  },
+  {
+    "number": 86,
+    "category": "Arma",
+    "name": "Ballesta ligera"
+  },
+  {
+    "number": 87,
+    "category": "Arma",
+    "name": "Honda"
+  },
+  {
+    "number": 88,
+    "category": "Arma",
+    "name": "Jabalina"
+  },
+  {
+    "number": 89,
+    "category": "Arma",
+    "name": "Tridente"
+  },
+  {
+    "number": 90,
+    "category": "Arma",
+    "name": "Garrote grande"
+  },
+  {
+    "number": 91,
+    "category": "Armadura",
+    "name": "Escudo"
+  },
+  {
+    "number": 92,
+    "category": "Armadura",
+    "name": "Armadura acolchada"
+  },
+  {
+    "number": 93,
+    "category": "Armadura",
+    "name": "Armadura de cuero"
+  },
+  {
+    "number": 94,
+    "category": "Armadura",
+    "name": "Armadura de cuero tachonado"
+  },
+  {
+    "number": 95,
+    "category": "Armadura",
+    "name": "Camisote de malla"
+  },
+  {
+    "number": 96,
+    "category": "Armadura",
+    "name": "Cota de escamas"
+  },
+  {
+    "number": 97,
+    "category": "Armadura",
+    "name": "Cota de malla"
+  },
+  {
+    "number": 98,
+    "category": "Armadura",
+    "name": "Coraza"
+  },
+  {
+    "number": 99,
+    "category": "Armadura",
+    "name": "Armadura de placas"
+  },
+  {
+    "number": 100,
+    "category": "Armadura",
+    "name": "Armadura de pieles"
+  }
+];
+  let lastChestRoll: { number: number; category: string; name: string } | null = null;
+  function rollChestLoot() {
+    const number = Math.floor(Math.random() * 100) + 1;
+    lastChestRoll = CHEST_LOOT[number - 1];
+  }
+
   let customRolls: CustomRoll[] = [];
   let lastRollId = '';
   let newRollName = '';
@@ -337,6 +845,19 @@
           {/each}
         {/if}
       </section>
+      <section class="panel chest-panel">
+        <div class="section-heading"><h2>Cofres</h2><span class="count">1d100</span></div>
+        <p class="muted">Tabla de botín mundano para cofres. Cada tirada selecciona uno de los 100 objetos.</p>
+        <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 1d100</button></div>
+        {#if lastChestRoll}
+          <div class="chest-result"><span class="chest-result-number">Resultado {lastChestRoll.number}</span><strong>{lastChestRoll.name}</strong><span>{lastChestRoll.category}</span></div>
+        {/if}
+        <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>d100</th><th>Objeto</th><th>Categoría</th></tr></thead><tbody>
+          {#each CHEST_LOOT as item}
+            <tr class:chest-selected={lastChestRoll?.number === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td></tr>
+          {/each}
+        </tbody></table></div>
+      </section>
     {:else}
       {#if !sheet}
         <section class="panel import-character-panel">
@@ -445,7 +966,7 @@
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.4</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.5</span></footer>
 </div>
 
 <style>
@@ -512,6 +1033,7 @@
   .import-character-panel{margin-bottom:.8rem}
   .gm-sheet-details{flex-basis:100%;margin-top:.7rem}.gm-sheet-details summary{cursor:pointer;color:var(--accent,#d6b66d);padding:.5rem 0}
   .gm-character-sheet{margin-top:.8rem}.gm-character-sheet .sheet-grid{grid-template-columns:1fr}
+  .chest-panel{margin-top:1rem}.chest-roll-actions{display:flex;justify-content:flex-start;margin:.8rem 0}.chest-result{display:grid;grid-template-columns:auto 1fr auto;gap:.75rem;align-items:center;padding:.85rem 1rem;margin:.75rem 0;border:1px solid var(--gold);border-radius:6px;background:#f0e6ce;color:var(--ink)}.chest-result-number{font:700 .72rem system-ui,sans-serif;color:var(--red)}.chest-result strong{font:700 1rem Georgia,serif}.chest-result>span:last-child{font:.72rem system-ui,sans-serif;color:var(--ink-soft)}.chest-table-wrap{max-height:440px;overflow:auto;border:1px solid var(--rule);border-radius:5px}.chest-table{width:100%;border-collapse:collapse;background:rgba(255,255,255,.4);font:.78rem system-ui,sans-serif}.chest-table th{position:sticky;top:0;background:#e8dfce;color:var(--ink);text-align:left}.chest-table th,.chest-table td{padding:.42rem .6rem;border-bottom:1px solid rgba(130,112,83,.2)}.chest-table td:first-child{width:3.5rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}.chest-selected{background:#e9d7a9;font-weight:700}
   .empty-state{text-align:center;padding:2rem}.save-panel{display:flex;flex-direction:column;gap:.8rem;margin-top:1rem}
   .save-panel .danger-text{align-self:center}
   .roster-panel{margin-top:1rem}.card-identity{min-width:0}
