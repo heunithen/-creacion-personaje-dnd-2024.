@@ -771,6 +771,7 @@
   let levelUpSubclassVariant = '';
   let levelUpBarbarianAspect = '';
   let levelUpRangerStyle = '';
+  let levelUpPaladinStyle = '';
   let levelUpFighterStyles = '';
   let levelUpRangerCantrips = '';
   let levelUpRangerHunterPrey = '';
@@ -1838,6 +1839,7 @@
     const spellNames=[...b.selectedCantrips,...speciesCantrips,...(b.species==='Gnomo'&&b.speciesChoice==='Gnomo de los bosques'?['Hablar con los animales']:[]),...b.backgroundMagicCantrips,...(b.species==='Humano'?b.speciesMagicCantrips:[]),...b.warlockTomeCantrips,...b.selectedSpells,...b.wizardSpellbook,b.backgroundMagicSpell,...(b.species==='Humano'?[b.speciesMagicSpell]:[]),...(b.className==='Explorador'?['Marca del cazador']:[]),...(b.className==='Brujo'&&b.classSpecialChoice==='Pacto del grimorio'?b.warlockTomeRituals:[])].filter(Boolean);
     put(detailSpellsIndex,0,describeSpells(spellNames));
     const result={id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente del GM. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
+    if(b.className==='Paladín') setCharacterStat(result,'RASGOS Y DOTES','Reserva de Imposición de manos','5 PG');
     refreshDerivedCharacterSheet(result);
     return result;
   }
@@ -2199,6 +2201,7 @@ import SPELLS from './spells.json';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
     levelUpBarbarianAspect = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Aspecto de lo salvaje') || '';
     levelUpRangerStyle = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Estilo de combate') || '';
+    levelUpPaladinStyle = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Estilo de combate de paladín') || '';
     levelUpFighterStyles = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Estilos de combate') || ((String(getCharacterStat(entry.sheet,'RASGOS Y DOTES','Rasgos de clase')||'').match(/Estilo de combate:\s*([^\n;]+)/i)||[])[1] || '');
     levelUpRangerCantrips = getCharacterStat(entry.sheet,'CONJUROS','Trucos de estilo de combate') || '';
     levelUpRangerHunterPrey = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opción de Cazador · nivel 3') || '';
@@ -2276,9 +2279,10 @@ import SPELLS from './spells.json';
     const isSorcererSpellProgression=className==='Hechicero';
     const isClericCantripProgression=className==='Clérigo' && nextLevel>=2;
     const isDruidCantripProgression=className==='Druida' && nextLevel>=2;
+    const isPaladinSpellProgression=className==='Paladín' && nextLevel>=2;
     if(classCastingAbility && Number.isFinite(classCantripTarget) && (classCantripTarget>oldClassCantripCount || isWarlockSpellProgression || isClericCantripProgression || isDruidCantripProgression || isSorcererSpellProgression) && classCantripNames.length!==classCantripTarget) { notice='Debes registrar la lista completa de '+classCantripTarget+' trucos de clase.'; return; }
     if(classCastingAbility && Number.isFinite(classPreparedTarget) && (classPreparedTarget>oldClassPreparedCount || isWarlockSpellProgression || isSorcererSpellProgression) && classSpellNames.length!==classPreparedTarget) { notice='Debes registrar la lista completa de '+classPreparedTarget+' conjuros de clase preparados/conocidos.'; return; }
-    if((isWarlockSpellProgression || isSorcererSpellProgression) && (new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length || new Set(classSpellNames.map(name=>normalizeLevelText(name))).size!==classSpellNames.length)) { notice='No puedes repetir trucos ni conjuros en tu lista de clase.'; return; }
+    if((isWarlockSpellProgression || isSorcererSpellProgression || isPaladinSpellProgression) && (new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length || new Set(classSpellNames.map(name=>normalizeLevelText(name))).size!==classSpellNames.length)) { notice='No puedes repetir trucos ni conjuros en tu lista de clase.'; return; }
     if(isSorcererSpellProgression && oldClassCantripNames.length && classCantripNames.filter(name=>oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassCantripNames.length-1) { notice='Al subir de nivel de hechicero solo puedes sustituir un truco que ya conozcas.'; return; }
     if(isSorcererSpellProgression && oldClassSpellNames.length && classSpellNames.filter(name=>oldClassSpellNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassSpellNames.length-1) { notice='Al subir de nivel de hechicero solo puedes sustituir un conjuro preparado que ya conozcas.'; return; }
     if(isClericCantripProgression && new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length) { notice='No puedes repetir trucos en la lista del clérigo.'; return; }
@@ -2356,6 +2360,9 @@ import SPELLS from './spells.json';
     const rangerSubclassKey=selectedSubclassKey.replace(/[\s_-]/g,'');
     const needsRangerStyle=className==='Explorador' && nextLevel===2;
     const rangerStyle=levelUpRangerStyle || getCharacterStat(original,'RASGOS Y DOTES','Estilo de combate');
+    const needsPaladinStyle=className==='Paladín' && nextLevel>=2;
+    const paladinStyleOptions=BUILDER_CLASS_DATA['Guerrero'].specialOptions||[];
+    if(needsPaladinStyle && ((!levelUpPaladinStyle.trim() && nextLevel===2) || (levelUpPaladinStyle.trim() && !paladinStyleOptions.some(option=>normalizeLevelText(option)===normalizeLevelText(levelUpPaladinStyle))))) { notice='Elige una dote válida de Estilo de combate para el paladín.'; return; }
     const isRangerDruidicWarrior=className==='Explorador' && normalizeLevelText(rangerStyle)==='guerrero druidico';
     const rangerCantripChoices=splitChoiceList(levelUpRangerCantrips);
     const oldRangerCantrips=splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos de estilo de combate'));
@@ -2552,6 +2559,14 @@ import SPELLS from './spells.json';
     }
     if(needsBarbarianWildAspect) setCharacterStat(updated,'RASGOS Y DOTES','Aspecto de lo salvaje',levelUpBarbarianAspect);
     if(needsRangerStyle) setCharacterStat(updated,'RASGOS Y DOTES','Estilo de combate',levelUpRangerStyle);
+    if(needsPaladinStyle && levelUpPaladinStyle.trim()) setCharacterStat(updated,'RASGOS Y DOTES','Estilo de combate de paladín',levelUpPaladinStyle);
+    if(className==='Paladín') {
+      setCharacterStat(updated,'RASGOS Y DOTES','Reserva de Imposición de manos',(5*nextLevel)+' PG');
+      const previousAlwaysPrepared=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros siempre preparados de clase'));
+      const newAlwaysPrepared=[...(nextLevel===2?['Castigo divino']:[]),...(nextLevel===5?['Hallar corcel']:[])];
+      const alwaysPrepared=[...new Map([...previousAlwaysPrepared,...newAlwaysPrepared].map(name=>[normalizeLevelText(name),name])).values()];
+      if(alwaysPrepared.length) setCharacterStat(updated,'CONJUROS','Conjuros siempre preparados de clase',alwaysPrepared.join(', '));
+    }
     if(needsFighterStyle) setCharacterStat(updated,'RASGOS Y DOTES','Estilos de combate',fighterStyleChoices.join(', '));
     if(isRangerDruidicWarrior) {
       setCharacterStat(updated,'CONJUROS','Trucos de estilo de combate',rangerCantripChoices.join(', '));
@@ -3092,6 +3107,10 @@ import SPELLS from './spells.json';
               {#if levelUpSubclass==='MAESTRO DEL COMBATE' && [3,7,10,15].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
                 <label>Maniobras de Maestro del combate (lista completa)<textarea bind:value={levelUpManeuvers} rows="3" placeholder="Ej. Arremetida, Ataque preciso, Contraataque" /></label>
                 <small>Opciones: {BUILDER_BATTLE_MANEUVER_OPTIONS.join(' · ')}</small>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Paladín' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
+                <label>Estilo de combate del paladín<select bind:value={levelUpPaladinStyle}><option value="">Conservar el estilo actual / elegir en nivel 2</option>{#each BUILDER_CLASS_DATA['Guerrero'].specialOptions as style}<option value={style}>{style}</option>{/each}</select></label>
+                <small>En nivel 2 debes elegir uno. En niveles posteriores puedes conservarlo o sustituirlo por otro estilo.</small>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
                 <label>Furia elemental<select bind:value={levelUpElementalFury}><option value="">Elige una opción</option><option>Golpe primordial</option><option>Lanzamiento potente</option></select></label>
