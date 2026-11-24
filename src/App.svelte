@@ -20,6 +20,9 @@
   let activeTab = 'Datos';
   const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
+  let autoSyncTimer: ReturnType<typeof setTimeout>;
+  let syncInProgress = false;
+  let syncPending = false;
   let fileInput: HTMLInputElement;
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
@@ -947,7 +950,45 @@
 
   function editField(target: Record<string, unknown>, key: string, event: Event) {
     target[key] = (event.currentTarget as HTMLInputElement | HTMLTextAreaElement).value;
-    if (sheet) sheet = { ...sheet };
+    if (sheet) {
+      sheet = { ...sheet };
+      scheduleAutoSync();
+    }
+  }
+
+  function scheduleAutoSync() {
+    if (!sheet) return;
+    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+    if (!obrReady || obrRole !== 'PLAYER') return;
+    syncStatus = 'Cambios pendientes de sincronizar…';
+    clearTimeout(autoSyncTimer);
+    autoSyncTimer = setTimeout(() => {
+      syncPending = true;
+      void flushAutoSync();
+    }, 650);
+  }
+
+  async function flushAutoSync() {
+    if (syncInProgress || !syncPending || !sheet || !obrReady || obrRole !== 'PLAYER') return;
+    syncInProgress = true;
+    try {
+      while (syncPending && sheet) {
+        syncPending = false;
+        const snapshot = JSON.parse(JSON.stringify(sheet)) as RawSheet;
+        const id = await OBR.player.getId();
+        const name = await OBR.player.getName();
+        await OBR.player.setMetadata({ [KEY]: { character: snapshot, playerName: name, updatedAt: new Date().toISOString() } });
+        await OBR.broadcast.sendMessage(CHANNEL, {
+          type: 'character-updated', playerId: id, playerName: name, character: snapshot
+        }, { destination: 'ALL' });
+      }
+      syncStatus = 'Ficha sincronizada con la sala.';
+    } catch {
+      syncStatus = 'No se pudo sincronizar. Los cambios siguen guardados en este navegador.';
+    } finally {
+      syncInProgress = false;
+      if (syncPending) void flushAutoSync();
+    }
   }
 
   function editSheetField(key: string, event: Event) {
@@ -1067,17 +1108,8 @@
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     if (obrReady && obrRole === 'PLAYER') {
-      try {
-        const id = await OBR.player.getId();
-        const name = await OBR.player.getName();
-        await OBR.player.setMetadata({ [KEY]: { character: sheet, playerName: name, updatedAt: new Date().toISOString() } });
-        await OBR.broadcast.sendMessage(CHANNEL, {
-          type: 'character-updated', playerId: id, playerName: name, character: sheet
-        }, { destination: 'ALL' });
-        syncStatus = 'Ficha exportada y actualizada en la sala.';
-      } catch {
-        syncStatus = 'JSON exportado, pero no se pudo actualizar la ficha en la sala.';
-      }
+      syncPending = true;
+      await flushAutoSync();
     }
     notice = 'Personaje exportado como ' + safeName + '.json';
   }
