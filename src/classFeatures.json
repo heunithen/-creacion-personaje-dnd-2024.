@@ -36,6 +36,71 @@
         "level": 3,
         "name": "SUBCLASE DE BÁRBARO",
         "description": "Consigues una subclase de bárbaro de tu elección.\nLas subclases de la senda del Árbol del Mundo, la senda\ndel berserker, la senda del corazón salvaje y la senda\ndel fanático se detallan tras la descripción de esta clase.\nUna subclase es una especialización que te proporciona\nrasgos cuando alcanzas ciertos niveles de bárbaro. De aquí\nen adelante, obtienes todos los rasgos de tu subclase que\nsean de tu nivel de bárbaro e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los niveles\nde bárbaro 8, 12 y 16."
+      },
+      {
+        "level": 5,
+        "name": "ATAQUE ADICIONAL",
+        "description": "Cuando lleves a cabo la acción de atacar en tu turno,\npodrás hacer dos ataques en lugar de uno."
+      },
+      {
+        "level": 5,
+        "name": "MOVIMIENTO RÁPIDO",
+        "description": "Tu velocidad aumenta en 3 m si no llevas armadura pesada."
+      },
+      {
+        "level": 7,
+        "name": "INSTINTO SALVAJE",
+        "description": "Tus instintos están tan afinados que tienes ventaja en las\ntiradas de iniciativa.\n\nINICIO PÁGINA PDF: 55"
+      },
+      {
+        "level": 7,
+        "name": "SALTO INSTINTIVO",
+        "description": "Como parte de la acción adicional para dejarte llevar por\nla furia, puedes moverte hasta la mitad de tu velocidad."
+      },
+      {
+        "level": 9,
+        "name": "GOLPE BRUTAL",
+        "description": "Si utilizas Ataque temerario, puedes renunciar\na cualquier ventaja en una tirada de ataque de tu\nelección basada en la Fuerza en tu turno. La tirada de\nataque elegida no debe tener desventaja. Si la tirada de\nataque elegida acierta, el objetivo sufre 1d10 de daño\nadicional del mismo tipo que inflija el arma o el ataque\nsin armas y puedes causar un efecto de Golpe brutal de\ntu elección. Tienes las siguientes opciones de efectos.\nGolpe enérgico. El objetivo es empujado 4,5 m respecto\na ti en línea recta. Luego puedes moverte hasta la mitad\nde tu velocidad directamente hacia el objetivo sin\nprovocar ataques de oportunidad.\nGolpe ralentizador. La velocidad del objetivo se\nreduce en 4,5 m hasta el principio de tu siguiente turno.\nUn objetivo solo puede sufrir un golpe ralentizador cada\nvez: el más reciente."
+      },
+      {
+        "level": 11,
+        "name": "FURIA IMPLACABLE",
+        "description": "Tu furia te permite seguir luchando incluso tras\nsufrir heridas graves. Si tus puntos de golpe se\nreducen a 0 mientras estás enfurecido, pero no mueres\ninmediatamente, puedes hacer una tirada de salvación\nde Constitución con CD 10. Si la superas, tus puntos\nde golpe pasarán a ser una cantidad igual al doble de\ntu nivel de bárbaro.\nSiempre que uses este rasgo después de la primera vez,\nla CD aumenta en 5. Tras finalizar un descanso corto\no largo, la CD vuelve a ser 10."
+      },
+      {
+        "level": 13,
+        "name": "GOLPE BRUTAL MEJORADO",
+        "description": "Has perfeccionado tus formas de atacar con fiereza.\nEntre las opciones de Golpe brutal se encuentran ahora\nlos siguientes efectos:\nGolpe abrumador. El objetivo tiene desventaja en la\nsiguiente tirada de salvación que haga y no puede llevar\na cabo ataques de oportunidad hasta el principio de tu\nsiguiente turno.\nGolpe desgarrador. Antes del principio de tu siguiente\nturno, la próxima tirada de ataque realizada por otra\ncriatura contra el objetivo obtiene un bonificador de +5.\nUna tirada de ataque puede obtener solo un bonificador\nde un golpe desgarrador."
+      },
+      {
+        "level": 15,
+        "name": "FURIA PERSISTENTE",
+        "description": "Cuando tires iniciativa, puedes recuperar todos los usos\ngastados de la furia. Tras recuperar los usos de la furia de\nesta manera, no podrás volver a hacerlo hasta que finalices\nun descanso largo.\nAdemás, tu furia es tan intensa que ahora dura\n10 minutos sin necesidad de hacer nada para prolongarla\nde un asalto a otro. Tu furia termina antes si recibes el\nestado de inconsciente (no solo el de incapacitado) o te\npones una armadura pesada."
+      },
+      {
+        "level": 17,
+        "name": "GOLPE BRUTAL MEJORADO",
+        "description": "El daño adicional de tu Golpe brutal aumenta a 2d10.\nAdemás, puedes utilizar dos efectos diferentes de Golpe\nbrutal siempre que uses tu rasgo Golpe brutal."
+      },
+      {
+        "level": 18,
+        "name": "PODERÍO INDÓMITO",
+        "description": "Si tu resultado en una prueba de Fuerza o una tirada de\nsalvación de Fuerza es inferior a tu puntuación de Fuerza,\npuedes usar esa puntuación en lugar del resultado."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del ataque imparable."
+      },
+      {
+        "level": 20,
+        "name": "CAMPEÓN PRIMORDIAL",
+        "description": "Encarnas un poder primigenio. Tus puntuaciones de\nFuerza y Constitución aumentan en 4, hasta un máximo\nde 25.\n\nINICIO PÁGINA PDF: 56\nSUBCLASES DE BÁRBARO\nUna subclase de bárbaro es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles de\nbárbaro, según se especifique en la subclase. Esta sección\nte presenta las subclases de la senda del Árbol del Mundo,\nla senda del berserker, la senda del corazón salvaje y la\nsenda del fanático.\nSENDA DEL ÁRBOL DEL MUNDO"
       }
     ],
     "Bardo": [
@@ -63,6 +128,41 @@
         "level": 3,
         "name": "SUBCLASE DE BARDO",
         "description": "Consigues una subclase de bardo de tu elección.\nLas subclases del colegio de la danza, el colegio del\nconocimiento, el colegio del glamour y el colegio del valor\nse detallan tras la descripción de esta clase. Una subclase\nes una especialización que te proporciona rasgos cuando\nalcanzas ciertos niveles de bardo. De aquí en adelante,\nobtienes todos los rasgos de tu subclase que sean de tu\nnivel de bardo e inferiores.\n\nINICIO PÁGINA PDF: 63\nINICIO RECUADRO: EL REPERTORIO DE UN BARDO\n¿Tu bardo toca el tambor mientras canta las hazañas\nde los héroes de antaño? ¿Puntea un laúd mientras\ntararea una romántica melodía? ¿Entona arias de una\nfuerza conmovedora? ¿Recita monólogos dramáticos\nde tragedias clásicas? ¿Usa el ritmo de danzas folclóricas\npara coordinar los movimientos de sus aliados en\ncombate? ¿Compone quintillas jocosas y subidas de tono?\nCuando interpretes a un bardo, plantéate el estilo\nde actuaciones artísticas que prefieres, el estado de\nánimo que aspiras provocar y los temas que inspiran\ntus creaciones. ¿Se basan tus poemas en momentos\nde belleza natural o son reflexiones inquietantes\nsobre la pérdida de un ser querido? ¿Prefieres himnos\nidealistas o los animados cánticos de las tabernas?\n¿Te atraen las lamentaciones por los caídos o las\ncelebraciones de alegría? ¿Bailas gigas alegres o realizas\ncoreografías complicadas? ¿Te centras en un único\nestilo en tus actuaciones o aspiras a dominarlos todos?\nFIN RECUADRO"
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de bardo."
+      },
+      {
+        "level": 5,
+        "name": "FUENTE DE INSPIRACIÓN",
+        "description": "Ahora recuperas todos los usos de Inspiración bárdica\ntras finalizar un descanso corto o largo.\nAdemás, puedes gastar un espacio de conjuro (no requiere\nacción) para recuperar un uso gastado de Inspiración\nbárdica."
+      },
+      {
+        "level": 7,
+        "name": "CONTRAENCANTAMIENTO",
+        "description": "Puedes emplear notas musicales o palabras de poder para\ninterrumpir los efectos que afectan a la mente. Si tú o una\ncriatura que esté a 9 m o menos de ti falláis una tirada\nde salvación contra un efecto que aplique el estado de\nasustado o hechizado, puedes llevar a cabo una reacción\npara que se repita la tirada de salvación, y la nueva tirada\ntendrá ventaja."
+      },
+      {
+        "level": 10,
+        "name": "SECRETOS MÁGICOS",
+        "description": "Has aprendido secretos de diversas tradiciones mágicas.\nCada vez que alcances un nivel de bardo (incluido este)\ny aumente la cantidad de conjuros preparados de la tabla\n“Rasgos de bardo”, podrás elegir cualquiera de los nuevos\nconjuros preparados de entre las listas de conjuros de bardo,\nclérigo, druida y mago. Los conjuros elegidos contarán\ncomo conjuros de bardo para ti (consulta las listas de\nconjuros en la sección de la clase correspondiente). Además,\ncuando sustituyas un conjuro preparado para esta clase,\npodrás hacerlo con un conjuro de esas listas."
+      },
+      {
+        "level": 18,
+        "name": "INSPIRACIÓN SUPERIOR",
+        "description": "Cuando tires iniciativa, recuperarás usos gastados de\nInspiración bárdica hasta que tengas dos, si tuvieras\nmenos de esta cifra."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del recuerdo de conjuros."
+      },
+      {
+        "level": 20,
+        "name": "PALABRAS DE CREACIÓN",
+        "description": "Ahora dominas dos de las palabras de creación:\nlas\npalabras de la vida y de la muerte. Por tanto, siempre\ntienes preparados los conjuros palabra de poder: sanar\ny palabra de poder: matar. Cuando lances uno de estos\nconjuros, podrás hacer objetivo a una segunda criatura\nsi esta se encuentra a 3 m o menos del primer objetivo.\n\nINICIO PÁGINA PDF: 64\nLISTA DE CONJUROS DE BARDO\nEsta sección presenta la lista de conjuros de bardo. Los conjuros se organizan por su nivel y por orden alfabético y se indica la escuela mágica de cada uno de ellos. En la columna “Especial”, C significa que el conjuro requiere concentración, R significa que es un ritual y M significa que requiere un componente material específico.\n\nTABLA: Trucos (conjuros de bardo de nivel 0)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Amistad | Encantamiento | C\nFILA: Burla dañina | Encantamiento | —\nFILA: Guardia de cuchillas | Abjuración | C\nFILA: Ilusión menor | Ilusionismo | —\nFILA: Impacto certero | Adivinación | —\nFILA: Luces danzantes | Ilusionismo | C\nFILA: Luz | Evocación | —\nFILA: Mano de mago | Conjuración | —\nFILA: Mensaje | Transmutación | —\nFILA: Prestidigitación | Transmutación | —\nFILA: Reparar | Transmutación | —\nFILA: Tronar | Evocación | —\nFILA: Voluta estelar | Evocación | —\nFIN DE TABLA\n\nTABLA: Conjuros de bardo de nivel 1\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Caída de pluma | Transmutación | —\nFILA: Curar heridas | Abjuración | —\nFILA: Detectar magia | Adivinación | C, R\nFILA: Disfrazarse | Ilusionismo | —\nFILA: Dormir | Encantamiento | C\nFILA: Encantar animal | Encantamiento | —\nFILA: Entender idiomas | Adivinación | R\nFILA: Fuego feérico | Evocación | C\nFILA: Hablar con los animales | Adivinación | R\nFILA: Hechizar persona | Encantamiento | —\nFILA: Heroísmo | Encantamiento | C\nFILA: Identificar | Adivinación | R, M\nFILA: Imagen silenciosa | Ilusionismo | C\nFILA: Ola atronadora | Evocación | —\nFILA: Orden imperiosa | Encantamiento | —\nFILA: Palabra de curación | Abjuración | —\nFILA: Perdición | Encantamiento | C\nFILA: Risa horrible de Tasha | Encantamiento | C\nFILA: Rociada de color | Ilusionismo | —\nFILA: Sirviente invisible | Conjuración | R\nFILA: Susurros discordantes | Encantamiento | —\nFILA: Texto ilusorio | Ilusionismo | R, M\nFILA: Zancada prodigiosa | Transmutación | —\nFIN DE TABLA\n\nTABLA: Conjuros de bardo de nivel 2\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Abrir | Transmutación | —\nFILA: Agrandar/reducir | Transmutación | C\nFILA: Auxilio | Abjuración | —\nFILA: Boca mágica | Ilusionismo | R, M\nFILA: Calentar metal | Transmutación | C\nFILA: Calmar emociones | Encantamiento | C\nFILA: Corona de la locura | Encantamiento | C\nFILA: Detectar pensamientos | Adivinación | C\nFILA: Embelesar | Encantamiento | C\nFILA: Fuerza fantasmal | Ilusionismo | C\nFILA: Hacer añicos | Evocación | —\nFILA: Imagen múltiple | Ilusionismo | —\nFILA: Inmovilizar persona | Encantamiento | C\nFILA: Invisibilidad | Ilusionismo | C\nFILA: Localizar animales o plantas | Adivinación | R\nFILA: Localizar objeto | Adivinación | C\nFILA: Mensajero animal | Encantamiento | R\nFILA: Nube de dagas | Conjuración | C\nFILA: Potenciar característica | Transmutación | C\nFILA: Restablecimiento menor | Abjuración | —\nFILA: Silencio | Ilusionismo | C, R\nFILA: Sordera/ceguera | Transmutación | —\nFILA: Sugestión | Encantamiento | C\nFILA: Ver invisibilidad | Adivinación | —\nFILA: Zona de la verdad | Encantamiento | —\nFIN DE TABLA\n\nTABLA: Conjuros de bardo de nivel 3\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Clarividencia | Adivinación | C, M\nFILA: Crecimiento vegetal | Transmutación | —\nFILA: Disipar magia | Abjuración | —\nFILA: Don de lenguas | Adivinación | —\nFILA: Fingir muerte | Nigromancia | R\nFILA: Glifo custodio | Abjuración | M\nFILA: Hablar con las plantas | Transmutación | —\nFILA: Hablar con los muertos | Nigromancia | —\nFILA: Imagen mayor | Ilusionismo | C\nFILA: Imponer maldición | Nigromancia | C\nFILA: Indetectable | Abjuración | M\nFILA: Nube apestosa | Conjuración | C\nFILA: Palabra de curación en masa | Abjuración | —\nFILA: Patrón hipnótico | Ilusionismo | C\nFILA: Pequeña choza de Leomund | Evocación | R\nFILA: Ralentizar | Transmutación | C\nFILA: Recado | Adivinación | —\nFILA: Terror | Ilusionismo | C\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 65\nTABLA: Conjuros de bardo de nivel 4\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Asesino fantasmal | Ilusionismo | C\nFILA: Compulsión | Encantamiento | C\nFILA: Confusión | Encantamiento | C\nFILA: Fuente de luz lunar | Evocación | C\nFILA: Hechizar monstruo | Encantamiento | —\nFILA: Invisibilidad mejorada | Ilusionismo | C\nFILA: Libertad de movimiento | Abjuración | —\nFILA: Localizar criatura | Adivinación | C\nFILA: Polimorfar | Transmutación | C\nFILA: Puerta dimensional | Conjuración | —\nFILA: Terreno alucinatorio | Ilusionismo | —\nFIN DE TABLA\n\nTABLA: Conjuros de bardo de nivel 5\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Alterar los recuerdos | Encantamiento | C\nFILA: Alzar a los muertos | Nigromancia | M\nFILA: Animar objetos | Transmutación | C\nFILA: Apariencia | Ilusionismo | —\nFILA: Atadura planar | Abjuración | M\nFILA: Círculo de teletransportación | Conjuración | M\nFILA: Conocer las leyendas | Adivinación | M\nFILA: Curar heridas en masa | Abjuración | —\nFILA: Despertar | Transmutación | M\nFILA: Dominar persona | Encantamiento | C\nFILA: Engañar | Ilusionismo | C\nFILA: Enlace telepático de Rary | Adivinación | R\nFILA: Ensueño | Ilusionismo | —\nFILA: Escudriñar | Adivinación | C, M\nFILA: Estática sináptica | Encantamiento | —\nFILA: Geas | Encantamiento | —\nFILA: Inmovilizar monstruo | Encantamiento | C\nFILA: Presencia regia de Yolande | Encantamiento | C\nFILA: Restablecimiento mayor | Abjuración | M\nFIN DE TABLA\n\nTABLA: Conjuros de bardo de nivel 6\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Baile irresistible de Otto | Encantamiento | C\nFILA: Encontrar el camino | Adivinación | C, M\nFILA: Festín de héroes | Conjuración | M\nFILA: Guardas y guardias | Abjuración | M\nFILA: Ilusión programada | Ilusionismo | M\nFILA: Mal de ojo | Nigromancia | C\nFILA: Sugestión en masa | Encantamiento | —\nFILA: Visión veraz | Adivinación | M\nFIN DE TABLA\n\nTABLA: Conjuros de bardo de nivel 7\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Espada de Mordenkainen | Evocación | C, M\nFILA: Espejismo arcano | Ilusionismo | —\nFILA: Excursión etérea | Conjuración | —\nFILA: Jaula de fuerza | Evocación | C, M\nFILA: Mansión magnífica de Mordenkainen | Conjuración | M\nFILA: Palabra de poder: fortalecer | Encantamiento | —\nFILA: Proyectar imagen | Ilusionismo | C, M\nFILA: Regenerar | Transmutación | —\nFILA: Resurrección | Nigromancia | M\nFILA: Rociada prismática | Evocación | —\nFILA: Símbolo | Abjuración | M\nFILA: Teletransporte | Conjuración | —\nFIN DE TABLA\n\nTABLA: Conjuros de bardo de nivel 8\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Antipatía/simpatía | Encantamiento | —\nFILA: Dominar monstruo | Encantamiento | C\nFILA: Labia | Encantamiento | —\nFILA: Mente en blanco | Abjuración | —\nFILA: Ofuscación | Encantamiento | —\nFILA: Palabra de poder: aturdir | Encantamiento | —\nFIN DE TABLA\n\nTABLA: Conjuros de bardo de nivel 9\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Muro prismático | Abjuración | —\nFILA: Palabra de poder: matar | Encantamiento | —\nFILA: Palabra de poder: sanar | Encantamiento | —\nFILA: Polimorfar verdadero | Transmutación | C\nFILA: Presciencia | Adivinación | —\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 66\nSUBCLASES DE BARDO\nUna subclase de bardo es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles de\nbardo, según se especifique en la subclase. Los bardos\nforman organizaciones poco estructuradas, a las que\nllaman colegios, para preservar sus tradiciones. Esta\nsección presenta las subclases del colegio de la danza,\nel colegio del conocimiento, el colegio del glamour\ny el colegio del valor.\nCOLEGIO DE LA DANZA"
       }
     ],
     "Brujo": [
@@ -85,6 +185,26 @@
         "level": 3,
         "name": "SUBCLASE DE BRUJO",
         "description": "Consigues una subclase de brujo de tu elección.\nLas subclases del patrón celestial, el patrón feérico,\nel patrón infernal y el patrón primigenio se detallan\ntras la descripción de esta clase. Una subclase es una\nespecialización que te proporciona rasgos cuando\nalcanzas ciertos niveles de brujo. De aquí en adelante,\nobtienes todos los rasgos de tu subclase que sean de tu\nnivel de brujo e inferiores.\n\nINICIO PÁGINA PDF: 73"
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de brujo."
+      },
+      {
+        "level": 9,
+        "name": "CONTACTAR PATRÓN",
+        "description": "Antes solías ponerte en contacto con tu patrón a través de\nintermediarios. Ahora puedes comunicarte directamente,\nya que siempre tienes el conjuro contactar con otro plano\npreparado. Con este rasgo, puedes lanzar el conjuro sin\ngastar un espacio de conjuro para contactar con tu patrón\ny superas automáticamente la tirada de salvación del\nconjuro.\nCuando lances el conjuro con este rasgo, no podrás\nvolver a hacerlo de esta forma hasta que finalices un\ndescanso largo."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del destino."
+      },
+      {
+        "level": 20,
+        "name": "MAESTRO SOBRENATURAL",
+        "description": "Cuando empleas tu rasgo Astucia mágica, recuperas todos\nlos espacios de conjuro utilizados de Magia del pacto.\nOPCIONES DE INVOCACIÓN\nSOBRENATURAL\nLas opciones de invocación sobrenatural aparecen\nen orden alfabético.\nARMADURA DE SOMBRAS\nPuedes lanzar armadura de mago sobre ti sin gastar un\nespacio de conjuro.\nCASTIGO ARCANO\nRequisitos: brujo de nivel 5 o superior, invocación Pacto del filo.\nUna vez por turno, cuando aciertes a una criatura con\ntu arma de pacto, puedes gastar un espacio de conjuro\nde Magia del pacto para causar 1d8 de daño de fuerza\nadicional al objetivo más 1d8 por cada nivel del espacio\nde conjuro. Además, puedes imponerle el estado de\nderribado al objetivo si es Enorme o más pequeño.\nDESCARGA AGÓNICA\nRequisitos: brujo de nivel 2 o superior, un truco de brujo que\ncause daño.\nElige uno de tus trucos de brujo que conozcas y cause\ndaño. Puedes sumar tu modificador por Carisma a las\ntiradas de daño del conjuro.\nRepetible. Puedes obtener esta invocación más de una\nvez. Cada vez que lo hagas, elige un truco distinto que\ncumpla las condiciones.\nDESCARGA AHUYENTADORA\nRequisitos: brujo de nivel 2 o superior, un truco de brujo que\ncause daño mediante una tirada de ataque.\nElige uno de tus trucos de brujo que conozcas y requiera\nuna tirada de ataque. Cuando aciertes a una criatura\nGrande o más pequeña con ese truco, puedes empujarla\nhasta 3 m respecto a ti en línea recta.\nRepetible. Puedes obtener esta invocación más de una\nvez. Cada vez que lo hagas, elige un truco distinto que\ncumpla las condiciones.\nDEVORADOR DE VIDA\nRequisitos: brujo de nivel 9 o superior, invocación Pacto del filo.\nUna vez por turno, cuando aciertes a una criatura con\ntu arma de pacto, puedes causarle 1d6 de daño necrótico,\npsíquico o radiante adicional (a tu elección) a esa\ncriatura y gastar uno de tus dados de puntos de golpe\npara tirarlo y recuperar una cantidad de puntos de golpe\nigual al resultado más tu modificador por Constitución\n(mínimo 1 punto de golpe).\nDON DE LAS PROFUNDIDADES\nRequisitos: brujo de nivel 5 o superior.\nPuedes respirar bajo el agua y obtienes una velocidad\nnadando igual a tu velocidad.\nTambién puedes lanzar respirar bajo el agua una vez sin\ngastar un espacio de conjuro. Recuperas la capacidad de\nlanzarlo de este modo tras finalizar un descanso largo.\nDON DE LOS PROTECTORES\nRequisitos: brujo de nivel 9 o superior, invocación Pacto del\ngrimorio.\nAparece una nueva página en el Libro de las sombras\ncuando lo conjuras. Con tu permiso, una criatura puede\nusar una acción para escribir su nombre en esa página,\nque puede contener una cantidad de nombres igual\na tu modificador por Carisma (mínimo un nombre).\nCuando los puntos de golpe de cualquier criatura\ncuyo nombre esté en la página se reduzcan a 0, pero\nno muera, en vez de eso pasará a tener 1 punto de golpe\nmágicamente. Cuando esta magia se active, ninguna\ncriatura podrá beneficiarse de ella hasta que finalices\nun descanso largo.\nComo acción de magia, puedes borrar un nombre\nde la página tocándolo.\n\nINICIO PÁGINA PDF: 74\nFILO SEDIENTO\nRequisitos: brujo de nivel 5 o superior, invocación Pacto del filo.\nObtienes el rasgo Ataque adicional, pero solo para tu arma\nde pacto. Este rasgo te permite hacer dos ataques con esa\narma en lugar de uno cuando lleves a cabo la acción de\natacar en tu turno.\nHOJA DEVORADORA\nRequisitos: brujo de nivel 12 o superior, invocación Filo\nsediento.\nEl rasgo Ataque adicional de tu invocación Filo sediento\notorga dos ataques adicionales en vez de uno.\nINVERSIÓN DEL AMO DE LAS CADENAS\nRequisitos: brujo de nivel 5 o superior, invocación Pacto de la\ncadena.\nCuando lanzas encontrar familiar, imbuyes al familiar\ninvocado de una cierta cantidad de tu poder sobrenatural,\nlo que le otorga a la criatura los siguientes beneficios.\nAcuático o aéreo. El familiar obtiene una velocidad\nnadando o una velocidad volando (a tu elección) de 12 m.\nAtaque rápido. Como acción adicional, puedes ordenar\nal familiar que realice la acción de atacar.\nDaño necrótico o radiante. Siempre que el familiar haga\ndaño contundente, cortante o perforante, puedes hacer\nque cause daño necrótico o radiante en su lugar.\nTu CD de salvación. Si el familiar obliga a una criatura\na realizar una tirada de salvación, esta utiliza tu CD de\nsalvación de conjuros.\nResistencia. Cuando el familiar recibe daño, puedes usar\nuna reacción para otorgarle resistencia contra ese daño.\nLANZA SOBRENATURAL\nRequisitos: brujo de nivel 2 o superior, un truco de brujo que\ncause daño.\nElige uno de tus trucos de brujo que conozcas, cause\ndaño y tenga un alcance de 3 m o más. Cuando lances ese\nconjuro, su alcance aumenta una cantidad de metros igual\na 10 veces tu nivel de brujo.\nRepetible. Puedes obtener esta invocación más de una\nvez. Cada vez que lo hagas, elige un truco distinto que\ncumpla las condiciones.\nLECCIONES DE LOS PRIMEROS\nRequisitos: brujo de nivel 2 o superior.\nHas obtenido conocimientos de un ente anciano del\nmultiverso, lo que te permite obtener una dote de origen\nde tu elección (consulta el capítulo 5).\nRepetible. Puedes obtener esta invocación más de una vez.\nCada vez que lo hagas, elige una dote de origen distinta.\nMAESTRO DE LAS FORMAS INNUMERABLES\nRequisitos: brujo de nivel 5 o superior.\nPuedes lanzar alterar el propio aspecto sin gastar un espacio\nde conjuro.\nMÁSCARA DE LOS MIL ROSTROS\nRequisitos: brujo de nivel 2 o superior.\nPuedes lanzar disfrazarse sin gastar un espacio de conjuro.\nMENTE SOBRENATURAL\nTienes ventaja en las tiradas de salvación de Constitución\nque realices para mantener la concentración.\nMIRADA DE LAS DOS MENTES\nRequisitos: brujo de nivel 5 o superior.\nPuedes usar una acción adicional para tocar a una criatura\nvoluntaria y percibir el mundo a través de sus sentidos\nhasta el final de tu siguiente turno. Mientras la criatura\npermanezca en el mismo plano de existencia que tú, podrás\nutilizar una acción adicional en cada uno de los turnos\nposteriores para mantener esta conexión y alargar la\nduración de este efecto hasta el final de tu siguiente turno.\nLa conexión termina si no la mantienes de esta forma.\nMientras percibes el mundo a través de los ojos de la\notra criatura, te beneficias de cualquier sentido especial\nque tenga y puedes lanzar conjuros como si estuvieras\nen tu espacio o en el espacio de la otra criatura si estáis\na 18 m o menos de distancia.\nPACTO DE LA CADENA\nAprendes el conjuro encontrar familiar y puedes lanzarlo\ncomo acción de magia sin gastar un espacio de conjuro.\nCuando lo lances, escoge entre una de las formas\nhabituales para tu familiar o una de las siguientes formas\nespeciales: diablillo, duende, esfinge de las maravillas,\nesqueleto, pseudodragón, quasit, renacuajo slaad\no serpiente venenosa (consulta el perfil del familiar\nen el apéndice B).\nAsimismo, cuando realizas la acción de atacar, puedes\nrenunciar a uno de tus propios ataques para que el\nfamiliar realice un ataque propio con su reacción.\nPACTO DEL FILO\nComo acción adicional, puedes conjurar en tu mano\nun arma de pacto, un arma cuerpo a cuerpo sencilla\no marcial de tu elección con la que estableces un vínculo.\nComo alternativa, puedes vincularte con un arma mágica\nque toques, pero no podrás hacerlo si otra criatura está\nsintonizada con ella o si otro brujo está vinculado con ella.\nHasta que termine el vínculo, tendrás competencia con esa\narma y podrás usarla como canalizador mágico.\nSiempre que ataques con el arma vinculada, puedes usar\ntu modificador por Carisma para las tiradas de ataque\ny de daño en lugar del modificador por Fuerza o Destreza.\nAdemás, puedes hacer que cause daño necrótico, psíquico\no radiante en lugar de su tipo de daño normal.\nTu vínculo con el arma se rompe si vuelves a usar la\nacción adicional de este rasgo, si el arma está a más de\n1,5 m de ti durante 1 minuto o más o si mueres. Un arma\nconjurada desaparece cuando termina el vínculo.\n\nINICIO PÁGINA PDF: 75\nPACTO DEL GRIMORIO\nUniendo hebras de sombras, conjuras un libro en tu mano\nal terminar un descanso corto o largo. Este Libro de las\nsombras (tú eliges su aspecto) contiene magia sobrenatural\na la que solo tú puedes acceder y que te proporciona los\nbeneficios presentados a continuación. El libro desaparece\nsi conjuras otro con este rasgo o si mueres.\nTrucos y rituales. Cuando aparezca el libro, elige tres\ntrucos y dos conjuros de nivel 1 que estén marcados como\n“ritual”. Los conjuros pueden ser de la lista de cualquier\nclase y deben ser conjuros que no tengas ya preparados.\nMientras lleves el libro contigo, tendrás preparados los\nconjuros elegidos y funcionarán como conjuros de brujo\npara ti.\nCanalizador mágico. Puedes usar el libro como\ncanalizador mágico.\nPASO ASCENDENTE\nRequisitos: brujo de nivel 5 o superior.\nPuedes lanzar levitar sobre ti sin gastar un espacio\nde conjuro.\nSALTO SOBRENATURAL\nRequisitos: brujo de nivel 2 o superior.\nPuedes lanzar salto sobre ti sin gastar un espacio\nde conjuro.\nSUSURROS DEL SEPULCRO\nRequisitos: brujo de nivel 7 o superior.\nPuedes lanzar hablar con los muertos sin gastar un espacio\nde conjuro.\nUNO CON LAS SOMBRAS\nRequisitos: brujo de nivel 5 o superior.\nMientras estés en una zona de luz tenue u oscuridad,\npuedes lanzar invisibilidad sobre ti sin gastar un espacio\nde conjuro.\nVIGOR INFERNAL\nRequisitos: brujo de nivel 2 o superior.\nPuedes lanzar falsa vida sobre ti sin gastar un espacio\nde conjuro. Si lanzas el conjuro con este rasgo, no tiras\nel dado para los puntos de golpe temporales; en su lugar,\nobtienes automáticamente el número más alto en el dado.\nVISIÓN BRUJA\nRequisitos: brujo de nivel 15 o superior.\nTienes visión verdadera hasta 9 m.\nVISIONES BRUMOSAS\nRequisitos: brujo de nivel 2 o superior.\nPuedes lanzar imagen silenciosa sin gastar un espacio\nde conjuro.\nVISIONES DE REINOS REMOTOS\nRequisitos: brujo de nivel 9 o superior.\nPuedes lanzar ojo arcano sin gastar un espacio de conjuro.\nVISTA DEL DIABLO\nRequisitos: brujo de nivel 2 o superior.\nPuedes ver con normalidad en luz tenue y en la oscuridad,\ntanto si son mágicas como si no, a una distancia de 36 m\no menos de ti.\nLISTA DE CONJUROS DE BRUJO\nEsta sección presenta la lista de conjuros de brujo.\nLos conjuros se organizan por su nivel y por orden\nalfabético y se indica la escuela mágica de cada uno de\nellos. En la columna “Especial”, C significa que el conjuro\nrequiere concentración, R significa que es un ritual y M\nsignifica que requiere un componente material específico.\nTABLA: Trucos (conjuros de brujo de nivel 0)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Amistad | Encantamiento | C\nFILA: Descarga sobrenatural | Evocación | —\nFILA: Fragmento mental | Encantamiento | —\nFILA: Guardia de cuchillas | Abjuración | C\nFILA: Ilusión menor | Ilusionismo | —\nFILA: Impacto certero | Adivinación | —\nFILA: Mano de mago | Conjuración | —\nFILA: Prestidigitación | Transmutación | —\nFILA: Rociada venenosa | Nigromancia | —\nFILA: Tañido por los muertos | Nigromancia | —\nFILA: Toque helado | Nigromancia | —\nFILA: Tronar | Evocación | —\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 76\nTABLA: Conjuros de brujo de nivel 1\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Armadura de Agathys | Abjuración | —\nFILA: Brazos de Hadar | Conjuración | —\nFILA: Detectar magia | Adivinación | C, R\nFILA: Entender idiomas | Adivinación | R\nFILA: Hablar con los animales | Adivinación | R\nFILA: Hechizar persona | Encantamiento | —\nFILA: Maleficio | Encantamiento | C\nFILA: Perdición | Encantamiento | C\nFILA: Protección contra el bien y el mal | Abjuración | C, M\nFILA: Rayo de hechicería | Evocación | C\nFILA: Reprensión infernal | Evocación | —\nFILA: Retirada expeditiva | Transmutación | C\nFILA: Risa horrible de Tasha | Encantamiento | C\nFILA: Sirviente invisible | Conjuración | R\nFILA: Texto ilusorio | Ilusionismo | R, M\nFIN DE TABLA\n\nTABLA: Conjuros de brujo de nivel 2\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Clavo mental | Adivinación | C\nFILA: Corona de la locura | Encantamiento | C\nFILA: Embelesar | Encantamiento | C\nFILA: Imagen múltiple | Ilusionismo | —\nFILA: Inmovilizar persona | Encantamiento | C\nFILA: Invisibilidad | Ilusionismo | C\nFILA: Nube de dagas | Conjuración | C\nFILA: Oscuridad | Evocación | C\nFILA: Paso brumoso | Conjuración | —\nFILA: Rayo debilitador | Nigromancia | C\nFILA: Sugestión | Encantamiento | C\nFILA: Trepar cual arácnido | Transmutación | C\nFIN DE TABLA\n\nTABLA: Conjuros de brujo de nivel 3\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Círculo mágico | Abjuración | M\nFILA: Contrahechizo | Abjuración | —\nFILA: Disipar magia | Abjuración | —\nFILA: Don de lenguas | Adivinación | —\nFILA: Forma gaseosa | Transmutación | C\nFILA: Hambre de Hadar | Conjuración | C\nFILA: Imagen mayor | Ilusionismo | C\nFILA: Invocar feérico | Conjuración | C, M\nFILA: Invocar muerto viviente | Nigromancia | C, M\nFILA: Levantar maldición | Abjuración | —\nFILA: Patrón hipnótico | Ilusionismo | C\nFILA: Terror | Ilusionismo | C\nFILA: Toque vampírico | Nigromancia | C\nFILA: Volar | Transmutación | C\nFIN DE TABLA\n\nTABLA: Conjuros de brujo de nivel 4\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Destierro | Abjuración | C\nFILA: Hechizar monstruo | Encantamiento | —\nFILA: Invocar aberración | Conjuración | C, M\nFILA: Marchitar | Nigromancia | —\nFILA: Puerta dimensional | Conjuración | —\nFILA: Terreno alucinatorio | Ilusionismo | —\nFIN DE TABLA\n\nTABLA: Conjuros de brujo de nivel 5\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Atadura planar | Abjuración | M\nFILA: Círculo de teletransportación | Conjuración | M\nFILA: Contactar con otro plano | Adivinación | R\nFILA: Engañar | Ilusionismo | C\nFILA: Ensueño | Ilusionismo | —\nFILA: Escudriñar | Adivinación | C, M\nFILA: Estática sináptica | Encantamiento | —\nFILA: Inmovilizar monstruo | Encantamiento | C\nFILA: Tormenta resplandeciente de Jallarzi | Evocación | C\nFIN DE TABLA\n\nTABLA: Conjuros de brujo de nivel 6\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Caldero burbujeante de Tasha | Conjuración | M\nFILA: Círculo de muerte | Nigromancia | M\nFILA: Crear muerto viviente | Nigromancia | M\nFILA: Invocar infernal | Conjuración | C, M\nFILA: Mal de ojo | Nigromancia | C\nFILA: Puerta arcana | Conjuración | C\nFILA: Visión veraz | Adivinación | M\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 77\nTABLA: Conjuros de brujo de nivel 7\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Dedo de la muerte | Nigromancia | —\nFILA: Desplazamiento entre planos | Conjuración | M\nFILA: Excursión etérea | Conjuración | —\nFILA: Jaula de fuerza | Evocación | C, M\nFIN DE TABLA\n\nTABLA: Conjuros de brujo de nivel 8\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Dominar monstruo | Encantamiento | C\nFILA: Labia | Encantamiento | —\nFILA: Ofuscación | Encantamiento | —\nFILA: Palabra de poder: aturdir | Encantamiento | —\nFILA: Semiplano | Conjuración | —\nFIN DE TABLA\n\nTABLA: Conjuros de brujo de nivel 9\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Cautiverio | Abjuración | M\nFILA: Palabra de poder: matar | Encantamiento | —\nFILA: Polimorfar verdadero | Transmutación | C\nFILA: Portal | Conjuración | C, M\nFILA: Presciencia | Adivinación | —\nFILA: Proyección astral | Nigromancia | M\nFILA: Terror abyecto | Ilusionismo | C\nFIN DE TABLA\n\nSUBCLASES DE BRUJO\nUna subclase de brujo es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles de\nbrujo, según se especifique en la subclase. Esta sección\npresenta las subclases del patrón celestial, el patrón\nfeérico, el patrón infernal y el patrón primigenio.\nPATRÓN CELESTIAL"
       }
     ],
     "Clérigo": [
@@ -107,6 +227,41 @@
         "level": 3,
         "name": "SUBCLASE DE CLÉRIGO",
         "description": "Consigues una subclase de clérigo de tu elección.\nLas subclases del dominio de la guerra, el dominio de\nla luz, el dominio de la vida y el dominio del engaño se\ndetallan tras la descripción de esta clase. Una subclase\nes una especialización que te proporciona rasgos cuando\nalcanzas ciertos niveles de clérigo. De aquí en adelante,\nobtienes todos los rasgos de tu subclase que sean de tu\nnivel de clérigo e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de clérigo."
+      },
+      {
+        "level": 5,
+        "name": "ABRASAR MUERTOS VIVIENTES",
+        "description": "Cuando utilices Expulsar muertos vivientes, puedes tirar\nuna cantidad de d8 igual a tu modificador por Sabiduría\n(mínimo 1d8) y sumar los resultados. Todos los muertos\nvivientes que fallen su tirada de salvación contra ese uso\nde Expulsar muertos vivientes sufrirán una cantidad\nde daño radiante igual al resultado total de las tiradas.\nEste daño no pone fin al efecto de expulsión."
+      },
+      {
+        "level": 7,
+        "name": "GOLPES BENDITOS",
+        "description": "Te imbuyes de poder divino en la batalla. Obtienes una de\nlas siguientes opciones, a tu elección (si obtienes cualquiera\nde ellas por una subclase de clérigo de un libro antiguo,\nutiliza solo la opción que escojas para este rasgo).\nGolpe divino. Una vez en cada uno de tus turnos, cuando\naciertes a una criatura con una tirada de ataque usando\nun arma, podrás hacer que el objetivo sufra 1d8 de daño\nnecrótico o radiante adicional (a tu elección).\nLanzamiento potente. Sumas tu modificador por Sabiduría\nal daño que causas con cualquier truco de clérigo."
+      },
+      {
+        "level": 10,
+        "name": "INTERCESIÓN DIVINA",
+        "description": "Puedes recurrir a tu deidad o panteón para que intervenga\nen tu nombre. Como acción de magia, elige cualquier\nconjuro de clérigo de nivel 5 o inferior que no requiera\nuna reacción para lanzarlo. Como parte de la misma\nacción, lanzas ese conjuro sin gastar un espacio de\nconjuro o sin necesidad de componentes materiales.\nNo podrás volver a utilizar este rasgo hasta que finalices\nun descanso largo."
+      },
+      {
+        "level": 14,
+        "name": "GOLPES BENDITOS MEJORADOS",
+        "description": "La opción elegida para Golpes benditos se vuelve más\npoderosa.\nGolpe divino. El daño adicional de tu Golpe divino\naumenta a 2d8.\nLanzamiento potente. Cuando lances un truco de clérigo\ny causes daño a una criatura con él, podrás transmitir\nvitalidad a ti o a otra criatura que esté a 18 m o menos de ti;\nse concederá una cantidad de puntos de golpe temporales\nigual al doble de tu modificador por Sabiduría."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del destino."
+      },
+      {
+        "level": 20,
+        "name": "INTERCESIÓN DIVINA MAYOR",
+        "description": "Puedes solicitar una intercesión divina todavía más\npoderosa. Cuando uses tu rasgo Intercesión divina,\npuedes elegir deseo al seleccionar un conjuro. Si lo haces,\nno podrás volver a usar Intercesión divina hasta que\nfinalices 2d4 descansos largos.\nLISTA DE CONJUROS DE CLÉRIGO\nEsta sección presenta la lista de conjuros de clérigo.\nLos conjuros se organizan por su nivel y por orden\nalfabético y se indica la escuela mágica de cada uno de\nellos. En la columna “Especial”, C significa que el conjuro\nrequiere concentración, R significa que es un ritual y M\nsignifica que requiere un componente material específico.\nTABLA: Trucos (conjuros de clérigo de nivel 0)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Guía | Adivinación | C\nFILA: Llama sagrada | Evocación | —\nFILA: Luz | Evocación | —\nFILA: Palabra de resplandor | Evocación | —\nFILA: Piedad con los moribundos | Nigromancia | —\nFILA: Reparar | Transmutación | —\nFILA: Resistencia | Abjuración | C\nFILA: Tañido por los muertos | Nigromancia | —\nFILA: Taumaturgia | Transmutación | —\nFIN DE TABLA\n\nTABLA: Conjuros de clérigo de nivel 1\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Bendición | Encantamiento | C, M\nFILA: Crear o destruir agua | Transmutación | —\nFILA: Curar heridas | Abjuración | —\nFILA: Detectar el bien y el mal | Adivinación | C\nFILA: Detectar magia | Adivinación | C, R\nFILA: Detectar venenos y enfermedades | Adivinación | C, R\nFILA: Escudo de fe | Abjuración | C\nFILA: Infligir heridas | Nigromancia | —\nFILA: Orden imperiosa | Encantamiento | —\nFILA: Palabra de curación | Abjuración | —\nFILA: Perdición | Encantamiento | C\nFILA: Protección contra el bien y el mal | Abjuración | C, M\nFILA: Purificar comida y bebida | Transmutación | R\nFILA: Saeta guía | Evocación | —\nFILA: Santuario | Abjuración | —\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 86\nTABLA: Conjuros de clérigo de nivel 2\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Arma espiritual | Evocación | C\nFILA: Augurio | Adivinación | R, M\nFILA: Auxilio | Abjuración | —\nFILA: Calmar emociones | Encantamiento | C\nFILA: Detectar trampas | Adivinación | —\nFILA: Dulce descanso | Nigromancia | R, M\nFILA: Inmovilizar persona | Encantamiento | C\nFILA: Llama permanente | Evocación | M\nFILA: Localizar objeto | Adivinación | C\nFILA: Plegaria de curación | Abjuración | —\nFILA: Potenciar característica | Transmutación | C\nFILA: Protección contra veneno | Abjuración | —\nFILA: Restablecimiento menor | Abjuración | —\nFILA: Silencio | Ilusionismo | C, R\nFILA: Sordera/ceguera | Transmutación | —\nFILA: Vínculo protector | Abjuración | M\nFILA: Zona de la verdad | Encantamiento | —\nFIN DE TABLA\n\nTABLA: Conjuros de clérigo de nivel 3\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Animar a los muertos | Nigromancia | —\nFILA: Aura de vitalidad | Abjuración | C\nFILA: Caminar sobre el agua | Transmutación | R\nFILA: Círculo mágico | Abjuración | M\nFILA: Clarividencia | Adivinación | C, M\nFILA: Crear comida y agua | Conjuración | —\nFILA: Disipar magia | Abjuración | —\nFILA: Don de lenguas | Adivinación | —\nFILA: Espíritus guardianes | Conjuración | C\nFILA: Fingir muerte | Nigromancia | R\nFILA: Fundirse con la piedra | Transmutación | R\nFILA: Glifo custodio | Abjuración | M\nFILA: Hablar con los muertos | Nigromancia | —\nFILA: Imponer maldición | Nigromancia | C\nFILA: Levantar maldición | Abjuración | —\nFILA: Luz del día | Evocación | —\nFILA: Palabra de curación en masa | Abjuración | —\nFILA: Protección contra energía | Abjuración | C\nFILA: Recado | Adivinación | —\nFILA: Revivir | Nigromancia | M\nFILA: Señal de esperanza | Abjuración | C\nFIN DE TABLA\n\nTABLA: Conjuros de clérigo de nivel 4\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Adivinación | Adivinación | R, M\nFILA: Aura de pureza | Abjuración | C\nFILA: Aura de vida | Abjuración | C\nFILA: Controlar agua | Transmutación | C\nFILA: Destierro | Abjuración | C\nFILA: Guarda contra la muerte | Abjuración | —\nFILA: Guardián de la fe | Conjuración | —\nFILA: Libertad de movimiento | Abjuración | —\nFILA: Localizar criatura | Adivinación | C\nFILA: Moldear la piedra | Transmutación | —\nFIN DE TABLA\n\nTABLA: Conjuros de clérigo de nivel 5\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Alzar a los muertos | Nigromancia | M\nFILA: Atadura planar | Abjuración | M\nFILA: Círculo de poder | Abjuración | C\nFILA: Comunión | Adivinación | R\nFILA: Conocer las leyendas | Adivinación | M\nFILA: Consagrar | Abjuración | M\nFILA: Contagio | Nigromancia | —\nFILA: Curar heridas en masa | Abjuración | —\nFILA: Disipar el bien y el mal | Abjuración | C\nFILA: Escudriñar | Adivinación | C, M\nFILA: Geas | Encantamiento | —\nFILA: Golpe flamígero | Evocación | —\nFILA: Invocar celestial | Conjuración | C, M\nFILA: Plaga de insectos | Conjuración | C\nFILA: Restablecimiento mayor | Abjuración | M\nFIN DE TABLA\n\nTABLA: Conjuros de clérigo de nivel 6\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Aliado planar | Conjuración | —\nFILA: Barrera de cuchillas | Evocación | C\nFILA: Crear muerto viviente | Nigromancia | M\nFILA: Curar | Abjuración | —\nFILA: Dañar | Nigromancia | —\nFILA: Encontrar el camino | Adivinación | C, M\nFILA: Festín de héroes | Conjuración | M\nFILA: Palabra de regreso | Conjuración | —\nFILA: Prohibición | Abjuración | R, M\nFILA: Rayo solar | Evocación | C\nFILA: Visión veraz | Adivinación | M\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 87\nTABLA: Conjuros de clérigo de nivel 7\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Conjurar celestial | Conjuración | C\nFILA: Desplazamiento entre planos | Conjuración | M\nFILA: Excursión etérea | Conjuración | —\nFILA: Palabra de poder: fortalecer | Encantamiento | —\nFILA: Palabra divina | Evocación | —\nFILA: Regenerar | Transmutación | —\nFILA: Resurrección | Nigromancia | M\nFILA: Símbolo | Abjuración | M\nFILA: Tormenta de fuego | Evocación | —\nFIN DE TABLA\n\nTABLA: Conjuros de clérigo de nivel 8\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Aura sagrada | Abjuración | C, M\nFILA: Campo antimagia | Abjuración | C\nFILA: Controlar el clima | Transmutación | C\nFILA: Explosión solar | Evocación | —\nFILA: Terremoto | Transmutación | C\nFIN DE TABLA\n\nTABLA: Conjuros de clérigo de nivel 9\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Curar en masa | Abjuración | —\nFILA: Palabra de poder: sanar | Encantamiento | —\nFILA: Portal | Conjuración | C, M\nFILA: Proyección astral | Nigromancia | M\nFILA: Resurrección verdadera | Nigromancia | M\nFIN DE TABLA\n\nSUBCLASES DE CLÉRIGO\nUna subclase de clérigo es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles de\nclérigo, según se especifique en la subclase. Cada subclase\nde clérigo recibe el nombre de un dominio de existencia\nque tiene el favor de un dios, un panteón o una orden\nreligiosa. Esta sección presenta las subclases del dominio\nde la guerra, el dominio de la luz, el dominio de la vida\ny el dominio del engaño.\nDOMINIO DE LA GUERRA"
       }
     ],
     "Druida": [
@@ -139,6 +294,41 @@
         "level": 3,
         "name": "SUBCLASE DE DRUIDA",
         "description": "Consigues una subclase de druida de tu elección.\nLas subclases del círculo de la luna, el círculo de la tierra,\nel círculo de las estrellas y el círculo del mar se detallan\ntras la descripción de esta clase. Una subclase es una\nespecialización que te proporciona rasgos cuando alcanzas\nciertos niveles de druida. De aquí en adelante, obtienes\ntodos los rasgos de tu subclase que sean de tu nivel de\ndruida e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de druida."
+      },
+      {
+        "level": 5,
+        "name": "RESURGIMIENTO SALVAJE",
+        "description": "Una vez en cada uno de tus turnos, si no te quedan usos\nde Forma salvaje, puedes obtener un uso gastando un\nespacio de conjuro (no requiere acción).\nAdemás, puedes gastar un uso de tu rasgo Forma salvaje\n(no requiere acción) para obtener un espacio de conjuro\nde nivel 1, pero no podrás volver a hacerlo hasta que\nfinalices un descanso largo."
+      },
+      {
+        "level": 7,
+        "name": "FURIA ELEMENTAL",
+        "description": "El poder de los elementos fluye por ti. Obtienes una de las\nsiguientes opciones, a tu elección.\nGolpe primordial. Una vez en cada uno de tus turnos,\ncuando aciertes a una criatura con una tirada de ataque\nusando un arma o un ataque de una bestia en Forma\nsalvaje, podrás hacer que el objetivo sufra 1d8 de daño de\nfrío, fuego, relámpago o trueno adicional (elígelo cuando\naciertes).\nLanzamiento potente. Sumas tu modificador por Sabiduría\nal daño que causas con cualquier truco de druida."
+      },
+      {
+        "level": 15,
+        "name": "FURIA ELEMENTAL MEJORADA",
+        "description": "La opción elegida para Furia elemental se vuelve más\npoderosa, como se detalla a continuación.\nGolpe primordial. El daño adicional de tu Golpe\nprimordial aumenta a 2d8.\nLanzamiento potente. Cuando lances un truco de druida\ncon un alcance de 3 m o más, el alcance del conjuro\naumentará en 90 m."
+      },
+      {
+        "level": 18,
+        "name": "CONJURAR COMO BESTIA",
+        "description": "Mientras utilices Forma salvaje, podrás lanzar conjuros\nen forma de bestia, salvo cualquier conjuro que tenga\nun componente material que tenga un coste especificado\no que se consuma como parte del conjuro."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del viaje dimensional.\n\nINICIO PÁGINA PDF: 96"
+      },
+      {
+        "level": 20,
+        "name": "ARCHIDRUIDA",
+        "description": "La vitalidad de la naturaleza florece en ti de manera\nconstante, lo que te otorga los siguientes beneficios.\nForma salvaje perenne. Cuando tires iniciativa y no te\nqueden usos de Forma salvaje, recuperas uno de los usos\ngastados.\nMago de la naturaleza. Puedes convertir los usos de\nForma salvaje en un espacio de conjuro (no requiere acción).\nElige una cantidad de usos no gastados de Forma salvaje\npara convertirlos en un único espacio de conjuro. Cada\nuso aporta 2 niveles de conjuro. Por ejemplo, si conviertes\ndos usos de Forma salvaje, produces un espacio de conjuro\nde nivel 4. Cuando uses este beneficio, no podrás volver\na hacerlo hasta que finalices un descanso largo.\nLongevidad. La magia primigenia que dominas ralentiza\ntu envejecimiento. Por cada diez años que pasen, tu cuerpo\nenvejece solo uno.\nLISTA DE CONJUROS DE DRUIDA\nEsta sección presenta la lista de conjuros de druida.\nLos conjuros se organizan por su nivel y por orden\nalfabético y se indica la escuela mágica de cada uno de\nellos. En la columna “Especial”, C significa que el conjuro\nrequiere concentración, R significa que es un ritual y M\nsignifica que requiere un componente material específico.\nTABLA: TRUCOS (CONJUROS DE DRUIDA DE NIVEL 0)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Crear llama | Conjuración | —\nFILA: Elementalismo | Transmutación | —\nFILA: Guía | Adivinación | C\nFILA: Látigo de espinas | Transmutación | —\nFILA: Mensaje | Transmutación | —\nFILA: Piedad con los moribundos | Nigromancia | —\nFILA: Reparar | Transmutación | —\nFILA: Resistencia | Abjuración | C\nFILA: Rociada venenosa | Nigromancia | —\nFILA: Saber druídico | Transmutación | —\nFILA: Shillelagh | Transmutación | —\nFILA: Tronar | Evocación | —\nFILA: Voluta estelar | Evocación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE DRUIDA DE NIVEL 1 (INICIO)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Buenas bayas | Conjuración | —\nFILA: Crear o destruir agua | Transmutación | —\nFILA: Cuchillo de hielo | Conjuración | —\nFILA: Curar heridas | Abjuración | —\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 97\nTABLA: CONJUROS DE DRUIDA DE NIVEL 1 (CONTINUACIÓN)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Detectar magia | Adivinación | C, R\nFILA: Detectar venenos y enfermedades | Adivinación | C, R\nFILA: Encantar animal | Encantamiento | —\nFILA: Enmarañar | Conjuración | C\nFILA: Fuego feérico | Evocación | C\nFILA: Hablar con los animales | Adivinación | R\nFILA: Hechizar persona | Encantamiento | —\nFILA: Nube de oscurecimiento | Conjuración | C\nFILA: Ola atronadora | Evocación | —\nFILA: Palabra de curación | Abjuración | —\nFILA: Protección contra el bien y el mal | Abjuración | C, M\nFILA: Purificar comida y bebida | Transmutación | R\nFILA: Salto | Transmutación | —\nFILA: Zancada prodigiosa | Transmutación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE DRUIDA DE NIVEL 2\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Agrandar/reducir | Transmutación | C\nFILA: Augurio | Adivinación | R, M\nFILA: Auxilio | Abjuración | —\nFILA: Calentar metal | Transmutación | C\nFILA: Crecimiento espinoso | Transmutación | C\nFILA: Detectar trampas | Adivinación | —\nFILA: Esfera de llamas | Evocación | C\nFILA: Hoja de fuego | Evocación | C\nFILA: Inmovilizar persona | Encantamiento | C\nFILA: Invocar bestia | Conjuración | C, M\nFILA: Llama permanente | Evocación | M\nFILA: Localizar animales o plantas | Adivinación | R\nFILA: Localizar objeto | Adivinación | C\nFILA: Mensajero animal | Encantamiento | R\nFILA: Pasar sin rastro | Abjuración | C\nFILA: Piel robliza | Transmutación | —\nFILA: Potenciar característica | Transmutación | C\nFILA: Protección contra veneno | Abjuración | —\nFILA: Ráfaga de viento | Evocación | C\nFILA: Rayo de luna | Evocación | C\nFILA: Restablecimiento menor | Abjuración | —\nFILA: Sentidos de la bestia | Adivinación | C, R\nFILA: Visión en la oscuridad | Transmutación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE DRUIDA DE NIVEL 3\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Arma elemental | Transmutación | C\nFILA: Aura de vitalidad | Abjuración | C\nFILA: Caminar sobre el agua | Transmutación | R\nFILA: Conjurar animales | Conjuración | C\nFILA: Crecimiento vegetal | Transmutación | —\nFILA: Disipar magia | Abjuración | —\nFILA: Fingir muerte | Nigromancia | R\nFILA: Fundirse con la piedra | Transmutación | R\nFILA: Hablar con las plantas | Transmutación | —\nFILA: Invocar feérico | Conjuración | C, M\nFILA: Llamar al relámpago | Conjuración | C\nFILA: Luz del día | Evocación | —\nFILA: Muro de viento | Evocación | C\nFILA: Protección contra energía | Abjuración | C\nFILA: Respirar bajo el agua | Transmutación | R\nFILA: Revivir | Nigromancia | M\nFILA: Tormenta de aguanieve | Conjuración | C\nFIN DE TABLA\n\nTABLA: CONJUROS DE DRUIDA DE NIVEL 4\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Adivinación | Adivinación | R, M\nFILA: Confusión | Encantamiento | C\nFILA: Conjurar elementales menores | Conjuración | C\nFILA: Conjurar seres del bosque | Conjuración | C\nFILA: Controlar agua | Transmutación | C\nFILA: Dominar bestia | Encantamiento | C\nFILA: Enredadera | Conjuración | C\nFILA: Escudo de fuego | Evocación | —\nFILA: Fuente de luz lunar | Evocación | C\nFILA: Hechizar monstruo | Encantamiento | —\nFILA: Insecto gigante | Conjuración | C\nFILA: Invocar elemental | Conjuración | C, M\nFILA: Libertad de movimiento | Abjuración | —\nFILA: Localizar criatura | Adivinación | C\nFILA: Marchitar | Nigromancia | —\nFILA: Moldear la piedra | Transmutación | —\nFILA: Muro de fuego | Evocación | C\nFILA: Piel pétrea | Transmutación | C, M\nFILA: Polimorfar | Transmutación | C\nFILA: Terreno alucinatorio | Ilusionismo | —\nFILA: Tormenta de hielo | Evocación | —\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 98\nTABLA: CONJUROS DE DRUIDA DE NIVEL 5\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Atadura planar | Abjuración | M\nFILA: Caparazón antivida | Abjuración | C\nFILA: Comunión con la naturaleza | Adivinación | R\nFILA: Conjurar elemental | Conjuración | C\nFILA: Cono de frío | Evocación | —\nFILA: Contagio | Nigromancia | —\nFILA: Curar heridas en masa | Abjuración | —\nFILA: Despertar | Transmutación | M\nFILA: Escudriñar | Adivinación | C, M\nFILA: Geas | Encantamiento | —\nFILA: Muro de piedra | Evocación | C\nFILA: Paso arbóreo | Conjuración | C\nFILA: Plaga de insectos | Conjuración | C\nFILA: Reencarnar | Nigromancia | M\nFILA: Restablecimiento mayor | Abjuración | M\nFIN DE TABLA\n\nTABLA: CONJUROS DE DRUIDA DE NIVEL 6\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Conjurar feérico | Conjuración | C\nFILA: Curar | Abjuración | —\nFILA: De la carne a la piedra | Transmutación | C\nFILA: Encontrar el camino | Adivinación | C, M\nFILA: Festín de héroes | Conjuración | M\nFILA: Mover la tierra | Transmutación | C\nFILA: Muro de espinas | Conjuración | C\nFILA: Rayo solar | Evocación | C\nFILA: Viajar con el viento | Transmutación | —\nFILA: Viajar mediante plantas | Conjuración | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE DRUIDA DE NIVEL 7\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Desplazamiento entre planos | Conjuración | M\nFILA: Espejismo arcano | Ilusionismo | —\nFILA: Invertir la gravedad | Transmutación | C\nFILA: Regenerar | Transmutación | —\nFILA: Símbolo | Abjuración | M\nFILA: Tormenta de fuego | Evocación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE DRUIDA DE NIVEL 8\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Antipatía/simpatía | Encantamiento | —\nFILA: Aspectos animales | Transmutación | —\nFILA: Controlar el clima | Transmutación | C\nFILA: Explosión solar | Evocación | —\nFILA: Nube incendiaria | Conjuración | C\nFILA: Ofuscación | Encantamiento | —\nFILA: Terremoto | Transmutación | C\nFILA: Tsunami | Conjuración | C\nFIN DE TABLA\n\nTABLA: CONJUROS DE DRUIDA DE NIVEL 9\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Cambiar de forma | Transmutación | C, M\nFILA: Presciencia | Adivinación | —\nFILA: Resurrección verdadera | Nigromancia | M\nFILA: Tormenta de la venganza | Conjuración | C\nFIN DE TABLA\n\nSUBCLASES DE DRUIDA\nUna subclase de druida es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles de\ndruida, según se especifique en la subclase. Los druidas\nse organizan en asociaciones poco estructuradas a las que\nllaman círculos. Esta sección presenta las subclases del\ncírculo de la luna, el círculo de la tierra, el círculo de las\nestrellas y el círculo del mar.\nCÍRCULO DE LA LUNA\n\nINICIO PÁGINA PDF: 99"
       }
     ],
     "Explorador": [
@@ -171,6 +361,61 @@
         "level": 3,
         "name": "SUBCLASE DE EXPLORADOR",
         "description": "Consigues una subclase de explorador de tu elección.\nLas subclases de acechador en la penumbra, cazador,\nerrante feérico y señor de las bestias se detallan tras\nla descripción de esta clase. Una subclase es una\nespecialización que te proporciona rasgos cuando alcanzas\nciertos niveles de explorador. De aquí en adelante, obtienes\ntodos los rasgos de tu subclase que sean de tu nivel de\nexplorador e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de explorador."
+      },
+      {
+        "level": 5,
+        "name": "ATAQUE ADICIONAL",
+        "description": "Cuando lleves a cabo la acción de atacar en tu turno,\npodrás hacer dos ataques en lugar de uno."
+      },
+      {
+        "level": 6,
+        "name": "ERRANTE",
+        "description": "Tu velocidad aumenta en 3 m si no llevas armadura pesada.\nTambién tienes una velocidad nadando y una velocidad\ntrepando iguales a tu velocidad."
+      },
+      {
+        "level": 9,
+        "name": "PERICIA",
+        "description": "Escoge dos de tus competencias en habilidades con las que\nno tengas pericia. Ganas pericia en esas habilidades.\n\nINICIO PÁGINA PDF: 107"
+      },
+      {
+        "level": 10,
+        "name": "INFATIGABLE",
+        "description": "Las fuerzas primigenias te ayudan ahora en tus viajes,\nlo que te otorga los siguientes beneficios.\nPuntos de golpe temporales. Como acción de magia,\npuedes concederte una cantidad de puntos de golpe\ntemporales igual a 1d8 más tu modificador por Sabiduría\n(mínimo de 1). Puedes usar esta acción una cantidad de\nveces igual a tu modificador por Sabiduría (mínimo una vez)\ny recuperas todos los usos tras finalizar un descanso largo.\nDisminuir cansancio. Tras finalizar un descanso corto,\ntu nivel de cansancio, si lo tienes, se reduce en 1."
+      },
+      {
+        "level": 13,
+        "name": "CAZADOR PERSISTENTE",
+        "description": "Sufrir daño no rompe tu concentración de marca del cazador."
+      },
+      {
+        "level": 14,
+        "name": "VELO DE LA NATURALEZA",
+        "description": "Invocas espíritus de la naturaleza para esconderte\nmágicamente. Como acción adicional, puedes otorgarte\nel estado de invisible hasta el final de tu siguiente turno.\nPuedes usar este rasgo una cantidad de veces igual a tu\nmodificador por Sabiduría (mínimo una vez) y recuperas\ntodos los usos tras finalizar un descanso largo."
+      },
+      {
+        "level": 17,
+        "name": "CAZADOR PRECISO",
+        "description": "Tienes ventaja en las tiradas de ataque contra la criatura\nque tenga tu marca del cazador sobre ella."
+      },
+      {
+        "level": 18,
+        "name": "SENTIDOS SALVAJES",
+        "description": "Tu conexión con las fuerzas de la naturaleza te otorga\nvisión ciega hasta 9 m."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del viaje dimensional."
+      },
+      {
+        "level": 20,
+        "name": "AZOTE DE ENEMIGOS",
+        "description": "El dado de daño de tu marca del cazador es un d10 en lugar\nde un d6.\nLISTA DE CONJUROS DE EXPLORADOR\nEsta sección presenta la lista de conjuros de explorador.\nLos conjuros se organizan por su nivel y por orden\nalfabético y se indica la escuela mágica de cada uno de\nellos. En la columna “Especial”, C significa que el conjuro\nrequiere concentración, R significa que es un ritual y M\nsignifica que requiere un componente material específico.\nTABLA: CONJUROS DE EXPLORADOR DE NIVEL 1\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Alarma | Abjuración | R\nFILA: Buenas bayas | Conjuración | —\nFILA: Curar heridas | Abjuración | —\nFILA: Detectar magia | Adivinación | C, R\nFILA: Detectar venenos y enfermedades | Adivinación | C, R\nFILA: Encantar animal | Encantamiento | —\nFILA: Enmarañar | Conjuración | C\nFILA: Golpe apresador | Conjuración | C\nFILA: Hablar con los animales | Adivinación | R\nFILA: Marca del cazador | Adivinación | C\nFILA: Nube de oscurecimiento | Conjuración | C\nFILA: Salto | Transmutación | —\nFILA: Tormenta de espinas | Conjuración | —\nFILA: Zancada prodigiosa | Transmutación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE EXPLORADOR DE NIVEL 2\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Arma mágica | Transmutación | —\nFILA: Auxilio | Abjuración | —\nFILA: Cordón de flechas | Transmutación | —\nFILA: Crecimiento espinoso | Transmutación | C\nFILA: Detectar trampas | Adivinación | —\nFILA: Invocar bestia | Conjuración | C, M\nFILA: Localizar animales o plantas | Adivinación | R\nFILA: Localizar objeto | Adivinación | C\nFILA: Mensajero animal | Encantamiento | R\nFILA: Pasar sin rastro | Abjuración | C\nFILA: Piel robliza | Transmutación | —\nFILA: Potenciar característica | Transmutación | C\nFILA: Protección contra veneno | Abjuración | —\nFILA: Ráfaga de viento | Evocación | C\nFILA: Restablecimiento menor | Abjuración | —\nFILA: Sentidos de la bestia | Adivinación | C, R\nFILA: Silencio | Ilusionismo | C, R\nFILA: Visión en la oscuridad | Transmutación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE EXPLORADOR DE NIVEL 3\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Arma elemental | Transmutación | C\nFILA: Caminar sobre el agua | Transmutación | R\nFILA: Conjurar animales | Conjuración | C\nFILA: Conjurar descarga de proyectiles | Conjuración | —\nFILA: Crecimiento vegetal | Transmutación | —\nFILA: Disipar magia | Abjuración | —\nFILA: Flecha de relámpago | Transmutación | —\nFILA: Fundirse con la piedra | Transmutación | R\nFILA: Hablar con las plantas | Transmutación | —\nFILA: Indetectable | Abjuración | M\nFILA: Invocar feérico | Conjuración | C, M\nFILA: Luz del día | Evocación | —\nFILA: Muro de viento | Evocación | C\nFILA: Protección contra energía | Abjuración | C\nFILA: Respirar bajo el agua | Transmutación | R\nFILA: Revivir | Nigromancia | M\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 108\nTABLA: CONJUROS DE EXPLORADOR DE NIVEL 4\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Conjurar seres del bosque | Conjuración | C\nFILA: Dominar bestia | Encantamiento | C\nFILA: Enredadera | Conjuración | C\nFILA: Invocar elemental | Conjuración | C, M\nFILA: Libertad de movimiento | Abjuración | —\nFILA: Localizar criatura | Adivinación | C\nFILA: Piel pétrea | Transmutación | C, M\nFIN DE TABLA\n\nTABLA: CONJUROS DE EXPLORADOR DE NIVEL 5\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Carcaj veloz | Transmutación | C, M\nFILA: Comunión con la naturaleza | Adivinación | R\nFILA: Conjurar lluvia de flechas | Conjuración | —\nFILA: Golpe de viento acerado | Conjuración | M\nFILA: Paso arbóreo | Conjuración | C\nFILA: Restablecimiento mayor | Abjuración | M\nFIN DE TABLA\n\nSUBCLASES DE EXPLORADOR\nUna subclase de explorador es una especialización que\nte proporciona rasgos cuando alcanzas ciertos niveles\nde explorador, según se especifique en la subclase.\nEsta sección presenta las subclases de acechador en la\npenumbra, cazador, errante feérico y señor de las bestias.\nACECHADOR EN LA PENUMBRA"
       }
     ],
     "Guerrero": [
@@ -191,11 +436,6 @@
       },
       {
         "level": 2,
-        "name": "ACCIÓN SÚBITA",
-        "description": "Puedes superar tus límites normales durante un instante.\nEn tu turno, puedes llevar a cabo una acción más, salvo\nla acción de magia.\nCuando uses este rasgo, no podrás volver a hacerlo\nhasta que finalices un descanso corto o largo. A partir\ndel nivel 17, podrás usarlo dos veces antes de descansar,\npero solo una vez por turno."
-      },
-      {
-        "level": 2,
         "name": "MENTE TÁCTICA",
         "description": "Tienes facilidad para la estrategia dentro y fuera del campo\nde batalla. Cuando falles una prueba de característica,\npodrás gastar un uso de tu rasgo Tomar aliento para\nesforzarte por superarla. En vez de recuperar puntos\nde golpe, tiras 1d10 y sumas el resultado a la prueba de\ncaracterística, lo que podría convertir el fallo en un éxito.\nSi sigues sin superar la prueba, este uso de Tomar aliento\nno se gasta.\n\nINICIO PÁGINA PDF: 116\nTABLA: RASGOS DE GUERRERO\nCOLUMNAS: Nivel | Bonificador por competencia | Rasgos de clase | Tomar aliento | Maestría con armas\nFILA: 1 | +2 | Estilo de combate, Maestría con armas, Tomar aliento | 2 | 3\nFILA: 2 | +2 | Acción súbita (un uso), Mente táctica | 2 | 3\nFILA: 3 | +2 | Subclase de guerrero | 2 | 3\nFILA: 4 | +2 | Mejora de característica | 3 | 4\nFILA: 5 | +3 | Ataque adicional, Desplazamiento táctico | 3 | 4\nFILA: 6 | +3 | Mejora de característica | 3 | 4\nFILA: 7 | +3 | Rasgo de subclase | 3 | 4\nFILA: 8 | +3 | Mejora de característica | 3 | 4\nFILA: 9 | +4 | Indómito (un uso), Maestro táctico | 3 | 4\nFILA: 10 | +4 | Rasgo de subclase | 4 | 5\nFILA: 11 | +4 | Dos ataques adicionales | 4 | 5\nFILA: 12 | +4 | Mejora de característica | 4 | 5\nFILA: 13 | +5 | Ataques estudiados, Indómito (dos usos) | 4 | 5\nFILA: 14 | +5 | Mejora de característica | 4 | 5\nFILA: 15 | +5 | Rasgo de subclase | 4 | 5\nFILA: 16 | +5 | Mejora de característica | 4 | 6\nFILA: 17 | +6 | Acción súbita (dos usos), Indómito (tres usos) | 4 | 6\nFILA: 18 | +6 | Rasgo de subclase | 4 | 6\nFILA: 19 | +6 | Don épico | 4 | 6\nFILA: 20 | +6 | Tres ataques adicionales | 4 | 6\nFIN DE TABLA"
       },
@@ -203,6 +443,46 @@
         "level": 3,
         "name": "SUBCLASE DE GUERRERO",
         "description": "Consigues una subclase de guerrero de tu elección.\nLas subclases de caballero arcano, campeón, guerrero\npsiónico y maestro del combate se detallan tras\nla descripción de esta clase. Una subclase es una\nespecialización que te proporciona rasgos cuando\nalcanzas ciertos niveles de guerrero. De aquí en adelante,\nobtienes todos los rasgos de tu subclase que sean de tu\nnivel de guerrero e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 6, 8, 12, 14 y 16 de guerrero."
+      },
+      {
+        "level": 5,
+        "name": "ATAQUE ADICIONAL",
+        "description": "Cuando lleves a cabo la acción de atacar en tu turno,\npodrás hacer dos ataques en lugar de uno."
+      },
+      {
+        "level": 5,
+        "name": "DESPLAZAMIENTO TÁCTICO",
+        "description": "Cuando uses tu rasgo Tomar aliento con una acción\nadicional, podrás moverte hasta la mitad de tu velocidad\nsin provocar ataques de oportunidad."
+      },
+      {
+        "level": 9,
+        "name": "MAESTRO TÁCTICO",
+        "description": "Cuando ataques usando un arma con la que puedas utilizar\nsu propiedad de maestría, puedes sustituir la propiedad\npara ese ataque por la de debilitar, empujar o ralentizar."
+      },
+      {
+        "level": 11,
+        "name": "DOS ATAQUES ADICIONALES",
+        "description": "Cuando lleves a cabo la acción de atacar en tu turno,\npodrás hacer tres ataques en lugar de uno."
+      },
+      {
+        "level": 13,
+        "name": "ATAQUES ESTUDIADOS",
+        "description": "Estudias a tus adversarios y aprendes con cada ataque que\nrealizas. Si haces una tirada de ataque contra una criatura\ny fallas, tendrás ventaja en tu siguiente tirada de ataque\ncontra esa criatura antes del final de tu siguiente turno."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don de la pericia en combate."
+      },
+      {
+        "level": 20,
+        "name": "TRES ATAQUES ADICIONALES",
+        "description": "Cuando lleves a cabo la acción de atacar en tu turno,\npodrás hacer cuatro ataques en lugar de uno.\n\nINICIO PÁGINA PDF: 117\nSUBCLASES DE GUERRERO\nUna subclase de guerrero es una especialización que te proporciona rasgos cuando alcanzas ciertos niveles de guerrero, según se especifique en la subclase. Esta sección presenta las subclases de caballero arcano, campeón, guerrero psiónico y maestro del combate.\nCABALLERO ARCANO"
       }
     ],
     "Hechicero": [
@@ -230,6 +510,31 @@
         "level": 3,
         "name": "SUBCLASE DE HECHICERO",
         "description": "Consigues una subclase de hechicero de tu elección.\nLas subclases de hechicería aberrante, hechicería de magia\nsalvaje, hechicería dracónica y hechicería mecánica se\ndetallan tras la descripción de esta clase. Una subclase\nes una especialización que te proporciona rasgos cuando\nalcanzas ciertos niveles de hechicero. De aquí en adelante,\nobtienes todos los rasgos de tu subclase que sean de tu\nnivel de hechicero e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de hechicero."
+      },
+      {
+        "level": 5,
+        "name": "RECUPERACIÓN MÁGICA",
+        "description": "Tras finalizar un descanso corto, puedes recuperar una\ncantidad de puntos de hechicería igual o inferior a la\nmitad de tu nivel de hechicero (redondeando hacia abajo).\nCuando uses este rasgo, no podrás volver a hacerlo hasta\nque finalices un descanso largo."
+      },
+      {
+        "level": 7,
+        "name": "ENCARNACIÓN MÁGICA",
+        "description": "Si no te quedan usos del rasgo Hechicería innata, puedes\nusarlo si gastas 2 puntos de hechicería cuando empleas\nla acción adicional para activarlo.\nAdemás, mientras tengas activo el rasgo Hechicería\ninnata, puedes usar hasta dos de tus opciones de\nmetamagia en cada conjuro que lances."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del viaje dimensional."
+      },
+      {
+        "level": 20,
+        "name": "APOTEOSIS ARCANA",
+        "description": "Mientras tengas activo el rasgo Hechicería innata, puedes\nusar una opción de metamagia en cada uno de tus turnos\nsin gastar puntos de hechicería.\nOPCIONES DE METAMAGIA\nLas siguientes opciones están disponibles para el rasgo\nde metamagia y se presentan en orden alfabético.\nCONJURO ACELERADO\nCoste: 2 puntos de hechicería\nCuando lanzas un conjuro con un tiempo de lanzamiento\nde una acción, puedes gastar 2 puntos de hechicería para\nhacer que el tiempo de lanzamiento sea de una acción\nadicional a efectos de este lanzamiento. No puedes\nmodificar un conjuro de esta forma si ya has lanzado un\nconjuro de nivel 1 o superior en el turno actual ni lanzar\nun conjuro de nivel 1 o superior este turno tras modificar\nun conjuro de esta forma.\nCONJURO BUSCADOR\nCoste: 1 punto de hechicería\nSi realizas una tirada de ataque para un conjuro y fallas,\npuedes gastar 1 punto de hechicería para volver a tirar\nel d20, pero tendrás que usar el nuevo resultado.\nPuedes usar Conjuro buscador aunque ya hayas\nempleado una opción diferente de metamagia durante\nel lanzamiento del conjuro.\n\nINICIO PÁGINA PDF: 128\nCONJURO CUIDADOSO\nCoste: 1 punto de hechicería\nCuando lanzas un conjuro que obliga a otras criaturas\na realizar una tirada de salvación, puedes proteger\na algunas de esas criaturas de la fuerza completa del\nconjuro. Para ello, gasta 1 punto de hechicería y escoge\nhasta una cantidad de criaturas igual tu modificador\npor Carisma (mínimo una criatura). Las criaturas\nelegidas tienen éxito automáticamente en sus tiradas de\nsalvación contra el conjuro y no reciben daño alguno\nsi normalmente recibirían la mitad de daño del mismo\nal superar una tirada de salvación.\nCONJURO DISTANTE\nCoste: 1 punto de hechicería\nCuando lanzas un conjuro que tenga como mínimo un\nalcance de 1,5 m, puedes gastar 1 punto de hechicería para\nduplicar el alcance del conjuro. Como alternativa, cuando\nlanzas un conjuro que tenga un alcance de toque, puedes\ngastar 1 punto de hechicería para hacer que su alcance\nsea de 9 m.\nCONJURO EXTENDIDO\nCoste: 1 punto de hechicería\nCuando lanzas un conjuro que tenga una duración de al\nmenos 1 minuto, puedes gastar 1 punto de hechicería para\nduplicar su duración, hasta un máximo de 24 horas.\nSi el conjuro afectado requiere concentración, tienes\nventaja en cualquier tirada de salvación que hagas para\nmantener la concentración.\nCONJURO GEMELO\nCoste: 1 punto de hechicería\nCuando lances un conjuro, como hechizar persona,\nque puede lanzarse mediante un espacio de conjuro\nde niveles superiores para hacer objetivo a criaturas\nadicionales, puedes gastar 1 punto de hechicería para\naumentar el nivel efectivo del conjuro en 1.\nCONJURO INTENSIFICADO\nCoste: 2 puntos de hechicería\nCuando lanzas un conjuro que obliga como mínimo a una\ncriatura a hacer una tirada de salvación, puedes gastar\n2 puntos de hechicería para que uno de los objetivos del\nconjuro tenga desventaja en las tiradas de salvación que\nrealice contra el conjuro.\nCONJURO POTENCIADO\nCoste: 1 punto de hechicería\nCuando tiras el daño de un conjuro, puedes gastar 1 punto\nde hechicería para repetir la tirada de, como mucho,\ntantos dados de daño como tu modificador por Carisma\n(mínimo de un dado) y deberás usar los nuevos resultados.\nPuedes usar Conjuro potenciado aunque ya hayas\nempleado una opción diferente de metamagia durante\nel lanzamiento del conjuro.\nCONJURO SUTIL\nCoste: 1 punto de hechicería\nCuando lanzas un conjuro, puedes gastar 1 punto\nde hechicería para hacerlo sin componentes verbales,\nsomáticos ni materiales, salvo por componentes materiales\nque se consuman como parte del conjuro o que tengan un\ncoste especificado en él.\nCONJURO TRANSMUTADO\nCoste: 1 punto de hechicería\nCuando lances un conjuro que inflija un tipo de daño\nde la siguiente lista, puedes gastar 1 punto de hechicería\npara cambiar ese tipo de daño a uno de los otros tipos\nindicados: ácido, frío, fuego, relámpago, trueno y veneno.\nLISTA DE CONJUROS DE HECHICERO\nEsta sección presenta la lista de conjuros de hechicero.\nLos conjuros se organizan por su nivel y por orden\nalfabético y se indica la escuela mágica de cada uno de\nellos. En la columna “Especial”, C significa que el conjuro\nrequiere concentración, R significa que es un ritual y M\nsignifica que requiere un componente material específico.\n\nINICIO PÁGINA PDF: 129\nTABLA: TRUCOS (CONJUROS DE HECHICERO DE NIVEL 0)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Agarre electrizante | Evocación | —\nFILA: Amistad | Encantamiento | C\nFILA: Descarga de fuego | Evocación | —\nFILA: Elementalismo | Transmutación | —\nFILA: Estallido mágico | Evocación | —\nFILA: Fragmento mental | Encantamiento | —\nFILA: Guardia de cuchillas | Abjuración | C\nFILA: Ilusión menor | Ilusionismo | —\nFILA: Impacto certero | Adivinación | —\nFILA: Luces danzantes | Ilusionismo | C\nFILA: Luz | Evocación | —\nFILA: Mano de mago | Conjuración | —\nFILA: Mensaje | Transmutación | —\nFILA: Prestidigitación | Transmutación | —\nFILA: Rayo de escarcha | Evocación | —\nFILA: Reparar | Transmutación | —\nFILA: Rociada venenosa | Nigromancia | —\nFILA: Salpicadura ácida | Evocación | —\nFILA: Toque helado | Nigromancia | —\nFILA: Tronar | Evocación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 1\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Armadura de mago | Abjuración | —\nFILA: Caída de pluma | Transmutación | —\nFILA: Cuchillo de hielo | Conjuración | —\nFILA: Detectar magia | Adivinación | C, R\nFILA: Disfrazarse | Ilusionismo | —\nFILA: Dormir | Encantamiento | C\nFILA: Entender idiomas | Adivinación | R\nFILA: Escudo | Abjuración | —\nFILA: Falsa vida | Nigromancia | —\nFILA: Grasa | Conjuración | —\nFILA: Hechizar persona | Encantamiento | —\nFILA: Imagen silenciosa | Ilusionismo | C\nFILA: Manos ardientes | Evocación | —\nFILA: Nube de oscurecimiento | Conjuración | C\nFILA: Ola atronadora | Evocación | —\nFILA: Orbe cromático | Evocación | M\nFILA: Proyectil mágico | Evocación | —\nFILA: Rayo de hechicería | Evocación | C\nFILA: Rayo nauseabundo | Nigromancia | —\nFILA: Retirada expeditiva | Transmutación | C\nFILA: Rociada de color | Ilusionismo | —\nFILA: Salto | Transmutación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 2\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Abrir | Transmutación | —\nFILA: Agrandar/reducir | Transmutación | C\nFILA: Aliento de dragón | Transmutación | C\nFILA: Alterar el propio aspecto | Transmutación | C\nFILA: Arma mágica | Transmutación | —\nFILA: Clavo mental | Adivinación | C\nFILA: Contorno borroso | Ilusionismo | C\nFILA: Corona de la locura | Encantamiento | C\nFILA: Detectar pensamientos | Adivinación | C\nFILA: Esfera de llamas | Evocación | C\nFILA: Fuerza fantasmal | Ilusionismo | C\nFILA: Hacer añicos | Evocación | —\nFILA: Hoja de fuego | Evocación | C\nFILA: Imagen múltiple | Ilusionismo | —\nFILA: Inmovilizar persona | Encantamiento | C\nFILA: Invisibilidad | Ilusionismo | C\nFILA: Levitar | Transmutación | C\nFILA: Nube de dagas | Conjuración | C\nFILA: Oscuridad | Evocación | C\nFILA: Paso brumoso | Conjuración | —\nFILA: Potenciar característica | Transmutación | C\nFILA: Ráfaga de viento | Evocación | C\nFILA: Rayo abrasador | Evocación | —\nFILA: Sordera/ceguera | Transmutación | —\nFILA: Sugestión | Encantamiento | C\nFILA: Telaraña | Conjuración | C\nFILA: Trepar cual arácnido | Transmutación | C\nFILA: Ver invisibilidad | Adivinación | —\nFILA: Vigor arcano | Abjuración | —\nFILA: Visión en la oscuridad | Transmutación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 3 (INICIO)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Acelerar | Transmutación | C\nFILA: Bola de fuego | Evocación | —\nFILA: Caminar sobre el agua | Transmutación | R\nFILA: Clarividencia | Adivinación | C, M\nFILA: Contrahechizo | Abjuración | —\nFILA: Desplazamiento | Transmutación | —\nFILA: Disipar magia | Abjuración | —\nFILA: Don de lenguas | Adivinación | —\nFILA: Forma gaseosa | Transmutación | C\nFILA: Imagen mayor | Ilusionismo | C\nFILA: Luz del día | Evocación | —\nFILA: Nube apestosa | Conjuración | C\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 130\nTABLA: CONJUROS DE HECHICERO DE NIVEL 3 (CONTINUACIÓN)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Patrón hipnótico | Ilusionismo | C\nFILA: Protección contra energía | Abjuración | C\nFILA: Ralentizar | Transmutación | C\nFILA: Relámpago | Evocación | —\nFILA: Respirar bajo el agua | Transmutación | R\nFILA: Terror | Ilusionismo | C\nFILA: Toque vampírico | Nigromancia | C\nFILA: Tormenta de aguanieve | Conjuración | C\nFILA: Volar | Transmutación | C\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 4\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Confusión | Encantamiento | C\nFILA: Destierro | Abjuración | C\nFILA: Dominar bestia | Encantamiento | C\nFILA: Escudo de fuego | Evocación | —\nFILA: Esfera vitriólica | Evocación | —\nFILA: Hechizar monstruo | Encantamiento | —\nFILA: Invisibilidad mejorada | Ilusionismo | C\nFILA: Marchitar | Nigromancia | —\nFILA: Muro de fuego | Evocación | C\nFILA: Piel pétrea | Transmutación | C, M\nFILA: Polimorfar | Transmutación | C\nFILA: Puerta dimensional | Conjuración | —\nFILA: Tormenta de hielo | Evocación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 5\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Animar objetos | Transmutación | C\nFILA: Apariencia | Ilusionismo | —\nFILA: Círculo de teletransportación | Conjuración | M\nFILA: Cono de frío | Evocación | —\nFILA: Creación | Ilusionismo | —\nFILA: Dominar persona | Encantamiento | C\nFILA: Estática sináptica | Encantamiento | —\nFILA: Inmovilizar monstruo | Encantamiento | C\nFILA: Mano de Bigby | Evocación | C\nFILA: Muro de piedra | Evocación | C\nFILA: Nube aniquiladora | Conjuración | C\nFILA: Plaga de insectos | Conjuración | C\nFILA: Telequinesis | Transmutación | C\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 6\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Círculo de muerte | Nigromancia | M\nFILA: De la carne a la piedra | Transmutación | C\nFILA: Desintegrar | Transmutación | —\nFILA: Esfera congelante de Otiluke | Evocación | —\nFILA: Globo de invulnerabilidad | Abjuración | C\nFILA: Mal de ojo | Nigromancia | C\nFILA: Mover la tierra | Transmutación | C\nFILA: Puerta arcana | Conjuración | C\nFILA: Rayo solar | Evocación | C\nFILA: Relámpago en cadena | Evocación | —\nFILA: Sugestión en masa | Encantamiento | —\nFILA: Visión veraz | Adivinación | M\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 7\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Bola de fuego de explosión retardada | Evocación | C\nFILA: Dedo de la muerte | Nigromancia | —\nFILA: Desplazamiento entre planos | Conjuración | M\nFILA: Excursión etérea | Conjuración | —\nFILA: Invertir la gravedad | Transmutación | C\nFILA: Rociada prismática | Evocación | —\nFILA: Teletransporte | Conjuración | —\nFILA: Tormenta de fuego | Evocación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 8\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Dominar monstruo | Encantamiento | C\nFILA: Explosión solar | Evocación | —\nFILA: Nube incendiaria | Conjuración | C\nFILA: Palabra de poder: aturdir | Encantamiento | —\nFILA: Semiplano | Conjuración | —\nFILA: Terremoto | Transmutación | C\nFIN DE TABLA\n\nTABLA: CONJUROS DE HECHICERO DE NIVEL 9\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Deseo | Conjuración | —\nFILA: Palabra de poder: matar | Encantamiento | —\nFILA: Parar el tiempo | Transmutación | —\nFILA: Portal | Conjuración | C, M\nFILA: Tormenta de meteoritos | Evocación | —\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 131\nSUBCLASES DE HECHICERO\nUna subclase de hechicero es una especialización que\nte proporciona rasgos cuando alcanzas ciertos niveles\nde hechicero, según se especifique en la subclase. Esta\nsección presenta las subclases de hechicería aberrante,\nhechicería de magia salvaje, hechicería dracónica\ny hechicería mecánica.\nHECHICERÍA ABERRANTE"
       }
     ],
     "Mago": [
@@ -257,6 +562,31 @@
         "level": 3,
         "name": "SUBCLASE DE MAGO",
         "description": "Consigues una subclase de mago de tu elección.\nLas subclases de abjurador, adivino, evocador\ne ilusionista se detallan tras la descripción de esta clase.\nUna subclase es una especialización que te proporciona\nrasgos cuando alcanzas ciertos niveles de mago. De aquí\nen adelante, obtienes todos los rasgos de tu subclase que\nsean de tu nivel de mago e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de mago."
+      },
+      {
+        "level": 5,
+        "name": "MEMORIZAR CONJURO",
+        "description": "Tras finalizar un descanso corto, puedes estudiar tu\nlibro de conjuros y sustituir un conjuro de mago de\nnivel 1 o superior que tengas preparado con tu rasgo\nLanzamiento de conjuros por otro de nivel 1 o superior\ndel libro."
+      },
+      {
+        "level": 18,
+        "name": "MAESTRÍA SOBRE CONJUROS",
+        "description": "Has alcanzado tal maestría sobre ciertos conjuros que\npuedes lanzarlos a voluntad. Elige un conjuro de nivel 1\ny otro de nivel 2 de tu libro de conjuros con un tiempo de\nlanzamiento de una acción. Siempre tienes esos conjuros\npreparados y puedes lanzarlos a su nivel más bajo sin\ngastar un espacio de conjuro. Para lanzar cualquiera de ellos\na un nivel superior, deberás gastar un espacio de conjuro.\nTras finalizar un descanso largo, puedes estudiar tu\nlibro de conjuros y sustituir uno de los conjuros por otro\ndel libro del mismo nivel que cumpla los requisitos."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del recuerdo de conjuros."
+      },
+      {
+        "level": 20,
+        "name": "CONJUROS CARACTERÍSTICOS",
+        "description": "Escoge dos conjuros de nivel 3 que figuren en tu libro de\nconjuros como conjuros característicos. Siempre tienes\nesos conjuros preparados y puedes lanzar cada uno de\nellos una vez a nivel 3 sin gastar un espacio de conjuro.\nUna vez que los lances, no podrás volver a hacerlo de\neste modo hasta que finalices un descanso corto o largo.\nPara lanzar cualquiera de ellos a un nivel superior,\ndeberás gastar un espacio de conjuro.\n\nINICIO PÁGINA PDF: 142\nLISTA DE CONJUROS DE MAGO\nEsta sección presenta la lista de conjuros de mago.\nLos conjuros se organizan por su nivel y por orden\nalfabético y se indica la escuela mágica de cada uno de\nellos. En la columna “Especial”, C significa que el conjuro\nrequiere concentración, R significa que es un ritual y M\nsignifica que requiere un componente material específico.\nTABLA: TRUCOS (CONJUROS DE MAGO DE NIVEL 0)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Agarre electrizante | Evocación | —\nFILA: Amistad | Encantamiento | C\nFILA: Descarga de fuego | Evocación | —\nFILA: Elementalismo | Transmutación | —\nFILA: Fragmento mental | Encantamiento | —\nFILA: Guardia de cuchillas | Abjuración | C\nFILA: Ilusión menor | Ilusionismo | —\nFILA: Impacto certero | Adivinación | —\nFILA: Luces danzantes | Ilusionismo | C\nFILA: Luz | Evocación | —\nFILA: Mano de mago | Conjuración | —\nFILA: Mensaje | Transmutación | —\nFILA: Prestidigitación | Transmutación | —\nFILA: Rayo de escarcha | Evocación | —\nFILA: Reparar | Transmutación | —\nFILA: Rociada venenosa | Nigromancia | —\nFILA: Salpicadura ácida | Evocación | —\nFILA: Tañido por los muertos | Nigromancia | —\nFILA: Toque helado | Nigromancia | —\nFILA: Tronar | Evocación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE MAGO DE NIVEL 1\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Alarma | Abjuración | R\nFILA: Armadura de mago | Abjuración | —\nFILA: Caída de pluma | Transmutación | —\nFILA: Cuchillo de hielo | Conjuración | —\nFILA: Detectar magia | Adivinación | C, R\nFILA: Disco flotante de Tenser | Conjuración | R\nFILA: Disfrazarse | Ilusionismo | —\nFILA: Dormir | Encantamiento | C\nFILA: Encontrar familiar | Conjuración | R, M\nFILA: Entender idiomas | Adivinación | R\nFILA: Escudo | Abjuración | —\nFILA: Falsa vida | Nigromancia | —\nFILA: Grasa | Conjuración | —\nFILA: Hechizar persona | Encantamiento | —\nFILA: Identificar | Adivinación | R, M\nFILA: Imagen silenciosa | Ilusionismo | C\nFILA: Manos ardientes | Evocación | —\nFILA: Nube de oscurecimiento | Conjuración | C\nFILA: Ola atronadora | Evocación | —\nFILA: Orbe cromático | Evocación | M\nFILA: Protección contra el bien y el mal | Abjuración | C, M\nFILA: Proyectil mágico | Evocación | —\nFILA: Rayo de hechicería | Evocación | C\nFILA: Rayo nauseabundo | Nigromancia | —\nFILA: Retirada expeditiva | Transmutación | C\nFILA: Risa horrible de Tasha | Encantamiento | C\nFILA: Rociada de color | Ilusionismo | —\nFILA: Salto | Transmutación | —\nFILA: Sirviente invisible | Conjuración | R\nFILA: Texto ilusorio | Ilusionismo | R, M\nFILA: Zancada prodigiosa | Transmutación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE MAGO DE NIVEL 2 (INICIO)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Abrir | Transmutación | —\nFILA: Agrandar/reducir | Transmutación | C\nFILA: Aliento de dragón | Transmutación | C\nFILA: Alterar el propio aspecto | Transmutación | C\nFILA: Arma mágica | Transmutación | —\nFILA: Augurio | Adivinación | R, M\nFILA: Aura mágica de Nystul | Ilusionismo | —\nFILA: Boca mágica | Ilusionismo | R, M\nFILA: Cerradura arcana | Abjuración | M\nFILA: Clavo mental | Adivinación | C\nFILA: Contorno borroso | Ilusionismo | C\nFILA: Corona de la locura | Encantamiento | C\nFILA: Detectar pensamientos | Adivinación | C\nFILA: Dulce descanso | Nigromancia | R, M\nFILA: Esfera de llamas | Evocación | C\nFILA: Flecha ácida de Melf | Evocación | —\nFILA: Fuerza fantasmal | Ilusionismo | C\nFILA: Hacer añicos | Evocación | —\nFILA: Imagen múltiple | Ilusionismo | —\nFILA: Inmovilizar persona | Encantamiento | C\nFILA: Invisibilidad | Ilusionismo | C\nFILA: Levitar | Transmutación | C\nFILA: Llama permanente | Evocación | M\nFILA: Localizar objeto | Adivinación | C\nFILA: Nube de dagas | Conjuración | C\nFILA: Oscuridad | Evocación | C\nFILA: Paso brumoso | Conjuración | —\nFILA: Potenciar característica | Transmutación | C\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 143\nTABLA: CONJUROS DE MAGO DE NIVEL 2 (CONTINUACIÓN)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Ráfaga de viento | Evocación | C\nFILA: Rayo abrasador | Evocación | —\nFILA: Rayo debilitador | Nigromancia | C\nFILA: Sordera/ceguera | Transmutación | —\nFILA: Sugestión | Encantamiento | C\nFILA: Telaraña | Conjuración | C\nFILA: Trepar cual arácnido | Transmutación | C\nFILA: Truco de la cuerda | Transmutación | —\nFILA: Ver invisibilidad | Adivinación | —\nFILA: Vigor arcano | Abjuración | —\nFILA: Visión en la oscuridad | Transmutación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE MAGO DE NIVEL 3\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Acelerar | Transmutación | C\nFILA: Animar a los muertos | Nigromancia | —\nFILA: Bola de fuego | Evocación | —\nFILA: Círculo mágico | Abjuración | M\nFILA: Clarividencia | Adivinación | C, M\nFILA: Contrahechizo | Abjuración | —\nFILA: Corcel fantasma | Ilusionismo | R\nFILA: Desplazamiento | Transmutación | —\nFILA: Disipar magia | Abjuración | —\nFILA: Don de lenguas | Adivinación | —\nFILA: Fingir muerte | Nigromancia | R\nFILA: Forma gaseosa | Transmutación | C\nFILA: Glifo custodio | Abjuración | M\nFILA: Hablar con los muertos | Nigromancia | —\nFILA: Imagen mayor | Ilusionismo | C\nFILA: Imponer maldición | Nigromancia | C\nFILA: Indetectable | Abjuración | M\nFILA: Invocar feérico | Conjuración | C, M\nFILA: Invocar muerto viviente | Nigromancia | C, M\nFILA: Levantar maldición | Abjuración | —\nFILA: Nube apestosa | Conjuración | C\nFILA: Patrón hipnótico | Ilusionismo | C\nFILA: Pequeña choza de Leomund | Evocación | R\nFILA: Protección contra energía | Abjuración | C\nFILA: Ralentizar | Transmutación | C\nFILA: Recado | Adivinación | —\nFILA: Relámpago | Evocación | —\nFILA: Respirar bajo el agua | Transmutación | R\nFILA: Terror | Ilusionismo | C\nFILA: Toque vampírico | Nigromancia | C\nFILA: Tormenta de aguanieve | Conjuración | C\nFILA: Volar | Transmutación | C\nFIN DE TABLA\n\nTABLA: CONJUROS DE MAGO DE NIVEL 4 (INICIO)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Adivinación | Adivinación | R, M\nFILA: Asesino fantasmal | Ilusionismo | C\nFILA: Cofre oculto de Leomund | Conjuración | M\nFILA: Confusión | Encantamiento | C\nFILA: Conjurar elementales menores | Conjuración | C\nFILA: Controlar agua | Transmutación | C\nFILA: Destierro | Abjuración | C\nFILA: Escudo de fuego | Evocación | —\nFILA: Esfera elástica de Otiluke | Abjuración | C\nFILA: Esfera vitriólica | Evocación | —\nFILA: Fabricar | Transmutación | —\nFILA: Hechizar monstruo | Encantamiento | —\nFILA: Invisibilidad mejorada | Ilusionismo | C\nFILA: Invocar aberración | Conjuración | C, M\nFILA: Invocar autómata | Conjuración | C, M\nFILA: Invocar elemental | Conjuración | C, M\nFILA: Localizar criatura | Adivinación | C\nFILA: Marchitar | Nigromancia | —\nFILA: Mastín fiel de Mordenkainen | Conjuración | —\nFILA: Moldear la piedra | Transmutación | —\nFILA: Muro de fuego | Evocación | C\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 144\nTABLA: CONJUROS DE MAGO DE NIVEL 4 (CONTINUACIÓN)\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Ojo arcano | Adivinación | C\nFILA: Piel pétrea | Transmutación | C, M\nFILA: Polimorfar | Transmutación | C\nFILA: Puerta dimensional | Conjuración | —\nFILA: Sanctasanctórum privado de Mordenkainen | Abjuración | —\nFILA: Tentáculos negros de Evard | Conjuración | C\nFILA: Terreno alucinatorio | Ilusionismo | —\nFILA: Tormenta de hielo | Evocación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE MAGO DE NIVEL 5\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Alterar los recuerdos | Encantamiento | C\nFILA: Animar objetos | Transmutación | C\nFILA: Apariencia | Ilusionismo | —\nFILA: Atadura planar | Abjuración | M\nFILA: Círculo de poder | Abjuración | C\nFILA: Círculo de teletransportación | Conjuración | M\nFILA: Conjurar elemental | Conjuración | C\nFILA: Cono de frío | Evocación | —\nFILA: Conocer las leyendas | Adivinación | M\nFILA: Contactar con otro plano | Adivinación | R\nFILA: Creación | Ilusionismo | —\nFILA: Dominar persona | Encantamiento | C\nFILA: Engañar | Ilusionismo | C\nFILA: Enlace telepático de Rary | Adivinación | R\nFILA: Ensueño | Ilusionismo | —\nFILA: Escudriñar | Adivinación | C, M\nFILA: Estática sináptica | Encantamiento | —\nFILA: Geas | Encantamiento | —\nFILA: Golpe de viento acerado | Conjuración | M\nFILA: Inmovilizar monstruo | Encantamiento | C\nFILA: Invocar dragón | Conjuración | C, M\nFILA: Mano de Bigby | Evocación | C\nFILA: Muro de fuerza | Evocación | C\nFILA: Muro de piedra | Evocación | C\nFILA: Nube aniquiladora | Conjuración | C\nFILA: Pasamuros | Transmutación | —\nFILA: Presencia regia de Yolande | Encantamiento | C\nFILA: Telequinesis | Transmutación | C\nFILA: Tormenta resplandeciente de Jallarzi | Evocación | C\nFIN DE TABLA\n\nTABLA: CONJUROS DE MAGO DE NIVEL 6\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Baile irresistible de Otto | Encantamiento | C\nFILA: Caldero burbujeante de Tasha | Conjuración | M\nFILA: Círculo de muerte | Nigromancia | M\nFILA: Contingencia | Abjuración | M\nFILA: Crear muerto viviente | Nigromancia | M\nFILA: De la carne a la piedra | Transmutación | C\nFILA: Desintegrar | Transmutación | —\nFILA: Esfera congelante de Otiluke | Evocación | —\nFILA: Globo de invulnerabilidad | Abjuración | C\nFILA: Guardas y guardias | Abjuración | M\nFILA: Ilusión programada | Ilusionismo | M\nFILA: Invocación instantánea de Drawmij | Conjuración | R, M\nFILA: Invocar infernal | Conjuración | C, M\nFILA: Mal de ojo | Nigromancia | C\nFILA: Mover la tierra | Transmutación | C\nFILA: Muro de hielo | Evocación | C\nFILA: Puerta arcana | Conjuración | C\nFILA: Rayo solar | Evocación | C\nFILA: Relámpago en cadena | Evocación | —\nFILA: Sugestión en masa | Encantamiento | —\nFILA: Urna mágica | Nigromancia | M\nFILA: Visión veraz | Adivinación | M\nFIN DE TABLA\n\nTABLA: CONJUROS DE MAGO DE NIVEL 7\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Bola de fuego de explosión retardada | Evocación | C\nFILA: Dedo de la muerte | Nigromancia | —\nFILA: Desplazamiento entre planos | Conjuración | M\nFILA: Espada de Mordenkainen | Evocación | C, M\nFILA: Espejismo arcano | Ilusionismo | —\nFILA: Excursión etérea | Conjuración | —\nFILA: Invertir la gravedad | Transmutación | C\nFILA: Jaula de fuerza | Evocación | C, M\nFILA: Mansión magnífica de Mordenkainen | Conjuración | M\nFILA: Proyectar imagen | Ilusionismo | C, M\nFILA: Recluir | Transmutación | M\nFILA: Rociada prismática | Evocación | —\nFILA: Símbolo | Abjuración | M\nFILA: Simulacro | Ilusionismo | M\nFILA: Teletransporte | Conjuración | —\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 145\nTABLA: CONJUROS DE MAGO DE NIVEL 8\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Antipatía/simpatía | Encantamiento | —\nFILA: Campo antimagia | Abjuración | C\nFILA: Clon | Nigromancia | M\nFILA: Controlar el clima | Transmutación | C\nFILA: Dominar monstruo | Encantamiento | C\nFILA: Explosión solar | Evocación | —\nFILA: Laberinto | Conjuración | C\nFILA: Mente en blanco | Abjuración | —\nFILA: Nube incendiaria | Conjuración | C\nFILA: Ofuscación | Encantamiento | —\nFILA: Palabra de poder: aturdir | Encantamiento | —\nFILA: Semiplano | Conjuración | —\nFILA: Telepatía | Adivinación | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE MAGO DE NIVEL 9\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Cambiar de forma | Transmutación | C, M\nFILA: Cautiverio | Abjuración | M\nFILA: Deseo | Conjuración | —\nFILA: Muro prismático | Abjuración | —\nFILA: Palabra de poder: matar | Encantamiento | —\nFILA: Parar el tiempo | Transmutación | —\nFILA: Polimorfar verdadero | Transmutación | C\nFILA: Portal | Conjuración | C, M\nFILA: Presciencia | Adivinación | —\nFILA: Proyección astral | Nigromancia | M\nFILA: Terror abyecto | Ilusionismo | C\nFILA: Tormenta de meteoritos | Evocación | —\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 146\nSUBCLASES DE MAGO\nUna subclase de mago es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles de\nmago, según se especifique en la subclase. Esta sección\npresenta las subclases de abjurador, adivino, evocador\ne ilusionista.\nABJURADOR"
       }
     ],
     "Monje": [
@@ -294,6 +624,81 @@
         "level": 3,
         "name": "SUBCLASE DE MONJE",
         "description": "Consigues una subclase de monje de tu elección.\nLas subclases de guerrero de la mano abierta, guerrero\nde la misericordia, guerrero de la sombra y guerrero de\nlos elementos se detallan tras la descripción de esta clase.\nUna subclase es una especialización que te proporciona\nrasgos cuando alcanzas ciertos niveles de monje. De aquí\nen adelante, obtienes todos los rasgos de tu subclase que\nsean de tu nivel de monje e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "CAÍDA LENTA",
+        "description": "Puedes llevar a cabo una reacción cuando caigas para\nreducir cualquier daño que sufras de la caída en una\ncantidad igual a cinco veces tu nivel de monje."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de monje."
+      },
+      {
+        "level": 5,
+        "name": "ATAQUE ADICIONAL",
+        "description": "Cuando lleves a cabo la acción de atacar en tu turno,\npodrás hacer dos ataques en lugar de uno."
+      },
+      {
+        "level": 5,
+        "name": "GOLPE ATURDIDOR",
+        "description": "Una vez por turno cuando aciertes a una criatura con\nun arma de monje o un ataque sin armas, puedes gastar\n1 punto de concentración para intentar propinar un golpe\naturdidor. El objetivo deberá hacer una tirada de salvación\nde Constitución. Si la falla, tendrá el estado de aturdido\nhasta el principio de tu siguiente turno. Si la supera, su\nvelocidad se reducirá a la mitad hasta el principio de tu\nsiguiente turno y la siguiente tirada de ataque realizada\ncontra él antes de ese momento tendrá ventaja."
+      },
+      {
+        "level": 6,
+        "name": "GOLPES POTENCIADOS",
+        "description": "Siempre que inflijas daño con tu ataque sin armas, puedes\nelegir entre causar daño de fuerza o su tipo de daño normal."
+      },
+      {
+        "level": 7,
+        "name": "EVASIÓN",
+        "description": "Cuando sufras un efecto que te permita hacer una tirada\nde salvación de Destreza para sufrir solo la mitad de daño,\nno recibes daño alguno si la superas y'solo sufres la mitad\nsi la fallas.\nNo te beneficias de este rasgo si tienes el estado de\nincapacitado."
+      },
+      {
+        "level": 9,
+        "name": "MOVIMIENTO ACROBÁTICO",
+        "description": "Mientras no lleves armadura ni portes un escudo, obtienes\nla capacidad de moverte por superficies verticales y sobre\nlíquidos sin caerte."
+      },
+      {
+        "level": 10,
+        "name": "AUTORRESTABLECIMIENTO",
+        "description": "Por pura fuerza de voluntad, puedes eliminar uno de\nlos siguientes estados que te afecten al final de cada\nuno de tus turnos: asustado, envenenado o hechizado.\nAdemás, privarte de comida y bebida no te aplica niveles\nde cansancio."
+      },
+      {
+        "level": 10,
+        "name": "CONCENTRACIÓN AGUDIZADA",
+        "description": "Tus rasgos Defensa paciente, Paso del viento y Ráfaga\nde golpes obtienen los siguientes beneficios:\nDefensa paciente. Cuando gastes un punto de\nconcentración para usar Defensa paciente, obtienes una\ncantidad de puntos de golpe temporales igual al resultado\nde dos tiradas de tu dado de Artes marciales.\nPaso del viento. Cuando gastes un punto de concentración para usar Paso del viento, puedes elegir una criatura\nvoluntaria Grande o más pequeña que esté a 1,5 m o menos\nde ti. Moverás a la criatura contigo hasta el final de tu\nturno. El movimiento de la criatura no provoca ataques\nde oportunidad.\nRáfaga de golpes. Puedes gastar 1 punto de concentración\npara usar Ráfaga de golpes y hacer tres ataques sin armas\nen lugar de dos."
+      },
+      {
+        "level": 13,
+        "name": "DESVIAR ENERGÍA",
+        "description": "Ahora puedes usar tu rasgo Desviar ataques contra\nataques que causen cualquier tipo de daño, no solo\ncontundente, cortante o perforante."
+      },
+      {
+        "level": 14,
+        "name": "SUPERVIVIENTE DISCIPLINADO",
+        "description": "Tu disciplina física y mental te otorga competencia en\ntodas las tiradas de salvación.\nAdemás, cuando hagas una tirada de salvación y falles,\npuedes gastar 1 punto de concentración para repetirla,\npero deberás utilizar el nuevo resultado."
+      },
+      {
+        "level": 15,
+        "name": "CONCENTRACIÓN PERFECTA",
+        "description": "Cuando tires iniciativa y no utilices Metabolismo\nasombroso, recuperas los puntos de concentración\ngastados hasta que tengas 4 si te quedan 3 o menos."
+      },
+      {
+        "level": 18,
+        "name": "DEFENSA SUPERIOR",
+        "description": "Al principio de tu turno, puedes gastar 3 puntos de\nconcentración para protegerte del daño durante 1 minuto\no hasta que tengas el estado de incapacitado. Durante ese\ntiempo, tendrás resistencia a todo el daño excepto al de\nfuerza."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del ataque imparable."
+      },
+      {
+        "level": 20,
+        "name": "CUERPO Y MENTE",
+        "description": "Has llevado tu cuerpo y mente a otro nivel. Tus puntuaciones de Destreza y Sabiduría aumentan en 4, hasta un\nmáximo de 25.\n\nINICIO PÁGINA PDF: 154\nSUBCLASES DE MONJE\nUna subclase de monje es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles de\nmonje, según se especifique en la subclase. Esta sección\npresenta las subclases de guerrero de la mano abierta,\nguerrero de la misericordia, guerrero de la sombra\ny guerrero de los elementos.\nGUERRERO DE LA MANO ABIERTA"
       }
     ],
     "Paladín": [
@@ -331,6 +736,56 @@
         "level": 3,
         "name": "SUBCLASE DE PALADÍN",
         "description": "Consigues una subclase de paladín de tu elección.\nLas subclases del juramento de entrega, el juramento\nde gloria, el juramento de los antiguos y el juramento\nde venganza se detallan tras la descripción de esta clase.\nUna subclase es una especialización que te proporciona\nrasgos cuando alcanzas ciertos niveles de paladín.\nDe aquí en adelante, obtienes todos los rasgos de tu\nsubclase que sean de tu nivel de paladín e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 12 y 16 de paladín."
+      },
+      {
+        "level": 5,
+        "name": "ATAQUE ADICIONAL",
+        "description": "Cuando lleves a cabo la acción de atacar en tu turno,\npodrás hacer dos ataques en lugar de uno."
+      },
+      {
+        "level": 5,
+        "name": "CORCEL FIEL",
+        "description": "Puedes invocar la ayuda de un corcel sobrenatural.\nSiempre tienes el conjuro hallar corcel preparado.\nTambién puedes lanzarlo una vez sin gastar un espacio\nde conjuro y recuperas la capacidad de hacerlo tras\nfinalizar un descanso largo."
+      },
+      {
+        "level": 6,
+        "name": "AURA DE PROTECCIÓN",
+        "description": "Irradias un aura protectora e invisible en una emanación\nde 3 m que se origina de ti. El aura estará inactiva\nmientras tengas el estado de incapacitado.\nTus aliados dentro del aura y tú obtenéis un bonificador\na las tiradas de salvación igual a tu modificador por\nCarisma (mínimo de +1).\nSi hay otro paladín presente, una criatura solo puede\nbeneficiarse de un Aura de protección a la vez; esa criatura\nelegirá cuál de ellas mientras esté dentro de ambas."
+      },
+      {
+        "level": 9,
+        "name": "ABJURAR DE LOS ENEMIGOS",
+        "description": "Como acción de magia, puedes gastar uno de los usos de\nCanalizar divinidad de esta clase para sobrecoger a tus\nenemigos. Mientras muestras tu símbolo sagrado o arma,\npuedes hacer objetivo a una cantidad de criaturas que\npuedas ver a 18 m o menos de ti igual a tu modificador\npor Carisma (mínimo una criatura). Cada objetivo deberá\nsuperar una tirada de salvación de Sabiduría o tendrá el\nestado de asustado durante 1 minuto o hasta recibir daño.\nMientras esté asustado de esta forma, un objetivo solo\npodrá hacer una de estas opciones en sus turnos: moverse,\nrealizar una acción o realizar una acción adicional."
+      },
+      {
+        "level": 10,
+        "name": "AURA DE CORAJE",
+        "description": "Tus aliados y tú tenéis inmunidad al estado de asustados\nmientras estéis dentro de tu Aura de protección. Si un\naliado asustado entra en el aura, ese estado no tendrá\nefecto en él mientras esté dentro."
+      },
+      {
+        "level": 11,
+        "name": "GOLPES RADIANTES",
+        "description": "Ahora, tus golpes tienen un poder sobrenatural. Cuando\naciertes a un objetivo con una tirada de ataque usando un\narma cuerpo a cuerpo o un ataque sin armas, el objetivo\nrecibirá 1d8 de daño radiante adicional."
+      },
+      {
+        "level": 14,
+        "name": "TOQUE REPARADOR",
+        "description": "Cuando uses Imponer las manos sobre una criatura,\ntambién podrás eliminar uno o más de los siguientes\nestados que la afecten: asustado, aturdido, cegado,\nensordecido, hechizado o paralizado. Deberás gastar\n5 puntos de golpe de la reserva de curación de Imponer\nlas manos por cada uno de los estados que elimines,\npero esos puntos gastados no restaurarán puntos de golpe."
+      },
+      {
+        "level": 18,
+        "name": "EXPANSIÓN DE AURA",
+        "description": "Tu Aura de protección ahora es una emanación de 9 m."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don de la visión verdadera.\n\nRECUADRO: ROMPER TU JURAMENTO\nLos paladines siempre intentan alcanzar los más\naltos estándares de conducta, pero incluso los\nmás entregados pueden fallar. A veces, un paladín\nquebranta su juramento.\nUn paladín que rompe sus votos tiende a buscar\nla absolución. Para ello, y en señal de penitencia,\npasa la noche en vela o lleva a cabo un ayuno.\nTras finalizar el rito del perdón, el paladín puede\nhacer borrón y cuenta nueva.\nSi tu paladín rompe su juramento y no se arrepiente,\nhabla con tu DM. Tu paladín probablemente debería\nbuscar una subclase más apropiada o incluso abandonar\nla clase y adoptar otra.\nFIN DE RECUADRO\n\nINICIO PÁGINA PDF: 162\nLISTA DE CONJUROS DE PALADÍN\nEsta sección presenta la lista de conjuros de paladín.\nLos conjuros se organizan por su nivel y por orden\nalfabético y se indica la escuela mágica de cada uno de\nellos. En la columna “Especial”, C significa que el conjuro\nrequiere concentración, R significa que es un ritual y M\nsignifica que requiere un componente material específico.\nTABLA: CONJUROS DE PALADÍN DE NIVEL 1\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Bendición | Encantamiento | C, M\nFILA: Castigo abrasador | Evocación | —\nFILA: Castigo atronador | Evocación | —\nFILA: Castigo divino | Evocación | —\nFILA: Castigo furioso | Nigromancia | —\nFILA: Curar heridas | Abjuración | —\nFILA: Detectar el bien y el mal | Adivinación | C\nFILA: Detectar magia | Adivinación | C, R\nFILA: Detectar venenos y enfermedades | Adivinación | C, R\nFILA: Duelo forzado | Encantamiento | C\nFILA: Escudo de fe | Abjuración | C\nFILA: Favor divino | Transmutación | —\nFILA: Heroísmo | Encantamiento | C\nFILA: Orden imperiosa | Encantamiento | —\nFILA: Protección contra el bien y el mal | Abjuración | C, M\nFILA: Purificar comida y bebida | Transmutación | R\nFIN DE TABLA\n\nTABLA: CONJUROS DE PALADÍN DE NIVEL 2\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Arma mágica | Transmutación | —\nFILA: Auxilio | Abjuración | —\nFILA: Castigo brillante | Transmutación | C\nFILA: Dulce descanso | Nigromancia | R, M\nFILA: Hallar corcel | Conjuración | —\nFILA: Localizar objeto | Adivinación | C\nFILA: Plegaria de curación | Abjuración | —\nFILA: Protección contra veneno | Abjuración | —\nFILA: Restablecimiento menor | Abjuración | —\nFILA: Vínculo protector | Abjuración | M\nFILA: Zona de la verdad | Encantamiento | —\nFIN DE TABLA\n\nTABLA: CONJUROS DE PALADÍN DE NIVEL 3\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Arma elemental | Transmutación | C\nFILA: Aura de vitalidad | Abjuración | C\nFILA: Castigo cegador | Evocación | —\nFILA: Círculo mágico | Abjuración | M\nFILA: Crear comida y agua | Conjuración | —\nFILA: Disipar magia | Abjuración | —\nFILA: Levantar maldición | Abjuración | —\nFILA: Luz del día | Evocación | —\nFILA: Manto del cruzado | Transmutación | C\nFILA: Revivir | Nigromancia | M\nFIN DE TABLA\n\nTABLA: CONJUROS DE PALADÍN DE NIVEL 4\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Aura de pureza | Abjuración | C\nFILA: Aura de vida | Abjuración | C\nFILA: Castigo abrumador | Encantamiento | —\nFILA: Destierro | Abjuración | C\nFILA: Guarda contra la muerte | Abjuración | —\nFILA: Localizar criatura | Adivinación | C\nFIN DE TABLA\n\nTABLA: CONJUROS DE PALADÍN DE NIVEL 5\nCOLUMNAS: Conjuro | Escuela | Especial\nFILA: Alzar a los muertos | Nigromancia | M\nFILA: Castigo desterrador | Conjuración | C\nFILA: Círculo de poder | Abjuración | C\nFILA: Disipar el bien y el mal | Abjuración | C\nFILA: Geas | Encantamiento | —\nFILA: Invocar celestial | Conjuración | C, M\nFILA: Ola destructora | Evocación | —\nFILA: Restablecimiento mayor | Abjuración | M\nFIN DE TABLA\n\nINICIO PÁGINA PDF: 163\nSUBCLASES DE PALADÍN\nUna subclase de paladín es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles\nde paladín, según se especifique en la subclase. Esta\nsección presenta las subclases del juramento de entrega,\nel juramento de gloria, el juramento de los antiguos y el\njuramento de venganza.\nCada una de estas subclases representa un cuerpo\nde juramentos que un paladín empieza a prestar al\nunirse a la clase. El juramento definitivo se presta al\nllegar al nivel 3 y es la culminación del entrenamiento\nde un paladín. Algunos personajes de esta clase no se\nconsideran a sí mismos auténticos paladines hasta que\nno han alcanzado el nivel 3 y pronunciado su juramento.\nPara otros, esto no es más que un formalismo, un sello\noficial sobre algo que siempre estuvo en su corazón.\nJURAMENTO DE ENTREGA\nEstos paladines comparten los siguientes principios:\n+ Que tus palabras sean siempre promesas.\n+ Protege a los débiles y nunca temas actuar.\n+ Que tus actos honorables sirvan de ejemplo."
       }
     ],
     "Pícaro": [
@@ -368,6 +823,61 @@
         "level": 3,
         "name": "SUBCLASE DE PÍCARO",
         "description": "Consigues una subclase de pícaro de tu elección.\nLas subclases de asesino, embaucador arcano, ladrón\ny rebanaalmas se detallan tras la descripción de esta clase.\nUna subclase es una especialización que te proporciona\nrasgos cuando alcanzas ciertos niveles de pícaro. De aquí\nen adelante, obtienes todos los rasgos de tu subclase que\nsean de tu nivel de pícaro e inferiores."
+      },
+      {
+        "level": 4,
+        "name": "MEJORA DE CARACTERÍSTICA",
+        "description": "Obtienes la dote Mejora de característica (consulta el\ncapítulo 5) u otra dote de tu elección para la que cumplas\nlas condiciones. Vuelves a obtener este rasgo en los\nniveles 8, 10, 12 y 16 de pícaro."
+      },
+      {
+        "level": 5,
+        "name": "ESQUIVA ASOMBROSA",
+        "description": "Cuando un atacante que puedas ver te acierte con una\ntirada de ataque, puedes usar una reacción para reducir\na la mitad el daño que te causa dicho ataque (redondeando\nhacia abajo)."
+      },
+      {
+        "level": 5,
+        "name": "GOLPE ASTUTO",
+        "description": "Has desarrollado formas astutas de usar tu Ataque furtivo.\nCuando infliges daño de Ataque furtivo, puedes añadir\nuno de los siguientes efectos de Golpe astuto. Cada uno\ntiene un coste en dados que es la cantidad de dados de\ndaño de Ataque furtivo a los que debes renunciar para\nañadir el efecto. Retiras la cantidad de dados antes de tirar\ny el efecto se produce inmediatamente después de que se\ncause el daño del ataque. Por ejemplo, si añades el efecto de\nveneno, quita 1d6 del daño de Ataque furtivo antes de tirar.\nSi un efecto de Golpe astuto requiere una tirada de\nsalvación, la CD es igual a 8 más tu modificador por\nDestreza y tu bonificador por competencia.\nRetirada (coste: 1d6). Justo después del ataque, te mueves\nhasta la mitad de tu velocidad sin provocar ataques de\noportunidad.\nTropiezo (coste: 1d6). Si el objetivo es Grande o más\npequeño, deberá superar una tirada de salvación de\nDestreza o tendrá el estado de derribado.\n\nINICIO PÁGINA PDF: 171\nVeneno (coste: 1d6). Añades una toxina a tu golpe, lo\nque obliga al objetivo a hacer una tirada de salvación de\nConstitución. Si la falla, tendrá el estado de envenenado\ndurante 1 minuto. Al final de cada uno de sus turnos, el\nobjetivo envenenado repetirá la tirada de salvación y,\nsi tiene éxito, se librará del efecto.\nPara usar este efecto, debes llevar contigo unos útiles\nde envenenador."
+      },
+      {
+        "level": 7,
+        "name": "EVASIÓN",
+        "description": "Puedes esquivar con agilidad ciertos peligros. Cuando\nsufras un efecto que te permita hacer una tirada de\nsalvación de Destreza para sufrir solo la mitad de daño,\nno recibes daño alguno si la superas y solo sufres la mitad\nsi la fallas. No puedes usar este rasgo si tienes el estado de\nincapacitado."
+      },
+      {
+        "level": 7,
+        "name": "TALENTOS FIABLES",
+        "description": "Cuando hagas una prueba de característica que utilice una\nde tus competencias en habilidades o con herramientas,\npuedes sustituir un resultado de 9 o menos en el d20 por\nun 10."
+      },
+      {
+        "level": 11,
+        "name": "GOLPE ASTUTO MEJORADO",
+        "description": "Puedes usar hasta dos efectos de Golpe astuto cuando\ninflijas daño de Ataque furtivo pagando el coste en dados\npor cada efecto."
+      },
+      {
+        "level": 14,
+        "name": "GOLPES TAIMADOS",
+        "description": "Has practicado nuevas formas de usar tu Ataque furtivo\nde forma artera. Entre las opciones de Golpe astuto se\nencuentran ahora los siguientes efectos.\nConfundir (coste: 2d6). El objetivo deberá superar una\ntirada de salvación de Constitución. Si no lo hace, en su\npróximo turno solo podrá moverse, realizar una acción\no realizar una acción adicional.\nNoquear (coste: 6d6). El objetivo deberá superar una\ntirada de salvación de Constitución o tendrá el estado\nde inconsciente durante 1 minuto o hasta recibir daño.\nEl objetivo inconsciente repetirá la tirada de salvación al\nfinal de cada uno de sus turnos y, si tiene éxito, se librará\ndel efecto.\nOfuscar (coste: 3d6). El objetivo deberá superar una\ntirada de salvación de Destreza o tendrá el estado de\ncegado hasta el final de su siguiente turno."
+      },
+      {
+        "level": 15,
+        "name": "MENTE ESCURRIDIZA",
+        "description": "Tu mente astuta es excepcionalmente difícil de controlar.\nGanas competencia en las tiradas de salvación de\nSabiduría y Carisma."
+      },
+      {
+        "level": 18,
+        "name": "ELUSIVO",
+        "description": "Eres tan escurridizo que será raro que un atacante\npueda golpearte con facilidad. Ninguna tirada de ataque\ncontra ti tendrá ventaja a menos que tengas el estado\nde incapacitado."
+      },
+      {
+        "level": 19,
+        "name": "DON ÉPICO",
+        "description": "Obtienes una dote de don épico (consulta el capítulo 5)\nu otra dote de tu elección para la que cumplas las\ncondiciones. Se recomienda Don del espíritu de la noche."
+      },
+      {
+        "level": 20,
+        "name": "GOLPE DE SUERTE",
+        "description": "Has desarrollado una capacidad asombrosa para tener\néxito justo cuando lo necesitas. Si fallas una prueba con\nd20, puedes convertir el resultado de la tirada en un 20.\nCuando uses este rasgo, no podrás volver a hacerlo\nhasta que finalices un descanso corto o largo.\n\nINICIO PÁGINA PDF: 172\nSUBCLASES DE PÍCARO\nUna subclase de pícaro es una especialización que te\nproporciona rasgos cuando alcanzas ciertos niveles de\npícaro, según se especifique en la subclase. Esta sección\npresenta las subclases de asesino, embaucador arcano,\nladrón y rebanaalmas.\nASESINO"
       }
     ]
   }
