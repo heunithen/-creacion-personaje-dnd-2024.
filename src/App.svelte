@@ -737,6 +737,65 @@
     lastChestRoll = { total, dice, lootNumber, category: loot.category, name: loot.name, priceLabel: loot.priceLabel };
   }
 
+  let masterTab = 'Personajes';
+  const masterTabs = ['Personajes', 'Cofres', 'Monstruos ordenados'];
+  const MONSTERS = [
+    {
+      name: 'Cultista', english: 'Cultist', type: 'Humanoide mediano o pequeño', alignment: 'Neutral', cr: '1/8 (25 PX)',
+      ac: 12, initiative: '+1 (11)', hp: '9 (2d8)', speed: '30 pies',
+      abilities: 'Fue 11 (+0) · Des 12 (+1) · Con 10 (+0) · Int 10 (+0) · Sab 11 (+0) · Car 10 (+0)',
+      skills: 'Engaño +2, Religión +2', senses: 'Percepción pasiva 10', languages: 'Común',
+      traits: 'Ninguno.',
+      attacks: [{name:'Hoz ritual', bonus:'+3', reach:'5 pies', damage:'3 (1d4 + 1) cortante + 1 necrótico'}],
+      role: 'Combatiente básico; daño bajo y sencillo de administrar.'
+    },
+    {
+      name: 'Estirge', english: 'Stirge', type: 'Monstruosidad diminuta', alignment: 'Sin alineamiento', cr: '1/8 (25 PX)',
+      ac: 13, initiative: '+3 (13)', hp: '5 (2d4)', speed: '10 pies, volar 40 pies',
+      abilities: 'Fue 4 (−3) · Des 16 (+3) · Con 11 (+0) · Int 2 (−4) · Sab 8 (−1) · Car 6 (−2)',
+      skills: '—', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 9', languages: '—',
+      traits: 'Cuando impacta, se adhiere al objetivo. Mientras permanece adherida, no vuelve a atacar con la probóscide y el objetivo recibe 5 (2d4) de daño necrótico al comienzo de cada turno de la estirge. Puede soltarse gastando 5 pies de movimiento; el objetivo o una criatura adyacente puede retirarla usando una acción.',
+      attacks: [{name:'Probóscide', bonus:'+5', reach:'5 pies', damage:'6 (1d6 + 3) perforante; se adhiere al objetivo'}],
+      role: 'Amenaza voladora que obliga a gastar acciones para retirarla.'
+    },
+    {
+      name: 'Goblin esbirro', english: 'Goblin Minion', type: 'Feérico pequeño (goblinoide)', alignment: 'Caótico neutral', cr: '1/8 (25 PX)',
+      ac: 12, initiative: '+2 (12)', hp: '7 (2d6)', speed: '30 pies',
+      abilities: 'Fue 8 (−1) · Des 15 (+2) · Con 10 (+0) · Int 10 (+0) · Sab 8 (−1) · Car 8 (−1)',
+      skills: 'Sigilo +6', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 9', languages: 'Común, goblin',
+      traits: 'Escape ágil (acción adicional): realiza las acciones Destrabarse u Ocultarse.',
+      attacks: [{name:'Daga', bonus:'+4', reach:'5 pies o 20/60 pies', damage:'4 (1d4 + 2) perforante'}],
+      role: 'Hostigador móvil; puede retirarse o esconderse con facilidad.'
+    },
+    {
+      name: 'Guerrero kóbold', english: 'Kobold Warrior', type: 'Dragón pequeño', alignment: 'Neutral', cr: '1/8 (25 PX)',
+      ac: 14, initiative: '+2 (12)', hp: '7 (3d6 − 3)', speed: '30 pies',
+      abilities: 'Fue 7 (−2) · Des 15 (+2) · Con 9 (−1) · Int 8 (−1) · Sab 7 (−2) · Car 8 (−1)',
+      skills: '—', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 8', languages: 'Común, dracónico',
+      traits: 'Tácticas de grupo: tiene ventaja en una tirada de ataque contra una criatura si al menos un aliado no incapacitado está a 5 pies de ella. Sensibilidad a la luz solar: tiene desventaja en pruebas de característica y tiradas de ataque bajo luz solar.',
+      attacks: [{name:'Daga', bonus:'+4', reach:'5 pies o 20/60 pies', damage:'4 (1d4 + 2) perforante'}],
+      role: 'Enemigo de grupo; gana ventaja cuando rodea a un aventurero.'
+    },
+    {
+      name: 'Rata gigante', english: 'Giant Rat', type: 'Bestia pequeña', alignment: 'Sin alineamiento', cr: '1/8 (25 PX)',
+      ac: 13, initiative: '+3 (13)', hp: '7 (2d6)', speed: '30 pies, trepar 30 pies',
+      abilities: 'Fue 7 (−2) · Des 16 (+3) · Con 11 (+0) · Int 2 (−4) · Sab 10 (+0) · Car 4 (−3)',
+      skills: 'Percepción +2', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 12', languages: '—',
+      traits: 'Tácticas de grupo: tiene ventaja en una tirada de ataque contra una criatura si al menos un aliado no incapacitado está a 5 pies de ella.',
+      attacks: [{name:'Mordisco', bonus:'+5', reach:'5 pies', damage:'5 (1d4 + 3) perforante'}],
+      role: 'Enemigo básico; peligrosa cuando varias ratas atacan al mismo objetivo.'
+    },
+    {
+      name: 'Serpiente voladora', english: 'Flying Snake', type: 'Monstruosidad diminuta', alignment: 'Sin alineamiento', cr: '1/8 (25 PX)',
+      ac: 14, initiative: '+2 (12)', hp: '5 (2d4)', speed: '30 pies, volar 60 pies, nadar 30 pies',
+      abilities: 'Fue 4 (−3) · Des 15 (+2) · Con 11 (+0) · Int 2 (−4) · Sab 12 (+1) · Car 5 (−3)',
+      skills: '—', senses: 'Vista ciega 10 pies; Percepción pasiva 11', languages: '—',
+      traits: 'Sobrevuelo: no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo.',
+      attacks: [{name:'Mordisco', bonus:'+4', reach:'5 pies', damage:'1 perforante + 5 (2d4) de veneno'}],
+      role: 'Atacante voladora rápida; puede entrar, atacar y alejarse.'
+    }
+  ];
+
   let customRolls: CustomRoll[] = [];
   let lastRollId = '';
   let newRollName = '';
@@ -1020,55 +1079,104 @@
 
   <main class="main">
     {#if obrRole === 'GM'}
-      <section class="panel roster-panel">
-        <div class="section-heading"><h2>Personajes de la sala</h2><span class="count">{roomSheets.length}</span></div>
-        <div class="actions"><button class="secondary" on:click={refreshPlayers}>Actualizar</button></div>
-        {#if !roomSheets.length}<p class="muted">No hay personajes publicados.</p>
-        {:else}
-          {#each roomSheets as entry}
-            <article class="character-card">
-              <div class="card-symbol">✧</div>
-              <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName}</p></div>
-              <details class="gm-sheet-details">
-                <summary>Ver ficha</summary>
-                <div class="character-sheet gm-character-sheet">
-                  <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2></div>
-                  <div class="sheet-grid">
-                    {#each visiblePairs(entry.sheet?.sections || [], 'Datos') as pair}
-                      <section class="sheet-section {sectionClass(pair.heading.name)}">
-                        <div class="sheet-section-title"><h3>{pair.heading.name || 'Sección'}</h3></div>
-                        <div class="stats-list">
-                          {#each pair.heading.stats || [] as stat, i}
-                            <div class="sheet-stat"><span>{stat.name || '—'}</span><strong>{displayValue(pair.values?.stats?.[i]?.value ?? stat.value) || '—'}</strong></div>
-                          {/each}
-                        </div>
-                      </section>
+      <nav class="master-tabs" role="tablist" aria-label="Herramientas del director">
+        {#each masterTabs as tab}
+          <button class:active={masterTab === tab} role="tab" aria-selected={masterTab === tab} on:click={() => masterTab = tab}>{tab}</button>
+        {/each}
+      </nav>
+      {#if masterTab === 'Personajes'}
+        <section class="panel roster-panel">
+          <div class="section-heading"><h2>Personajes de la sala</h2><span class="count">{roomSheets.length}</span></div>
+          <div class="actions"><button class="secondary" on:click={refreshPlayers}>Actualizar</button></div>
+          {#if !roomSheets.length}<p class="muted">No hay personajes publicados.</p>
+          {:else}
+            {#each roomSheets as entry}
+              <article class="character-card">
+                <div class="card-symbol">✧</div>
+                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName}</p></div>
+                <details class="gm-sheet-details">
+                  <summary>Ver ficha</summary>
+                  <div class="character-sheet gm-character-sheet">
+                    <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2></div>
+                    <div class="sheet-grid">
+                      {#each visiblePairs(entry.sheet?.sections || [], 'Datos') as pair}
+                        <section class="sheet-section {sectionClass(pair.heading.name)}">
+                          <div class="sheet-section-title"><h3>{pair.heading.name || 'Sección'}</h3></div>
+                          <div class="stats-list">
+                            {#each pair.heading.stats || [] as stat, i}
+                              <div class="sheet-stat"><span>{stat.name || '—'}</span><strong>{displayValue(pair.values?.stats?.[i]?.value ?? stat.value) || '—'}</strong></div>
+                            {/each}
+                          </div>
+                        </section>
+                      {/each}
+                    </div>
+                  </div>
+                </details>
+              </article>
+            {/each}
+          {/if}
+        </section>
+      {:else if masterTab === 'Cofres'}
+        <section class="panel chest-panel">
+          <div class="section-heading"><h2>Cofres</h2><span class="count">10d10 · 10–100</span></div>
+          <p class="muted">Tira 10 dados de diez caras y suma los resultados. El 55 es el centro: cuanto más se acerque la suma a 10 o 100, más valioso será el botín.</p>
+          <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 10d10</button></div>
+          {#if lastChestRoll}
+            <div class="chest-result">
+              <span class="chest-result-number">10d10: {lastChestRoll.dice.join(' + ')} = {lastChestRoll.total}</span>
+              <strong>{lastChestRoll.name}</strong>
+              <span>{lastChestRoll.category} · {lastChestRoll.priceLabel}</span>
+              <span>Objeto {lastChestRoll.lootNumber} de 100</span>
+            </div>
+          {/if}
+          <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>#</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
+            {#each CHEST_LOOT as item}
+              <tr class:chest-selected={lastChestRoll?.lootNumber === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td><td>{item.priceLabel}</td></tr>
+            {/each}
+          </tbody></table></div>
+        </section>
+      {:else}
+        <section class="panel monsters-panel">
+          <div class="section-heading"><h2>Monstruos ordenados</h2><span class="count">6 criaturas · VD 1/8</span></div>
+          <p class="muted">Bloques resumidos para consulta rápida durante el combate. Orden alfabético por nombre.</p>
+          <div class="monster-list">
+            {#each MONSTERS as monster}
+              <details class="monster-card">
+                <summary>
+                  <span class="monster-name">{monster.name}</span>
+                  <span class="monster-subtitle">{monster.english} · {monster.type}</span>
+                  <span class="monster-cr">VD {monster.cr}</span>
+                </summary>
+                <div class="monster-statblock">
+                  <div class="monster-heading">
+                    <h3>{monster.name}</h3>
+                    <span>{monster.type} · {monster.alignment}</span>
+                  </div>
+                  <div class="monster-combat-grid">
+                    <div><small>CA</small><strong>{monster.ac}</strong></div>
+                    <div><small>PG</small><strong>{monster.hp}</strong></div>
+                    <div><small>Iniciativa</small><strong>{monster.initiative}</strong></div>
+                    <div><small>Velocidad</small><strong>{monster.speed}</strong></div>
+                  </div>
+                  <p><b>Características:</b> {monster.abilities}</p>
+                  <p><b>Habilidades:</b> {monster.skills}</p>
+                  <p><b>Sentidos:</b> {monster.senses}</p>
+                  <p><b>Idiomas:</b> {monster.languages}</p>
+                  <p><b>Rasgos:</b> {monster.traits}</p>
+                  <div class="monster-attacks">
+                    <b>Acciones</b>
+                    {#each monster.attacks as attack}
+                      <p><strong>{attack.name}.</strong> Ataque {attack.bonus}; alcance {attack.reach}. Daño: {attack.damage}.</p>
                     {/each}
                   </div>
+                  <p class="monster-role"><b>Uso táctico:</b> {monster.role}</p>
+                  <small class="monster-source">D&D 2024 · SRD 5.2.1 · VD {monster.cr}</small>
                 </div>
               </details>
-            </article>
-          {/each}
-        {/if}
-      </section>
-      <section class="panel chest-panel">
-        <div class="section-heading"><h2>Cofres</h2><span class="count">10d10 · 10–100</span></div>
-        <p class="muted">Tira 10 dados de diez caras y suma los resultados. El 55 es el centro: cuanto más se acerque la suma a 10 o 100, más valioso será el botín.</p>
-        <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 10d10</button></div>
-        {#if lastChestRoll}
-          <div class="chest-result">
-            <span class="chest-result-number">10d10: {lastChestRoll.dice.join(' + ')} = {lastChestRoll.total}</span>
-            <strong>{lastChestRoll.name}</strong>
-            <span>{lastChestRoll.category} · {lastChestRoll.priceLabel}</span>
-            <span>Objeto {lastChestRoll.lootNumber} de 100</span>
+            {/each}
           </div>
-        {/if}
-        <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>#</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
-          {#each CHEST_LOOT as item}
-            <tr class:chest-selected={lastChestRoll?.lootNumber === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td><td>{item.priceLabel}</td></tr>
-          {/each}
-        </tbody></table></div>
-      </section>
+        </section>
+      {/if}
     {:else}
       {#if !sheet}
         <section class="panel import-character-panel">
@@ -1182,6 +1290,29 @@
 
 <style>
   :global(:root){--paper:#f3eee2;--paper-deep:#e8dfce;--ink:#24231f;--ink-soft:#5e594f;--rule:#c9bea9;--red:#8f3028;--gold:#b18a45}
+  .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
+  .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
+  .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .monsters-panel{margin-top:.5rem}
+  .monster-list{display:grid;gap:.55rem}
+  .monster-card{border:1px solid var(--rule);border-left:4px solid var(--red);border-radius:5px;background:var(--paper);color:var(--ink);overflow:hidden}
+  .monster-card>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.18rem .7rem;align-items:center;padding:.7rem .8rem;cursor:pointer;list-style:none}
+  .monster-card>summary::-webkit-details-marker{display:none}
+  .monster-name{font:700 .95rem Georgia,serif}
+  .monster-subtitle{grid-column:1;color:var(--ink-soft);font:.7rem system-ui,sans-serif}
+  .monster-cr{grid-column:2;grid-row:1/3;align-self:center;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;color:#765a27;font:700 .68rem system-ui,sans-serif}
+  .monster-statblock{padding:.8rem;border-top:1px solid var(--rule);font:.78rem/1.45 system-ui,sans-serif}
+  .monster-heading{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.3rem;padding-bottom:.45rem;border-bottom:2px solid var(--red)}
+  .monster-heading h3{margin:0;font:700 1.05rem Georgia,serif}
+  .monster-heading span{color:var(--ink-soft);font-size:.7rem}
+  .monster-combat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.35rem;margin:.65rem 0}
+  .monster-combat-grid div{display:grid;gap:.12rem;padding:.4rem;border:1px solid var(--rule);border-radius:4px;background:#e8dfce}
+  .monster-combat-grid small{color:var(--ink-soft);font-size:.62rem;text-transform:uppercase}
+  .monster-combat-grid strong{font-size:.78rem;overflow-wrap:anywhere}
+  .monster-statblock p{margin:.38rem 0}
+  .monster-attacks{margin-top:.65rem;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:rgba(255,255,255,.4)}
+  .monster-role{padding:.5rem;border-left:3px solid var(--gold);background:rgba(177,138,69,.1)}
+  .monster-source{display:block;margin-top:.55rem;color:var(--ink-soft);font-size:.62rem}
   .character-sheet{background:var(--paper);color:var(--ink);border:1px solid #c8bda8;border-radius:10px;padding:clamp(.65rem,2vw,1.25rem);box-shadow:0 12px 32px rgba(0,0,0,.22);font-family:Georgia,'Times New Roman',serif}
   .character-sheet > .sheet-banner{display:block;min-height:0;height:auto;padding:0!important;margin:0 0 .5rem!important;border:0!important;outline:0!important;background:none!important;box-shadow:none!important;text-align:center}
   .character-sheet > .sheet-banner .character-name{display:block;width:100%;min-height:0;margin:0!important;padding:0!important;border:0!important;outline:0!important;background:none!important;color:#000!important;font:700 1.25rem/1.2 Georgia,serif;text-align:center}
