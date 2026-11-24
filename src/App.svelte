@@ -738,6 +738,7 @@
 ];
   import LEVEL_PROGRESSION from './levelProgression.json';
   import SUBCLASS_PROGRESSION from './subclassProgression.json';
+  import CLASS_FEATURES from './classFeatures.json';
   let levelUpEntry: RoomEntry | null = null;
   let levelUpDecision = '';
   let levelUpSubclass = '';
@@ -1317,7 +1318,8 @@
     put(7,0,b.notes || '—');
     const progressionIndex = pairs.length-1;
     put(progressionIndex,0,'1');
-    put(progressionIndex,1,classLevelOne?.features || classData.features || '—');
+    const levelOneFeatureDetails=getClassFeaturesAtLevel(b.className,1).map((feature:any)=>feature.name+'\n'+feature.description).join('\n\n');
+    put(progressionIndex,1,levelOneFeatureDetails || classLevelOne?.features || classData.features || '—');
     Object.entries(classResources).forEach(([key,value],i)=>put(progressionIndex,i+2,String(value)));
     return {id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente del GM. La sección Progresión contiene los rasgos y valores de clase del nivel actual.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
   }
@@ -1549,6 +1551,9 @@ import SPELLS from './spells.json';
     if (pair.values?.stats?.[index]) pair.values.stats[index].value = value;
     else stats[index].value = value;
   }
+  function getClassFeaturesAtLevel(className: string, level: number): any[] {
+    return ((CLASS_FEATURES as any).classes?.[className] || []).filter((feature:any)=>feature.level===level);
+  }
   function getSubclassOptions(className: string): string[] {
     return Object.keys((SUBCLASS_PROGRESSION as any).classes?.[className] || {});
   }
@@ -1688,9 +1693,10 @@ import SPELLS from './spells.json';
     const resourceText=resourceEntries.filter(([key,value]:any)=>value!==undefined && value!==null && value!=='—').map(([key,value]:any)=>key+': '+value).join(' · ');
     setCharacterStat(updated,'PROGRESIÓN','Nivel de clase',nextLevel);
     for (const [resourceName,resourceValue] of resourceEntries) setCharacterStat(updated,'PROGRESIÓN',resourceName,String(resourceValue ?? '—'));
+    const classFeatureDetails=getClassFeaturesAtLevel(className,nextLevel).map((feature:any)=>'Nivel '+nextLevel+' · '+feature.name+'\n'+feature.description).join('\n\n');
+    const currentClassFeatures=classFeatureDetails || features.map((feature:string)=>'Nivel '+nextLevel+' · '+feature).join('\n');
     const previousClassFeatures=getCharacterStat(updated,'PROGRESIÓN','Rasgos de clase acumulados');
-    const currentClassFeatures=features.map((feature:string)=>'Nivel '+nextLevel+' · '+feature).join('\n');
-    setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase acumulados',[previousClassFeatures,currentClassFeatures].filter(Boolean).join('\n'));
+    setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase acumulados',[previousClassFeatures,currentClassFeatures].filter(Boolean).join('\n\n'));
 
     const classMagicAbility=(BUILDER_MAGIC_ABILITY as any)[className] || '';
     const classSpellResources=row.resources || {};
@@ -1746,7 +1752,7 @@ import SPELLS from './spells.json';
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
     const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
-    setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,features.join(', ') || 'Sin rasgos nuevos indicados');
+    setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
       setCharacterStat(updated,'PROGRESIÓN','Rasgos de subclase nivel '+nextLevel,subclassFeatureText);
       const previousSubclassFeatures=getCharacterStat(updated,'PROGRESIÓN','Rasgos de subclase acumulados');
