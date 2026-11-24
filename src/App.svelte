@@ -1179,6 +1179,20 @@
     'Guerrero':'Fuerza y Constitución','Hechicero':'Constitución y Carisma','Mago':'Inteligencia y Sabiduría',
     'Monje':'Fuerza y Destreza','Paladín':'Sabiduría y Carisma','Pícaro':'Destreza e Inteligencia'
   };
+  const BUILDER_WEAPON_PROFICIENCIES: Record<string,string> = {
+    'Bárbaro':'Armas sencillas y marciales',
+    'Bardo':'Armas sencillas; ballesta de mano, espada larga, estoque y espada corta',
+    'Brujo':'Armas sencillas',
+    'Clérigo':'Armas sencillas',
+    'Druida':'Armas sencillas',
+    'Explorador':'Armas sencillas y marciales',
+    'Guerrero':'Armas sencillas y marciales',
+    'Hechicero':'Daga, dardo, honda, bastón y ballesta ligera',
+    'Mago':'Daga, dardo, honda, bastón y ballesta ligera',
+    'Monje':'Armas sencillas y armas marciales cuerpo a cuerpo ligeras',
+    'Paladín':'Armas sencillas y marciales',
+    'Pícaro':'Armas sencillas; armas marciales sutiles o ligeras; ballesta de mano, espada larga, estoque y espada corta'
+  };
   const BUILDER_ARMOR: Record<string,string> = {
     'Bárbaro':'Armaduras ligeras y medias; escudos','Bardo':'Armaduras ligeras',
     'Brujo':'Armaduras ligeras','Clérigo':'Armaduras ligeras y medias; escudos (Protector obtiene armaduras pesadas)',
@@ -1275,6 +1289,75 @@
   }
   function builderNext() { if (builderStep < 5) builderStep += 1; }
   function builderBack() { if (builderStep > 0) builderStep -= 1; }
+  const WEAPON_PROFILES: Record<string,{damage:string;damageType:string;category:'simple'|'martial';ability:'strength'|'dexterity'|'finesse';properties:string}> = {
+    'Garrote':{damage:'1d4',damageType:'contundente',category:'simple',ability:'strength',properties:'Ligera'},
+    'Daga':{damage:'1d4',damageType:'perforante',category:'simple',ability:'finesse',properties:'Sutil, ligera, arrojadiza (6/18 m)'},
+    'Garrote grande':{damage:'1d8',damageType:'contundente',category:'simple',ability:'strength',properties:'A dos manos'},
+    'Hacha de mano':{damage:'1d6',damageType:'cortante',category:'simple',ability:'strength',properties:'Ligera, arrojadiza (6/18 m)'},
+    'Jabalina':{damage:'1d6',damageType:'perforante',category:'simple',ability:'strength',properties:'Arrojadiza (9/36 m)'},
+    'Martillo ligero':{damage:'1d4',damageType:'contundente',category:'simple',ability:'strength',properties:'Ligera, arrojadiza (6/18 m)'},
+    'Maza':{damage:'1d6',damageType:'contundente',category:'simple',ability:'strength',properties:'—'},
+    'Bastón':{damage:'1d6',damageType:'contundente',category:'simple',ability:'strength',properties:'Versátil (1d8)'},
+    'Hoz':{damage:'1d4',damageType:'cortante',category:'simple',ability:'strength',properties:'Ligera'},
+    'Lanza':{damage:'1d6',damageType:'perforante',category:'simple',ability:'strength',properties:'Arrojadiza (6/18 m), versátil (1d8)'},
+    'Dardo':{damage:'1d4',damageType:'perforante',category:'simple',ability:'finesse',properties:'Arrojadiza (6/18 m)'},
+    'Arco corto':{damage:'1d6',damageType:'perforante',category:'simple',ability:'dexterity',properties:'Munición (24/96 m), a dos manos'},
+    'Ballesta ligera':{damage:'1d8',damageType:'perforante',category:'simple',ability:'dexterity',properties:'Munición (24/96 m), carga, a dos manos'},
+    'Honda':{damage:'1d4',damageType:'contundente',category:'simple',ability:'dexterity',properties:'Munición (9/36 m)'},
+    'Hacha de guerra':{damage:'1d8',damageType:'cortante',category:'martial',ability:'strength',properties:'Versátil (1d10)'},
+    'Mangual':{damage:'1d8',damageType:'contundente',category:'martial',ability:'strength',properties:'—'},
+    'Alabarda':{damage:'1d10',damageType:'cortante',category:'martial',ability:'strength',properties:'Pesada, alcance, a dos manos'},
+    'Hacha a dos manos':{damage:'1d12',damageType:'cortante',category:'martial',ability:'strength',properties:'Pesada, a dos manos'},
+    'Espadón':{damage:'2d6',damageType:'cortante',category:'martial',ability:'strength',properties:'Pesada, a dos manos'},
+    'Guja':{damage:'1d10',damageType:'cortante',category:'martial',ability:'strength',properties:'Pesada, alcance, a dos manos'},
+    'Lanza de caballería':{damage:'1d10',damageType:'perforante',category:'martial',ability:'strength',properties:'Alcance, especial'},
+    'Espada larga':{damage:'1d8',damageType:'cortante',category:'martial',ability:'strength',properties:'Versátil (1d10)'},
+    'Maza a dos manos':{damage:'2d6',damageType:'contundente',category:'martial',ability:'strength',properties:'Pesada, a dos manos'},
+    'Lucero del alba':{damage:'1d8',damageType:'perforante',category:'martial',ability:'strength',properties:'—'},
+    'Pica':{damage:'1d10',damageType:'perforante',category:'martial',ability:'strength',properties:'Pesada, alcance, a dos manos'},
+    'Estoque':{damage:'1d8',damageType:'perforante',category:'martial',ability:'finesse',properties:'Sutil'},
+    'Cimitarra':{damage:'1d6',damageType:'cortante',category:'martial',ability:'finesse',properties:'Sutil, ligera'},
+    'Espada corta':{damage:'1d6',damageType:'perforante',category:'martial',ability:'finesse',properties:'Sutil, ligera'},
+    'Tridente':{damage:'1d8',damageType:'perforante',category:'martial',ability:'strength',properties:'Arrojadiza (6/18 m), versátil (1d10)'},
+    'Pico de guerra':{damage:'1d8',damageType:'perforante',category:'martial',ability:'strength',properties:'Versátil (1d10)'},
+    'Martillo de guerra':{damage:'1d8',damageType:'contundente',category:'martial',ability:'strength',properties:'Versátil (1d10)'},
+    'Látigo':{damage:'1d4',damageType:'cortante',category:'martial',ability:'finesse',properties:'Sutil, alcance'},
+    'Arco largo':{damage:'1d8',damageType:'perforante',category:'martial',ability:'dexterity',properties:'Munición (45/180 m), pesada, a dos manos'},
+    'Ballesta de mano':{damage:'1d6',damageType:'perforante',category:'martial',ability:'dexterity',properties:'Munición (9/36 m), ligera, carga'},
+    'Ballesta pesada':{damage:'1d10',damageType:'perforante',category:'martial',ability:'dexterity',properties:'Munición (30/120 m), pesada, carga, a dos manos'},
+    'Cerbatana':{damage:'1',damageType:'perforante',category:'martial',ability:'dexterity',properties:'Munición (7,5/30 m), carga'},
+    'Mosquete':{damage:'1d12',damageType:'perforante',category:'martial',ability:'dexterity',properties:'Munición (12/36 m), carga, a dos manos'},
+    'Pistola':{damage:'1d10',damageType:'perforante',category:'martial',ability:'dexterity',properties:'Munición (9/27 m), carga'}
+  };
+  function weaponAttackDetails(target:RawSheet,names:string): string {
+    const proficiency=getCharacterNumber(target,'COMBATE','Bonificador por competencia',2);
+    const strength=getCharacterNumber(target,'ATRIBUTOS','Fuerza',10);
+    const dexterity=getCharacterNumber(target,'ATRIBUTOS','Destreza',10);
+    const strengthMod=Math.floor((strength-10)/2), dexterityMod=Math.floor((dexterity-10)/2);
+    const profText=normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armas'));
+    const masteryText=normalizeLevelText(getCharacterStat(target,'ATAQUES','Maestrías con armas'));
+    return names.split(/[,;\n]+/).map(name=>name.trim()).filter(Boolean).map(name=>{
+      const profile=WEAPON_PROFILES[name];
+      if(!profile) return name+': perfil de daño no disponible en los datos de armas.';
+      const abilityMod=profile.ability==='finesse'?Math.max(strengthMod,dexterityMod):profile.ability==='dexterity'?dexterityMod:strengthMod;
+      const normalizedName=normalizeLevelText(name);
+      const proficient=(profile.category==='simple'&&profText.includes('sencillas'))||
+        (profile.category==='martial'&&profText.includes('marciales'))||
+        profText.includes(normalizedName)||
+        (classWeaponSpecialProficiency(profText,profile,name));
+      const attackBonus=abilityMod+(proficient?proficiency:0);
+      const damageBonus=abilityMod===0?'':(abilityMod>0?'+':'')+abilityMod;
+      const mastery=masteryText.includes(normalizedName)?' · Maestría elegida':'';
+      return name+': ataque '+signedBonus(attackBonus)+' · '+profile.damage+damageBonus+' '+profile.damageType+
+        ' · '+profile.properties+(proficient?'':' · Sin competencia')+mastery;
+    }).join('\n');
+  }
+  function classWeaponSpecialProficiency(profText:string,profile:any,name:string):boolean {
+    const n=normalizeLevelText(name);
+    if(profText.includes('armas marciales sutiles o ligeras')) return profile.category==='martial'&&(/sutil|ligera/i.test(profile.properties)||['ballesta de mano','espada larga','estoque','espada corta'].includes(n));
+    if(profText.includes('armas marciales cuerpo a cuerpo ligeras')) return profile.category==='martial'&&/ligera/i.test(profile.properties);
+    return false;
+  }
   const BUILDER_FIXED_SPECIES_SIZE: Record<string,string> = {
     'Dracónido':'Mediano','Enano':'Mediano','Elfo':'Mediano','Gnomo':'Pequeño',
     'Goliat':'Mediano','Mediano':'Pequeño','Orco':'Mediano'
@@ -1348,6 +1431,8 @@
       .split(/[,;\n]+/).map(value=>value.replace(/\s*\([^)]*\)\s*$/,'').trim())
       .filter(value=>value && !/^(libro:|preparados:)/i.test(value));
     if(spellNames.length) setCharacterStat(target,'DETALLE DE CONJUROS','Conjuros y descripciones',describeSpells(spellNames));
+    const weaponNames=getCharacterStat(target,'ATAQUES','Armas incluidas en el equipo');
+    if(weaponNames) setCharacterStat(target,'ATAQUES','Perfiles de ataque',weaponAttackDetails(target,weaponNames));
   }
   function buildLevelOneSheet() {
     const b = builderData;
@@ -1375,14 +1460,14 @@
       general('RASGOS Y DOTES',['Rasgos de clase (nivel 1)','Rasgos de especie','Dote de origen','Otros rasgos']),
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel']),
       general('EQUIPO',['Equipo inicial','Monedas']),
-      general('HISTORIA',['Notas']),
+      general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
       general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})]),
       general('HABILIDADES',BUILDER_SKILL_OPTIONS),
       general('SALVACIONES',BUILDER_ABILITY_NAMES),
       general('DETALLES DEL TRASFONDO',['Aumentos de característica permitidos','Habilidades','Herramienta','Dote de origen','Equipo del trasfondo']),
       general('DETALLES DE ESPECIE',['Elección de especie','Rasgos de especie','Competencia adicional','Elecciones mágicas','Tamaño']),
       general('INVENTARIO',['Equipo de clase','Equipo de trasfondo','Equipo adicional']),
-      general('ATAQUES',['Armas incluidas en el equipo','Maestrías con armas','Competencia con armas']),
+      general('ATAQUES',['Armas incluidas en el equipo','Maestrías con armas','Competencia con armas','Perfiles de ataque']),
       general('DETALLE DE CONJUROS',['Conjuros y descripciones'])
     ];
     const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
@@ -1392,11 +1477,14 @@
     const allFeatChoices = [...b.backgroundFeatChoices, ...(b.species === 'Humano' ? b.speciesFeatChoices : [])];
     const featSkills = allFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice));
     const featTools = allFeatChoices.filter(choice => !BUILDER_SKILL_OPTIONS.includes(choice));
-    put(3,0,[...BUILDER_BACKGROUND_DATA[b.background].skills, ...b.classSkillChoices.filter(Boolean), b.speciesSkill, ...featSkills, b.skills, b.classExpertise.length ? 'Pericia: ' + b.classExpertise.join(', ') : ''].filter(Boolean).join('; ')); put(3,1,[BUILDER_BACKGROUND_DATA[b.background].tool.replace(/ a elección|Un tipo de /g,''), b.backgroundToolChoice, classData.tool, ...b.classToolsChoices, ...featTools, b.tools].filter(x=>x && x !== 'Ninguna competencia con herramientas de clase.').join('; ') || '—'); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,b.className === 'Bárbaro' || b.className === 'Explorador' || b.className === 'Guerrero' || b.className === 'Paladín' ? 'Armas sencillas y marciales' : b.className === 'Pícaro' ? 'Armas sencillas y marciales ligeras o sutiles' : b.className === 'Monje' ? 'Armas sencillas y marciales ligeras' : 'Armas sencillas'); put(3,4,['Común',...b.languages,b.className === 'Pícaro' ? 'Jerga de ladrones' : '',b.className === 'Pícaro' ? b.rogueLanguage : '', b.className === 'Druida' ? 'Druídico' : ''].filter(Boolean).join('; '));
+    put(3,0,[...BUILDER_BACKGROUND_DATA[b.background].skills, ...b.classSkillChoices.filter(Boolean), b.speciesSkill, ...featSkills, b.skills, b.classExpertise.length ? 'Pericia: ' + b.classExpertise.join(', ') : ''].filter(Boolean).join('; ')); put(3,1,[BUILDER_BACKGROUND_DATA[b.background].tool.replace(/ a elección|Un tipo de /g,''), b.backgroundToolChoice, classData.tool, ...b.classToolsChoices, ...featTools, b.tools].filter(x=>x && x !== 'Ninguna competencia con herramientas de clase.').join('; ') || '—'); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,BUILDER_WEAPON_PROFICIENCIES[b.className] || 'Consultar clase'); put(3,4,['Común',...b.languages,b.className === 'Pícaro' ? 'Jerga de ladrones' : '',b.className === 'Pícaro' ? b.rogueLanguage : '', b.className === 'Druida' ? 'Druídico' : ''].filter(Boolean).join('; '));
     put(4,0,features); put(4,1,BUILDER_SPECIES_TRAITS[b.species] || ''); put(4,2,[b.feat, b.backgroundFeatChoices.length ? 'Opciones de dote: ' + b.backgroundFeatChoices.join(', ') : '', builderMagicInitiateClass(b.feat) ? 'Iniciado en la magia (' + builderMagicInitiateClass(b.feat) + '): trucos ' + b.backgroundMagicCantrips.join(', ') + '; conjuro ' + b.backgroundMagicSpell + '; aptitud ' + b.backgroundMagicAbility : '', b.species === 'Humano' ? 'Dote adicional: ' + b.speciesExtraFeat : '', b.speciesFeatChoices.length ? 'Opciones de dote adicional: ' + b.speciesFeatChoices.join(', ') : '', builderMagicInitiateClass(b.speciesExtraFeat) && b.species === 'Humano' ? 'Iniciado en la magia adicional: trucos ' + b.speciesMagicCantrips.join(', ') + '; conjuro ' + b.speciesMagicSpell + '; aptitud ' + b.speciesFeatMagicAbility : ''].filter(Boolean).join('; ')); put(4,3,b.traits || '—');
     const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(finalAbilities[magicAbility])) : 0; const classLevelOne = (LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]; const classResources = classLevelOne?.resources || {}; const classSlots = Object.entries(classResources).filter(([key,value]:any)=>/^Espacios nivel|^Espacios de conjuro$|^Nivel de los espacios$/.test(key) && value && value!=='—').map(([key,value]:any)=>key+': '+value).join(' · '); put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(10 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,[...b.selectedCantrips, ...speciesCantrips, ...b.backgroundMagicCantrips, ...(b.species === 'Humano' ? b.speciesMagicCantrips : []), ...b.warlockTomeCantrips].join(', ') || (classData.cantrips ? 'Faltan por elegir ' + classData.cantrips + ' trucos' : 'No obtiene trucos de clase a nivel 1')); put(5,4,(b.className === 'Mago' ? 'Libro: ' + b.wizardSpellbook.join(', ') + '. Preparados: ' : '') + ([...b.selectedSpells, b.backgroundMagicSpell, ...(b.species === 'Humano' ? [b.speciesMagicSpell] : []), ...(b.className === 'Explorador' ? ['Marca del cazador (siempre preparado)'] : []), ...(b.species === 'Gnomo' && b.speciesChoice === 'Gnomo de los bosques' ? ['Hablar con los animales (siempre preparado)'] : []), ...(b.className === 'Brujo' && b.classSpecialChoice === 'Pacto del grimorio' ? b.warlockTomeRituals : []), ...(b.className === 'Brujo' && b.classSpecialChoice === 'Pacto de la cadena' ? ['Encontrar familiar (Pacto de la cadena)'] : [])].filter(Boolean).join(', ') || (classData.spells ? 'Faltan por elegir ' + classData.spells + ' conjuros' : 'No tiene conjuros de clase a nivel 1'))); put(5,5,classSlots || '—'); put(5,6,classResources['Trucos'] || '—'); put(5,7,classResources['Conjuros preparados'] || '—'); put(5,8,classSlots || '—');
-    put(6,0,[classEquipment, classEquipmentDetail, b.backgroundEquipment === 'B' ? 'Trasfondo: 50 po en lugar del paquete A.' : BUILDER_BACKGROUND_DATA[b.background].equipmentA, b.equipment].filter(Boolean).join(' ')); put(6,1,'Monedas incluidas en el equipo inicial');
-    put(7,0,b.notes || '—');
+    const backgroundEquipmentText=b.backgroundEquipment==='B'?'50 po':BUILDER_BACKGROUND_DATA[b.background].equipmentA;
+    put(6,0,[classEquipment, classEquipmentDetail, b.backgroundEquipment === 'B' ? 'Trasfondo: 50 po en lugar del paquete A.' : backgroundData.equipmentA, b.equipment].filter(Boolean).join(' '));
+    const goldTotal=[classEquipment,backgroundEquipmentText].join(' ').match(/\d+\s*po/gi)?.reduce((sum:string,coin:string)=>sum+Number(coin.match(/\d+/)?.[0]||0),0) || 0;
+    put(6,1,goldTotal+' po (monedas iniciales de ambos paquetes)');
+    put(7,0,''); put(7,1,''); put(7,2,''); put(7,3,''); put(7,4,''); put(7,5,''); put(7,6,b.notes || '');
     const backgroundData=BUILDER_BACKGROUND_DATA[b.background];
     const detailIndex=(name:string)=>pairs.findIndex(pair=>normalizeLevelText(pair.heading.name)===normalizeLevelText(name));
     const backgroundIndex=detailIndex('DETALLES DEL TRASFONDO');
@@ -1421,7 +1509,8 @@
     const weaponNames=BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>equipmentText.includes(weapon.toLocaleLowerCase('es')));
     put(attacksIndex,0,weaponNames.join(', ')||'No se identificaron armas individuales en el paquete seleccionado.');
     put(attacksIndex,1,b.weaponMasteries.join(', ')||'—');
-    put(attacksIndex,2,'Bonificador por competencia: '+proficiency+' · Consulta el perfil del arma para su daño y propiedades.');
+    put(attacksIndex,2,'Bonificador por competencia: '+proficiency);
+    put(attacksIndex,3,'');
     const detailSpellsIndex=detailIndex('DETALLE DE CONJUROS');
     const progressionIndex = detailIndex('PROGRESIÓN');
     put(progressionIndex,0,'1');
@@ -1912,6 +2001,7 @@ import SPELLS from './spells.json';
     const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (/\b19\b.*recurso|recurso/.test(n)) return 'Ocultar';
     if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
+    if (/historia|personalidad|apariencia|trasfondo/.test(n)) return 'Datos';
     if (/atributo|ability/.test(n)) return 'Datos';
     if (/tirada|roll|dado/.test(n)) return 'Tiradas';
     if (/equipo|inventario|objeto/.test(n)) return 'Equipo';
@@ -2630,7 +2720,7 @@ import SPELLS from './spells.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.34</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.35</span></footer>
 </div>
 
 <style>
