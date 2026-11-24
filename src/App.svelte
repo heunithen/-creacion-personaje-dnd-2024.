@@ -737,9 +737,13 @@
   }
 ];
   import LEVEL_PROGRESSION from './levelProgression.json';
+  import SUBCLASS_PROGRESSION from './subclassProgression.json';
   let levelUpEntry: RoomEntry | null = null;
   let levelUpDecision = '';
   let levelUpSubclass = '';
+  let levelUpSubclassVariant = '';
+  let levelUpSubclassCantrips = '';
+  let levelUpSubclassSpells = '';
   let levelUpAsiMode = 'asi';
   let levelUpAbility1 = 'Fuerza';
   let levelUpAbility2 = 'Destreza';
@@ -1531,6 +1535,41 @@ import SPELLS from './spells.json';
     if (pair.values?.stats?.[index]) pair.values.stats[index].value = value;
     else stats[index].value = value;
   }
+  function getSubclassOptions(className: string): string[] {
+    return Object.keys((SUBCLASS_PROGRESSION as any).classes?.[className] || {});
+  }
+  function formatSubclassName(value: string): string {
+    return String(value || '').toLocaleLowerCase('es').replace(/(^|[\\s-])([a-záéíóúüñ])/g, (_m, prefix, letter) => prefix + letter.toLocaleUpperCase('es'));
+  }
+  function getSubclassData(className: string, value: string): any {
+    const options = (SUBCLASS_PROGRESSION as any).classes?.[className] || {};
+    const key = Object.keys(options).find(item => normalizeLevelText(item) === normalizeLevelText(value));
+    return key ? { key, ...options[key] } : null;
+  }
+  function getSelectedSubclassData(entry: RoomEntry): any {
+    const className = getCharacterStat(entry.sheet,'PERSONAJE','Clase');
+    const value = levelUpSubclass || getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
+    return getSubclassData(className,value);
+  }
+  function getSubclassFeaturesForNextLevel(entry: RoomEntry): any[] {
+    const data = getSelectedSubclassData(entry);
+    const level = Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel')) + 1;
+    return data?.features?.filter((feature:any) => feature.level === level) || [];
+  }
+  function getSubclassSpellTables(className: string, subclassName: string): any[] {
+    const data = getSubclassData(className,subclassName);
+    return (data?.tables || []).filter((table:any) => table.columns?.some((column:string) => normalizeLevelText(column).includes('conjuros')));
+  }
+  function getSubclassCastingTable(className: string, subclassName: string): any {
+    return getSubclassSpellTables(className,subclassName).find((table:any) => table.columns?.some((column:string) => normalizeLevelText(column) === 'conjuros preparados')) || null;
+  }
+  function getLevelUpSubclassSpellTable(entry: RoomEntry): any {
+    const className = getCharacterStat(entry.sheet,'PERSONAJE','Clase');
+    const data = getSelectedSubclassData(entry);
+    const tables = getSubclassSpellTables(className,data?.key || '');
+    if (!tables.length) return null;
+    return tables.find((table:any) => table.name === levelUpSubclassVariant) || (tables.length === 1 ? tables[0] : null);
+  }
   function getNextLevelRow(entry: RoomEntry): any {
     const className=getCharacterStat(entry.sheet,'PERSONAJE','Clase');
     const current=Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel')) || 1;
@@ -1538,9 +1577,13 @@ import SPELLS from './spells.json';
   }
   function getNextLevelFeatures(entry: RoomEntry) { return getNextLevelRow(entry)?.features || 'Sin rasgos nuevos registrados'; }
   function openLevelUp(entry: RoomEntry) {
-    levelUpEntry = entry; levelUpDecision = ''; levelUpSubclass = ''; levelUpAsiMode = 'asi';
-    levelUpAbility1 = 'Fuerza'; levelUpAbility2 = 'Destreza'; levelUpIncrease1 = '2'; levelUpIncrease2 = '0';
-    levelUpFeat = ''; levelUpHpMode = 'average'; levelUpHpRoll = '';
+    levelUpEntry = entry; levelUpDecision = '';
+    levelUpSubclass = getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
+    levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
+    levelUpSubclassCantrips = getCharacterStat(entry.sheet,'CONJUROS','Trucos de subclase');
+    levelUpSubclassSpells = getCharacterStat(entry.sheet,'CONJUROS','Conjuros preparados de subclase');
+    levelUpAsiMode = 'asi'; levelUpAbility1 = 'Fuerza'; levelUpAbility2 = 'Destreza';
+    levelUpIncrease1 = '2'; levelUpIncrease2 = '0'; levelUpFeat = ''; levelUpHpMode = 'average'; levelUpHpRoll = '';
   }
   function closeLevelUp() { levelUpEntry = null; }
   function applyLevelUp() {
@@ -1557,7 +1600,30 @@ import SPELLS from './spells.json';
     const needsSubclass = features.some((x:string)=>normalizeLevelText(x).startsWith('subclase de'));
     const needsASI = features.some((x:string)=>normalizeLevelText(x).includes('mejora de caracteristica'));
     const needsEpicFeat = features.some((x:string)=>normalizeLevelText(x)==='don epico');
-    if (needsSubclass && !levelUpSubclass.trim() && !getCharacterStat(original,'PERSONAJE','Subclase')) { notice = 'Indica la subclase que el personaje elige.'; return; }
+    const oldSubclassValue = getCharacterStat(original,'PERSONAJE','Subclase');
+    const chosenSubclass = levelUpSubclass || oldSubclassValue;
+    const subclass = getSubclassData(className,chosenSubclass);
+    const isNewSubclass = !!subclass && !getSubclassData(className,oldSubclassValue);
+    if ((needsSubclass || currentLevel >= 3) && !subclass) { notice = 'Selecciona una subclase oficial para '+className+'.'; return; }
+    if (chosenSubclass && !subclass) { notice = 'La subclase guardada no coincide con las opciones del manual. Selecciónala nuevamente.'; return; }
+    const subclassFeatures = subclass?.features?.filter((feature:any) => isNewSubclass ? feature.level <= nextLevel : feature.level === nextLevel) || [];
+    const subclassSpellTables = subclass?.tables?.filter((table:any) => table.columns?.some((column:string) => normalizeLevelText(column).includes('conjuros'))) || [];
+    if (subclassSpellTables.length > 1 && !subclassSpellTables.some((table:any)=>table.name===levelUpSubclassVariant)) { notice = 'Elige la opción de conjuros que corresponde a la subclase.'; return; }
+    const castingTable = subclassSpellTables.find((table:any)=>table.columns?.some((column:string)=>normalizeLevelText(column)==='conjuros preparados'));
+    const castingRow = castingTable?.rows?.find((values:string[])=>Number(values[0])===nextLevel);
+    if (castingTable && castingRow) {
+      const preparedIndex = castingTable.columns.findIndex((column:string)=>normalizeLevelText(column)==='conjuros preparados');
+      const targetPrepared = Number(castingRow[preparedIndex]);
+      const oldPrepared = Number(getCharacterStat(original,'CONJUROS','Conjuros preparados máximos')) || 0;
+      const cantripTarget = className === 'Guerrero' ? (nextLevel >= 10 ? 3 : 2) : (nextLevel >= 10 ? 4 : 3);
+      const oldCantrips = Number(getCharacterStat(original,'CONJUROS','Trucos máximos')) || 0;
+      const cantripNames = levelUpSubclassCantrips.split(/[,;\\n]+/).map((x:string)=>x.trim()).filter(Boolean);
+      const spellNames = levelUpSubclassSpells.split(/[,;\\n]+/).map((x:string)=>x.trim()).filter(Boolean);
+      if (isNewSubclass && nextLevel===3 && cantripNames.length!==cantripTarget) { notice = 'Elige '+cantripTarget+' trucos de mago para la subclase.'; return; }
+      if (cantripTarget>oldCantrips && cantripNames.length!==cantripTarget) { notice = 'Actualiza la lista completa a '+cantripTarget+' trucos de mago.'; return; }
+      if ((isNewSubclass || targetPrepared>oldPrepared) && spellNames.length!==targetPrepared) { notice = 'La subclase requiere '+targetPrepared+' conjuros preparados. Introduce la lista completa.'; return; }
+      if (levelUpSubclassSpells.trim() && spellNames.length!==targetPrepared) { notice = 'La lista debe contener exactamente '+targetPrepared+' conjuros preparados.'; return; }
+    }
     if ((needsEpicFeat || (needsASI && levelUpAsiMode === 'feat')) && !levelUpFeat.trim()) { notice = 'Indica el nombre de la dote elegida.'; return; }
     if (needsASI && levelUpAsiMode === 'asi') {
       const inc1=Number(levelUpIncrease1), inc2=Number(levelUpIncrease2);
@@ -1586,7 +1652,8 @@ import SPELLS from './spells.json';
     setCharacterStat(updated,'COMBATE','Puntos de golpe máximos',oldHp+hpGain);
     setCharacterStat(updated,'COMBATE','Dados de golpe',oldHitDice+1+'d'+hitDie);
     setCharacterStat(updated,'COMBATE','Bonificador por competencia',row.proficiency);
-    if (needsSubclass && levelUpSubclass.trim()) setCharacterStat(updated,'PERSONAJE','Subclase',levelUpSubclass.trim());
+    if (subclass) setCharacterStat(updated,'PERSONAJE','Subclase',subclass.key);
+    if (levelUpSubclassVariant) setCharacterStat(updated,'PERSONAJE','Opción de subclase',levelUpSubclassVariant);
     if (needsASI && levelUpAsiMode==='asi') {
       for (const [ability,inc] of [[levelUpAbility1,Number(levelUpIncrease1)],[levelUpAbility2,Number(levelUpIncrease2)]] as [string,number][]) {
         if (!inc) continue;
@@ -1600,21 +1667,47 @@ import SPELLS from './spells.json';
     }
     const resourceText=Object.entries(row.resources || {}).filter(([key,value]:any)=>value && value!=='—').map(([key,value])=>key+': '+value).join(' · ');
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(levelUpSubclass.trim()?' · Subclase: '+levelUpSubclass.trim():'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\\n'+feature.description).join('\\n\\n');
+    const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,features.join(', ') || 'Sin rasgos nuevos indicados');
+    if (subclassFeatureText) setCharacterStat(updated,'PROGRESIÓN','Rasgos de subclase nivel '+nextLevel,subclassFeatureText);
     setCharacterStat(updated,'PROGRESIÓN','Recursos según tabla de clase',resourceText || 'Sin cambios de recursos tabulados');
-    const preparedKey=Object.keys(row.resources || {}).find(k=>normalizeLevelText(k)==='conjuros preparados');
-    if (preparedKey) setCharacterStat(updated,'CONJUROS','Conjuros preparados máximos',row.resources[preparedKey]);
-    const slotKeys=Object.keys(row.resources || {}).filter(k=>normalizeLevelText(k).startsWith('espacios'));
-    if (slotKeys.length) setCharacterStat(updated,'CONJUROS','Espacios por nivel',slotKeys.map(k=>k.replace('Espacios ','')+': '+row.resources[k]).join(' · '));
-    const cantripKey=Object.keys(row.resources || {}).find(k=>normalizeLevelText(k)==='trucos');
-    if (cantripKey) setCharacterStat(updated,'CONJUROS','Trucos máximos',row.resources[cantripKey]);
+    if (subclass) {
+      const tableSummary=(subclass.tables || []).map((table:any)=>table.name+'\\n'+table.columns.join(' | ')+'\\n'+table.rows.map((r:string[])=>r.join(' | ')).join('\\n')).join('\\n\\n');
+      if (tableSummary) setCharacterStat(updated,'PROGRESIÓN','Tablas de subclase · '+formatSubclassName(subclass.key),tableSummary);
+    }
+    if (castingTable && castingRow) {
+      const preparedIndex=castingTable.columns.findIndex((column:string)=>normalizeLevelText(column)==='conjuros preparados');
+      const targetPrepared=Number(castingRow[preparedIndex]);
+      const slotValues=castingTable.columns.map((column:string,index:number)=>({column,value:castingRow[index]})).filter((x:any)=>normalizeLevelText(x.column).startsWith('espacios nivel')&&x.value!=='—'&&Number(x.value)>0);
+      setCharacterStat(updated,'CONJUROS','Lanzamiento de conjuros','Sí');
+      setCharacterStat(updated,'CONJUROS','Aptitud mágica','Inteligencia');
+      setCharacterStat(updated,'CONJUROS','Lista de conjuros de subclase','Mago');
+      setCharacterStat(updated,'CONJUROS','Conjuros preparados máximos',targetPrepared);
+      setCharacterStat(updated,'CONJUROS','Espacios por nivel',slotValues.map((x:any)=>x.column.replace('Espacios ','')+': '+x.value).join(' · '));
+      const cantripTarget=className==='Guerrero'?(nextLevel>=10?3:2):(nextLevel>=10?4:3);
+      setCharacterStat(updated,'CONJUROS','Trucos máximos',cantripTarget);
+      if (levelUpSubclassCantrips.trim()) setCharacterStat(updated,'CONJUROS','Trucos de subclase',levelUpSubclassCantrips.trim());
+      if (levelUpSubclassSpells.trim()) setCharacterStat(updated,'CONJUROS','Conjuros preparados de subclase',levelUpSubclassSpells.trim());
+    }
+    const fixedSpellTables=subclassSpellTables.filter((table:any)=>!table.columns.some((column:string)=>normalizeLevelText(column)==='conjuros preparados'));
+    if (fixedSpellTables.length) {
+      const selectedTable=fixedSpellTables.find((table:any)=>table.name===levelUpSubclassVariant)||(fixedSpellTables.length===1?fixedSpellTables[0]:null);
+      if (selectedTable) {
+        const spellColumn=selectedTable.columns.findIndex((column:string)=>normalizeLevelText(column).includes('conjuros'));
+        const spellList=selectedTable.rows.filter((values:string[])=>Number(values[0])<=nextLevel).map((values:string[])=>values[spellColumn]).filter(Boolean);
+        const existing=getCharacterStat(updated,'CONJUROS','Conjuros adicionales de subclase');
+        const merged=[...new Set([...(existing?existing.split(/[,;\\n]+/).map((x:string)=>x.trim()):[]),...spellList.flatMap((x:string)=>x.split(/[,;]+/).map((v:string)=>v.trim()))].filter(Boolean))];
+        setCharacterStat(updated,'CONJUROS','Conjuros adicionales de subclase',merged.join(', '));
+      }
+    }
     const playerId=levelUpEntry.playerId;
     roomSheets=[...roomSheets.filter(x=>x.playerId!==playerId),{...levelUpEntry,sheet:updated}];
     void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
     levelUpEntry=null;
-    notice='Nivel '+nextLevel+' aplicado a '+updated.name+'. El jugador recibirá la actualización en Owlbear Rodeo.';
+    notice='Nivel '+nextLevel+' aplicado a '+updated.name+'. Se añadieron los rasgos de clase y subclase correspondientes.';
   }
 
   function sectionPairs(sections: RawSection[] = []) {
@@ -1842,8 +1935,19 @@ import SPELLS from './spells.json';
               <p><strong>{getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}</strong> · {getNextLevelFeatures(levelUpEntry)}.</p>
               <label>Método de puntos de golpe<select bind:value={levelUpHpMode}><option value="average">Valor fijo del manual</option><option value="roll">Tirar dado de golpe</option></select></label>
               {#if levelUpHpMode==='roll'}<label>Resultado del dado (1–{LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8})<input type="number" min="1" max={LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8} bind:value={levelUpHpRoll} /></label>{/if}
-              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('subclase de')}
-                <label>Subclase elegida<input bind:value={levelUpSubclass} placeholder="Escribe la subclase elegida" /></label>
+              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('subclase de') || (Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))>=3 && !getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))}
+                <label>Subclase · {getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}<select bind:value={levelUpSubclass}><option value="">Selecciona una subclase</option>{#each getSubclassOptions(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')) as option}<option value={option}>{formatSubclassName(option)}</option>{/each}</select></label>
+              {/if}
+              {#if levelUpSubclass && getSubclassFeaturesForNextLevel(levelUpEntry).length}
+                <div class="subclass-level-preview"><strong>Rasgos de subclase que se incorporarán</strong>{#each getSubclassFeaturesForNextLevel(levelUpEntry) as feature}<div><b>Nivel {feature.level}: {feature.name}</b><p>{feature.description}</p></div>{/each}</div>
+              {/if}
+              {#if levelUpSubclass && getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass).length>1}
+                <label>Elección de la subclase<select bind:value={levelUpSubclassVariant}><option value="">Selecciona una opción</option>{#each getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) as table}<option value={table.name}>{formatSubclassName(table.name)}</option>{/each}</select></label>
+              {/if}
+              {#if levelUpSubclass && getSubclassCastingTable(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass)}
+                <p class="muted">Esta subclase concede lanzamiento de conjuros. La ficha activará su aptitud mágica, trucos, conjuros preparados y espacios según la tabla del manual.</p>
+                <label>Trucos de mago elegidos (separados por comas)<input bind:value={levelUpSubclassCantrips} placeholder={getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero'?'Agarre electrizante, Rayo de escarcha':'Mano de mago, Fragmento mental, Ilusión menor'} /></label>
+                <label>Conjuros preparados de mago (lista completa, separados por comas)<textarea bind:value={levelUpSubclassSpells} rows="2" placeholder="Ej. Escudo, Manos ardientes, Salto" /></label>
               {/if}
               {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('mejora de característica')}
                 <label>Tipo de mejora<select bind:value={levelUpAsiMode}><option value="asi">Aumentar características</option><option value="feat">Elegir una dote</option></select></label>
@@ -2343,7 +2447,7 @@ import SPELLS from './spells.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.28</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.29</span></footer>
 </div>
 
 <style>
@@ -2352,7 +2456,7 @@ import SPELLS from './spells.json';
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-  .level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#fff;color:#171313;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}.spells-panel{margin-top:.5rem}
+  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#fff;color:#171313;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}.spells-panel{margin-top:.5rem}
   .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
   .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#fff;color:var(--ink);font:500 .82rem system-ui,sans-serif}
   .spell-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
