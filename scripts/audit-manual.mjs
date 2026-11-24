@@ -149,14 +149,15 @@ try {
         .map((match) => [Number(match[1]), norm(match[2])])
         .filter(([, name]) => name && !name.startsWith(norm('TABLA:')) && !name.startsWith(norm('CONJUROS DEL')) && !name.startsWith(norm('CONJUROS DE')));
       const jsonPairs = (subclassMap[subclassName]?.features ?? [])
-        .map((feature) => [Number(feature.level), norm(feature.name)]);
+        .map((feature) => [Number(feature.level), norm(feature.name)])
+        .filter(([, name]) => !name.startsWith(norm('conjuros')));
       const pairKey = ([level, name]) => level + ':' + name;
       const missing = manualPairs.filter(([level, name]) => !jsonPairs.some(([jsonLevel, jsonName]) =>
         jsonLevel === level && (jsonName.startsWith(name) || name.startsWith(jsonName))));
       const extra = jsonPairs.filter(([level, name]) => !manualPairs.some(([manualLevel, manualName]) =>
         manualLevel === level && (name.startsWith(manualName) || manualName.startsWith(name))));
       const tablesValid = (subclassMap[subclassName]?.tables ?? []).every((table) =>
-        norm(subclassText).includes(norm(table.name)));
+        norm(sectionText).includes(norm(table.name)));
       report(className + ' · subclase ' + subclassName,
         start >= 0 && manualPairs.length > 0 && missing.length === 0 && extra.length === 0 && tablesValid,
         'Manual=' + JSON.stringify(manualPairs) + '; JSON=' + JSON.stringify(jsonPairs) +
