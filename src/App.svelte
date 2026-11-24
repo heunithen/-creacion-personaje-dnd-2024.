@@ -749,6 +749,7 @@
   let levelUpLanguages = '';
   let levelUpMetamagic = '';
   let levelUpInvocations = '';
+  let levelUpMysticArcanum = '';
   let levelUpWildShapeForms = '';
   let levelUpWeaponMasteries = '';
   let levelUpSubclass = '';
@@ -1633,6 +1634,7 @@
       getCharacterStat(target,'CONJUROS','Conjuros de especie'),
       getCharacterStat(target,'CONJUROS','Conjuros de trasfondo'),
       getCharacterStat(target,'CONJUROS','Conjuros de dote'),
+      getCharacterStat(target,'CONJUROS','Arcanum místico'),
       getCharacterStat(target,'CONJUROS','Conjuros de nivel 1'),
       getCharacterStat(target,'CONJUROS','Trucos de subclase'),
       getCharacterStat(target,'CONJUROS','Conjuros preparados de subclase'),
@@ -1669,7 +1671,7 @@
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
       general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia','Invocaciones sobrenaturales','Detalles de invocaciones']),
-      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase']),
+      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Arcanum místico']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
       general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})]),
@@ -2067,7 +2069,8 @@ import SPELLS from './spells.json';
     levelUpWizardBookAdditions=''; levelUpExpertise=''; levelUpNewSkill=''; levelUpLanguages=''; levelUpWildShapeForms=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Formas salvajes conocidas') || '';
     levelUpWeaponMasteries=getCharacterStat(entry.sheet,'ATAQUES','Maestrías con armas') || '';
     levelUpMetamagic=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opciones de metamagia') || '';
-    levelUpInvocations=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Invocaciones sobrenaturales') || ((getCharacterStat(entry.sheet,'RASGOS Y DOTES','Rasgos de clase').match(/Invocación sobrenatural:\s*([^\n]+)/i)||[])[1]||'');
+    levelUpInvocations=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Invocaciones sobrenaturales') || ((String(getCharacterStat(entry.sheet,'RASGOS Y DOTES','Rasgos de clase')||'').match(/Invocación sobrenatural:\s*([^\n]+)/i)||[])[1]||'');
+    levelUpMysticArcanum=getCharacterStat(entry.sheet,'CONJUROS','Arcanum místico') || '';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
@@ -2145,6 +2148,13 @@ import SPELLS from './spells.json';
 
     const nextClassFeatures=getClassFeaturesAtLevel(className,nextLevel);
     const nextFeatureDescription=nextClassFeatures.map((feature:any)=>feature.description||'').join(' ');
+    const needsMysticArcanum=className==='Brujo' && nextLevel>=11;
+    const arcanumTarget=nextLevel>=17?4:nextLevel>=15?3:nextLevel>=13?2:1;
+    const arcanumChoices=splitChoiceList(levelUpMysticArcanum);
+    const oldArcanumChoices=splitChoiceList(getCharacterStat(original,'CONJUROS','Arcanum místico'));
+    const arcanumLevels=[6,7,8,9].slice(0,arcanumTarget);
+    const retainedArcanum=arcanumChoices.filter((spell,index)=>oldArcanumChoices[index] && normalizeLevelText(oldArcanumChoices[index])===normalizeLevelText(spell)).length;
+    if(needsMysticArcanum && (arcanumChoices.length!==arcanumTarget || new Set(arcanumChoices.map(spell=>normalizeLevelText(spell))).size!==arcanumTarget || arcanumChoices.some((spell,index)=>!isValidClassSpell(spell,'Brujo',arcanumLevels[index],arcanumLevels[index])) || (oldArcanumChoices.length>0 && retainedArcanum<oldArcanumChoices.length-1))) { notice='Registra '+arcanumTarget+' conjuros de Arcanum místico de brujo, en orden de niveles 6, 7, 8 y 9. Al subir de nivel solo puedes sustituir uno de los arcanum que ya conoces.'; return; }
     const needsWarlockInvocations=className==='Brujo' && nextLevel>=2;
     const invocationTarget=Number(row.resources?.['Invocaciones sobrenaturales']||0);
     const invocationChoices=splitChoiceList(levelUpInvocations);
@@ -2311,6 +2321,7 @@ import SPELLS from './spells.json';
       setCharacterStat(updated,'RASGOS Y DOTES','Invocaciones sobrenaturales',invocationChoices.join(', '));
       setCharacterStat(updated,'RASGOS Y DOTES','Detalles de invocaciones',invocationChoices.map(builderWarlockInvocationDescription).join('\n\n'));
     }
+    if(needsMysticArcanum) setCharacterStat(updated,'CONJUROS','Arcanum místico',arcanumChoices.join(', '));
     if(targetMasteries>0 && masteryChoices.length===targetMasteries) setCharacterStat(updated,'ATAQUES','Maestrías con armas',masteryChoices.join(', '));
 
     const classMagicAbility=(BUILDER_MAGIC_ABILITY as any)[className] || '';
@@ -2394,7 +2405,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2702,6 +2713,9 @@ import SPELLS from './spells.json';
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/idiomas conoces dos idiomas/.test(normalizeLevelText(feature.description)))}
                 <label>Dos idiomas nuevos<input bind:value={levelUpLanguages} placeholder="Ej. Dracónico, Gigante" /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=11}
+                <label>Arcanum místico (conjuros de niveles 6, 7, 8 y 9, en ese orden)<textarea bind:value={levelUpMysticArcanum} rows="2" placeholder="Ej. Conjuro de nivel 6, Conjuro de nivel 7, ..." /></label>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
                 <label>Invocaciones sobrenaturales (lista completa; repite las que lo permitan con una elección después de dos puntos)<textarea bind:value={levelUpInvocations} rows="3" placeholder="Ej. Pacto de la cadena, Mente sobrenatural, Descarga agónica: Descarga sobrenatural" /></label>
