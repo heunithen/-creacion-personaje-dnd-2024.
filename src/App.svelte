@@ -725,10 +725,16 @@
     "priceLabel": "50.000 po"
   }
 ];
-  let lastChestRoll: { number: number; category: string; name: string } | null = null;
+  let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
   function rollChestLoot() {
-    const number = Math.floor(Math.random() * 100) + 1;
-    lastChestRoll = CHEST_LOOT[number - 1];
+    const dice = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10) + 1);
+    const total = dice.reduce((sum, value) => sum + value, 0);
+    // 55 es el centro y entrega el objeto más barato. Cuanto más se aleja
+    // el resultado hacia 10 o 100, más alto es el valor del botín.
+    const distance = Math.abs(total - 55);
+    const lootNumber = Math.min(100, Math.max(1, Math.round(1 + (distance / 45) * 99)));
+    const loot = CHEST_LOOT[lootNumber - 1];
+    lastChestRoll = { total, dice, lootNumber, category: loot.category, name: loot.name, priceLabel: loot.priceLabel };
   }
 
   let customRolls: CustomRoll[] = [];
@@ -1046,15 +1052,20 @@
         {/if}
       </section>
       <section class="panel chest-panel">
-        <div class="section-heading"><h2>Cofres</h2><span class="count">1d100</span></div>
-        <p class="muted">Tabla de botín con objetos útiles en combate, ordenados por precio ascendente.</p>
-        <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 1d100</button></div>
+        <div class="section-heading"><h2>Cofres</h2><span class="count">10d10 · 10–100</span></div>
+        <p class="muted">Tira 10 dados de diez caras y suma los resultados. El 55 es el centro: cuanto más se acerque la suma a 10 o 100, más valioso será el botín.</p>
+        <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 10d10</button></div>
         {#if lastChestRoll}
-          <div class="chest-result"><span class="chest-result-number">Resultado {lastChestRoll.number}</span><strong>{lastChestRoll.name}</strong><span>{lastChestRoll.category}</span></div>
+          <div class="chest-result">
+            <span class="chest-result-number">10d10: {lastChestRoll.dice.join(' + ')} = {lastChestRoll.total}</span>
+            <strong>{lastChestRoll.name}</strong>
+            <span>{lastChestRoll.category} · {lastChestRoll.priceLabel}</span>
+            <span>Objeto {lastChestRoll.lootNumber} de 100</span>
+          </div>
         {/if}
-        <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>d100</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
+        <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>#</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
           {#each CHEST_LOOT as item}
-            <tr class:chest-selected={lastChestRoll?.number === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td><td>{item.priceLabel}</td></tr>
+            <tr class:chest-selected={lastChestRoll?.lootNumber === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td><td>{item.priceLabel}</td></tr>
           {/each}
         </tbody></table></div>
       </section>
