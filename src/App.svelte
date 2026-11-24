@@ -20,6 +20,10 @@
   let activeTab = 'Datos';
   let monsterCrFilter = 'Todos';
   let monsterSearch = '';
+  let spellSearch = '';
+  let spellLevelFilter = 'Todos';
+  let spellClassFilter = 'Todas';
+  let spellSchoolFilter = 'Todas';
   const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
@@ -742,7 +746,7 @@
   }
 
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Monstruos ordenados', 'Crear personaje'];
+  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Monstruos ordenados', 'Conjuros', 'Crear personaje'];
   type BuilderData = {
     name: string; player: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
@@ -1018,6 +1022,7 @@
   }
 
   import MONSTERS from './monsters.json';
+import SPELLS from './spells.json';
 
 
   let customRolls: CustomRoll[] = [];
@@ -1036,6 +1041,14 @@
   const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
   const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
   $: filteredMonsters = MONSTERS.filter(monster => (monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')) && monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()));
+  const SPELL_CLASSES = ['Bardo', 'Brujo', 'Clérigo', 'Druida', 'Explorador', 'Hechicero', 'Mago', 'Paladín'];
+  const SPELL_SCHOOLS = ['Abjuración', 'Adivinación', 'Conjuración', 'Encantamiento', 'Evocación', 'Ilusionismo', 'Nigromancia', 'Transmutación'];
+  $: filteredSpells = SPELLS.filter(spell =>
+    (spellLevelFilter === 'Todos' || String(spell.level) === spellLevelFilter) &&
+    (spellClassFilter === 'Todas' || spell.classes.includes(spellClassFilter.toLocaleLowerCase('es'))) &&
+    (spellSchoolFilter === 'Todas' || spell.school === spellSchoolFilter) &&
+    (!spellSearch.trim() || (spell.name + ' ' + spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es')))
+  );
 
   function persistCustomRolls() {
     localStorage.setItem('forja-custom-rolls', JSON.stringify(customRolls));
@@ -1593,6 +1606,64 @@
             {/each}
           </tbody></table></div>
         </section>
+      {:else if masterTab === 'Conjuros'}
+        <section class="panel spells-panel">
+          <div class="section-heading"><h2>Conjuros · Manual del Jugador 2024</h2><span class="count">{filteredSpells.length} / {SPELLS.length}</span></div>
+          <p class="muted">Catálogo de conjuros del manual. Cada ficha incluye nivel, escuela, clases, tiempo de lanzamiento, alcance, componentes, duración y descripción.</p>
+          <label class="spell-search">Buscar conjuro
+            <input type="search" bind:value={spellSearch} placeholder="Nombre o texto del conjuro..." />
+          </label>
+          <div class="spell-filters">
+            <label>Nivel
+              <select bind:value={spellLevelFilter}>
+                <option value="Todos">Todos los niveles</option>
+                <option value="0">Trucos · Nivel 0</option>
+                {#each [1,2,3,4,5,6,7,8,9] as level}
+                  <option value={String(level)}>Nivel {level}</option>
+                {/each}
+              </select>
+            </label>
+            <label>Clase
+              <select bind:value={spellClassFilter}>
+                <option value="Todas">Todas las clases</option>
+                {#each SPELL_CLASSES as className}
+                  <option value={className}>{className}</option>
+                {/each}
+              </select>
+            </label>
+            <label>Escuela
+              <select bind:value={spellSchoolFilter}>
+                <option value="Todas">Todas las escuelas</option>
+                {#each SPELL_SCHOOLS as school}
+                  <option value={school}>{school}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <div class="spell-list">
+            {#each filteredSpells as spell}
+              <details class="spell-card">
+                <summary>
+                  <span class="spell-name">{spell.name}</span>
+                  <span class="spell-level">{spell.level === 0 ? 'Truco' : 'Nivel ' + spell.level}</span>
+                  <span class="spell-subtitle">{spell.school} · {spell.classes.map(name => name.charAt(0).toLocaleUpperCase('es') + name.slice(1)).join(', ')}</span>
+                </summary>
+                <div class="spell-details">
+                  <div class="spell-meta">
+                    <p><strong>Tiempo de lanzamiento:</strong> {spell.castingTime || '—'}</p>
+                    <p><strong>Alcance:</strong> {spell.range || '—'}</p>
+                    <p><strong>Componentes:</strong> {spell.components || '—'}</p>
+                    <p><strong>Duración:</strong> {spell.duration || '—'}</p>
+                    {#if spell.special.length}<p><strong>Especial:</strong> {spell.special.join(', ')}</p>{/if}
+                  </div>
+                  <p class="spell-description">{spell.description || 'Descripción no disponible en el texto extraído del manual.'}</p>
+                  <small class="spell-source">Manual del Jugador 2024 · PDF p. {spell.pdfPage ?? '—'} · Impresa p. {spell.printedPage ?? '—'}</small>
+                </div>
+              </details>
+            {/each}
+            {#if filteredSpells.length === 0}<p class="muted">No hay conjuros que coincidan con esos filtros.</p>{/if}
+          </div>
+        </section>
       {:else}
         <section class="panel monsters-panel">
           <div class="section-heading"><h2>Monster Manual · 2024</h2><span class="count">{filteredMonsters.length} / {MONSTERS.length} criaturas</span></div>
@@ -1622,7 +1693,7 @@
               </details>
             {/each}
           </div>
-        </section>>
+        </section>
       {/if}
     {:else}
       {#if !sheet}
@@ -1732,7 +1803,7 @@
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.18</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.19</span></footer>
 </div>
 
 <style>
@@ -1741,6 +1812,22 @@
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .spells-panel{margin-top:.5rem}
+  .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
+  .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#fff;color:var(--ink);font:500 .82rem system-ui,sans-serif}
+  .spell-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
+  .spell-list{display:grid;gap:.55rem;margin-top:.7rem}
+  .spell-card{min-width:0;border:1px solid var(--rule);border-left:4px solid #526b8c;border-radius:5px;background:var(--paper);color:var(--ink);overflow:hidden}
+  .spell-card>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.2rem .7rem;align-items:center;padding:.7rem .8rem;cursor:pointer;list-style:none}
+  .spell-card>summary::-webkit-details-marker{display:none}
+  .spell-name{font:700 .95rem Georgia,serif;overflow-wrap:anywhere}
+  .spell-level{grid-column:2;grid-row:1/3;align-self:center;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;color:#765a27;font:700 .68rem system-ui,sans-serif;white-space:nowrap}
+  .spell-subtitle{grid-column:1;color:var(--ink-soft);font:.7rem system-ui,sans-serif;overflow-wrap:anywhere}
+  .spell-details{padding:.75rem .85rem;border-top:1px solid var(--rule);font:.78rem/1.5 system-ui,sans-serif}
+  .spell-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.15rem .75rem;padding:.55rem .65rem;border:1px solid var(--rule);border-radius:4px;background:#e8dfce}
+  .spell-meta p{margin:.12rem 0;overflow-wrap:anywhere}
+  .spell-description{margin:.7rem 0 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}
+  .spell-source{display:block;margin-top:.6rem;color:var(--ink-soft);font-size:.65rem}
   .monsters-panel{margin-top:.5rem}
   .monster-filter{display:flex;align-items:center;gap:.65rem;margin:.8rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
   .monster-filter select{min-width:130px;padding:.45rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#fff;color:var(--ink);font:600 .78rem system-ui,sans-serif}
