@@ -746,6 +746,8 @@
   let levelUpWizardBookAdditions = '';
   let levelUpExpertise = '';
   let levelUpNewSkill = '';
+  let levelUpLanguages = '';
+  let levelUpWildShapeForms = '';
   let levelUpWeaponMasteries = '';
   let levelUpSubclass = '';
   let levelUpSubclassVariant = '';
@@ -1479,7 +1481,7 @@
       general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
-      general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos']),
+      general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas']),
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
@@ -1855,12 +1857,23 @@ import SPELLS from './spells.json';
     const classOk=spell.classes.some((value:string)=>normalizeLevelText(value)===normalizeLevelText(className));
     return classOk && spell.level<=maxLevel && (expectedLevel===undefined || spell.level===expectedLevel);
   }
+  function isValidWildShapeForm(name:string): boolean {
+    const monster=MONSTERS.find((item:any)=>normalizeLevelText(item.name)===normalizeLevelText(name));
+    if(!monster) return false;
+    const lines=String(monster.statBlock||'').split('\n');
+    const typeLine=lines.find((line:string)=>/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\b/.test(line)&&/\bBeast\b/.test(line));
+    const speedLine=lines.find((line:string)=>/^Speed\b/i.test(line))||'';
+    const cr=String(monster.cr||'').split(' ')[0];
+    const parts=cr.split('/').map(Number);
+    const value=parts.length===2?parts[0]/parts[1]:parts[0];
+    return Boolean(typeLine) && Number.isFinite(value) && value<=0.25 && !/\bFly\b/i.test(speedLine);
+  }
   function openLevelUp(entry: RoomEntry) {
     levelUpEntry = entry; levelUpDecision = '';
     levelUpClassCantrips=getCharacterStat(entry.sheet,'CONJUROS','Trucos de clase') || '';
     levelUpClassSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros preparados de clase') || '';
     if(!levelUpClassSpells && getCharacterStat(entry.sheet,'PERSONAJE','Clase')==='Mago') levelUpClassSpells=(String(getCharacterStat(entry.sheet,'CONJUROS','Conjuros de nivel 1')).match(/Preparados:\s*([^.]*)/i)||[])[1]||'';
-    levelUpWizardBookAdditions=''; levelUpExpertise=''; levelUpNewSkill='';
+    levelUpWizardBookAdditions=''; levelUpExpertise=''; levelUpNewSkill=''; levelUpLanguages=''; levelUpWildShapeForms=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Formas salvajes conocidas') || '';
     levelUpWeaponMasteries=getCharacterStat(entry.sheet,'ATAQUES','Maestrías con armas') || '';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
@@ -1938,19 +1951,34 @@ import SPELLS from './spells.json';
     }
 
     const nextClassFeatures=getClassFeaturesAtLevel(className,nextLevel);
-    const needsExpertise=nextClassFeatures.some((feature:any)=>normalizeLevelText(feature.name).includes('pericia'));
+    const nextFeatureDescription=nextClassFeatures.map((feature:any)=>feature.description||'').join(' ');
+    const expertiseFeature=nextClassFeatures.some((feature:any)=>normalizeLevelText(feature.name).includes('pericia')) || /ganas pericia/.test(normalizeLevelText(nextFeatureDescription));
+    const expertiseCount=nextClassFeatures.reduce((count:number,feature:any)=>{
+      const name=normalizeLevelText(feature.name),description=normalizeLevelText(feature.description||'');
+      return Math.max(count,name.includes('pericia')?2:description.includes('ganas pericia en dos')?2:description.includes('ganas pericia en esa habilidad')||description.includes('ganas pericia en la habilidad elegida')?1:0);
+    },0);
+    const needsExpertise=expertiseFeature && expertiseCount>0;
     const expertiseChoices=splitChoiceList(levelUpExpertise);
     const skillRawBefore=getCharacterStat(original,'COMPETENCIAS','Habilidades');
     const existingExpertise=normalizeLevelText((String(skillRawBefore).match(/pericia\s*:\s*([^\n;]+)/i)||[])[1]||'');
     const proficientSkills=BUILDER_SKILL_OPTIONS.filter(skill=>normalizeLevelText(skillRawBefore).includes(normalizeLevelText(skill)));
+    const academicSkills=['Conocimiento arcano','Historia','Investigación','Medicina','Naturaleza','Religión'];
+    const expertiseAllowed=className==='Mago' && nextClassFeatures.some((feature:any)=>normalizeLevelText(feature.name)==='academico')?academicSkills:proficientSkills;
     if(needsExpertise) {
-      if(expertiseChoices.length!==2 || new Set(expertiseChoices.map(skill=>normalizeLevelText(skill))).size!==2) { notice='Debes elegir exactamente dos habilidades distintas para obtener Pericia.'; return; }
+      if(expertiseChoices.length!==expertiseCount || new Set(expertiseChoices.map(skill=>normalizeLevelText(skill))).size!==expertiseCount) { notice='Debes elegir exactamente '+expertiseCount+' habilidad(es) distinta(s) para obtener Pericia.'; return; }
+      if(expertiseChoices.some(skill=>!expertiseAllowed.some(value=>normalizeLevelText(value)===normalizeLevelText(skill)))) { notice='Elige habilidades válidas y competentes para obtener Pericia.'; return; }
       if(expertiseChoices.some(skill=>!proficientSkills.some(value=>normalizeLevelText(value)===normalizeLevelText(skill)))) { notice='Solo puedes elegir habilidades en las que ya tengas competencia para obtener Pericia.'; return; }
       if(expertiseChoices.some(skill=>existingExpertise.includes(normalizeLevelText(skill)))) { notice='No puedes elegir una habilidad que ya tenga Pericia.'; return; }
     }
-    const nextFeatureDescription=nextClassFeatures.map((feature:any)=>feature.description||'').join(' ');
     const needsNewSkill=/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(nextFeatureDescription));
     if(needsNewSkill && (!levelUpNewSkill || !(BUILDER_CLASS_SKILLS[className]?.options||BUILDER_SKILL_OPTIONS).some((skill:string)=>normalizeLevelText(skill)===normalizeLevelText(levelUpNewSkill)) || proficientSkills.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpNewSkill)))) { notice='Elige una habilidad válida de la lista de '+className+' en la que aún no tengas competencia.'; return; }
+    const needsNewLanguages=/idiomas conoces dos idiomas/.test(normalizeLevelText(nextFeatureDescription));
+    const languageChoices=splitChoiceList(levelUpLanguages);
+    const currentLanguages=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Idiomas'));
+    if(needsNewLanguages && (languageChoices.length!==2 || new Set(languageChoices.map(x=>normalizeLevelText(x))).size!==2 || languageChoices.some(name=>!BUILDER_LANGUAGES.some(option=>normalizeLevelText(option)===normalizeLevelText(name)) || currentLanguages.some(old=>normalizeLevelText(old)===normalizeLevelText(name))))) { notice='Explorador hábil requiere dos idiomas nuevos y distintos de las listas del manual.'; return; }
+    const needsWildShapeForms=className==='Druida' && nextClassFeatures.some((feature:any)=>normalizeLevelText(feature.description||'').includes('conoces cuatro formas de bestia'));
+    const wildShapeForms=splitChoiceList(levelUpWildShapeForms);
+    if(needsWildShapeForms && (wildShapeForms.length!==4 || new Set(wildShapeForms.map(x=>normalizeLevelText(x))).size!==4 || wildShapeForms.some(name=>!isValidWildShapeForm(name)))) { notice='Forma salvaje requiere cuatro bestias distintas de VD 1/4 o inferior y sin velocidad volando, según el manual de monstruos.'; return; }
     const masteryResource=Object.entries(row.resources||{}).find(([key])=>normalizeLevelText(key).includes('maestria con armas'));
     const targetMasteries=masteryResource?Number(masteryResource[1]):0;
     const masteryChoices=splitChoiceList(levelUpWeaponMasteries);
@@ -2040,6 +2068,11 @@ import SPELLS from './spells.json';
       const oldSkillText=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
       setCharacterStat(updated,'COMPETENCIAS','Habilidades',[oldSkillText,levelUpNewSkill].filter(Boolean).join('; '));
     }
+    if(needsNewLanguages) {
+      const oldLanguages=getCharacterStat(updated,'COMPETENCIAS','Idiomas');
+      setCharacterStat(updated,'COMPETENCIAS','Idiomas',[oldLanguages,...languageChoices].filter(Boolean).join(', '));
+    }
+    if(needsWildShapeForms) setCharacterStat(updated,'RASGOS Y DOTES','Formas salvajes conocidas',wildShapeForms.join(', '));
     if(targetMasteries>0 && masteryChoices.length===targetMasteries) setCharacterStat(updated,'ATAQUES','Maestrías con armas',masteryChoices.join(', '));
 
     const classMagicAbility=(BUILDER_MAGIC_ABILITY as any)[className] || '';
@@ -2122,7 +2155,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -2144,6 +2177,10 @@ import SPELLS from './spells.json';
     if(speciesUnlock.spells.length) {
       const oldSpeciesSpells=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros de especie'));
       setCharacterStat(updated,'CONJUROS','Conjuros de especie',[...new Set([...oldSpeciesSpells,...speciesUnlock.spells])].join(', '));
+    }
+    if(levelUpDecision.trim()) {
+      const oldOtherTraits=getCharacterStat(updated,'RASGOS Y DOTES','Otros rasgos');
+      setCharacterStat(updated,'RASGOS Y DOTES','Otros rasgos',[oldOtherTraits,'Nivel '+nextLevel+' · Elecciones: '+levelUpDecision.trim()].filter(Boolean).join('\n\n'));
     }
     setCharacterStat(updated,'PROGRESIÓN','Recursos según tabla de clase',resourceText || 'Sin cambios de recursos tabulados');
     if (subclass) {
@@ -2423,6 +2460,15 @@ import SPELLS from './spells.json';
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(feature.description)))}
                 <label>Nueva competencia en habilidad<input bind:value={levelUpNewSkill} placeholder="Elige una habilidad de la lista de tu clase" /></label>
+              {/if}
+              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia') || /ganas pericia/.test(normalizeLevelText(feature.description))) }
+                <label>Habilidades que obtienen Pericia (elige {getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia'))?'dos':'una'})<input bind:value={levelUpExpertise} placeholder="Habilidades en las que ya tienes competencia" /></label>
+              {/if}
+              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/idiomas conoces dos idiomas/.test(normalizeLevelText(feature.description)))}
+                <label>Dos idiomas nuevos<input bind:value={levelUpLanguages} placeholder="Ej. Dracónico, Gigante" /></label>
+              {/if}
+              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.description).includes('conoces cuatro formas de bestia'))}
+                <label>Cuatro formas de bestia conocidas (VD 1/4 o inferior, sin vuelo)<textarea bind:value={levelUpWildShapeForms} rows="2" placeholder="Ej. Wolf, Panther, Giant Wolf Spider, Giant Badger" /></label>
               {/if}
               {#if Number(getNextLevelRow(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRow(levelUpEntry)?.resources?.['Maestrías con armas']) > splitChoiceList(getCharacterStat(levelUpEntry.sheet,'ATAQUES','Maestrías con armas')).length}
                 <label>Maestrías con armas (lista completa)<input bind:value={levelUpWeaponMasteries} placeholder="Escribe todas las maestrías, separadas por comas" /></label>
