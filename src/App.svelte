@@ -1084,7 +1084,8 @@
       const v=line.replace(/^•\s*/,''); const p=v.indexOf(':');
       return p>0?[v.slice(0,p).trim(),v.slice(p+1).trim()]:['Competencia',v];
     });
-    const featureLines=featuresStart>=0?lines.slice(featuresStart+1,equipmentStart>featuresStart?equipmentStart:lines.length):[];
+    const featureLines=featuresStart>=0?lines.slice(featuresStart+1,equipmentStart>featuresStart?equipmentStart:lines.length)
+      .filter(line=>!line.startsWith('Proficiencies & Languages') && !profLines.includes(line)):[];
     const equipmentLines=equipmentStart>=0?lines.slice(equipmentStart+1):[];
     const equipment: [string,string][]=equipmentLines.map(line=>{
       const v=line.replace(/^•\s*/,''); const p=v.indexOf(':');
