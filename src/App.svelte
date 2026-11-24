@@ -1845,7 +1845,7 @@ import SPELLS from './spells.json';
               <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre" /></label>
               <label>Jugador<input bind:value={builderData.player} placeholder="Nombre del jugador (opcional)" /></label>
 
-              <h3>6. Competencias, rasgos, conjuros y equipo</h3>
+              <h3>Competencias, rasgos, conjuros y equipo</h3>
               <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
               <div class="builder-info"><strong>Habilidades automáticas del trasfondo</strong><p>{BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><strong>Elige {BUILDER_CLASS_SKILLS[builderData.className].count} competencias de clase</strong></div>
               {#each Array.from({length:BUILDER_CLASS_SKILLS[builderData.className].count},(_,i)=>i) as index}
