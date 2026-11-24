@@ -1939,7 +1939,7 @@ import SPELLS from './spells.json';
     if(classCastingAbility && Number.isFinite(classCantripTarget) && classCantripTarget>oldClassCantripCount && classCantripNames.length!==classCantripTarget) { notice='Debes registrar los '+classCantripTarget+' trucos de clase que conoces, separados por comas.'; return; }
     if(classCastingAbility && Number.isFinite(classPreparedTarget) && classPreparedTarget>oldClassPreparedCount && classSpellNames.length!==classPreparedTarget) { notice='Debes registrar los '+classPreparedTarget+' conjuros de clase preparados/conocidos, separados por comas.'; return; }
     if(classCastingAbility && classCantripNames.length && classCantripNames.some(name=>!isValidClassSpell(name,className,0,0))) { notice='Hay trucos que no pertenecen a la lista de '+className+'.'; return; }
-    if(classCastingAbility && classSpellNames.length && classSpellNames.some(name=>!isValidClassSpell(name,className,maxClassSpellLevel))) { notice='Hay conjuros que no pertenecen a la lista de '+className+' o superan el nivel de espacio disponible.'; return; }
+    if(classCastingAbility && classSpellNames.length && classSpellNames.some(name=>!(className==='Bardo' && nextLevel>=10 ? Boolean(getSpellRecord(name)) && getSpellRecord(name)!.level<=maxClassSpellLevel : isValidClassSpell(name,className,maxClassSpellLevel)))) { notice='Hay conjuros que no pertenecen a la lista permitida o superan el nivel de espacio disponible.'; return; }
     const oldBookText=getCharacterStat(original,'CONJUROS','Libro de conjuros') || (String(getCharacterStat(original,'CONJUROS','Conjuros de nivel 1')).match(/Libro:\s*([^.]*)/i)||[])[1] || '';
     const currentWizardBook=splitChoiceList(oldBookText);
     const wizardBookAdditions=splitChoiceList(levelUpWizardBookAdditions);
@@ -2056,7 +2056,7 @@ import SPELLS from './spells.json';
     const currentClassFeatures=classFeatureDetails || features.map((feature:string)=>'Nivel '+nextLevel+' · '+feature).join('\n');
     const previousClassFeatures=getCharacterStat(updated,'PROGRESIÓN','Rasgos de clase acumulados');
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase acumulados',[previousClassFeatures,currentClassFeatures].filter(Boolean).join('\n\n'));
-    const existingClassTraitText=getCharacterStat(updated,'RASGOS Y DOTES','Rasgos de clase');
+    const existingClassTraitText=getCharacterStat(updated,'RASGOS Y DOTES','Rasgos de clase') || getCharacterStat(updated,'RASGOS Y DOTES','Rasgos de clase (nivel 1)');
     setCharacterStat(updated,'RASGOS Y DOTES','Rasgos de clase',[existingClassTraitText,currentClassFeatures].filter(Boolean).join('\n\n'));
     if(needsExpertise) {
       const oldSkillText=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
@@ -2105,9 +2105,10 @@ import SPELLS from './spells.json';
         setCharacterStat(updated,'CONJUROS','Trucos',[...classCantripNames,...otherTricks].join(', '));
       }
       if(levelUpClassSpells.trim()) {
-        const oldClassSpells=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros preparados de clase'));
+        const oldClassSpells=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros preparados de clase') || (className==='Mago'?(String(getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1')).match(/Preparados:\s*([^.]*)/i)||[])[1]||'':''));
         const combinedSpells=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1'));
-        const otherSpells=combinedSpells.filter(name=>!oldClassSpells.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) && !/^libro:|^preparados:/i.test(name));
+        const oldPreparedText=className==='Mago'?(String(getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1')).split(/Preparados:/i).pop()||''):'';
+        const otherSpells=(className==='Mago'?splitChoiceList(oldPreparedText):combinedSpells).filter(name=>!oldClassSpells.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) && !/^libro:|^preparados:/i.test(name));
         setCharacterStat(updated,'CONJUROS','Conjuros preparados de clase',classSpellNames.join(', '));
         if(className==='Mago') {
           const newBook=[...currentWizardBook,...wizardBookAdditions];
@@ -2454,9 +2455,6 @@ import SPELLS from './spells.json';
                 {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago'}
                   <label>Dos conjuros nuevos para el libro del mago<input bind:value={levelUpWizardBookAdditions} placeholder="Dos conjuros separados por comas" /></label>
                 {/if}
-              {/if}
-              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia'))}
-                <label>Dos habilidades competentes que obtienen Pericia<input bind:value={levelUpExpertise} placeholder="Ej. Percepción, Sigilo" /></label>
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(feature.description)))}
                 <label>Nueva competencia en habilidad<input bind:value={levelUpNewSkill} placeholder="Elige una habilidad de la lista de tu clase" /></label>
