@@ -1382,7 +1382,7 @@
     const backgroundFeatOk = builderOriginFeatChoicesOk(backgroundFeatName,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell) && builderData.backgroundFeatChoices.every(choice=>backgroundFeatOptions.includes(choice) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice!==builderData.speciesSkill && choice!==builderData.backgroundToolChoice);
     const speciesFeatOptions=builderFeatChoiceOptions(builderData.speciesExtraFeat);
     const speciesFeatOk=builderData.species!=='Humano' || (builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell) && builderData.speciesFeatChoices.every(choice=>speciesFeatOptions.includes(choice) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice!==builderData.speciesSkill && choice!==builderData.backgroundToolChoice && !builderData.backgroundFeatChoices.includes(choice)));
-    return skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && tomeOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && humanFeatOk && backgroundFeatOk && speciesFeatOk && languagesOk;
+    return skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && tomeOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && backgroundFeatOk && speciesFeatOk && languagesOk;
   }
   function builderNext() { if (builderStep < 5) builderStep += 1; }
   function builderBack() { if (builderStep > 0) builderStep -= 1; }
