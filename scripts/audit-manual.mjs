@@ -54,7 +54,8 @@ try {
 
   const classText = findSection(manualClass, 'RASGOS DE CLASE DE BÁRBARO', 'SUBCLASES DE BÁRBARO');
   const manualFeaturePairs = [...classText.matchAll(/^NIVEL (\d+): ([^\n]+)/gm)].map((m) => [Number(m[1]), norm(m[2])]);
-  const asiText = classText.match(/Vuelves a obtener este rasgo en los niveles de bárbaro ([^.]+)\./i)?.[1] ?? '';
+  const normalizedClassText = classText.replace(/\s+/g, ' ');
+  const asiText = normalizedClassText.match(/Vuelves a obtener este rasgo en los niveles de bárbaro ([^.]+)\./i)?.[1] ?? '';
   for (const level of [...asiText.matchAll(/\d+/g)].map((m) => Number(m[0]))) manualFeaturePairs.push([level, norm('Mejora de característica')]);
   const jsonFeaturePairs = (classFeatures.classes[className] ?? []).map((feature) => [Number(feature.level), norm(feature.name)]);
   const pairKey = ([level, name]) => level + ':' + name;
@@ -98,8 +99,12 @@ try {
   report('Definición de maestrías con armas', Boolean(mastery && mastery.level === 'progression' && mastery.kind === 'multiple' &&
     mastery.retainExisting && mastery.countFromResource === 'Maestría con armas' && mastery.options.length === 28));
 
-  const simpleMelee = findSection(manual, 'ARMAS CUERPO A CUERPO SENCILLAS', 'ARMAS A DISTANCIA SENCILLAS');
-  const martialMelee = findSection(manual, 'ARMAS CUERPO A CUERPO MARCIALES', 'ARMAS A DISTANCIA MARCIALES');
+  const simpleStart = manual.lastIndexOf('ARMAS CUERPO A CUERPO SENCILLAS');
+  const simpleEnd = manual.indexOf('ARMAS A DISTANCIA SENCILLAS', simpleStart);
+  const martialStart = manual.lastIndexOf('ARMAS CUERPO A CUERPO MARCIALES');
+  const martialEnd = manual.indexOf('ARMAS A DISTANCIA MARCIALES', martialStart);
+  const simpleMelee = manual.slice(simpleStart, simpleEnd);
+  const martialMelee = manual.slice(martialStart, martialEnd);
   const weaponNames = (section) => [...section.matchAll(/^([^:\n]+):/gm)].map((m) => norm(m[1].trim()));
   const allowedWeapons = [...weaponNames(simpleMelee), ...weaponNames(martialMelee)];
   const configuredWeapons = (mastery?.options ?? []).map(norm);
