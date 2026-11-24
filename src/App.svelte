@@ -760,8 +760,8 @@
   let builderPreview: RawSheet | null = null;
   let builderData: BuilderData = {
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
-    alignment: 'Neutral', method: 'standard',
-    abilities: { Fuerza: 15, Destreza: 14, Constitución: 13, Inteligencia: 12, Sabiduría: 10, Carisma: 8 },
+    alignment: 'Neutral', method: 'free',
+    abilities: { Fuerza: 10, Destreza: 10, Constitución: 10, Inteligencia: 10, Sabiduría: 10, Carisma: 10 },
     feat: 'Atacante salvaje', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', backgroundToolChoice: '', classEquipmentChoice: 'A', classSkillChoices: [], classToolsChoices: [], classSpecialChoice: '', classExpertise: [], weaponMasteries: [], selectedCantrips: [], selectedSpells: [], wizardSpellbook: [], speciesChoice: '', speciesMagicAbility: '', speciesSkill: '', speciesExtraFeat: 'Habilidoso', speciesSize: '', speciesBreathShape: 'Cono', backgroundFeatChoices: [], speciesFeatChoices: [], languages: [], rogueLanguage: '', backgroundMagicCantrips: [], backgroundMagicSpell: '', backgroundMagicAbility: 'Inteligencia', warlockTomeCantrips: [], warlockTomeRituals: [], speciesMagicCantrips: [], speciesMagicSpell: '', speciesFeatMagicAbility: 'Inteligencia', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
   };
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
@@ -1623,11 +1623,9 @@
               <div class="builder-info"><small>Los aumentos se aplican automáticamente a las puntuaciones base y quedan reflejados en la ficha final.</small></div>
             {:else if builderStep === 4}
               <h3>5. Puntuaciones de característica</h3>
-              <label>Método para generar las puntuaciones<select bind:value={builderData.method}><option value="standard">Conjunto estándar (15, 14, 13, 12, 10, 8)</option><option value="manual">Compra por puntos (27 puntos)</option><option value="rolled">Generación aleatoria (4d6, descartar el menor; seis veces)</option></select></label>
-              {#if builderData.method === 'rolled'}<button class="secondary" type="button" on:click={builderRollScores}>Generar seis puntuaciones con 4d6</button>{:else if builderData.method === 'standard'}<p class="muted">Distribuye una vez cada valor: 15, 14, 13, 12, 10 y 8.</p>{:else}<p class="muted">Tienes 27 puntos. Costes: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9.</p><p><strong>Puntos utilizados: {builderPointCost()} / 27</strong></p>{#if builderPointCost() > 27}<p class="builder-error">Has superado el presupuesto de 27 puntos.</p>{/if}{/if}
-              <p class="muted">Asigna las seis puntuaciones base. Después se aplican los aumentos elegidos en el trasfondo.</p>
+              <p class="muted">Asigna libremente cada puntuación base. No hay conjunto estándar ni presupuesto compartido; puedes repetir valores. Después se aplican los aumentos del trasfondo.</p>
               {#each BUILDER_ABILITY_NAMES as ability}
-                <label>{ability}<select bind:value={builderData.abilities[ability]}>{#each (builderData.method === 'standard' ? BUILDER_STANDARD.filter(score => !BUILDER_ABILITY_NAMES.some(other => other !== ability && Number(builderData.abilities[other]) === score)) : builderData.method === 'manual' ? Array.from({length:8},(_,i)=>8+i) : Array.from({length:8},(_,i)=>8+i)) as score}<option value={score}>{score} ({builderModifier(score) >= 0 ? '+' : ''}{builderModifier(score)})</option>{/each}</select></label>
+                <label>{ability}<input type="number" min="3" max="20" step="1" bind:value={builderData.abilities[ability]} /><small class="muted">Modificador: {builderModifier(Number(builderData.abilities[ability]) || 10) >= 0 ? '+' : ''}{builderModifier(Number(builderData.abilities[ability]) || 10)}</small></label>
               {/each}
               <div class="builder-info"><strong>Resultado con los aumentos del trasfondo</strong>{#each BUILDER_ABILITY_NAMES as ability}<p>{ability}: {builderData.abilities[ability]} → {builderAdjustedAbilities()[ability]}</p>{/each}</div>
             {:else if builderStep === 5}
@@ -1637,8 +1635,8 @@
               {#each Array.from({length:BUILDER_CLASS_SKILLS[builderData.className].count},(_,i)=>i) as index}
                 <label>Competencia de clase {index + 1}<select bind:value={builderData.classSkillChoices[index]}><option value="">Selecciona una habilidad</option>{#each BUILDER_CLASS_SKILLS[builderData.className].options.filter(skill => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && skill !== builderData.speciesSkill && ![...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].includes(skill) && !builderData.classSkillChoices.some((chosen,i)=>i !== index && chosen === skill)) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
               {/each}
-              {#if !builderCanFinish()}<p class="builder-error">Completa todas las elecciones obligatorias: habilidades, herramientas, maestrías, rasgos de clase, trucos, conjuros y presupuesto de características.</p>{/if}
-              <label>Competencias adicionales otorgadas por rasgos<textarea bind:value={builderData.skills} rows="2" placeholder="Solo si otra elección de clase o especie concede más competencias" /></label>
+              
+              
               <div class="builder-info"><strong>Rasgos automáticos de {builderData.className}</strong><p>{BUILDER_CLASS_DATA[builderData.className].features}</p><p><strong>Competencias de herramientas:</strong> {BUILDER_CLASS_DATA[builderData.className].tool}</p></div>
               {#if BUILDER_CLASS_DATA[builderData.className].specialOptions.length > 0}
                 <label>{BUILDER_CLASS_DATA[builderData.className].specialLabel}<select bind:value={builderData.classSpecialChoice}><option value="">Elige una opción</option>{#each BUILDER_CLASS_DATA[builderData.className].specialOptions as option}<option>{option}</option>{/each}</select></label>
@@ -1655,7 +1653,7 @@
               {:else if builderData.className === 'Monje'}
                 <label>Competencia con herramientas ({builderData.classToolsChoices.length}/1)<select multiple size="6" bind:value={builderData.classToolsChoices}>{#each [...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS].filter(tool => !builderData.backgroundFeatChoices.includes(tool) && !builderData.speciesFeatChoices.includes(tool) && tool !== builderData.backgroundToolChoice) as tool}<option>{tool}</option>{/each}</select></label>
               {/if}
-              <label>Idiomas adicionales u otras competencias<textarea bind:value={builderData.tools} rows="2" placeholder="Idiomas adicionales u otras competencias que el personaje elija" /></label>
+              
               <label>Equipo inicial de clase<select bind:value={builderData.classEquipmentChoice}><option value="A">Paquete A: {BUILDER_CLASS_DATA[builderData.className].equipmentA}</option><option value="B">Paquete B: {BUILDER_CLASS_DATA[builderData.className].equipmentB}</option>{#if builderData.className === 'Guerrero'}<option value="C">Paquete C: 155 po</option>{/if}</select></label>
               {#if builderData.className === 'Brujo' && builderData.classSpecialChoice === 'Pacto del grimorio'}
                 <div class="builder-info"><strong>Pacto del grimorio</strong><p>Elige tres trucos y dos conjuros de nivel 1 con la etiqueta de ritual. Estos se añaden a los beneficios de tu invocación.</p></div>
@@ -1674,12 +1672,12 @@
                 {/if}
               {/if}
               <label>Competencias o elecciones adicionales<textarea bind:value={builderData.skills} rows="2" placeholder="Solo beneficios adicionales que no estén recogidos arriba" /></label>
-              <label>Otros rasgos o notas<textarea bind:value={builderData.traits} rows="2" placeholder="Detalles especiales no contemplados por las elecciones anteriores" /></label>
+              
               <label>Notas<textarea bind:value={builderData.notes} rows="2" /></label>
             {/if}
             <div class="builder-actions">
               {#if builderStep > 0}<button class="secondary" on:click={builderBack}>Anterior</button>{/if}
-              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" disabled={!builderCanFinish()} on:click={finishBuilder}>Generar ficha de nivel 1</button>{/if}
+              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" on:click={finishBuilder}>Generar ficha de nivel 1</button>{/if}
             </div>
           {:else}
             <div class="section-heading"><h3>Personaje generado</h3><span class="count">Nivel 1</span></div>
