@@ -19,6 +19,7 @@
   let playerName = '';
   let activeTab = 'Datos';
   let monsterCrFilter = 'Todos';
+  let monsterSearch = '';
   const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
@@ -1016,134 +1017,8 @@
     URL.revokeObjectURL(url);
   }
 
-  const MONSTERS = [
-    {
-      name: 'Cultista', english: 'Cultist', type: 'Humanoide mediano o pequeño', alignment: 'Neutral', cr: '1/8 (25 PX)',
-      ac: 12, initiative: '+1 (11)', hp: '9 (2d8)', speed: '30 pies',
-      abilities: 'Fue 11 (+0) · Des 12 (+1) · Con 10 (+0) · Int 10 (+0) · Sab 11 (+0) · Car 10 (+0)',
-      skills: 'Engaño +2, Religión +2', senses: 'Percepción pasiva 10', languages: 'Común',
-      traits: 'Ninguno.',
-      attacks: [{name:'Hoz ritual', bonus:'+3', reach:'5 pies', damage:'3 (1d4 + 1) cortante + 1 necrótico'}],
-      role: 'Combatiente básico; daño bajo y sencillo de administrar.'
-    },
-    {
-      name: 'Estirge', english: 'Stirge', type: 'Monstruosidad diminuta', alignment: 'Sin alineamiento', cr: '1/8 (25 PX)',
-      ac: 13, initiative: '+3 (13)', hp: '5 (2d4)', speed: '10 pies, volar 40 pies',
-      abilities: 'Fue 4 (−3) · Des 16 (+3) · Con 11 (+0) · Int 2 (−4) · Sab 8 (−1) · Car 6 (−2)',
-      skills: '—', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 9', languages: '—',
-      traits: 'Cuando impacta, se adhiere al objetivo. Mientras permanece adherida, no vuelve a atacar con la probóscide y el objetivo recibe 5 (2d4) de daño necrótico al comienzo de cada turno de la estirge. Puede soltarse gastando 5 pies de movimiento; el objetivo o una criatura adyacente puede retirarla usando una acción.',
-      attacks: [{name:'Probóscide', bonus:'+5', reach:'5 pies', damage:'6 (1d6 + 3) perforante; se adhiere al objetivo'}],
-      role: 'Amenaza voladora que obliga a gastar acciones para retirarla.'
-    },
-    {
-      name: 'Goblin esbirro', english: 'Goblin Minion', type: 'Feérico pequeño (goblinoide)', alignment: 'Caótico neutral', cr: '1/8 (25 PX)',
-      ac: 12, initiative: '+2 (12)', hp: '7 (2d6)', speed: '30 pies',
-      abilities: 'Fue 8 (−1) · Des 15 (+2) · Con 10 (+0) · Int 10 (+0) · Sab 8 (−1) · Car 8 (−1)',
-      skills: 'Sigilo +6', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 9', languages: 'Común, goblin',
-      traits: 'Escape ágil (acción adicional): realiza las acciones Destrabarse u Ocultarse.',
-      attacks: [{name:'Daga', bonus:'+4', reach:'5 pies o 20/60 pies', damage:'4 (1d4 + 2) perforante'}],
-      role: 'Hostigador móvil; puede retirarse o esconderse con facilidad.'
-    },
-    {
-      name: 'Guerrero kóbold', english: 'Kobold Warrior', type: 'Dragón pequeño', alignment: 'Neutral', cr: '1/8 (25 PX)',
-      ac: 14, initiative: '+2 (12)', hp: '7 (3d6 − 3)', speed: '30 pies',
-      abilities: 'Fue 7 (−2) · Des 15 (+2) · Con 9 (−1) · Int 8 (−1) · Sab 7 (−2) · Car 8 (−1)',
-      skills: '—', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 8', languages: 'Común, dracónico',
-      traits: 'Tácticas de grupo: tiene ventaja en una tirada de ataque contra una criatura si al menos un aliado no incapacitado está a 5 pies de ella. Sensibilidad a la luz solar: tiene desventaja en pruebas de característica y tiradas de ataque bajo luz solar.',
-      attacks: [{name:'Daga', bonus:'+4', reach:'5 pies o 20/60 pies', damage:'4 (1d4 + 2) perforante'}],
-      role: 'Enemigo de grupo; gana ventaja cuando rodea a un aventurero.'
-    },
-    {
-      name: 'Rata gigante', english: 'Giant Rat', type: 'Bestia pequeña', alignment: 'Sin alineamiento', cr: '1/8 (25 PX)',
-      ac: 13, initiative: '+3 (13)', hp: '7 (2d6)', speed: '30 pies, trepar 30 pies',
-      abilities: 'Fue 7 (−2) · Des 16 (+3) · Con 11 (+0) · Int 2 (−4) · Sab 10 (+0) · Car 4 (−3)',
-      skills: 'Percepción +2', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 12', languages: '—',
-      traits: 'Tácticas de grupo: tiene ventaja en una tirada de ataque contra una criatura si al menos un aliado no incapacitado está a 5 pies de ella.',
-      attacks: [{name:'Mordisco', bonus:'+5', reach:'5 pies', damage:'5 (1d4 + 3) perforante'}],
-      role: 'Enemigo básico; peligrosa cuando varias ratas atacan al mismo objetivo.'
-    },
-    {
-      name: 'Serpiente voladora', english: 'Flying Snake', type: 'Monstruosidad diminuta', alignment: 'Sin alineamiento', cr: '1/8 (25 PX)',
-      ac: 14, initiative: '+2 (12)', hp: '5 (2d4)', speed: '30 pies, volar 60 pies, nadar 30 pies',
-      abilities: 'Fue 4 (−3) · Des 15 (+2) · Con 11 (+0) · Int 2 (−4) · Sab 12 (+1) · Car 5 (−3)',
-      skills: '—', senses: 'Vista ciega 10 pies; Percepción pasiva 11', languages: '—',
-      traits: 'Sobrevuelo: no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo.',
-      attacks: [{name:'Mordisco', bonus:'+4', reach:'5 pies', damage:'1 perforante + 5 (2d4) de veneno'}],
-      role: 'Atacante voladora rápida; puede entrar, atacar y alejarse.'
-    },
-    {
-      name: 'Araña gigante', english: 'Giant Spider', type: 'Bestia grande', alignment: 'Sin alineamiento', cr: '1 (200 PX)',
-      ac: 14, initiative: '+3 (13)', hp: '26 (4d10 + 4)', speed: '30 pies, trepar 30 pies',
-      abilities: 'Fue 14 (+2) · Des 16 (+3) · Con 12 (+1) · Int 2 (−4) · Sab 11 (+0) · Car 4 (−3)',
-      skills: 'Percepción +4, Sigilo +7', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 14', languages: '—',
-      traits: 'Trepar por arañas: puede trepar superficies difíciles, incluso techos, sin pruebas de característica. Caminante de telarañas: ignora las restricciones de movimiento causadas por telarañas y conoce la ubicación de cualquier criatura en contacto con la misma telaraña.',
-      attacks: [
-        {name:'Mordisco', bonus:'+5', reach:'5 pies', damage:'7 (1d8 + 3) perforante + 7 (2d6) de veneno'},
-        {name:'Telaraña (recarga 5–6)', description:'Una criatura que pueda ver a 60 pies o menos realiza una salvación de Destreza CD 13. Si falla, queda apresada hasta que se destruya la telaraña (CA 10; 5 PG; vulnerabilidad al fuego; inmunidad al veneno y al daño psíquico).'}
-      ],
-      role: 'Controladora y emboscadora; puede apresar a distancia y trepar por paredes y techos.'
-    },
-    {
-      name: 'Araña lobo gigante', english: 'Giant Wolf Spider', type: 'Bestia mediana', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
-      ac: 13, initiative: '+3 (13)', hp: '11 (2d8 + 2)', speed: '40 pies, trepar 40 pies',
-      abilities: 'Fue 12 (+1) · Des 16 (+3) · Con 13 (+1) · Int 3 (−4) · Sab 12 (+1) · Car 4 (−3)',
-      skills: 'Percepción +3, Sigilo +7', senses: 'Vista ciega 10 pies, visión en la oscuridad 60 pies; Percepción pasiva 13', languages: '—',
-      traits: 'Trepar por arañas: puede trepar superficies difíciles, incluso techos, sin pruebas de característica.',
-      attacks: [{name:'Mordisco', bonus:'+5', reach:'5 pies', damage:'5 (1d4 + 3) perforante + 5 (2d4) de veneno'}],
-      role: 'Emboscadora; trepa por paredes y techos para atacar desde ángulos inesperados.'
-    },
-    {
-      name: 'Espada voladora animada', english: 'Animated Flying Sword', type: 'Constructo pequeño', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
-      ac: 17, initiative: '+4 (14)', hp: '14 (4d6)', speed: '5 pies, volar 50 pies (flotar)',
-      abilities: 'Fue 12 (+1) · Des 15 (+2) · Con 11 (+0) · Int 1 (−5) · Sab 5 (−3) · Car 1 (−5)',
-      skills: 'Salvación de Destreza +4', senses: 'Vista ciega 60 pies; Percepción pasiva 7', languages: '—',
-      traits: 'Inmunidades al daño: veneno y psíquico. Inmunidades a estados: hechizado, ensordecido, agotamiento, asustado, paralizado, petrificado y envenenado.',
-      attacks: [{name:'Tajo', bonus:'+4', reach:'5 pies', damage:'6 (1d8 + 2) cortante'}],
-      role: 'Atacante voladora con CA alta; puede atravesar obstáculos y presionar a personajes aislados.'
-    },
-    {
-      name: 'Esqueleto', english: 'Skeleton', type: 'Muerto viviente mediano', alignment: 'Legal malvado', cr: '1/4 (50 PX)',
-      ac: 14, initiative: '+3 (13)', hp: '13 (2d8 + 4)', speed: '30 pies',
-      abilities: 'Fue 10 (+0) · Des 16 (+3) · Con 15 (+2) · Int 6 (−2) · Sab 8 (−1) · Car 5 (−3)',
-      skills: '—', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 9', languages: 'Comprende común y otro idioma, pero no puede hablar',
-      traits: 'Vulnerabilidad al daño contundente. Inmunidad al daño de veneno e inmunidad a los estados agotamiento y envenenado.',
-      attacks: [
-        {name:'Espada corta', bonus:'+5', reach:'5 pies', damage:'6 (1d6 + 3) perforante'},
-        {name:'Arco corto', bonus:'+5', reach:'80/320 pies', damage:'6 (1d6 + 3) perforante'}
-      ],
-      role: 'Combatiente versátil; puede mantener distancia con el arco o bloquear pasillos con la espada.'
-    },
-    {
-      name: 'Lobo', english: 'Wolf', type: 'Bestia mediana', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
-      ac: 12, initiative: '+2 (12)', hp: '11 (2d8 + 2)', speed: '40 pies',
-      abilities: 'Fue 14 (+2) · Des 15 (+2) · Con 12 (+1) · Int 3 (−4) · Sab 12 (+1) · Car 6 (−2)',
-      skills: 'Percepción +5, Sigilo +4', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 15', languages: '—',
-      traits: 'Tácticas de grupo: tiene ventaja en las tiradas de ataque contra una criatura si al menos un aliado del lobo está a 5 pies de ella y no está incapacitado.',
-      attacks: [{name:'Mordisco', bonus:'+4', reach:'5 pies', damage:'5 (1d6 + 2) perforante; si el objetivo es Mediano o menor, queda derribado'}],
-      role: 'Cazador de manada; derriba a los aventureros y aprovecha los ataques coordinados.'
-    },
-    {
-      name: 'Rana gigante', english: 'Giant Frog', type: 'Bestia mediana', alignment: 'Sin alineamiento', cr: '1/4 (50 PX)',
-      ac: 11, initiative: '+1 (11)', hp: '18 (4d8)', speed: '30 pies, nadar 30 pies',
-      abilities: 'Fue 12 (+1) · Des 13 (+1) · Con 11 (+0) · Int 2 (−4) · Sab 10 (+0) · Car 3 (−4)',
-      skills: 'Percepción +2, Sigilo +4', senses: 'Visión en la oscuridad 30 pies; Percepción pasiva 12', languages: '—',
-      traits: 'Anfibia: puede respirar aire y agua. Salto parado: salta hasta 20 pies en largo o 10 pies en alto sin carrera.',
-      attacks: [
-        {name:'Mordisco', bonus:'+3', reach:'5 pies', damage:'5 (1d6 + 2) perforante; el objetivo Mediano o menor queda agarrado (CD 11 para escapar)'},
-        {name:'Engullir', bonus:'—', reach:'objetivo Pequeño o menor que tenga agarrado', damage:'lo deja cegado y apresado; al final del siguiente turno de la rana recibe 5 (2d4) de daño ácido y, si sobrevive, es expulsado y queda tumbado'}
-      ],
-      role: 'Control de posición; puede sacar temporalmente a un aventurero del combate al engullirlo.'
-    },
-    {
-      name: 'Zombi', english: 'Zombie', type: 'Muerto viviente mediano', alignment: 'Neutral malvado', cr: '1/4 (50 PX)',
-      ac: 8, initiative: '−2 (8)', hp: '15 (2d8 + 6)', speed: '20 pies',
-      abilities: 'Fue 13 (+1) · Des 6 (−2) · Con 16 (+3) · Int 3 (−4) · Sab 6 (−2) · Car 5 (−3)',
-      skills: 'Salvación de Sabiduría +0', senses: 'Visión en la oscuridad 60 pies; Percepción pasiva 8', languages: 'Comprende común y otro idioma, pero no puede hablar',
-      traits: 'Fortaleza de los muertos vivientes: al quedar en 0 PG, realiza una salvación de Constitución CD 5 + el daño recibido; si tiene éxito, queda en 1 PG. No puede usar este rasgo si recibe daño radiante o un golpe crítico. Inmunidad al daño de veneno y a los estados agotamiento y envenenado.',
-      attacks: [{name:'Golpe', bonus:'+3', reach:'5 pies', damage:'5 (1d8 + 1) contundente'}],
-      role: 'Enemigo lento y resistente; puede sobrevivir a un golpe que debería destruirlo y prolongar el combate.'
-    }
-  ];
+  import MONSTERS from './monsters.json';
+
 
   let customRolls: CustomRoll[] = [];
   let lastRollId = '';
@@ -1160,6 +1035,7 @@
   }
   const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
   const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
+  $: filteredMonsters = MONSTERS.filter(monster => (monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')) && monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()));
 
   function persistCustomRolls() {
     localStorage.setItem('forja-custom-rolls', JSON.stringify(customRolls));
@@ -1719,57 +1595,34 @@
         </section>
       {:else}
         <section class="panel monsters-panel">
-          <div class="section-heading"><h2>Monstruos ordenados</h2><span class="count">{MONSTERS.filter(monster => monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')).length} criaturas</span></div>
-          <p class="muted">Bloques resumidos para consulta rápida durante el combate. Orden alfabético por nombre.</p>
-          <label class="monster-filter">Filtrar por VD
+          <div class="section-heading"><h2>Monster Manual · 2024</h2><span class="count">{filteredMonsters.length} / {MONSTERS.length} criaturas</span></div>
+          <p class="muted">Los 504 bloques de estadísticas del manual en inglés. Se conservan nombres, términos, reglas y valores originales.</p>
+          <label class="monster-filter">Buscar monstruo
+            <input type="search" bind:value={monsterSearch} placeholder="Nombre en inglés..." />
+          </label>
+          <label class="monster-filter">Filtrar por CR
             <select bind:value={monsterCrFilter}>
               {#each MONSTER_CR_FILTERS as cr}
-                <option value={cr}>{cr === 'Todos' ? 'Todos los VD' : 'VD ' + cr}</option>
+                <option value={cr}>{cr === 'Todos' ? 'Todos los CR' : 'CR ' + cr}</option>
               {/each}
             </select>
           </label>
           <div class="monster-list">
-            {#each MONSTERS.filter(monster => monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')) as monster}
+            {#each filteredMonsters as monster}
               <details class="monster-card">
                 <summary>
                   <span class="monster-name">{monster.name}</span>
-                  <span class="monster-subtitle">{monster.english} · {monster.type}</span>
-                  <span class="monster-cr">VD {monster.cr}</span>
+                  <span class="monster-subtitle">{monster.group || 'Monster Manual'} · página {monster.pdfPage ?? '—'}</span>
+                  <span class="monster-cr">CR {monster.cr.split(' ')[0] || '—'}</span>
                 </summary>
                 <div class="monster-statblock">
-                  <div class="monster-heading">
-                    <h3>{monster.name}</h3>
-                    <span>{monster.type} · {monster.alignment}</span>
-                  </div>
-                  <div class="monster-combat-grid">
-                    <div><small>CA</small><strong>{monster.ac}</strong></div>
-                    <div><small>PG</small><strong>{monster.hp}</strong></div>
-                    <div><small>Iniciativa</small><strong>{monster.initiative}</strong></div>
-                    <div><small>Velocidad</small><strong>{monster.speed}</strong></div>
-                  </div>
-                  <p><b>Características:</b> {monster.abilities}</p>
-                  <p><b>Habilidades:</b> {monster.skills}</p>
-                  <p><b>Sentidos:</b> {monster.senses}</p>
-                  <p><b>Idiomas:</b> {monster.languages}</p>
-                  <p><b>Rasgos:</b> {monster.traits}</p>
-                  <div class="monster-attacks">
-                    <b>Acciones</b>
-                    {#each monster.attacks as attack}
-                      {#if attack.description}
-                        <p><strong>{attack.name}.</strong> {attack.description}</p>
-                      {:else}
-                        <p><strong>{attack.name}.</strong> Ataque {attack.bonus}; alcance {attack.reach}. Daño: {attack.damage}.</p>
-                      {/if}
-                    {/each}
-                  </div>
-                  <p class="monster-role"><b>Uso táctico:</b> {monster.role}</p>
-                  <small class="monster-source">D&D 2024 · SRD 5.2.1 · VD {monster.cr}</small>
+                  <pre class="monster-original">{monster.statBlock}</pre>
+                  <small class="monster-source">Monster Manual 2024 · PDF p. {monster.pdfPage ?? '—'} · Printed p. {monster.printedPage ?? '—'}</small>
                 </div>
               </details>
             {/each}
           </div>
-          <p class="monster-attribution">Este trabajo incluye material del System Reference Document 5.2.1 (SRD 5.2.1) de Wizards of the Coast LLC, disponible bajo licencia Creative Commons Attribution 4.0 International.</p>
-        </section>
+        </section>>
       {/if}
     {:else}
       {#if !sheet}
@@ -1907,6 +1760,7 @@
   .monster-combat-grid small{color:var(--ink-soft);font-size:.62rem;text-transform:uppercase}
   .monster-combat-grid strong{font-size:.78rem;overflow-wrap:anywhere}
   .monster-statblock p{margin:.38rem 0}
+  .monster-original{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font: .76rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink);}
   .monster-attacks{margin-top:.65rem;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:rgba(255,255,255,.4)}
   .monster-role{padding:.5rem;border-left:3px solid var(--gold);background:rgba(177,138,69,.1)}
   .monster-source{display:block;margin-top:.55rem;color:var(--ink-soft);font-size:.62rem}
