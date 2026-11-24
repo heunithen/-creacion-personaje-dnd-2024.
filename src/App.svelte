@@ -1518,7 +1518,7 @@ import SPELLS from './spells.json';
   function normalizeLevelText(value: unknown) { return String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().trim(); }
   function getCharacterNumber(target: RawSheet, sectionName: string, statName: string, fallback = 0): number {
     const raw = getCharacterStat(target,sectionName,statName);
-    const match = String(raw).replace(/,/g,'.').match(/[-+]?\\d+(?:\\.\\d+)?/);
+    const match = String(raw).replace(/,/g,'.').match(/[0-9]+(?:[.][0-9]+)?/);
     return match ? Number(match[0]) : fallback;
   }
   function formatAbilityScore(value: number): string {
@@ -1607,8 +1607,7 @@ import SPELLS from './spells.json';
     const currentLevel = Number(getCharacterStat(original,'PERSONAJE','Nivel')) || 1;
     const nextLevel = currentLevel + 1;
     if (nextLevel > 20) { notice = 'El personaje ya alcanzó el nivel 20.'; return; }
-    const classTable = (LEVEL_PROGRESSION as any).classes?.[className];
-    const row = classTable?.rows?.find((r:any) => r.level === nextLevel);
+    const row = (LEVEL_PROGRESSION as any).classes?.[className]?.rows?.find((r:any) => r.level === nextLevel);
     if (!row) { notice = 'No se encontró la progresión de esta clase en el manual.'; return; }
     const features = String(row.features || '').split(',').map((x:string)=>x.trim()).filter((x:string)=>x && x !== '—');
     const needsSubclass = features.some((x:string)=>normalizeLevelText(x).startsWith('subclase de'));
@@ -1620,16 +1619,84 @@ import SPELLS from './spells.json';
     const isNewSubclass = !!subclass && !getSubclassData(className,oldSubclassValue);
     if ((needsSubclass || currentLevel >= 3) && !subclass) { notice = 'Selecciona una subclase oficial para '+className+'.'; return; }
     if (chosenSubclass && !subclass) { notice = 'La subclase guardada no coincide con las opciones del manual. Selecciónala nuevamente.'; return; }
+
     const subclassFeatures = subclass?.features?.filter((feature:any) => isNewSubclass ? feature.level <= nextLevel : feature.level === nextLevel) || [];
     const subclassSpellTables = subclass?.tables?.filter((table:any) => table.columns?.some((column:string) => normalizeLevelText(column).includes('conjuros'))) || [];
     if (subclassSpellTables.length > 1 && !subclassSpellTables.some((table:any)=>table.name===levelUpSubclassVariant)) { notice = 'Elige la opción de conjuros que corresponde a la subclase.'; return; }
     const castingTable = subclassSpellTables.find((table:any)=>table.columns?.some((column:string)=>normalizeLevelText(column)==='conjuros preparados'));
     const castingRow = castingTable?.rows?.find((values:string[])=>Number(values[0])===nextLevel);
+    if (castingTable && castingRow) {
+      const preparedIndex=castingTable.columns.findIndex((column:string)=>normalizeLevelText(column)==='conjuros preparados');
+      const targetPrepared=Number(castingRow[preparedIndex]);
+      const oldPrepared=getCharacterNumber(original,'CONJUROS','Conjuros preparados máximos',0);
+      const cantripTarget=className==='Guerrero'?(nextLevel>=10?3:2):(nextLevel>=10?4:3);
+      const oldCantrips=getCharacterNumber(original,'CONJUROS','Trucos máximos',0);
+      const cantripNames=levelUpSubclassCantrips.split(/[,;\n]+/).map((x:string)=>x.trim()).filter(Boolean);
+      const spellNames=levelUpSubclassSpells.split(/[,;\n]+/).map((x:string)=>x.trim()).filter(Boolean);
+      if ((isNewSubclass || cantripTarget>oldCantrips) && cantripNames.length!==cantripTarget) { notice='La subclase requiere '+cantripTarget+' trucos. Introduce la lista completa.'; return; }
+      if ((isNewSubclass || targetPrepared>oldPrepared) && spellNames.length!==targetPrepared) { notice='La subclase requiere '+targetPrepared+' conjuros preparados. Introduce la lista completa.'; return; }
+      if (levelUpSubclassSpells.trim() && spellNames.length!==targetPrepared) { notice='La lista debe contener exactamente '+targetPrepared+' conjuros preparados.'; return; }
+    }
+    if ((needsEpicFeat || (needsASI && levelUpAsiMode === 'feat')) && !levelUpFeat.trim()) { notice = 'Indica el nombre de la dote elegida.'; return; }
+    if (needsASI && levelUpAsiMode === 'asi') {
+      const inc1=Number(levelUpIncrease1), inc2=Number(levelUpIncrease2);
+      if (![1,2].includes(inc1) || ![0,1,2].includes(inc2) || (inc2>0 && inc1+inc2!==2) || (inc2===0 && inc1!==2) || (inc2>0 && levelUpAbility1===levelUpAbility2)) { notice='La mejora debe ser +2 a una característica o +1 a dos características.'; return; }
+      for (const [ability,inc] of [[levelUpAbility1,inc1],[levelUpAbility2,inc2]] as [string,number][]) {
+        if (!inc) continue;
+        const current=getCharacterNumber(original,'ATRIBUTOS',ability,NaN);
+        if (!Number.isFinite(current) || current+inc>20) { notice='La mejora no puede superar 20 en '+ability+'.'; return; }
+      }
+    }
+
+    const constitution=getCharacterNumber(original,'ATRIBUTOS','Constitución',10);
+    const conMod=Math.floor((constitution-10)/2);
+    const hitDie=LEVEL_HIT_DIE[className] || 8;
+    let hpGain=LEVEL_FIXED_HP[className] || 5;
+    if (levelUpHpMode === 'roll') {
+      const roll=Number(levelUpHpRoll);
+      if (!Number.isInteger(roll) || roll<1 || roll>hitDie) { notice='Introduce una tirada válida de 1 a '+hitDie+'.'; return; }
+      hpGain=roll;
+    }
+    hpGain=Math.max(1,hpGain+conMod);
+
+    const updated=JSON.parse(JSON.stringify(original)) as RawSheet;
+    const oldHp=getCharacterNumber(updated,'COMBATE','Puntos de golpe máximos',0);
+    const oldCurrentHp=getCharacterNumber(updated,'COMBATE','Puntos de golpe actuales',oldHp);
+    const oldHitDice=Number(String(getCharacterStat(updated,'COMBATE','Dados de golpe')).match(/[0-9]+/)?.[0]) || currentLevel;
+    setCharacterStat(updated,'PERSONAJE','Nivel',nextLevel);
+    // La experiencia es acumulativa y no debe reemplazarse por el umbral del siguiente nivel.
+    setCharacterStat(updated,'COMBATE','Puntos de golpe máximos',(oldHp+hpGain)+' PG');
+    setCharacterStat(updated,'COMBATE','Puntos de golpe actuales',(oldCurrentHp+hpGain)+' PG');
+    setCharacterStat(updated,'COMBATE','Dados de golpe',oldHitDice+1+'d'+hitDie);
+    setCharacterStat(updated,'COMBATE','Bonificador por competencia',row.proficiency);
+    if (subclass) setCharacterStat(updated,'PERSONAJE','Subclase',subclass.key);
+    if (levelUpSubclassVariant) setCharacterStat(updated,'PERSONAJE','Opción de subclase',levelUpSubclassVariant);
+
+    if (needsASI && levelUpAsiMode==='asi') {
+      for (const [ability,inc] of [[levelUpAbility1,Number(levelUpIncrease1)],[levelUpAbility2,Number(levelUpIncrease2)]] as [string,number][]) {
+        if (!inc) continue;
+        const value=getCharacterNumber(updated,'ATRIBUTOS',ability,10);
+        setCharacterStat(updated,'ATRIBUTOS',ability,formatAbilityScore(value+inc));
+      }
+    }
+    if (levelUpFeat.trim() && (needsEpicFeat || (needsASI && levelUpAsiMode==='feat'))) {
+      const previous=getCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales');
+      setCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales',[previous,levelUpFeat.trim()].filter(Boolean).join('; '));
+    }
+
+    const resourceEntries=Object.entries(row.resources || {});
+    const resourceText=resourceEntries.filter(([key,value]:any)=>value!==undefined && value!==null && value!=='—').map(([key,value]:any)=>key+': '+value).join(' · ');
+    setCharacterStat(updated,'PROGRESIÓN','Nivel de clase',nextLevel);
+    for (const [resourceName,resourceValue] of resourceEntries) setCharacterStat(updated,'PROGRESIÓN',resourceName,String(resourceValue ?? '—'));
+    const previousClassFeatures=getCharacterStat(updated,'PROGRESIÓN','Rasgos de clase acumulados');
+    const currentClassFeatures=features.map((feature:string)=>'Nivel '+nextLevel+' · '+feature).join('\n');
+    setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase acumulados',[previousClassFeatures,currentClassFeatures].filter(Boolean).join('\n'));
+
     const classMagicAbility=(BUILDER_MAGIC_ABILITY as any)[className] || '';
     const classSpellResources=row.resources || {};
     const classCantripCount=Number(classSpellResources['Trucos']);
     const classPreparedCount=Number(classSpellResources['Conjuros preparados']);
-    const classSlotValues=Object.entries(classSpellResources).filter(([key,value]:any)=>/^Espacios nivel \\d+$/.test(key) && value && value!=='—' && Number(value)>0).map(([key,value]:any)=>key.replace('Espacios ','')+': '+value);
+    const classSlotValues=Object.entries(classSpellResources).filter(([key,value]:any)=>String(key).startsWith('Espacios nivel ') && value && value!=='—' && Number(value)>0).map(([key,value]:any)=>key.replace('Espacios ','')+': '+value);
     const pactSlotValues=['Espacios de conjuro','Nivel de los espacios'].filter(key=>classSpellResources[key] && classSpellResources[key]!=='—').map(key=>key+': '+classSpellResources[key]);
     if (classMagicAbility && (Number.isFinite(classCantripCount) || Number.isFinite(classPreparedCount) || classSlotValues.length || pactSlotValues.length)) {
       const abilityScore=getCharacterNumber(updated,'ATRIBUTOS',classMagicAbility,10);
@@ -1669,15 +1736,32 @@ import SPELLS from './spells.json';
         const spellColumn=selectedTable.columns.findIndex((column:string)=>normalizeLevelText(column).includes('conjuros'));
         const spellList=selectedTable.rows.filter((values:string[])=>Number(values[0])<=nextLevel).map((values:string[])=>values[spellColumn]).filter(Boolean);
         const existing=getCharacterStat(updated,'CONJUROS','Conjuros adicionales de subclase');
-        const merged=[...new Set([...(existing?existing.split(/[,;\\n]+/).map((x:string)=>x.trim()):[]),...spellList.flatMap((x:string)=>x.split(/[,;]+/).map((v:string)=>v.trim()))].filter(Boolean))];
+        const merged=[...new Set([...(existing?existing.split(/[,;\n]+/).map((x:string)=>x.trim()):[]),...spellList.flatMap((x:string)=>x.split(/[,;]+/).map((v:string)=>v.trim()))].filter(Boolean))];
         setCharacterStat(updated,'CONJUROS','Conjuros adicionales de subclase',merged.join(', '));
       }
+    }
+
+    const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
+    const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
+    const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim():'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
+    setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,features.join(', ') || 'Sin rasgos nuevos indicados');
+    if (subclassFeatureText) {
+      setCharacterStat(updated,'PROGRESIÓN','Rasgos de subclase nivel '+nextLevel,subclassFeatureText);
+      const previousSubclassFeatures=getCharacterStat(updated,'PROGRESIÓN','Rasgos de subclase acumulados');
+      setCharacterStat(updated,'PROGRESIÓN','Rasgos de subclase acumulados',[previousSubclassFeatures,subclassFeatureText].filter(Boolean).join('\n\n'));
+    }
+    setCharacterStat(updated,'PROGRESIÓN','Recursos según tabla de clase',resourceText || 'Sin cambios de recursos tabulados');
+    if (subclass) {
+      const tableSummary=(subclass.tables || []).map((table:any)=>table.name+'\n'+table.columns.join(' | ')+'\n'+table.rows.map((r:string[])=>r.join(' | ')).join('\n')).join('\n\n');
+      if (tableSummary) setCharacterStat(updated,'PROGRESIÓN','Tablas de subclase · '+formatSubclassName(subclass.key),tableSummary);
     }
     const playerId=levelUpEntry.playerId;
     roomSheets=[...roomSheets.filter(x=>x.playerId!==playerId),{...levelUpEntry,sheet:updated}];
     void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
     levelUpEntry=null;
-    notice='Nivel '+nextLevel+' aplicado a '+updated.name+'. Se añadieron los rasgos de clase y subclase correspondientes.';
+    notice='Nivel '+nextLevel+' aplicado a '+updated.name+'. La ficha contiene los datos de clase, subclase, características, puntos de golpe y conjuros del nuevo nivel.';
   }
 
   function sectionPairs(sections: RawSection[] = []) {
