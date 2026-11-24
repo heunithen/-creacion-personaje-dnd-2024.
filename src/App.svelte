@@ -1066,7 +1066,6 @@
       Intelligence:'Inteligencia',Wisdom:'Sabiduría',Charisma:'Carisma'
     };
     const abilities: [string,string][] = [];
-    const modifiers: [string,string][] = [];
     let current = '';
     let currentAbilityIndex = -1;
     for (const line of lines) {
@@ -1078,23 +1077,26 @@
         continue;
       }
       if (!current) continue;
-      const detail=line.match(/^([+\-]?\d+)\s*\.\.\.\s*(.+)$/);
+      const detail=line.match(/^(.+?)\s*\.\.\.\s*(.+)$/);
       if (detail) {
-        const detailName = detail[2].replace(/\s+\*+$/,'').trim();
-        if (/saving throws?/i.test(detailName)) {
-          const entry = abilities[currentAbilityIndex];
-          if (entry) entry[1] += '\nSalvación: ' + detail[1];
-        } else if (/ability modifier/i.test(detailName)) {
-          const entry = abilities[currentAbilityIndex];
-          if (entry) entry[1] += ' (' + detail[1] + ')';
-        } else {
-          modifiers.push([abilityLabels[current]+' · '+detailName,detail[1]]);
-        }
-      } else if (/^(COMBAT|FEATURES|Proficiencies|EQUIPMENT)/i.test(line)) current='';
+        const detailValue = detail[1].trim();
+        const rawName = detail[2].replace(/\s+\*+$/,'').trim();
+        let detailName = rawName;
+        if (/Ability Checks/i.test(rawName)) detailName = 'Pruebas de característica';
+        else if (/Saving Throws?/i.test(rawName)) detailName = 'Salvaciones';
+        else if (/Athletics Skill/i.test(rawName)) detailName = 'Atletismo';
+        else if (/Maximum Carrying Capacity/i.test(rawName)) detailName = 'Capacidad máxima de carga';
+        else if (/Max\. Push or Drag/i.test(rawName)) detailName = 'Empujar o arrastrar máximo';
+        else if (/Maximum Lift/i.test(rawName)) detailName = 'Levantamiento máximo';
+        const entry = abilities[currentAbilityIndex];
+        if (entry) entry[1] += '\\n' + detailName + ': ' + detailValue;
+      } else if (/^(COMBAT|FEATURES|Proficiencies|EQUIPMENT)/i.test(line)) {
+        current = '';
+        currentAbilityIndex = -1;
+      }
     }
     if (abilities.length!==6) { notice='No se reconocieron las seis características. Comprueba que pegaste el texto completo de Fast Character.'; return; }
     addPaired('Atributos',abilities);
-    addPaired('Competencias y modificadores',modifiers);
 
     const findStart=(prefix:string)=>lines.findIndex(line=>line.toLowerCase().startsWith(prefix.toLowerCase()));
     const combatStart=findStart('COMBAT'), featuresStart=findStart('FEATURES, TRAITS'), equipmentStart=findStart('EQUIPMENT & TREASURE');
