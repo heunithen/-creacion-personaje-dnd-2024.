@@ -755,7 +755,7 @@
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
     alignment: 'Neutral', method: 'standard',
     abilities: { Fuerza: 15, Destreza: 14, Constitución: 13, Inteligencia: 12, Sabiduría: 10, Carisma: 8 },
-    feat: 'Alerta', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', classSkillChoices: [], skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
+    feat: 'Atacante salvaje', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', classSkillChoices: [], skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
   };
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
@@ -1449,7 +1449,7 @@
               <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
             {:else if builderStep === 1}
               <h3>2. Clase</h3><p class="muted">Todas las clases del Manual del Jugador 2024. Se aplican únicamente los rasgos que se obtienen a nivel 1.</p>
-              <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
+              <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className} on:change={() => builderData.classSkillChoices = []}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
               <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
             {:else if builderStep === 2}
               <h3>3. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
