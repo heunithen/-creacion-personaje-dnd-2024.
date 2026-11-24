@@ -1891,6 +1891,15 @@ import SPELLS from './spells.json';
         setCharacterStat(updated,'ATRIBUTOS',ability,formatAbilityScore(value+inc));
       }
     }
+    // Si la mejora aumenta el modificador de Constitución, el máximo de PG
+    // aumenta en 1 por cada nivel ya alcanzado, según el Manual del Jugador.
+    const oldConstitutionMod=Math.floor((getCharacterNumber(original,'ATRIBUTOS','Constitución',10)-10)/2);
+    const newConstitutionMod=Math.floor((getCharacterNumber(updated,'ATRIBUTOS','Constitución',10)-10)/2);
+    const constitutionHpAdjustment=(newConstitutionMod-oldConstitutionMod)*nextLevel;
+    if (constitutionHpAdjustment>0) {
+      const maxAfterLevelUp=getCharacterNumber(updated,'COMBATE','Puntos de golpe máximos',0);
+      setCharacterStat(updated,'COMBATE','Puntos de golpe máximos',(maxAfterLevelUp+constitutionHpAdjustment)+' PG');
+    }
     if (levelUpFeat.trim() && (needsEpicFeat || (needsASI && levelUpAsiMode==='feat'))) {
       const previous=getCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales');
       setCharacterStat(updated,'RASGOS Y DOTES','Dotes adicionales',[previous,levelUpFeat.trim()].filter(Boolean).join('; '));
@@ -1917,7 +1926,7 @@ import SPELLS from './spells.json';
       const proficiencyBonus=Number(String(row.proficiency || '+2').replace('+','')) || 2;
       setCharacterStat(updated,'CONJUROS','Lanzamiento de conjuros','Sí');
       setCharacterStat(updated,'CONJUROS','Aptitud mágica',classMagicAbility);
-      setCharacterStat(updated,'CONJUROS','CD de salvación',10+abilityMod+proficiencyBonus);
+      setCharacterStat(updated,'CONJUROS','CD de salvación',8+abilityMod+proficiencyBonus);
       setCharacterStat(updated,'CONJUROS','Ataque de conjuro',(abilityMod+proficiencyBonus>=0?'+':'')+(abilityMod+proficiencyBonus));
       if (Number.isFinite(classCantripCount)) setCharacterStat(updated,'CONJUROS','Trucos máximos',classCantripCount);
       if (Number.isFinite(classPreparedCount)) setCharacterStat(updated,'CONJUROS','Conjuros preparados máximos',classPreparedCount);
