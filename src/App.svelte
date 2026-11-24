@@ -1136,9 +1136,9 @@
   };
   const BUILDER_SPECIES_TRAITS: Record<string,string> = {
     'Aasimar':'Tipo de criatura: Humanoide. Manos curativas; Portador de luz (truco luz); Resistencia celestial (necrótico y radiante); Visión en la oscuridad 18 m; Revelación celestial desde nivel 3.',
-    'Dracónido':'Tipo de criatura: Humanoide. Linaje dracónico; Ataque de aliento (cono de 4,5 m o línea de 9 m, a elegir en cada uso); Resistencia al daño del linaje; Visión en la oscuridad 18 m; Vuelo dracónico desde nivel 5.',
+    'Dracónido':'Tipo de criatura: Humanoide. Linaje dracónico; Ataque de aliento 1d10 (aumenta a 2d10 en nivel 5, 3d10 en nivel 11 y 4d10 en nivel 17); Resistencia al daño del linaje; Visión en la oscuridad 18 m; Vuelo dracónico desde nivel 5.',
     'Enano':'Tipo de criatura: Humanoide. Afinidad con la piedra; Aguante enano (+1 PG por nivel); Resistencia enana (veneno); Visión en la oscuridad 36 m.',
-    'Elfo':'Tipo de criatura: Humanoide. Linaje feérico; Linaje élfico; Sentidos agudos (elige Percepción, Perspicacia o Supervivencia); Trance; Visión en la oscuridad 18 m.',
+    'Elfo':'Tipo de criatura: Humanoide. Linaje feérico; Linaje élfico; Sentidos agudos (elige Percepción, Perspicacia o Supervivencia); Trance; Visión en la oscuridad 18 m (Drow: 36 m).',
     'Gnomo':'Tipo de criatura: Humanoide. Astucia gnoma; Linaje gnomo; Visión en la oscuridad 18 m.',
     'Goliat':'Tipo de criatura: Humanoide. Constitución poderosa; Forma grande desde nivel 5; Linaje gigante (elige un beneficio).',
     'Mediano':'Tipo de criatura: Humanoide. Agilidad de mediano; Fortuna; Sigiloso por naturaleza; Valiente.',
@@ -1147,6 +1147,34 @@
     'Tiefling':'Tipo de criatura: Humanoide. Legado infernal; Presencia sobrenatural (truco taumaturgia); Visión en la oscuridad 18 m.'
   };
   const BUILDER_CLASS_DATA: Record<string,{equipmentA:string;equipmentB:string;features:string;tool:string;weaponCount:number;cantrips:number;spells:number;slots:number;spellbook:number;specialLabel:string;specialOptions:string[]}> = {
+  function builderSpeciesChoiceDescription(species:string,choice:string): string {
+    const dragonDamage:Record<string,string>={Azul:'relámpago',Blanco:'frío',Bronce:'relámpago',Cobre:'ácido',Negro:'ácido',Oro:'fuego',Oropel:'fuego',Plata:'frío',Rojo:'fuego',Verde:'veneno'};
+    if(species==='Dracónido' && dragonDamage[choice]) return 'Linaje dracónico · '+choice+': resistencia al daño de '+dragonDamage[choice]+'. Ataque de aliento: 1d10 de '+dragonDamage[choice+'']+'; cono de 4,5 m o línea de 9 m × 1,5 m, salvación de Destreza CD 8 + Constitución + bonificador por competencia, mitad de daño si se supera. Usos iguales al bonificador por competencia por descanso largo. El daño aumenta a 2d10 en nivel 5, 3d10 en nivel 11 y 4d10 en nivel 17.';
+    const giant:Record<string,string>={
+      'Abrasión del fuego':'Cuando aciertas con un ataque, puedes causar 1d10 de daño de fuego adicional.',
+      'Caída de las colinas':'Cuando aciertas con un ataque a una criatura Grande o menor, puedes imponerle el estado derribado.',
+      'Excursión de las nubes':'Como acción adicional, te teletransportas hasta 9 m a un espacio desocupado que puedas ver.',
+      'Frío de la escarcha':'Cuando aciertas con un ataque, puedes causar 1d6 de daño de frío adicional y reducir la velocidad del objetivo en 3 m hasta el inicio de tu siguiente turno.',
+      'Resistencia de la piedra':'Cuando recibes daño, puedes usar una reacción para reducirlo en 1d12 + tu modificador por Constitución.',
+      'Trueno de la tormenta':'Cuando una criatura a 18 m o menos te causa daño, puedes usar una reacción para infligirle 1d8 de daño de trueno.'
+    };
+    if(species==='Goliat' && giant[choice]) return 'Linaje gigante · '+choice+': '+giant[choice]+' Usos iguales al bonificador por competencia; recuperas todos tras un descanso largo.';
+    if(species==='Elfo') {
+      if(choice==='Alto elfo') return 'Linaje élfico · Alto elfo: conoces el truco prestidigitación y puedes sustituirlo por otro truco de mago tras un descanso largo. En nivel 3 aprendes Detectar magia y en nivel 5 Paso brumoso; siempre preparados, un lanzamiento gratuito de cada uno por descanso largo.';
+      if(choice==='Drow') return 'Linaje élfico · Drow: visión en la oscuridad de 36 m y truco luces danzantes. En nivel 3 aprendes Fuego feérico y en nivel 5 Oscuridad; siempre preparados, un lanzamiento gratuito de cada uno por descanso largo.';
+      return 'Linaje élfico · Elfo de los bosques: velocidad 10,5 m y truco saber druídico. En nivel 3 aprendes Zancada prodigiosa y en nivel 5 Pasar sin rastro; siempre preparados, un lanzamiento gratuito de cada uno por descanso largo.';
+    }
+    if(species==='Gnomo') {
+      if(choice==='Gnomo de las rocas') return 'Linaje gnomo · Gnomo de las rocas: conoces los trucos prestidigitación y reparar. Puedes emplear 10 minutos para crear un dispositivo mecánico diminuto que reproduce un efecto de prestidigitación; puedes mantener hasta tres dispositivos activos, que se desarman tras 8 horas.';
+      return 'Linaje gnomo · Gnomo de los bosques: conoces el truco ilusión menor y siempre tienes Hablar con los animales preparado. Puedes lanzarlo sin espacio un número de veces igual a tu bonificador por competencia por descanso largo.';
+    }
+    if(species==='Tiefling') {
+      if(choice==='Abisal') return 'Legado infernal · Abisal: resistencia al daño de veneno y truco rociada venenosa. En nivel 3 aprendes Rayo nauseabundo y en nivel 5 Inmovilizar persona; siempre preparados, un lanzamiento gratuito de cada uno por descanso largo.';
+      if(choice==='Ctónico') return 'Legado infernal · Ctónico: resistencia al daño necrótico y truco toque helado. En nivel 3 aprendes Falsa vida y en nivel 5 Rayo debilitador; siempre preparados, un lanzamiento gratuito de cada uno por descanso largo.';
+      return 'Legado infernal · Infernal: resistencia al daño de fuego y truco descarga de fuego. En nivel 3 aprendes Reprensión infernal y en nivel 5 Oscuridad; siempre preparados, un lanzamiento gratuito de cada uno por descanso largo.';
+    }
+    return '';
+  }
     'Bárbaro':{equipmentA:'Hacha a dos manos, 4 hachas de mano, paquete de explorador y 15 po.',equipmentB:'75 po.',features:'Defensa sin armadura; Furia (2 usos, daño +2 y resistencia a daño contundente, cortante y perforante); Maestría con armas (elige 2 tipos de armas).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:2,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'',specialOptions:[]},
     'Bardo':{equipmentA:'Armadura de cuero, 2 dagas, un instrumento musical, paquete de artista y 19 po.',equipmentB:'90 po.',features:'Inspiración bárdica (d6; usos iguales al modificador de Carisma, mínimo 1); Lanzamiento de conjuros.',tool:'Elige 3 instrumentos musicales.',weaponCount:0,cantrips:2,spells:4,slots:2,spellbook:0,specialLabel:'Instrumentos musicales',specialOptions:[]},
     'Brujo':{equipmentA:'Armadura de cuero, hoz, 2 dagas, canalizador arcano (orbe), libro de conocimiento oculto, paquete de erudito y 15 po.',equipmentB:'100 po.',features:'Invocaciones sobrenaturales (elige 1); Magia del pacto (2 trucos, 2 conjuros preparados y 1 espacio de nivel 1).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:2,spells:2,slots:1,spellbook:0,specialLabel:'Invocación sobrenatural',specialOptions:['Armadura de sombras','Mente sobrenatural','Pacto de la cadena','Pacto del filo','Pacto del grimorio']},
@@ -1258,6 +1286,21 @@
     if (cls === 'Explorador') return 12 + dex;
     if (cls === 'Bardo' || cls === 'Brujo' || cls === 'Pícaro') return 11 + dex;
     return 10 + dex;
+  }
+  function builderStartingACFormula(): string {
+    const cls=builderData.className, dex=builderData.classEquipmentChoice;
+    if(cls==='Bárbaro') return '10 + DES + CON (Defensa sin armadura)';
+    if(cls==='Monje') return '10 + DES + SAB (Defensa sin armadura)';
+    if(cls==='Brujo' && builderData.classSpecialChoice==='Armadura de sombras') return '13 + DES (Armadura de mago)';
+    if(builderData.classEquipmentChoice!=='A' && !(cls==='Guerrero' && dex==='B')) return '10 + DES (sin armadura)';
+    if(cls==='Clérigo') return '13 + DES (máx. +2) + escudo (camisa de malla)';
+    if(cls==='Druida') return '11 + DES + escudo (armadura de cuero)';
+    if(cls==='Paladín') return '16 + escudo (cota de malla)';
+    if(cls==='Guerrero' && dex==='A') return '16 (cota de malla)';
+    if(cls==='Guerrero' && dex==='B') return '12 + DES (cuero tachonado)';
+    if(cls==='Explorador') return '12 + DES (cuero tachonado)';
+    if(cls==='Bardo' || cls==='Brujo' || cls==='Pícaro') return '11 + DES (armadura de cuero)';
+    return '10 + DES (sin armadura)';
   }
   function builderModifier(score:number) { return Math.floor((score - 10) / 2); }
   function builderOriginFeatChoicesOk(feat:string,choices:string[],cantrips:string[],spell:string) {
@@ -1401,6 +1444,22 @@
     const proficiency=Math.max(2,getCharacterNumber(target,'COMBATE','Bonificador por competencia',2));
     const scores:Record<string,number>={};
     for(const ability of BUILDER_ABILITY_NAMES) scores[ability]=getCharacterNumber(target,'ATRIBUTOS',ability,10);
+    const armorFormula=getCharacterStat(target,'COMBATE','Fórmula de clase de armadura');
+    if(armorFormula) {
+      const dexMod=Math.floor((scores.Destreza-10)/2),conMod=Math.floor((scores.Constitución-10)/2),wisMod=Math.floor((scores.Sabiduría-10)/2);
+      let ac:number|null=null;
+      if(armorFormula.startsWith('10 + DES + CON')) ac=10+dexMod+conMod;
+      else if(armorFormula.startsWith('10 + DES + SAB')) ac=10+dexMod+wisMod;
+      else if(armorFormula.startsWith('13 + DES (máx. +2)')) ac=13+Math.min(2,dexMod)+2;
+      else if(armorFormula.startsWith('11 + DES + escudo')) ac=11+dexMod+2;
+      else if(armorFormula.startsWith('16 + escudo')) ac=18;
+      else if(armorFormula.startsWith('16 (cota de malla)')) ac=16;
+      else if(armorFormula.startsWith('12 + DES')) ac=12+dexMod;
+      else if(armorFormula.startsWith('13 + DES')) ac=13+dexMod;
+      else if(armorFormula.startsWith('11 + DES')) ac=11+dexMod;
+      else if(armorFormula.startsWith('10 + DES')) ac=10+dexMod;
+      if(ac!==null) setCharacterStat(target,'COMBATE','Clase de armadura',ac+' ('+armorFormula+')');
+    }
     const skillRaw=getCharacterStat(target,'COMPETENCIAS','Habilidades');
     const skillText=normalizeLevelText(skillRaw);
     const expertiseMatch=String(skillRaw).match(/pericia\s*:\s*([^\n;]+)/i);
@@ -1469,7 +1528,7 @@
     const classEquipment = b.classEquipmentChoice === 'B' ? classData.equipmentB : b.classEquipmentChoice === 'C' && b.className === 'Guerrero' ? '155 po.' : classData.equipmentA;
     const classEquipmentDetail = b.className === 'Bardo' && b.classEquipmentChoice === 'A' && b.classToolsChoices.length ? 'Instrumento incluido: ' + b.classToolsChoices[0] + '.' : '';
     const classChoices = [b.classSpecialChoice ? classData.specialLabel + ': ' + b.classSpecialChoice : '', b.weaponMasteries.length ? 'Maestrías con armas: ' + b.weaponMasteries.join(', ') : '', b.classToolsChoices.length ? 'Competencias de herramientas: ' + b.classToolsChoices.join(', ') : '', b.className === 'Brujo' && b.classSpecialChoice === 'Pacto del grimorio' ? 'Trucos del grimorio: ' + b.warlockTomeCantrips.join(', ') + '; rituales: ' + b.warlockTomeRituals.join(', ') : ''].filter(Boolean).join('\n');
-    const speciesChoices = [b.speciesChoice ? 'Elección de especie: ' + b.speciesChoice : '', ['Elfo','Gnomo','Tiefling'].includes(b.species) ? 'Aptitud mágica de linaje: ' + b.speciesMagicAbility : '', ['Aasimar','Humano','Tiefling'].includes(b.species) ? 'Tamaño: ' + b.speciesSize : ''].filter(Boolean).join('; ');
+    const speciesChoices = [b.speciesChoice ? 'Elección de especie: ' + b.speciesChoice : '',builderSpeciesChoiceDescription(b.species,b.speciesChoice), ['Elfo','Gnomo','Tiefling'].includes(b.species) ? 'Aptitud mágica de linaje: ' + b.speciesMagicAbility : '', ['Aasimar','Humano','Tiefling'].includes(b.species) ? 'Tamaño: ' + b.speciesSize : ''].filter(Boolean).join('; ');
     const speciesCantrips = b.species === 'Aasimar' ? ['Luz'] : b.species === 'Elfo' ? (b.speciesChoice === 'Alto elfo' ? ['Prestidigitación'] : b.speciesChoice === 'Drow' ? ['Luces danzantes'] : ['Saber druídico']) : b.species === 'Gnomo' ? (b.speciesChoice === 'Gnomo de las rocas' ? ['Prestidigitación','Reparar'] : ['Ilusión menor']) : b.species === 'Tiefling' ? ['Taumaturgia', b.speciesChoice === 'Abisal' ? 'Rociada venenosa' : b.speciesChoice === 'Ctónico' ? 'Toque helado' : 'Descarga de fuego'] : [];
     const features = [classData.features, classChoices, BUILDER_SPECIES_TRAITS[b.species] || '', speciesChoices, b.traits].filter(Boolean).join('\n');
     const general = (name:string, values:string[]) => ({
@@ -1479,7 +1538,7 @@
     const pairs = [
       general('PERSONAJE',['Nombre','Clase','Subclase','Nivel','Especie','Trasfondo','Alineamiento','Experiencia','Jugador']),
       general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
-      general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones']),
+      general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
       general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas']),
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie']),
@@ -1497,12 +1556,12 @@
     const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
     put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
     BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(finalAbilities[a])+' ('+mod(Number(finalAbilities[a]))+')'));
-    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,String(Math.max(1,hp))+' PG'); put(2,2,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,3,String(builderStartingAC())+' (según equipo inicial y rasgos)'); put(2,4,(builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0) >= 0 ? '+' : '') + (builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0))); put(2,5,(b.species === 'Goliat' || (b.species === 'Elfo' && b.speciesChoice === 'Elfo de los bosques') ? '35 pies' : '30 pies')); put(2,6,proficiency); put(2,7,BUILDER_SAVES[b.className] || '—');
+    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,String(Math.max(1,hp))+' PG'); put(2,2,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,3,String(builderStartingAC())+' (según equipo inicial y rasgos)'); put(2,8,builderStartingACFormula()); put(2,4,(builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0) >= 0 ? '+' : '') + (builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0))); put(2,5,(b.species === 'Goliat' || (b.species === 'Elfo' && b.speciesChoice === 'Elfo de los bosques') ? '35 pies' : '30 pies')); put(2,6,proficiency); put(2,7,BUILDER_SAVES[b.className] || '—');
     const allFeatChoices = [...b.backgroundFeatChoices, ...(b.species === 'Humano' ? b.speciesFeatChoices : [])];
     const featSkills = allFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice));
     const featTools = allFeatChoices.filter(choice => !BUILDER_SKILL_OPTIONS.includes(choice));
     put(3,0,[...BUILDER_BACKGROUND_DATA[b.background].skills, ...b.classSkillChoices.filter(Boolean), b.speciesSkill, ...featSkills, b.skills, b.classExpertise.length ? 'Pericia: ' + b.classExpertise.join(', ') : ''].filter(Boolean).join('; ')); put(3,1,[BUILDER_BACKGROUND_DATA[b.background].tool.replace(/ a elección|Un tipo de /g,''), b.backgroundToolChoice, classData.tool, ...b.classToolsChoices, ...featTools, b.tools].filter(x=>x && x !== 'Ninguna competencia con herramientas de clase.').join('; ') || '—'); put(3,2,BUILDER_ARMOR[b.className] || 'Según clase'); put(3,3,BUILDER_WEAPON_PROFICIENCIES[b.className] || 'Consultar clase'); put(3,4,['Común',...b.languages,b.className === 'Pícaro' ? 'Jerga de ladrones' : '',b.className === 'Pícaro' ? b.rogueLanguage : '', b.className === 'Druida' ? 'Druídico' : ''].filter(Boolean).join('; '));
-    put(4,0,features); put(4,1,BUILDER_SPECIES_TRAITS[b.species] || ''); put(4,2,[b.feat, b.backgroundFeatChoices.length ? 'Opciones de dote: ' + b.backgroundFeatChoices.join(', ') : '', builderMagicInitiateClass(b.feat) ? 'Iniciado en la magia (' + builderMagicInitiateClass(b.feat) + '): trucos ' + b.backgroundMagicCantrips.join(', ') + '; conjuro ' + b.backgroundMagicSpell + '; aptitud ' + b.backgroundMagicAbility : '', b.species === 'Humano' ? 'Dote adicional: ' + b.speciesExtraFeat : '', b.speciesFeatChoices.length ? 'Opciones de dote adicional: ' + b.speciesFeatChoices.join(', ') : '', builderMagicInitiateClass(b.speciesExtraFeat) && b.species === 'Humano' ? 'Iniciado en la magia adicional: trucos ' + b.speciesMagicCantrips.join(', ') + '; conjuro ' + b.speciesMagicSpell + '; aptitud ' + b.speciesFeatMagicAbility : ''].filter(Boolean).join('; ')); put(4,3,b.traits || '—');
+    put(4,0,features); put(4,1,[BUILDER_SPECIES_TRAITS[b.species] || '',builderSpeciesChoiceDescription(b.species,b.speciesChoice)].filter(Boolean).join('\n\n')); put(4,2,[b.feat, b.backgroundFeatChoices.length ? 'Opciones de dote: ' + b.backgroundFeatChoices.join(', ') : '', builderMagicInitiateClass(b.feat) ? 'Iniciado en la magia (' + builderMagicInitiateClass(b.feat) + '): trucos ' + b.backgroundMagicCantrips.join(', ') + '; conjuro ' + b.backgroundMagicSpell + '; aptitud ' + b.backgroundMagicAbility : '', b.species === 'Humano' ? 'Dote adicional: ' + b.speciesExtraFeat : '', b.speciesFeatChoices.length ? 'Opciones de dote adicional: ' + b.speciesFeatChoices.join(', ') : '', builderMagicInitiateClass(b.speciesExtraFeat) && b.species === 'Humano' ? 'Iniciado en la magia adicional: trucos ' + b.speciesMagicCantrips.join(', ') + '; conjuro ' + b.speciesMagicSpell + '; aptitud ' + b.speciesFeatMagicAbility : ''].filter(Boolean).join('; ')); put(4,3,b.traits || '—');
     const magicAbility = BUILDER_MAGIC_ABILITY[b.className]; const magicMod = magicAbility ? builderModifier(Number(finalAbilities[magicAbility])) : 0; const classLevelOne = (LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]; const classResources = classLevelOne?.resources || {}; const classSlots = Object.entries(classResources).filter(([key,value]:any)=>/^Espacios nivel|^Espacios de conjuro$|^Nivel de los espacios$/.test(key) && value && value!=='—').map(([key,value]:any)=>key+': '+value).join(' · '); put(5,0,magicAbility || 'No tiene lanzamiento de conjuros a nivel 1'); put(5,1,magicAbility ? String(8 + magicMod + 2) : '—'); put(5,2,magicAbility ? (magicMod >= 0 ? '+' : '') + (magicMod + 2) : '—'); put(5,3,[...b.selectedCantrips, ...speciesCantrips, ...b.backgroundMagicCantrips, ...(b.species === 'Humano' ? b.speciesMagicCantrips : []), ...b.warlockTomeCantrips].join(', ') || (classData.cantrips ? 'Faltan por elegir ' + classData.cantrips + ' trucos' : 'No obtiene trucos de clase a nivel 1')); put(5,4,(b.className === 'Mago' ? 'Libro: ' + b.wizardSpellbook.join(', ') + '. Preparados: ' : '') + ([...b.selectedSpells, b.backgroundMagicSpell, ...(b.species === 'Humano' ? [b.speciesMagicSpell] : []), ...(b.className === 'Explorador' ? ['Marca del cazador (siempre preparado)'] : []), ...(b.species === 'Gnomo' && b.speciesChoice === 'Gnomo de los bosques' ? ['Hablar con los animales (siempre preparado)'] : []), ...(b.className === 'Brujo' && b.classSpecialChoice === 'Pacto del grimorio' ? b.warlockTomeRituals : []), ...(b.className === 'Brujo' && b.classSpecialChoice === 'Pacto de la cadena' ? ['Encontrar familiar (Pacto de la cadena)'] : [])].filter(Boolean).join(', ') || (classData.spells ? 'Faltan por elegir ' + classData.spells + ' conjuros' : 'No tiene conjuros de clase a nivel 1'))); put(5,5,classSlots || '—'); put(5,6,classResources['Trucos'] || '—'); put(5,7,classResources['Conjuros preparados'] || '—'); put(5,8,classSlots || '—');
     put(5,9,b.selectedCantrips.join(', ')); put(5,10,b.selectedSpells.join(', ')); put(5,11,b.className==='Mago'?b.wizardSpellbook.join(', '):''); put(5,12,''); put(5,13,b.species==='Aasimar'?'Carisma':(['Elfo','Gnomo','Tiefling'].includes(b.species)?b.speciesMagicAbility:''));
     const backgroundEquipmentText=b.backgroundEquipment==='B'?'50 po':BUILDER_BACKGROUND_DATA[b.background].equipmentA;
@@ -1520,7 +1579,7 @@
     put(backgroundIndex,4,b.backgroundEquipment==='B'?'50 po en lugar del paquete de equipo A':backgroundData.equipmentA);
     const speciesIndex=detailIndex('DETALLES DE ESPECIE');
     put(speciesIndex,0,[b.species,b.speciesChoice].filter(Boolean).join(' · '));
-    put(speciesIndex,1,BUILDER_SPECIES_TRAITS[b.species]||'—');
+    put(speciesIndex,1,[BUILDER_SPECIES_TRAITS[b.species]||'',builderSpeciesChoiceDescription(b.species,b.speciesChoice)].filter(Boolean).join('\n\n')||'—');
     put(speciesIndex,2,b.speciesSkill||'—');
     put(speciesIndex,3,[b.speciesMagicAbility,b.speciesMagicCantrips.join(', '),b.speciesMagicSpell,b.speciesFeatMagicAbility].filter(Boolean).join(' · ')||'—');
     put(speciesIndex,4,b.speciesSize||BUILDER_FIXED_SPECIES_SIZE[b.species]||'No indicado');
@@ -1826,8 +1885,9 @@ import SPELLS from './spells.json';
     const choiceParts=String(getCharacterStat(sheet,'DETALLES DE ESPECIE','Elección de especie')||'').split(/[·,]/).map(x=>x.trim()).filter(Boolean);
     const choice=choiceParts.length?choiceParts[choiceParts.length-1]:'';
     const result:{features:{name:string;description:string}[];spells:string[]}={features:[],spells:[]};
-    if(species==='Aasimar' && level===3) result.features.push({name:'Revelación celestial',description:'A partir del nivel 3, puedes transformarte como acción adicional durante 1 minuto. Elige Alas celestiales, Fulgor interior o Mortaja necrótica cada vez que te transformes. Una vez por turno, infliges daño adicional igual a tu bonificador por competencia: radiante con Alas celestiales o Fulgor interior, necrótico con Mortaja necrótica. Recuperas el uso tras un descanso largo.'});
+    if(species==='Aasimar' && level===3) result.features.push({name:'Revelación celestial',description:'A partir del nivel 3, como acción adicional te transformas durante 1 minuto o hasta que pongas fin a la transformación. Una vez por turno, cuando dañes a un objetivo con un ataque o conjuro, infliges daño adicional igual a tu bonificador por competencia: radiante con Alas celestiales o Fulgor interior, necrótico con Mortaja necrótica. Alas celestiales te da velocidad volando igual a tu velocidad; Fulgor interior emite luz y daña con luz radiante a criaturas cercanas al final de tus turnos; Mortaja necrótica puede asustar a criaturas cercanas con una salvación de Carisma. Recuperas el uso tras un descanso largo.'});
     if(species==='Dracónido' && level===5) result.features.push({name:'Vuelo dracónico',description:'A partir del nivel 5, como acción adicional haces brotar alas espectrales durante 10 minutos. Obtienes una velocidad volando igual a tu velocidad. El efecto termina si las repliegas o quedas incapacitado. Recuperas el uso tras un descanso largo.'});
+    if(species==='Dracónido' && [5,11,17].includes(level)) result.features.push({name:'Ataque de aliento · '+(level===5?'2d10':level===11?'3d10':'4d10'),description:'El daño del ataque de aliento aumenta a '+(level===5?'2d10':level===11?'3d10':'4d10')+' del tipo de tu linaje dracónico.'});
     if(species==='Goliat' && level===5) result.features.push({name:'Forma grande',description:'A partir del nivel 5, como acción adicional puedes cambiar a tamaño Grande durante 10 minutos si hay espacio suficiente. Mientras dure, tienes ventaja en las pruebas de Fuerza y tu velocidad aumenta 3 m. Recuperas el uso tras un descanso largo.'});
     if(species==='Elfo' && (level===3 || level===5)) {
       const spell=choice==='Alto elfo'?(level===3?'Detectar magia':'Paso brumoso'):choice==='Drow'?(level===3?'Fuego feérico':'Oscuridad'):(level===3?'Zancada prodigiosa':'Pasar sin rastro');
