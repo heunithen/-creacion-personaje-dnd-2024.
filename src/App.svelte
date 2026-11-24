@@ -2126,6 +2126,19 @@ import SPELLS from './spells.json';
     const value=parts.length===2?parts[0]/parts[1]:parts[0];
     return Boolean(typeLine) && Number.isFinite(value) && value<=maxChallengeRating && (allowFlight || !/\bFly\b/i.test(speedLine));
   }
+  function toggleLevelUpWeaponMastery(choice:string,event:Event,max:number) {
+    const input=event.currentTarget as HTMLInputElement;
+    const current=splitChoiceList(levelUpWeaponMasteries);
+    if(input.checked) {
+      if(current.length>=max) { input.checked=false; return; }
+      if(!current.some(value=>normalizeLevelText(value)===normalizeLevelText(choice))) {
+        levelUpWeaponMasteries=[...current,choice].join(', ');
+      }
+    } else {
+      levelUpWeaponMasteries=current.filter(value=>normalizeLevelText(value)!==normalizeLevelText(choice)).join(', ');
+    }
+  }
+
   function openLevelUp(entry: RoomEntry) {
     levelUpEntry = entry; levelUpDecision = '';
     levelUpClassCantrips=getCharacterStat(entry.sheet,'CONJUROS','Trucos de clase') || '';
@@ -2329,7 +2342,7 @@ import SPELLS from './spells.json';
     const targetMasteries=masteryResource?Number(masteryResource[1]):0;
     const masteryChoices=splitChoiceList(levelUpWeaponMasteries);
     const oldMasteryCount=splitChoiceList(getCharacterStat(original,'ATAQUES','Maestrías con armas')).length;
-    if(targetMasteries>oldMasteryCount && (masteryChoices.length!==targetMasteries || masteryChoices.some(name=>!BUILDER_WEAPON_MASTERY_OPTIONS.some((option:string)=>normalizeLevelText(option)===normalizeLevelText(name))))) { notice='Debes registrar exactamente '+targetMasteries+' maestrías con armas válidas.'; return; }
+    if(targetMasteries>oldMasteryCount && (masteryChoices.length!==targetMasteries || new Set(masteryChoices.map(name=>normalizeLevelText(name))).size!==targetMasteries || masteryChoices.some(name=>!BUILDER_WEAPON_MASTERY_OPTIONS.some((option:string)=>normalizeLevelText(option)===normalizeLevelText(name))) || splitChoiceList(getCharacterStat(original,'ATAQUES','Maestrías con armas')).some(old=>!masteryChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(old))))) { notice='Conserva tus maestrías anteriores y añade las nuevas hasta completar '+targetMasteries+'. No repitas armas.'; return; }
     if ((needsEpicFeat || (needsASI && levelUpAsiMode === 'feat')) && !levelUpFeat.trim()) { notice = 'Indica el nombre de la dote elegida.'; return; }
     if (needsASI && levelUpAsiMode === 'asi') {
       const inc1=Number(levelUpIncrease1), inc2=Number(levelUpIncrease2);
@@ -2823,7 +2836,11 @@ import SPELLS from './spells.json';
                 {/if}
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(feature.description)))}
-                <label>Nueva competencia en habilidad<input bind:value={levelUpNewSkill} placeholder="Elige una habilidad de la lista de tu clase" /></label>
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
+                  <label>Nueva competencia de Conocimiento primigenio<select bind:value={levelUpNewSkill}><option value="">Elige una habilidad nueva</option>{#each BUILDER_CLASS_SKILLS.Bárbaro.options.filter(skill=>!splitChoiceList(getCharacterStat(levelUpEntry.sheet,'COMPETENCIAS','Habilidades')).some(old=>normalizeLevelText(old)===normalizeLevelText(skill))) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+                {:else}
+                  <label>Nueva competencia en habilidad<input bind:value={levelUpNewSkill} placeholder="Elige una habilidad de la lista de tu clase" /></label>
+                {/if}
               {/if}
               {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia') || /ganas pericia/.test(normalizeLevelText(feature.description))) }
                 <label>Habilidades que obtienen Pericia (elige {getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia'))?'dos':'una'})<input bind:value={levelUpExpertise} placeholder="Habilidades en las que ya tienes competencia" /></label>
@@ -2869,7 +2886,11 @@ import SPELLS from './spells.json';
                 <label>{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?4:Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?6:8} formas de bestia conocidas (VD {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?'1/4':Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?'1/2':'1'} o inferior{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===8?', se permite vuelo':', sin vuelo'})<textarea bind:value={levelUpWildShapeForms} rows="2" placeholder="Introduce la lista completa de formas conocidas, separadas por comas" /></label>
               {/if}
               {#if Number(getNextLevelRow(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRow(levelUpEntry)?.resources?.['Maestrías con armas']) > splitChoiceList(getCharacterStat(levelUpEntry.sheet,'ATAQUES','Maestrías con armas')).length}
-                <label>Maestrías con armas (lista completa)<input bind:value={levelUpWeaponMasteries} placeholder="Escribe todas las maestrías, separadas por comas" /></label>
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
+                  <div class="builder-choice-wrapper"><strong>Maestrías con armas: conserva las anteriores y añade las nuevas</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Armas cuerpo a cuerpo sencillas o marciales</strong><span>{splitChoiceList(levelUpWeaponMasteries).length}/{Number(getNextLevelRow(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRow(levelUpEntry)?.resources?.['Maestrías con armas'])}</span></div><div class="builder-checkbox-grid">{#each BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>!['Arco corto','Ballesta ligera','Dardo','Honda','Arco largo','Ballesta de mano','Ballesta pesada','Cerbatana','Mosquete','Pistola'].includes(weapon)) as weapon}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon))} on:change={(event)=>toggleLevelUpWeaponMastery(weapon,event,Number(getNextLevelRow(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRow(levelUpEntry)?.resources?.['Maestrías con armas']))} disabled={!splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon)) && splitChoiceList(levelUpWeaponMasteries).length>=Number(getNextLevelRow(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRow(levelUpEntry)?.resources?.['Maestrías con armas'])} /><span>{weapon}</span></label>{/each}</div></div></div>
+                {:else}
+                  <label>Maestrías con armas (lista completa)<input bind:value={levelUpWeaponMasteries} placeholder="Escribe todas las maestrías, separadas por comas" /></label>
+                {/if}
               {/if}
               {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('mejora de característica')}
                 <label>Tipo de mejora<select bind:value={levelUpAsiMode}><option value="asi">Aumentar características</option><option value="feat">Elegir una dote</option></select></label>
@@ -3002,7 +3023,7 @@ import SPELLS from './spells.json';
                 <p>{BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')} reciben +1 cada una.</p>
               {/if}
               <div class="builder-info"><strong>Equipo del trasfondo</strong><p><b>A — Equipo:</b> {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA}</p><p><b>B — Oro:</b> 50 po en monedas; no recibes los objetos del paquete A.</p></div>
-              <div class="builder-choice-wrapper"><strong>Elige una opción de equipo del trasfondo</strong><label class="builder-checkbox"><input type="radio" name="background-equipment" value="A" bind:group={builderData.backgroundEquipment} /><span><b>A — Equipo completo:</b> {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA{'}'}</span></label><label class="builder-checkbox"><input type="radio" name="background-equipment" value="B" bind:group={builderData.backgroundEquipment} /><span><b>B — Oro:</b> 50 po; no recibes ninguno de los objetos del equipo A.</span></label></div>
+              <div class="builder-choice-wrapper"><strong>Elige una opción de equipo del trasfondo</strong><label class="builder-checkbox"><input type="radio" name="background-equipment" value="A" bind:group={builderData.backgroundEquipment} /><span><b>A — Equipo completo:</b> {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA}</span></label><label class="builder-checkbox"><input type="radio" name="background-equipment" value="B" bind:group={builderData.backgroundEquipment} /><span><b>B — Oro:</b> 50 po; no recibes ninguno de los objetos del equipo A.</span></label></div>
               <div class="builder-info"><small>Los aumentos se aplican automáticamente a las puntuaciones base y quedan reflejados en la ficha final.</small></div>
                         {:else if builderStep === 3}
 
@@ -3033,7 +3054,7 @@ import SPELLS from './spells.json';
               {/if}
               
               <div class="builder-info"><strong>Opciones de equipo inicial de {builderData.className}</strong><p><b>A — Equipo:</b> {BUILDER_CLASS_DATA[builderData.className].equipmentA}</p><p><b>B — {builderData.className === 'Guerrero' ? 'Equipo alternativo' : 'Oro'}:</b> {BUILDER_CLASS_DATA[builderData.className].equipmentB}{builderData.className === 'Guerrero' ? '' : '; recibes monedas en lugar del equipo A'}.</p>{#if builderData.className === 'Guerrero'}<p><b>C — Oro:</b> 155 po; no recibes los objetos de A ni B.</p>{/if}</div>
-              <div class="builder-choice-wrapper"><strong>Elige una opción de equipo de clase</strong><label class="builder-checkbox"><input type="radio" name="class-equipment" value="A" bind:group={builderData.classEquipmentChoice} /><span><b>A — Equipo inicial:</b> {BUILDER_CLASS_DATA[builderData.className].equipmentA{'}'}</span></label><label class="builder-checkbox"><input type="radio" name="class-equipment" value="B" bind:group={builderData.classEquipmentChoice} /><span><b>B — {builderData.className === 'Guerrero' ? 'Equipo alternativo' : 'Oro'}:</b> {BUILDER_CLASS_DATA[builderData.className].equipmentB{'}'}{builderData.className === 'Guerrero' ? '' : '; recibes estas monedas en lugar de los objetos del equipo A'}.</span></label>{#if builderData.className === 'Guerrero'}<label class="builder-checkbox"><input type="radio" name="class-equipment" value="C" bind:group={builderData.classEquipmentChoice} /><span><b>C — Oro:</b> 155 po; no recibes los objetos de A ni B.</span></label>{/if}</div>
+              <div class="builder-choice-wrapper"><strong>Elige una opción de equipo de clase</strong><label class="builder-checkbox"><input type="radio" name="class-equipment" value="A" bind:group={builderData.classEquipmentChoice} /><span><b>A — Equipo inicial:</b> {BUILDER_CLASS_DATA[builderData.className].equipmentA}</span></label><label class="builder-checkbox"><input type="radio" name="class-equipment" value="B" bind:group={builderData.classEquipmentChoice} /><span><b>B — {builderData.className === 'Guerrero' ? 'Equipo alternativo' : 'Oro'}:</b> {BUILDER_CLASS_DATA[builderData.className].equipmentB}{builderData.className === 'Guerrero' ? '' : '; recibes estas monedas en lugar de los objetos del equipo A'}.</span></label>{#if builderData.className === 'Guerrero'}<label class="builder-checkbox"><input type="radio" name="class-equipment" value="C" bind:group={builderData.classEquipmentChoice} /><span><b>C — Oro:</b> 155 po; no recibes los objetos de A ni B.</span></label>{/if}</div>
               {#if builderData.className === 'Brujo' && builderData.classSpecialChoice === 'Pacto del grimorio'}
                 <div class="builder-info"><strong>Pacto del grimorio</strong><p>Elige tres trucos y dos conjuros de nivel 1 con la etiqueta de ritual. Estos se añaden a los beneficios de tu invocación.</p></div>
                 <div class="builder-choice-wrapper"><strong>Trucos del grimorio</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Trucos del grimorio</strong><span>{builderData.warlockTomeCantrips.length}/{3}</span></div><div class="builder-checkbox-grid">{#each BUILDER_TOME_CANTRIPS.filter(spell => !builderData.selectedCantrips.includes(spell)) as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.warlockTomeCantrips.includes(spell)} on:change={(event) => builderToggleChoice('warlockTomeCantrips',spell,3,event)} disabled={!builderData.warlockTomeCantrips.includes(spell) && builderData.warlockTomeCantrips.length >= (3)} /><span>{spell}</span></label>{/each}</div></div></div>
