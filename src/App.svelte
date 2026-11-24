@@ -1073,7 +1073,7 @@
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
   const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
-  const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Matón de taberna','Músico','Sanador'];
+  const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Iniciado en la magia (Mago)','Matón de taberna','Músico','Sanador'];
   const BUILDER_BACKGROUND_TOOL_OPTIONS: Record<string,string[]> = {
     'Animador':['Chirimía','Cuerno','Dulcémele','Flauta','Flauta de pan','Gaita','Laúd','Lira','Tambor','Viola'],
     'Artesano':['Herramientas de albañil','Herramientas de alfarero','Herramientas de carpintero','Herramientas de curtidor','Herramientas de ebanista','Herramientas de herrero','Herramientas de manitas','Herramientas de tejedor'],
@@ -1310,12 +1310,14 @@
   }
   function builderCanFinish() {
     const cls = BUILDER_CLASS_DATA[builderData.className];
-    const skillsOk = builderData.classSkillChoices.filter(Boolean).length === BUILDER_CLASS_SKILLS[builderData.className].count;
+    const selectedClassSkills=builderData.classSkillChoices.filter(Boolean);
+    const allFeatSkillChoices=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_SKILL_OPTIONS.includes(choice));
+    const skillsOk = selectedClassSkills.length === BUILDER_CLASS_SKILLS[builderData.className].count && new Set(selectedClassSkills).size===selectedClassSkills.length && selectedClassSkills.every(skill=>BUILDER_CLASS_SKILLS[builderData.className].options.includes(skill) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && skill!==builderData.speciesSkill && !allFeatSkillChoices.includes(skill));
     const masteriesOk = builderData.weaponMasteries.length === cls.weaponCount;
     const expectedTools = builderData.className === 'Bardo' ? 3 : builderData.className === 'Monje' ? 1 : 0;
-    const classToolsOk = builderData.classToolsChoices.length === expectedTools;
+    const classToolsOk = builderData.classToolsChoices.length === expectedTools && new Set(builderData.classToolsChoices).size===builderData.classToolsChoices.length;
     const backgroundToolOk = !BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background] || Boolean(builderData.backgroundToolChoice);
-    const expertiseOk = builderData.className !== 'Pícaro' || (builderData.classExpertise.length === 2 && builderData.classExpertise.every(skill => [...BUILDER_BACKGROUND_DATA[builderData.background].skills,...builderData.classSkillChoices,builderData.speciesSkill,...builderData.backgroundFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice)),...builderData.speciesFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice))].includes(skill)));
+    const expertiseOk = builderData.className !== 'Pícaro' || (builderData.classExpertise.length === 2 && new Set(builderData.classExpertise).size===2 && builderData.classExpertise.every(skill => [...BUILDER_BACKGROUND_DATA[builderData.background].skills,...builderData.classSkillChoices,builderData.speciesSkill,...builderData.backgroundFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice)),...builderData.speciesFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice))].includes(skill)));
     const specialOk = cls.specialOptions.length === 0 || Boolean(builderData.classSpecialChoice);
     const bonusCantrip = (builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista') ? 1 : 0;
     const cantripsOk = builderData.selectedCantrips.length === cls.cantrips + bonusCantrip;
@@ -1329,11 +1331,11 @@
     const rolledOk = builderRolledScores.length === 6 && JSON.stringify(sortedAbilities) === JSON.stringify([...builderRolledScores].sort((a,b)=>b-a));
     const freeOk = BUILDER_ABILITY_NAMES.every(name => Number.isInteger(Number(builderData.abilities[name])) && Number(builderData.abilities[name]) >= 1 && Number(builderData.abilities[name]) <= 20);
     const abilitiesOk = builderData.method === 'standard' ? standardOk : builderData.method === 'pointBuy' ? pointBuyOk : builderData.method === 'rolled' ? rolledOk : builderData.method === 'free' ? freeOk : false;
-    const speciesChoiceOk = BUILDER_SPECIES_CHOICES[builderData.species].length === 0 || Boolean(builderData.speciesChoice);
-    const speciesSkillOk = !['Elfo','Humano'].includes(builderData.species) || (Boolean(builderData.speciesSkill) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(builderData.speciesSkill));
-    const speciesMagicAbilityOk = !['Elfo','Gnomo','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesMagicAbility);
+    const speciesChoiceOk = BUILDER_SPECIES_CHOICES[builderData.species].length === 0 || BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice);
+    const speciesSkillOk = !['Elfo','Humano'].includes(builderData.species) || (BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(builderData.speciesSkill) && !builderData.classSkillChoices.includes(builderData.speciesSkill));
+    const speciesMagicAbilityOk = !['Elfo','Gnomo','Tiefling'].includes(builderData.species) || ['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
     const speciesSizeOk = !['Aasimar','Humano','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesSize);
-    const languagesOk = builderData.languages.length === 2 && (builderData.className !== 'Pícaro' || (Boolean(builderData.rogueLanguage) && !builderData.languages.includes('Jerga de ladrones')));
+    const languagesOk = builderData.languages.length === 2 && new Set(builderData.languages).size===2 && builderData.languages.every(language=>BUILDER_STANDARD_LANGUAGES.includes(language)) && (builderData.className !== 'Pícaro' || (Boolean(builderData.rogueLanguage) && BUILDER_LANGUAGES.includes(builderData.rogueLanguage) && !builderData.languages.includes(builderData.rogueLanguage) && builderData.rogueLanguage!=='Jerga de ladrones'));
     const humanFeatOk = builderData.species !== 'Humano' || (Boolean(builderData.speciesExtraFeat) && builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell));
     const backgroundFeatOk = builderOriginFeatChoicesOk(BUILDER_BACKGROUND_DATA[builderData.background].feat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell);
     return skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && tomeOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && humanFeatOk && backgroundFeatOk && languagesOk;
