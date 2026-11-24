@@ -1517,7 +1517,7 @@ import SPELLS from './spells.json';
   const LEVEL_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
   const LEVEL_HIT_DIE: Record<string,number> = { 'Bárbaro':12,'Guerrero':10,'Paladín':10,'Explorador':10,'Bardo':8,'Brujo':8,'Clérigo':8,'Druida':8,'Monje':8,'Pícaro':8,'Hechicero':6,'Mago':6 };
   const LEVEL_FIXED_HP: Record<string,number> = { 'Bárbaro':7,'Guerrero':6,'Paladín':6,'Explorador':6,'Bardo':5,'Brujo':5,'Clérigo':5,'Druida':5,'Monje':5,'Pícaro':5,'Hechicero':4,'Mago':4 };
-  function normalizeLevelText(value: unknown) { return String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().trim(); }
+  function normalizeLevelText(value: unknown) { return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }
   function getCharacterNumber(target: RawSheet, sectionName: string, statName: string, fallback = 0): number {
     const raw = getCharacterStat(target,sectionName,statName);
     const match = String(raw).replace(/,/g,'.').match(/[0-9]+(?:[.][0-9]+)?/);
@@ -1727,6 +1727,10 @@ import SPELLS from './spells.json';
       const slotValues=castingTable.columns.map((column:string,index:number)=>({column,value:castingRow[index]})).filter((x:any)=>normalizeLevelText(x.column).startsWith('espacios nivel')&&x.value!=='—'&&Number(x.value)>0);
       setCharacterStat(updated,'CONJUROS','Lanzamiento de conjuros','Sí');
       setCharacterStat(updated,'CONJUROS','Aptitud mágica','Inteligencia');
+      const intelligenceMod=Math.floor((getCharacterNumber(updated,'ATRIBUTOS','Inteligencia',10)-10)/2);
+      const proficiencyBonus=Number(String(row.proficiency || '+2').replace('+','')) || 2;
+      setCharacterStat(updated,'CONJUROS','CD de salvación',8+intelligenceMod+proficiencyBonus);
+      setCharacterStat(updated,'CONJUROS','Ataque de conjuro',(intelligenceMod+proficiencyBonus>=0?'+':'')+(intelligenceMod+proficiencyBonus));
       setCharacterStat(updated,'CONJUROS','Lista de conjuros de subclase','Mago');
       setCharacterStat(updated,'CONJUROS','Conjuros preparados máximos',targetPrepared);
       setCharacterStat(updated,'CONJUROS','Espacios por nivel',slotValues.map((x:any)=>x.column.replace('Espacios ','')+': '+x.value).join(' · '));
