@@ -1531,6 +1531,12 @@ import SPELLS from './spells.json';
     if (pair.values?.stats?.[index]) pair.values.stats[index].value = value;
     else stats[index].value = value;
   }
+  function getNextLevelRow(entry: RoomEntry): any {
+    const className=getCharacterStat(entry.sheet,'PERSONAJE','Clase');
+    const current=Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel')) || 1;
+    return (LEVEL_PROGRESSION as any).classes?.[className]?.rows?.find((r:any)=>r.level===current+1);
+  }
+  function getNextLevelFeatures(entry: RoomEntry) { return getNextLevelRow(entry)?.features || 'Sin rasgos nuevos registrados'; }
   function openLevelUp(entry: RoomEntry) {
     levelUpEntry = entry; levelUpDecision = ''; levelUpSubclass = ''; levelUpAsiMode = 'asi';
     levelUpAbility1 = 'Fuerza'; levelUpAbility2 = 'Destreza'; levelUpIncrease1 = '2'; levelUpIncrease2 = '0';
@@ -1833,20 +1839,20 @@ import SPELLS from './spells.json';
           {#if levelUpEntry}
             <section class="level-up-panel">
               <div class="section-heading"><h2>Subir nivel · {levelUpEntry.sheet.name}</h2><span class="count">Nivel {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1}</span></div>
-              <p><strong>{getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}</strong> · {(LEVEL_PROGRESSION as any).classes?.[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]?.rows?.find((r:any)=>r.level===Number(getCharacterStat(levelUpEntry!.sheet,'PERSONAJE','Nivel'))+1)?.features || 'Sin rasgos nuevos registrados'}.</p>
+              <p><strong>{getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}</strong> · {getNextLevelFeatures(levelUpEntry)}.</p>
               <label>Método de puntos de golpe<select bind:value={levelUpHpMode}><option value="average">Valor fijo del manual</option><option value="roll">Tirar dado de golpe</option></select></label>
               {#if levelUpHpMode==='roll'}<label>Resultado del dado (1–{LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8})<input type="number" min="1" max={LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8} bind:value={levelUpHpRoll} /></label>{/if}
-              {#if (LEVEL_PROGRESSION as any).classes?.[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]?.rows?.find((r:any)=>r.level===Number(getCharacterStat(levelUpEntry!.sheet,'PERSONAJE','Nivel'))+1)?.features?.toLowerCase().includes('subclase de')}
+              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('subclase de')}
                 <label>Subclase elegida<input bind:value={levelUpSubclass} placeholder="Escribe la subclase elegida" /></label>
               {/if}
-              {#if (LEVEL_PROGRESSION as any).classes?.[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]?.rows?.find((r:any)=>r.level===Number(getCharacterStat(levelUpEntry!.sheet,'PERSONAJE','Nivel'))+1)?.features?.toLowerCase().includes('mejora de característica')}
+              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('mejora de característica')}
                 <label>Tipo de mejora<select bind:value={levelUpAsiMode}><option value="asi">Aumentar características</option><option value="feat">Elegir una dote</option></select></label>
                 {#if levelUpAsiMode==='asi'}
                   <div class="level-up-choice-grid"><label>Primera característica<select bind:value={levelUpAbility1}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease1}><option value="2">+2</option><option value="1">+1</option></select></label></div>
                   <div class="level-up-choice-grid"><label>Segunda característica<select bind:value={levelUpAbility2}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease2}><option value="0">No aplicar</option><option value="1">+1</option></select></label></div>
                 {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
               {/if}
-              {#if (LEVEL_PROGRESSION as any).classes?.[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]?.rows?.find((r:any)=>r.level===Number(getCharacterStat(levelUpEntry!.sheet,'PERSONAJE','Nivel'))+1)?.features?.toLowerCase().includes('don épico')}
+              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('don épico')}
                 <label>Don épico elegido<input bind:value={levelUpFeat} placeholder="Nombre del don épico" /></label>
               {/if}
               <label>Otras decisiones del rasgo (pericia, invocaciones, estilo de combate, conjuros, etc.)<textarea bind:value={levelUpDecision} rows="2" placeholder="Registra las elecciones realizadas para este nivel…" /></label>
