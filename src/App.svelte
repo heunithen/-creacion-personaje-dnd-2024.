@@ -1050,9 +1050,22 @@
     }
   }
 
-  async function saveSheet() {
+  async function exportSheet() {
     if (!sheet) return;
-    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+    const json = JSON.stringify(sheet, null, 2);
+    localStorage.setItem('forja-raw-character', json);
+    const safeName = (sheet.name || 'personaje')
+      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'personaje';
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = safeName + '.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     if (obrReady && obrRole === 'PLAYER') {
       try {
         const id = await OBR.player.getId();
@@ -1061,12 +1074,12 @@
         await OBR.broadcast.sendMessage(CHANNEL, {
           type: 'character-updated', playerId: id, playerName: name, character: sheet
         }, { destination: 'ALL' });
-        syncStatus = 'Ficha publicada en la sala.';
+        syncStatus = 'Ficha exportada y actualizada en la sala.';
       } catch {
-        syncStatus = 'No se pudo publicar la ficha en la sala.';
+        syncStatus = 'JSON exportado, pero no se pudo actualizar la ficha en la sala.';
       }
     }
-    notice = 'Ficha guardada.';
+    notice = 'Personaje exportado como ' + safeName + '.json';
   }
 
   async function deleteSheet() {
@@ -1335,7 +1348,7 @@
         </article>
 
         <section class="panel save-panel">
-          <button class="primary full" on:click={saveSheet}>Guardar cambios</button>
+          <button class="primary full" on:click={exportSheet}>Exportar personaje (JSON)</button>
           <button class="danger-text" on:click={deleteSheet}>Eliminar personaje</button>
         </section>
       {:else}
