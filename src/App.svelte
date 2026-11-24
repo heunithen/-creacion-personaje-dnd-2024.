@@ -754,6 +754,7 @@
   let levelUpInvocations = '';
   let levelUpMysticArcanum = '';
   let levelUpElementalFury = '';
+  let levelUpSorcererAffinity = '';
   let levelUpBlessedStrikes = '';
   let levelUpWizardMastery1 = '';
   let levelUpWizardMastery2 = '';
@@ -2185,6 +2186,7 @@ import SPELLS from './spells.json';
     levelUpInvocations=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Invocaciones sobrenaturales') || ((String(getCharacterStat(entry.sheet,'RASGOS Y DOTES','Rasgos de clase')||'').match(/Invocación sobrenatural:\s*([^\n]+)/i)||[])[1]||'');
     levelUpMysticArcanum=getCharacterStat(entry.sheet,'CONJUROS','Arcanum místico') || '';
     levelUpElementalFury=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opción de Furia elemental') || '';
+    levelUpSorcererAffinity=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Afinidad elemental dracónica') || '';
     levelUpBlessedStrikes=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Opción de Golpes benditos') || '';
     levelUpWizardMastery1=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 1') || '';
     levelUpWizardMastery2=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 2') || '';
@@ -2232,6 +2234,8 @@ import SPELLS from './spells.json';
     if (chosenSubclass && !subclass) { notice = 'La subclase guardada no coincide con las opciones del manual. Selecciónala nuevamente.'; return; }
 
     const subclassFeatures = subclass?.features?.filter((feature:any) => isNewSubclass ? feature.level <= nextLevel : feature.level === nextLevel) || [];
+    const needsDraconicAffinity=className==='Hechicero' && normalizeLevelText(chosenSubclass)==='hechiceria draconica' && nextLevel===6;
+    if(needsDraconicAffinity && !['Ácido','Frío','Fuego','Relámpago','Veneno'].includes(levelUpSorcererAffinity)) { notice='Elige el tipo de daño de tu Afinidad elemental dracónica.'; return; }
     const subclassSpellTables = subclass?.tables?.filter((table:any) => table.columns?.some((column:string) => normalizeLevelText(column).includes('conjuros'))) || [];
     if (subclassSpellTables.length > 1 && !subclassSpellTables.some((table:any)=>table.name===levelUpSubclassVariant)) { notice = 'Elige la opción de la subclase que corresponde a la tabla del manual.'; return; }
     const castingTable = subclassSpellTables.find((table:any)=>table.columns?.some((column:string)=>normalizeLevelText(column)==='conjuros preparados'));
@@ -2269,11 +2273,14 @@ import SPELLS from './spells.json';
     const oldClassPreparedCount=getCharacterNumber(original,'CONJUROS','Conjuros preparados máximos',0);
     const maxClassSpellLevel=highestSpellLevel(classSpellResourcesForLevel);
     const isWarlockSpellProgression=className==='Brujo' && nextLevel>=2;
+    const isSorcererSpellProgression=className==='Hechicero';
     const isClericCantripProgression=className==='Clérigo' && nextLevel>=2;
     const isDruidCantripProgression=className==='Druida' && nextLevel>=2;
-    if(classCastingAbility && Number.isFinite(classCantripTarget) && (classCantripTarget>oldClassCantripCount || isWarlockSpellProgression || isClericCantripProgression || isDruidCantripProgression) && classCantripNames.length!==classCantripTarget) { notice='Debes registrar la lista completa de '+classCantripTarget+' trucos de clase.'; return; }
-    if(classCastingAbility && Number.isFinite(classPreparedTarget) && (classPreparedTarget>oldClassPreparedCount || isWarlockSpellProgression) && classSpellNames.length!==classPreparedTarget) { notice='Debes registrar la lista completa de '+classPreparedTarget+' conjuros de clase preparados/conocidos.'; return; }
-    if(isWarlockSpellProgression && (new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length || new Set(classSpellNames.map(name=>normalizeLevelText(name))).size!==classSpellNames.length)) { notice='No puedes repetir trucos ni conjuros en la lista del brujo.'; return; }
+    if(classCastingAbility && Number.isFinite(classCantripTarget) && (classCantripTarget>oldClassCantripCount || isWarlockSpellProgression || isClericCantripProgression || isDruidCantripProgression || isSorcererSpellProgression) && classCantripNames.length!==classCantripTarget) { notice='Debes registrar la lista completa de '+classCantripTarget+' trucos de clase.'; return; }
+    if(classCastingAbility && Number.isFinite(classPreparedTarget) && (classPreparedTarget>oldClassPreparedCount || isWarlockSpellProgression || isSorcererSpellProgression) && classSpellNames.length!==classPreparedTarget) { notice='Debes registrar la lista completa de '+classPreparedTarget+' conjuros de clase preparados/conocidos.'; return; }
+    if((isWarlockSpellProgression || isSorcererSpellProgression) && (new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length || new Set(classSpellNames.map(name=>normalizeLevelText(name))).size!==classSpellNames.length)) { notice='No puedes repetir trucos ni conjuros en tu lista de clase.'; return; }
+    if(isSorcererSpellProgression && oldClassCantripNames.length && classCantripNames.filter(name=>oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassCantripNames.length-1) { notice='Al subir de nivel de hechicero solo puedes sustituir un truco que ya conozcas.'; return; }
+    if(isSorcererSpellProgression && oldClassSpellNames.length && classSpellNames.filter(name=>oldClassSpellNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassSpellNames.length-1) { notice='Al subir de nivel de hechicero solo puedes sustituir un conjuro preparado que ya conozcas.'; return; }
     if(isClericCantripProgression && new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length) { notice='No puedes repetir trucos en la lista del clérigo.'; return; }
     if(isClericCantripProgression && oldClassCantripNames.length && classCantripNames.filter(name=>oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassCantripNames.length-1) { notice='Al subir de nivel de clérigo puedes sustituir como máximo un truco que ya conozcas.'; return; }
     if(isDruidCantripProgression && new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length) { notice='No puedes repetir trucos en la lista del druida.'; return; }
@@ -2470,7 +2477,8 @@ import SPELLS from './spells.json';
     const alreadyTough=(originFeatText+' '+additionalFeatText).includes('duro');
     const gainsToughNow=normalizeLevelText(levelUpFeat)==='duro' && (needsEpicFeat || (needsASI && levelUpAsiMode==='feat')) && !alreadyTough;
     const toughBonus=alreadyTough?2:gainsToughNow?2*nextLevel:0;
-    hpGain=Math.max(1,hpGain+conMod+dwarfBonus+toughBonus);
+    const draconicHpBonus=className==='Hechicero' && normalizeLevelText(chosenSubclass)==='hechiceria draconica' ? (nextLevel===3?3:nextLevel>3?1:0) : 0;
+    hpGain=Math.max(1,hpGain+conMod+dwarfBonus+toughBonus+draconicHpBonus);
 
     const updated=JSON.parse(JSON.stringify(original)) as RawSheet;
     const oldHp=getCharacterNumber(updated,'COMBATE','Puntos de golpe máximos',0);
@@ -2483,6 +2491,13 @@ import SPELLS from './spells.json';
     setCharacterStat(updated,'COMBATE','Dados de golpe',oldHitDice+1+'d'+hitDie);
     setCharacterStat(updated,'COMBATE','Bonificador por competencia',row.proficiency);
     if (subclass) setCharacterStat(updated,'PERSONAJE','Subclase',subclass.key);
+    if(needsDraconicAffinity) setCharacterStat(updated,'RASGOS Y DOTES','Afinidad elemental dracónica',levelUpSorcererAffinity);
+    if(className==='Hechicero' && normalizeLevelText(chosenSubclass)==='hechiceria draconica' && nextLevel===3) {
+      const dexMod=Math.floor((getCharacterNumber(updated,'ATRIBUTOS','Destreza',10)-10)/2);
+      const chaMod=Math.floor((getCharacterNumber(updated,'ATRIBUTOS','Carisma',10)-10)/2);
+      setCharacterStat(updated,'COMBATE','Fórmula de clase de armadura','Resistencia dracónica: 10 + modificador de Destreza + modificador de Carisma (sin armadura)');
+      setCharacterStat(updated,'COMBATE','Clase de armadura',10+dexMod+chaMod);
+    }
     if (numericSubclassCasting && (className==='Guerrero'||className==='Pícaro')) setCharacterStat(updated,'CONJUROS','Aptitud mágica de subclase','Inteligencia');
     if (levelUpSubclassVariant) setCharacterStat(updated,'PERSONAJE','Opción de subclase',levelUpSubclassVariant);
 
@@ -2671,7 +2686,7 @@ import SPELLS from './spells.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsRangerStyle?' · Estilo de combate: '+levelUpRangerStyle:'')+(needsFighterStyle?' · Estilos de combate: '+fighterStyleChoices.join(', '):'')+(isRangerDruidicWarrior?' · Guerrero druídico: '+rangerCantripChoices.join(', '):'')+(needsHunterPrey?' · Cazador y presa: '+levelUpRangerHunterPrey:'')+(needsHunterDefense?' · Tácticas defensivas: '+levelUpRangerHunterDefense:'')+(needsRangerFeyGift?' · Bendición feérica: '+levelUpRangerFeyGift:'')+(needsRangerBeastCompanion?' · Compañero primigenio: '+levelUpRangerBeastProfile+' · '+levelUpRangerBeastAnimal:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsRangerStyle?' · Estilo de combate: '+levelUpRangerStyle:'')+(needsFighterStyle?' · Estilos de combate: '+fighterStyleChoices.join(', '):'')+(isRangerDruidicWarrior?' · Guerrero druídico: '+rangerCantripChoices.join(', '):'')+(needsHunterPrey?' · Cazador y presa: '+levelUpRangerHunterPrey:'')+(needsHunterDefense?' · Tácticas defensivas: '+levelUpRangerHunterDefense:'')+(needsRangerFeyGift?' · Bendición feérica: '+levelUpRangerFeyGift:'')+(needsRangerBeastCompanion?' · Compañero primigenio: '+levelUpRangerBeastProfile+' · '+levelUpRangerBeastAnimal:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsDraconicAffinity?' · Afinidad elemental: '+levelUpSorcererAffinity:'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -3049,8 +3064,15 @@ import SPELLS from './spells.json';
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===20}
                 <label>Conjuros característicos (dos conjuros de nivel 3 de tu libro)<input bind:value={levelUpWizardSignatureSpells} placeholder="Conjuro 1, Conjuro 2" /></label>
               {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero'}
+                <label>Trucos de hechicero conocidos (lista completa; puedes sustituir uno en cada subida)<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos tus trucos de hechicero, separados por comas" /></label>
+                <label>Conjuros de hechicero preparados (lista completa; puedes sustituir uno en cada subida)<textarea bind:value={levelUpClassSpells} rows="3" placeholder="Escribe todos tus conjuros preparados, separados por comas" /></label>
+              {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
                 <label>Opciones de metamagia (lista completa; puedes sustituir una al subir de nivel)<input bind:value={levelUpMetamagic} placeholder="Ej. Conjuro cuidadoso, Conjuro sutil" /></label>
+              {/if}
+              {#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='hechiceria draconica' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===6}
+                <label>Afinidad elemental dracónica<select bind:value={levelUpSorcererAffinity}><option value="">Elige un tipo de daño</option>{#each ['Ácido','Frío','Fuego','Relámpago','Veneno'] as damage}<option>{damage}</option>{/each}</select></label>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && [2,4,8].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
                 <label>{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?4:Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?6:8} formas de bestia conocidas (VD {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?'1/4':Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?'1/2':'1'} o inferior{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===8?', se permite vuelo':', sin vuelo'})<textarea bind:value={levelUpWildShapeForms} rows="2" placeholder="Introduce la lista completa de formas conocidas, separadas por comas" /></label>
