@@ -758,6 +758,8 @@
   let levelUpSubclassSkill = '';
   let levelUpSubclassTool = '';
   let levelUpManeuvers = '';
+  let levelUpWizardSchoolSpells = '';
+  let levelUpWizardIllusionCantrip = '';
   let levelUpWildShapeForms = '';
   let levelUpWeaponMasteries = '';
   let levelUpSubclass = '';
@@ -1694,6 +1696,7 @@
       getCharacterStat(target,'CONJUROS','Conjuros de trasfondo'),
       getCharacterStat(target,'CONJUROS','Conjuros de dote'),
       getCharacterStat(target,'CONJUROS','Arcanum místico'),
+      getCharacterStat(target,'CONJUROS','Conjuros de escuela'),
       getCharacterStat(target,'CONJUROS','Maestría sobre conjuros nivel 1'),
       getCharacterStat(target,'CONJUROS','Maestría sobre conjuros nivel 2'),
       getCharacterStat(target,'CONJUROS','Conjuros característicos'),
@@ -1733,7 +1736,7 @@
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
       general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia','Invocaciones sobrenaturales','Detalles de invocaciones','Maniobras de maestro del combate']),
-      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Arcanum místico','Opción de Furia elemental','Opción de Golpes benditos','Maestría sobre conjuros nivel 1','Maestría sobre conjuros nivel 2','Conjuros característicos']),
+      general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Arcanum místico','Conjuros de escuela','Opción de Furia elemental','Opción de Golpes benditos','Maestría sobre conjuros nivel 1','Maestría sobre conjuros nivel 2','Conjuros característicos']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
       general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})]),
@@ -2139,6 +2142,8 @@ import SPELLS from './spells.json';
     levelUpWizardMastery2=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 2') || '';
     levelUpWizardSignatureSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros característicos') || '';
     levelUpSubclassSkill=''; levelUpSubclassTool=''; levelUpManeuvers=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Maniobras de maestro del combate') || '';
+    levelUpWizardSchoolSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros de escuela') || '';
+    levelUpWizardIllusionCantrip='';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
@@ -2274,7 +2279,7 @@ import SPELLS from './spells.json';
     if(needsElementalFury && !['Golpe primordial','Lanzamiento potente'].includes(levelUpElementalFury)) { notice='Elige Golpe primordial o Lanzamiento potente para Furia elemental.'; return; }
     const needsBlessedStrikes=className==='Clérigo' && nextLevel===7;
     if(needsBlessedStrikes && !['Golpe divino','Lanzamiento potente'].includes(levelUpBlessedStrikes)) { notice='Elige Golpe divino o Lanzamiento potente para Golpes benditos.'; return; }
-    const wizardBookForChoices=[...splitChoiceList(getCharacterStat(original,'CONJUROS','Libro de conjuros')),...splitChoiceList(levelUpWizardBookAdditions)];
+    const wizardBookForChoices=[...splitChoiceList(getCharacterStat(original,'CONJUROS','Libro de conjuros')),...splitChoiceList(levelUpWizardBookAdditions),...splitChoiceList(levelUpWizardSchoolSpells)];
     const validWizardBookSpell=(name:string,level:number,actionOnly:boolean=false)=>{
       const spell=getSpellRecord(name);
       return Boolean(spell && spell.level===level && spell.classes.some((value:string)=>normalizeLevelText(value)==='mago') && (!actionOnly || normalizeLevelText(spell.castingTime)==='accion'));
