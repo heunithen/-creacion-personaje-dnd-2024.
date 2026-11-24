@@ -2230,11 +2230,17 @@ import SPELLS from './spells.json';
     const classPreparedTarget=Number(classSpellResourcesForLevel['Conjuros preparados']);
     const classCantripNames=splitChoiceList(levelUpClassCantrips);
     const classSpellNames=splitChoiceList(levelUpClassSpells);
-    const oldClassCantripCount=splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos de clase')).length || getCharacterNumber(original,'CONJUROS','Trucos máximos',0);
+    const oldClassCantripNames=splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos de clase'));
+    const oldClassSpellNames=splitChoiceList(getCharacterStat(original,'CONJUROS','Conjuros preparados de clase'));
+    const oldClassCantripCount=oldClassCantripNames.length || getCharacterNumber(original,'CONJUROS','Trucos máximos',0);
     const oldClassPreparedCount=getCharacterNumber(original,'CONJUROS','Conjuros preparados máximos',0);
     const maxClassSpellLevel=highestSpellLevel(classSpellResourcesForLevel);
-    if(classCastingAbility && Number.isFinite(classCantripTarget) && classCantripTarget>oldClassCantripCount && classCantripNames.length!==classCantripTarget) { notice='Debes registrar los '+classCantripTarget+' trucos de clase que conoces, separados por comas.'; return; }
-    if(classCastingAbility && Number.isFinite(classPreparedTarget) && classPreparedTarget>oldClassPreparedCount && classSpellNames.length!==classPreparedTarget) { notice='Debes registrar los '+classPreparedTarget+' conjuros de clase preparados/conocidos, separados por comas.'; return; }
+    const isWarlockSpellProgression=className==='Brujo' && nextLevel>=2;
+    if(classCastingAbility && Number.isFinite(classCantripTarget) && (classCantripTarget>oldClassCantripCount || isWarlockSpellProgression) && classCantripNames.length!==classCantripTarget) { notice='Debes registrar la lista completa de '+classCantripTarget+' trucos de clase.'; return; }
+    if(classCastingAbility && Number.isFinite(classPreparedTarget) && (classPreparedTarget>oldClassPreparedCount || isWarlockSpellProgression) && classSpellNames.length!==classPreparedTarget) { notice='Debes registrar la lista completa de '+classPreparedTarget+' conjuros de clase preparados/conocidos.'; return; }
+    if(isWarlockSpellProgression && (new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length || new Set(classSpellNames.map(name=>normalizeLevelText(name))).size!==classSpellNames.length)) { notice='No puedes repetir trucos ni conjuros en la lista del brujo.'; return; }
+    if(isWarlockSpellProgression && oldClassCantripNames.length && classCantripNames.filter(name=>oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassCantripNames.length-1) { notice='Al subir de nivel de brujo solo puedes sustituir un truco que ya conozcas.'; return; }
+    if(isWarlockSpellProgression && oldClassSpellNames.length && classSpellNames.filter(name=>oldClassSpellNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassSpellNames.length-1) { notice='Al subir de nivel de brujo solo puedes sustituir un conjuro que ya conozcas.'; return; }
     if(classCastingAbility && classCantripNames.length && classCantripNames.some(name=>!isValidClassSpell(name,className,0,0))) { notice='Hay trucos que no pertenecen a la lista de '+className+'.'; return; }
     if(classCastingAbility && classSpellNames.length && classSpellNames.some(name=>!(className==='Bardo' && nextLevel>=10 ? Boolean(getSpellRecord(name)) && getSpellRecord(name)!.level<=maxClassSpellLevel : isValidClassSpell(name,className,maxClassSpellLevel)))) { notice='Hay conjuros que no pertenecen a la lista permitida o superan el nivel de espacio disponible.'; return; }
     const oldBookText=getCharacterStat(original,'CONJUROS','Libro de conjuros') || (String(getCharacterStat(original,'CONJUROS','Conjuros de nivel 1')).match(/Libro:\s*([^.]*)/i)||[])[1] || '';
@@ -2877,11 +2883,11 @@ import SPELLS from './spells.json';
                 <p class="muted">Los conjuros de dominio o círculo se incorporarán automáticamente desde la tabla de la subclase del manual.</p>
               {/if}
               {#if BUILDER_MAGIC_ABILITY[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]}
-                {#if Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Trucos']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Trucos máximos',0)}
-                  <label>Trucos de clase conocidos (lista completa)<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos los trucos de clase conocidos, separados por comas" /></label>
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Trucos']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Trucos máximos',0)}
+                  <label>Trucos de clase conocidos (lista completa){#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo'} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos los trucos de clase conocidos, separados por comas" /></label>
                 {/if}
-                {#if Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Conjuros preparados']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Conjuros preparados máximos',0)}
-                  <label>Conjuros de clase preparados/conocidos (lista completa)<textarea bind:value={levelUpClassSpells} rows="2" placeholder="Escribe la lista completa de conjuros de clase" /></label>
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Conjuros preparados']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Conjuros preparados máximos',0)}
+                  <label>Conjuros de clase preparados/conocidos (lista completa){#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo'} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassSpells} rows="2" placeholder="Escribe la lista completa de conjuros de clase" /></label>
                 {/if}
                 {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago'}
                   <label>Dos conjuros nuevos para el libro del mago<input bind:value={levelUpWizardBookAdditions} placeholder="Dos conjuros separados por comas" /></label>
