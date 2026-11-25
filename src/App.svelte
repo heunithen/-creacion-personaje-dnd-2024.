@@ -822,6 +822,30 @@
   }
   let masterTab = 'Personajes';
   const masterTabs = ['Personajes', 'Personajes guardados', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Estilo'];
+
+  function openMasterTab(tab: string) {
+    // Cada entrada a un catálogo comienza sin búsquedas ni filtros anteriores.
+    if (tab === 'Monstruos ordenados') {
+      monsterSearch = '';
+      monsterCrFilter = '';
+    } else if (tab === 'Objetos') {
+      itemSearch = '';
+      itemTypeFilter = '';
+      itemPriceMin = '';
+      itemPriceMax = '';
+      itemWeightMin = '';
+      itemWeightMax = '';
+    } else if (tab === 'Conjuros') {
+      spellSearch = '';
+      spellLevelFilter = '';
+      spellClassFilter = '';
+      spellSchoolFilter = '';
+    } else if (tab === 'Reglas') {
+      rulesSearch = '';
+      rulesCategoryFilter = 'Todas';
+    }
+    masterTab = tab;
+  }
   let githubConfig: GithubConfig | null = null;
   let githubStore: GithubCharacterStorage | null = null;
   let githubTokenDraft = '';
@@ -3847,7 +3871,7 @@ import ITEMS from './items.json';
     {#if obrRole === 'GM'}
       <nav class="master-tabs" role="tablist" aria-label="Herramientas del director">
         {#each masterTabs as tab}
-          <button class:active={masterTab === tab} role="tab" aria-selected={masterTab === tab} on:click={() => masterTab = tab}>{tab}</button>
+          <button class:active={masterTab === tab} role="tab" aria-selected={masterTab === tab} on:click={() => openMasterTab(tab)}>{tab}</button>
         {/each}
       </nav>
       {#if masterTab === 'Personajes'}
