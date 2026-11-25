@@ -302,7 +302,9 @@ try {
     app.includes('function builderCanFinish()') &&
     !app.includes('disabled={!builderCanFinish()}') &&
     app.includes('function finishBuilder()') &&
-    app.includes('Hay elecciones obligatorias incompletas') &&
+    app.includes('function builderMissingFields(): string[]') &&
+    app.includes('No se puede generar la ficha. Revisa estos campos:') &&
+    app.includes('Falta completar lo siguiente para avanzar:') &&
     app.includes('builderStep = 6') &&
     app.includes('builderPreviewTab') &&
     app.includes('visiblePairs(builderPreview.sections || [], builderPreviewTab)'),
