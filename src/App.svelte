@@ -4117,18 +4117,20 @@ import ITEMS from './items.json';
           </header>
 
           <section class="sheet-quick-stats nautical-quick-stats" aria-label="Características y estadísticas">
-            {#each playerAttributes(sheet.sections || []) as pair}
-              {#each pair.heading.stats || [] as stat, i}
-                <div class="attribute-plaque">
-                  <span>{stat.name || ''}</span>
-                  <strong>{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value) || '—'}</strong>
-                  <div class="saving-throw-line" class:proficient={savingThrowIsProficient(String(stat.name || ''), sheet.sections || [])}>
-                    <span>Salvación</span>
-                    <strong>{savingThrowBonus(String(stat.name || ''), sheet.sections || [])}</strong>
+            <div class="attribute-plaque-row">
+              {#each playerAttributes(sheet.sections || []) as pair}
+                {#each pair.heading.stats || [] as stat, i}
+                  <div class="attribute-plaque">
+                    <span>{stat.name || ''}</span>
+                    <strong>{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value) || '—'}</strong>
+                    <div class="saving-throw-line" class:proficient={savingThrowIsProficient(String(stat.name || ''), sheet.sections || [])}>
+                      <span>Salvación</span>
+                      <strong>{savingThrowBonus(String(stat.name || ''), sheet.sections || [])}</strong>
+                    </div>
                   </div>
-                </div>
+                {/each}
               {/each}
-            {/each}
+            </div>
             <div><span>Competencia</span><strong>{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
             <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
             <div class="hp-plaque"><span>Puntos de golpe</span><strong>{sheetValueByNames(sheet, ['Puntos de golpe actuales','PG actuales']) || '—'} / {sheetValueByNames(sheet, ['Puntos de golpe máximos','PG máximos']) || '—'}</strong></div>
@@ -4504,7 +4506,8 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats>div){flex:1 1 5rem;min-width:5rem;display:flex;flex-direction:column;justify-content:center;gap:.25rem;padding:.55rem .6rem;border:1px solid #28676b;border-radius:7px;background:linear-gradient(145deg,#12373c,#0b252b)}
   :global(.nautical-quick-stats>div>span){font-size:.61rem;color:#7fcac2;text-transform:uppercase;letter-spacing:.06em}
   :global(.nautical-quick-stats>div>strong){font-size:1rem;color:#f1fffc}
-  :global(.nautical-quick-stats .attribute-plaque){flex:1 1 5.4rem;min-height:4rem;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
+  :global(.nautical-quick-stats .attribute-plaque-row){display:grid;grid-column:1/-1;grid-template-columns:repeat(6,minmax(0,1fr));gap:.45rem;width:100%;min-width:0}
+  :global(.nautical-quick-stats .attribute-plaque){min-width:0;min-height:4rem;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
   :global(.nautical-quick-stats .attribute-plaque strong){font-size:1.25rem}
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line){display:flex;align-items:center;justify-content:center;gap:.25rem;margin-top:.1rem;padding-top:.25rem;border-top:1px solid #28676b;font:600 .58rem/1.2 system-ui,sans-serif}
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line span){color:#849b99}
