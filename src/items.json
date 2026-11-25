@@ -1120,105 +1120,105 @@
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Albañil",
+    "name": "Herramientas de albañil",
     "type": "Herramienta",
     "price": "10 po",
     "weight": "4 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Alfarero",
+    "name": "Herramientas de alfarero",
     "type": "Herramienta",
     "price": "10 po",
     "weight": "3 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Carpintero",
+    "name": "Herramientas de carpintero",
     "type": "Herramienta",
     "price": "8 po",
     "weight": "3 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Cartógrafo",
+    "name": "Herramientas de cartógrafo",
     "type": "Herramienta",
     "price": "15 po",
     "weight": "3 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Curtidor",
+    "name": "Herramientas de curtidor",
     "type": "Herramienta",
     "price": "5 po",
     "weight": "2,5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Ebanista",
+    "name": "Herramientas de ebanista",
     "type": "Herramienta",
     "price": "1 po",
     "weight": "2,5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Herrero",
+    "name": "Herramientas de herrero",
     "type": "Herramienta",
     "price": "20 po",
     "weight": "4 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Joyero",
+    "name": "Herramientas de joyero",
     "type": "Herramienta",
     "price": "25 po",
     "weight": "5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Manitas",
+    "name": "Herramientas de manitas",
     "type": "Herramienta",
     "price": "50 po",
     "weight": "5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Tejedor",
+    "name": "Herramientas de tejedor",
     "type": "Herramienta",
     "price": "1 po",
     "weight": "2,5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Zapatero",
+    "name": "Herramientas de zapatero",
     "type": "Herramienta",
     "price": "5 po",
     "weight": "2,5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Útiles De Cocinero",
+    "name": "Útiles de cocinero",
     "type": "Herramienta",
     "price": "1 po",
     "weight": "4 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Ladrón",
+    "name": "Herramientas de ladrón",
     "type": "Herramienta",
     "price": "25 po",
     "weight": "0,5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Herramientas De Navegante",
+    "name": "Herramientas de navegante",
     "type": "Herramienta",
     "price": "25 po",
     "weight": "variable",
     "source": "Manual del jugador"
   },
   {
-    "name": "Instrumento Musical",
+    "name": "Instrumento musical",
     "type": "Herramienta",
     "price": "variable",
     "weight": "variable",
@@ -1232,1057 +1232,1050 @@
     "source": "Manual del jugador"
   },
   {
-    "name": "Útiles De Envenenador",
+    "name": "Útiles de envenenador",
     "type": "Herramienta",
     "price": "50 po",
     "weight": "—",
     "source": "Manual del jugador"
   },
   {
-    "name": "Útiles De Herborista",
+    "name": "Útiles de herborista",
     "type": "Herramienta",
     "price": "5 po",
     "weight": "1,5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Útiles Para Disfrazarse",
+    "name": "Útiles para disfrazarse",
     "type": "Herramienta",
     "price": "25 po",
     "weight": "1,5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Útiles Para Falsificar",
+    "name": "Útiles para falsificar",
     "type": "Herramienta",
     "price": "15 po",
     "weight": "2,5 kg",
     "source": "Manual del jugador"
   },
   {
-    "name": "Abalorio De Nutrición",
+    "name": "Abalorio de nutrición",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Abalorio De Refrigerio",
+    "name": "Abalorio de refrigerio",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Abanico Del Viento",
+    "name": "Abanico del viento",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Aceite De Afilado",
+    "name": "Aceite de afilado",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Aceite De Etereidad",
+    "name": "Aceite de etereidad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Aceite Escurridizo",
+    "name": "Aceite escurridizo",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Agujero Portátil",
+    "name": "Agujero portátil",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Alas De Vuelo",
+    "name": "Alas de vuelo",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Alfombra Voladora",
+    "name": "Alfombra voladora",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Amuleto A Prueba De Detección Y Localización",
+    "name": "Amuleto a prueba de detección y localización",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Amuleto De La Esquirla Oscura",
+    "name": "Amuleto de la esquirla oscura",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Amuleto De Los Planos",
+    "name": "Amuleto de los planos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Amuleto De Relojería",
+    "name": "Amuleto de relojería",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Amuleto De Salud",
+    "name": "Amuleto de salud",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Almacenamiento De Conjuros",
+    "name": "Anillo de almacenamiento de conjuros",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Caída De Pluma",
+    "name": "Anillo de caída de pluma",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Calidez",
+    "name": "Anillo de calidez",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Caminar Sobre Las Aguas",
+    "name": "Anillo de caminar sobre las aguas",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Comandar Elementales",
+    "name": "Anillo de comandar elementales",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Escudo Mental",
+    "name": "Anillo de escudo mental",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Estrellas Fugaces",
+    "name": "Anillo de estrellas fugaces",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Evasión",
+    "name": "Anillo de evasión",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Influencia Animal",
+    "name": "Anillo de influencia animal",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Invisibilidad",
+    "name": "Anillo de invisibilidad",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Invocar Djinns",
+    "name": "Anillo de invocar djinns",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Libertad De Acción",
+    "name": "Anillo de libertad de acción",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Los Tres Deseos",
+    "name": "Anillo de los tres deseos",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Natación",
+    "name": "Anillo de natación",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Protección",
+    "name": "Anillo de protección",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Regeneración",
+    "name": "Anillo de regeneración",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Resistencia",
+    "name": "Anillo de resistencia",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Retorno De Conjuros",
+    "name": "Anillo de retorno de conjuros",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Salto",
+    "name": "Anillo de salto",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Telequinesis",
+    "name": "Anillo de telequinesis",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo De Visión De Rayos X",
+    "name": "Anillo de visión de rayos x",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anillo Del Carnero",
+    "name": "Anillo del carnero",
     "type": "Anillo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anteojos De Encantamiento",
+    "name": "Anteojos de encantamiento",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anteojos De La Noche",
+    "name": "Anteojos de la noche",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anteojos De Visión Minuciosa",
+    "name": "Anteojos de visión minuciosa",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Anteojos De Vista De Águila",
+    "name": "Anteojos de vista de águila",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Aparato De Kwalish",
+    "name": "Aparato de Kwalish",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Arco De Energía",
+    "name": "Arco de energía",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Arco Juramentado",
+    "name": "Arco juramentado",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Arma +1, +2 O +3",
+    "name": "Arma +1, +2 o +3",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Arma Adamantina",
+    "name": "Arma adamantina",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Arma De Advertencia",
+    "name": "Arma de advertencia",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Arma De Plata",
+    "name": "Arma de plata",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Arma Feroz",
+    "name": "Arma feroz",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Arma Lanzaconjuro",
+    "name": "Arma lanzaconjuro",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura +1, +2 O +3",
+    "name": "Armadura +1, +2 o +3",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura Adamantina",
+    "name": "Armadura adamantina",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Invulnerabilidad",
+    "name": "Armadura de invulnerabilidad",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Marinero",
+    "name": "Armadura de marinero",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Mithral",
+    "name": "Armadura de mithral",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Placas De Etereidad",
+    "name": "Armadura de placas de etereidad",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Placas Enana",
+    "name": "Armadura de placas enana",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Quita Y Pon",
+    "name": "Armadura de quita y pon",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Rescoldos",
+    "name": "Armadura de rescoldos",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Resistencia",
+    "name": "Armadura de resistencia",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura De Vulnerabilidad",
+    "name": "Armadura de vulnerabilidad",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura Demoníaca",
+    "name": "Armadura demoníaca",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura Lanzaconjuro",
+    "name": "Armadura lanzaconjuro",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Armadura Resplandeciente",
+    "name": "Armadura resplandeciente",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Babuchas De Trepar Cual Arácnido",
+    "name": "Babuchas de trepar cual arácnido",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bandas De Hierro De Bilarro",
+    "name": "Bandas de hierro de Bilarro",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Baraja De Ilusiones",
+    "name": "Baraja de ilusiones",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Baraja De Múltiples Cosas",
+    "name": "Baraja de múltiples cosas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Avatar De La Muerte",
-    "type": "Objeto maravilloso",
-    "price": "—",
-    "weight": "—",
-    "source": "Guía del Dungeon Master"
-  },
-  {
-    "name": "Bastón De Acróbata",
+    "name": "Bastón de acróbata",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Curación",
+    "name": "Bastón de curación",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Enjambre De Insectos",
+    "name": "Bastón de enjambre de insectos",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Escarcha",
+    "name": "Bastón de escarcha",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Fuego",
+    "name": "Bastón de fuego",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Impacto",
+    "name": "Bastón de impacto",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De La Pitón",
+    "name": "Bastón de la pitón",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De La Víbora",
+    "name": "Bastón de la víbora",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Las Flores",
+    "name": "Bastón de las flores",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Llamada De Ave",
+    "name": "Bastón de llamada de ave",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Los Bosques",
+    "name": "Bastón de los bosques",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Los Magos",
+    "name": "Bastón de los magos",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Marchitamiento",
+    "name": "Bastón de marchitamiento",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Poder",
+    "name": "Bastón de poder",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón De Truenos Y Relámpagos",
+    "name": "Bastón de truenos y relámpagos",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón Del Adorno",
+    "name": "Bastón del adorno",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón Del Cautivador",
+    "name": "Bastón del cautivador",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bastón Lanzaconjuro",
+    "name": "Bastón lanzaconjuro",
     "type": "Bastón",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bola De Cristal",
+    "name": "Bola de cristal",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bola De Cristal De Leer Mentes",
+    "name": "Bola de cristal de leer mentes",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bola De Cristal De Telepatía",
+    "name": "Bola de cristal de telepatía",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bola De Cristal De Visión Veraz",
+    "name": "Bola de cristal de visión veraz",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bolsa De Contención",
+    "name": "Bolsa de contención",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bolsa De Judías",
+    "name": "Bolsa de judías",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bolsa De Trucos",
+    "name": "Bolsa de trucos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bolsa Devoradora",
+    "name": "Bolsa devoradora",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botas Aladas",
+    "name": "Botas aladas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botas De Las Tierras Invernales",
+    "name": "Botas de las tierras invernales",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botas De Levitación",
+    "name": "Botas de levitación",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botas De Pista Falsa",
+    "name": "Botas de pista falsa",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botas De Velocidad",
+    "name": "Botas de velocidad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botas De Zancadas Y Brincos",
+    "name": "Botas de zancadas y brincos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botas Élficas",
+    "name": "Botas élficas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Bote Plegable",
+    "name": "Bote plegable",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botella De Ifrit",
+    "name": "Botella de Ifrit",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Botella Siemprehumeante",
+    "name": "Botella siemprehumeante",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Brasero Para Controlar",
+    "name": "Brasero para controlar",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Brazales De Arquería",
+    "name": "Brazales de arquería",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Brazales De Defensa",
+    "name": "Brazales de defensa",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Broche Escudo",
+    "name": "Broche escudo",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Caldero De Renacimiento",
+    "name": "Caldero de renacimiento",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Canica De Fuerza",
+    "name": "Canica de fuerza",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa Arácnida",
+    "name": "Capa arácnida",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa De Desplazamiento",
+    "name": "Capa de desplazamiento",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa De Invisibilidad",
+    "name": "Capa de invisibilidad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa De La Mantarraya",
+    "name": "Capa de la mantarraya",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa De Muchas Modas",
+    "name": "Capa de muchas modas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa De Murciélago",
+    "name": "Capa de murciélago",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa De Protección",
+    "name": "Capa de protección",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa Del Charlatán",
+    "name": "Capa del charlatán",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa Élfica",
+    "name": "Capa élfica",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Capa Ondulante",
+    "name": "Capa ondulante",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Carcaj De Ehlonna",
+    "name": "Carcaj de Ehlonna",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Carillón De Apertura",
+    "name": "Carillón de apertura",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cayado Del Veterano",
+    "name": "Cayado del veterano",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cerradura Engañosa",
+    "name": "Cerradura engañosa",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cetro De Mando",
+    "name": "Cetro de mando",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cetro De Poder Señorial",
+    "name": "Cetro de poder señorial",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cimitarra De Velocidad",
+    "name": "Cimitarra de velocidad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cinturón De Fuerza De Gigante",
+    "name": "Cinturón de fuerza de gigante",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cinturón Enano",
+    "name": "Cinturón enano",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Colgante De Inmunidad Al Veneno",
+    "name": "Colgante de inmunidad al veneno",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Collar De Adaptación",
+    "name": "Collar de adaptación",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Collar De Bolas De Fuego",
+    "name": "Collar de bolas de fuego",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Collar De Plegarias",
+    "name": "Collar de plegarias",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cota De Escamas De Dragón",
+    "name": "Cota de escamas de dragón",
     "type": "Armadura",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cubo De Fuerza",
+    "name": "Cubo de fuerza",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cubo De Invocación",
+    "name": "Cubo de invocación",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cuenco Para Controlar",
+    "name": "Cuenco para controlar",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cuerda De Escalada",
+    "name": "Cuerda de escalada",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cuerda Enredadora",
+    "name": "Cuerda enredadora",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cuerda Reparadora",
+    "name": "Cuerda reparadora",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cuerno De Alarma Silenciosa",
+    "name": "Cuerno de alarma silenciosa",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cuerno De Estallido",
+    "name": "Cuerno de estallido",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cuerno Del Valhalla",
+    "name": "Cuerno del valhalla",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Cuero Tachonado Encantado",
+    "name": "Cuero tachonado encantado",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Dado Del Embustero",
+    "name": "Dado del embustero",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Daga De La Ponzoña",
+    "name": "Daga de la ponzoña",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Decantador De Agua Interminable",
+    "name": "Decantador de agua interminable",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
@@ -2296,574 +2289,567 @@
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Demonomicón De Iggwilv",
+    "name": "Demonomicón de Iggwilv",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Diadema De Estallidos",
+    "name": "Diadema de estallidos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Diadema De Intelecto",
+    "name": "Diadema de intelecto",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Disolvente Universal",
+    "name": "Disolvente universal",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Elixir De Salud",
+    "name": "Elixir de salud",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escarabajo Protector",
+    "name": "Escarabajo protector",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escoba Danzante De Baba Yaga",
+    "name": "Escoba danzante de Baba Yaga",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escoba Voladora",
+    "name": "Escoba voladora",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escudo +1, +2 O +3",
+    "name": "Escudo +1, +2 o +3",
     "type": "Escudo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escudo Animado",
+    "name": "Escudo animado",
     "type": "Escudo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escudo Atrapaflechas",
+    "name": "Escudo atrapaflechas",
     "type": "Escudo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escudo Centinela",
+    "name": "Escudo centinela",
     "type": "Escudo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escudo De Atraer Proyectiles",
+    "name": "Escudo de atraer proyectiles",
     "type": "Escudo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escudo De Caballero",
+    "name": "Escudo de caballero",
     "type": "Escudo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escudo De Guarda Contra Conjuros",
+    "name": "Escudo de guarda contra conjuros",
     "type": "Escudo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Escudo Expresivo",
+    "name": "Escudo expresivo",
     "type": "Escudo",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Esfera De Aniquilación",
+    "name": "Esfera de aniquilación",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada Danzarina",
+    "name": "Espada danzarina",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada De Hoja Afilada",
+    "name": "Espada de hoja afilada",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada De Kas",
+    "name": "Espada de Kas",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada De La Respuesta",
+    "name": "Espada de la respuesta",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada De La Venganza",
+    "name": "Espada de la venganza",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada Hiriente",
+    "name": "Espada hiriente",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada Ladrona De Vida",
+    "name": "Espada ladrona de vida",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada Solar",
+    "name": "Espada solar",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada Tocada Por La Luna",
+    "name": "Espada tocada por la luna",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espada Vorpal",
+    "name": "Espada vorpal",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Espejo Atrapavidas",
+    "name": "Espejo atrapavidas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Estatuilla De Poder Maravilloso",
+    "name": "Estatuilla de poder maravilloso",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Mosca Gigante",
+    "name": "Ficha de pluma de Quaal",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Ficha De Pluma De Quaal",
+    "name": "Filo de la fortuna",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Filo De La Fortuna",
+    "name": "Filtro de amor",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Filtro De Amor",
+    "name": "Flauta de la aparición",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Flauta De La Aparición",
+    "name": "Flauta de las cloacas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Flauta De Las Cloacas",
+    "name": "Fortaleza instantánea de Daern",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Fortaleza Instantánea De Daern",
+    "name": "Frasco de hierro",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Frasco De Hierro",
+    "name": "Garra silvana",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Garra Silvana",
+    "name": "Garrote grande atronador",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Garrote Grande Atronador",
+    "name": "Gema de visión",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Gema De Visión",
+    "name": "Gema del resplandor",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Gema Del Resplandor",
+    "name": "Gema elemental",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Gema Elemental",
+    "name": "Globo flotante",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Globo Flotante",
+    "name": "Gorro de respirar bajo el agua",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Gorro De Respirar Bajo El Agua",
+    "name": "Grilletes dimensionales",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Grilletes Dimensionales",
+    "name": "Guanteletes de fuerza de ogro",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Guanteletes De Fuerza De Ogro",
+    "name": "Guantes atrapaflechas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Guantes Atrapaflechas",
+    "name": "Guantes de ladrón",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Guantes De Ladrón",
+    "name": "Guantes de natación y escalada",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Guantes De Natación Y Escalada",
-    "type": "Objeto maravilloso",
-    "price": "—",
-    "weight": "—",
-    "source": "Guía del Dungeon Master"
-  },
-  {
-    "name": "Hacha Berserker",
+    "name": "Hacha berserker",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Hacha De Los Señores Enanos",
+    "name": "Hacha de los señores enanos",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Hacha De Verdugo",
+    "name": "Hacha de verdugo",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Herraduras De Velocidad",
+    "name": "Herraduras de velocidad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Herraduras Del Céfiro",
+    "name": "Herraduras del céfiro",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Hierro De Escarcha",
+    "name": "Hierro de escarcha",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Hoja Lunar",
+    "name": "Hoja lunar",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Incensario De Controlar",
+    "name": "Incensario de controlar",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Instrumento De Ilusiones",
+    "name": "Instrumento de ilusiones",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Instrumento De Los Bardos",
+    "name": "Instrumento de los bardos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Instrumento De Transcripción",
+    "name": "Instrumento de transcripción",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Jabalina Del Relámpago",
+    "name": "Jabalina del relámpago",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Jarra De Sobriedad",
+    "name": "Jarra de sobriedad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Ladrona De Nueve Vidas",
+    "name": "Ladrona de nueve vidas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Laúd De Acometida Atronadora",
+    "name": "Laúd de acometida atronadora",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Lengua De Fuego",
+    "name": "Lengua de fuego",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Libro De Conjuros Imperecedero",
+    "name": "Libro de conjuros imperecedero",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Libro De La Oscuridad Vil",
+    "name": "Libro de la oscuridad vil",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Libro De Las Obras Elevadas",
+    "name": "Libro de las obras elevadas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Linterna De Revelación",
+    "name": "Linterna de revelación",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Llave Misteriosa",
+    "name": "Llave misteriosa",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Maceta Del Despertar",
+    "name": "Maceta del despertar",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Malla De Ifrit",
+    "name": "Malla de Ifrit",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Malla Élfica",
+    "name": "Malla élfica",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Manto De La Naturaleza",
+    "name": "Manto de la naturaleza",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Manto De Resistencia A Conjuros",
+    "name": "Manto de resistencia a conjuros",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Manual De Gólems",
+    "name": "Manual de gólems",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Manual De La Salud Corporal",
+    "name": "Manual de la salud corporal",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Manual De Rapidez De Acción",
+    "name": "Manual de rapidez de acción",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Manual Del Ejercicio Beneficioso",
+    "name": "Manual del ejercicio beneficioso",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Maravillosos Pigmentos De Nolzur",
+    "name": "Maravillosos pigmentos de Nolzur",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Martillo Arrojadizo Enano",
+    "name": "Martillo arrojadizo enano",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Martillo De Rayos",
+    "name": "Martillo de rayos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
@@ -2884,70 +2870,70 @@
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Maza Castigadora",
+    "name": "Maza castigadora",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Maza Del Terror",
+    "name": "Maza del terror",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Maza Disruptiva",
+    "name": "Maza disruptiva",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Medallón De Los Pensamientos",
+    "name": "Medallón de los pensamientos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Moneda De Rivalidad",
+    "name": "Moneda de rivalidad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Morral Práctico De Heward",
+    "name": "Morral práctico de Heward",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Munición +1, +2 O +3",
+    "name": "Munición +1, +2 o +3",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Munición Asesina",
+    "name": "Munición asesina",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Munición Poderosa",
+    "name": "Munición poderosa",
     "type": "Arma",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Muñeca Parlante",
+    "name": "Muñeca parlante",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
@@ -2961,21 +2947,21 @@
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Ojo De Bruja",
+    "name": "Ojo de bruja",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Ojo De Imitación",
+    "name": "Ojo de imitación",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Ojo Y Mano De Vecna",
+    "name": "Ojo y mano de Vecna",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
@@ -2989,91 +2975,91 @@
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Orbe De La Dirección",
+    "name": "Orbe de la dirección",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Orbe De Los Dragones",
+    "name": "Orbe de los dragones",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Orbe Del Tiempo",
+    "name": "Orbe del tiempo",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Pegamento Soberano",
+    "name": "Pegamento soberano",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Perfume Embelesador",
+    "name": "Perfume embelesador",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Pergamino De Conjuro",
+    "name": "Pergamino de conjuro",
     "type": "Pergamino",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Pergamino De Invocar Titán",
+    "name": "Pergamino de invocar titán",
     "type": "Pergamino",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Pergamino De Protección",
+    "name": "Pergamino de protección",
     "type": "Pergamino",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Perla De Poder",
+    "name": "Perla de poder",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Pértiga Contraíble",
+    "name": "Pértiga contraíble",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Pértiga De Pescar",
+    "name": "Pértiga de pescar",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Piedra De Controlar",
+    "name": "Piedra de controlar",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Piedra De La Buena Fortuna",
+    "name": "Piedra de la buena fortuna",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
@@ -3087,217 +3073,217 @@
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Piedras Mensajeras",
+    "name": "Piedras mensajeras",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Pipa De Monstruos De Humo",
+    "name": "Pipa de monstruos de humo",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Aliento De Fuego",
+    "name": "Poción de aliento de fuego",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Amistad Animal",
+    "name": "Poción de amistad animal",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Clarividencia",
+    "name": "Poción de clarividencia",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Crecimiento",
+    "name": "Poción de crecimiento",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Encoger",
+    "name": "Poción de encoger",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Entendimiento",
+    "name": "Poción de entendimiento",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Forma Gaseosa",
+    "name": "Poción de forma gaseosa",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Fuerza De Gigante",
+    "name": "Poción de fuerza de gigante",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Heroísmo",
+    "name": "Poción de heroísmo",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Invisibilidad",
+    "name": "Poción de invisibilidad",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Invisibilidad  Mejorada",
+    "name": "Poción de invisibilidad mejorada",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Invulnerabilidad",
+    "name": "Poción de invulnerabilidad",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Leer Mentes",
+    "name": "Poción de leer mentes",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Longevidad",
+    "name": "Poción de longevidad",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Pugilismo",
+    "name": "Poción de pugilismo",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Resistencia",
+    "name": "Poción de resistencia",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Respirar Bajo El Agua",
+    "name": "Poción de respirar bajo el agua",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Trepar",
+    "name": "Poción de trepar",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Velocidad",
+    "name": "Poción de velocidad",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Veneno",
+    "name": "Poción de veneno",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Vitalidad",
+    "name": "Poción de vitalidad",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Poción De Vuelo",
+    "name": "Poción de vuelo",
     "type": "Poción",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Polvo De Desaparición",
+    "name": "Polvo de desaparición",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Polvo De Estornudar Y Atragantarse",
+    "name": "Polvo de estornudar y atragantarse",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Polvo De Sequedad",
+    "name": "Polvo de sequedad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Portal Cúbico",
+    "name": "Portal cúbico",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Pozo De Los Muchos Mundos",
+    "name": "Pozo de los muchos mundos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Prótesis De Extremidad",
+    "name": "Prótesis de extremidad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Ropas De Remiendo",
+    "name": "Ropas de remiendo",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
@@ -3311,402 +3297,500 @@
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Silla De Monta Del Caballero",
+    "name": "Silla de monta del caballero",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Sombrero De Disfraz",
+    "name": "Sombrero de disfraz",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Sombrero De Hechicería",
+    "name": "Sombrero de hechicería",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Sombrero De Las Alimañas",
+    "name": "Sombrero de las alimañas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Sombrero De Múltiples Conjuros",
+    "name": "Sombrero de múltiples conjuros",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Tablero De Espiritismo",
+    "name": "Tablero de espiritismo",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Talismán De Cerrar Heridas",
+    "name": "Talismán de cerrar heridas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Talismán De La Esfera",
+    "name": "Talismán de la esfera",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Talismán De Salud",
+    "name": "Talismán de salud",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Talismán Del Bien Puro",
+    "name": "Talismán del bien puro",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Talismán Del Mal Definitivo",
+    "name": "Talismán del mal definitivo",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Tomo De Entendimiento",
+    "name": "Tomo de entendimiento",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Tomo De La Lengua Detenida",
+    "name": "Tomo de la lengua detenida",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Tomo De Liderazgo E Influencia",
+    "name": "Tomo de liderazgo e influencia",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Tomo De Pensamiento Claro",
+    "name": "Tomo de pensamiento claro",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Tridente De Comandar Peces",
+    "name": "Tridente de comandar peces",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Trompetilla De Escucha",
+    "name": "Trompetilla de escucha",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Túnica De Colores Hipnóticos",
+    "name": "Túnica de colores hipnóticos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Túnica De Las Estrellas",
+    "name": "Túnica de las estrellas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Túnica De Los Ojos",
+    "name": "Túnica de los ojos",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Túnica De Objetos Útiles",
+    "name": "Túnica de objetos útiles",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Túnica Del Archimago",
+    "name": "Túnica del archimago",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Ungüento De Keoghtom",
+    "name": "Ungüento de Keoghtom",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Útil Bolsita De Especias De Heward",
+    "name": "Útil bolsita de especias de Heward",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vara De La Absorción",
+    "name": "Vara de la absorción",
     "type": "Vara",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vara De La Alerta",
+    "name": "Vara de la alerta",
     "type": "Vara",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vara De La Resurrección",
+    "name": "Vara de la resurrección",
     "type": "Vara",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vara De La Seguridad",
+    "name": "Vara de la seguridad",
     "type": "Vara",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vara Del Pacto",
+    "name": "Vara del pacto",
     "type": "Vara",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vara De Tentáculos",
+    "name": "Vara de tentáculos",
     "type": "Vara",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vara Inamovible",
+    "name": "Vara inamovible",
     "type": "Vara",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Atadura",
+    "name": "Varita de atadura",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Bolas De Fuego",
+    "name": "Varita de bolas de fuego",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Detección Mágica",
+    "name": "Varita de detección mágica",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Detectar Enemigos",
+    "name": "Varita de detectar enemigos",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Dirección",
+    "name": "Varita de dirección",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Las Maravillas",
+    "name": "Varita de las maravillas",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita Del Mago De Guerra +1, +2 O +3",
+    "name": "Varita del mago de guerra +1, +2 o +3",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita Del Terror",
+    "name": "Varita del terror",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Orcus",
+    "name": "Varita de Orcus",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Parálisis",
+    "name": "Varita de parálisis",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Pirotecnia",
+    "name": "Varita de pirotecnia",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Polimorfar",
+    "name": "Varita de polimorfar",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Proyectiles Mágicos",
+    "name": "Varita de proyectiles mágicos",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Relámpagos",
+    "name": "Varita de relámpagos",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Secretos",
+    "name": "Varita de secretos",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Varita De Telaraña",
+    "name": "Varita de telaraña",
     "type": "Varita",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vasija Alquímica",
+    "name": "Vasija alquímica",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vela De Invocación",
+    "name": "Vela de invocación",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vela De La Profundidad",
+    "name": "Vela de la profundidad",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vendas De Poder Sin Armas",
+    "name": "Vendas de poder sin armas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Vengadora Sagrada",
+    "name": "Vengadora sagrada",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Yelmo De Entender Idiomas",
+    "name": "Yelmo de entender idiomas",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Yelmo De Fulgor",
+    "name": "Yelmo de fulgor",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Yelmo De Telepatía",
+    "name": "Yelmo de telepatía",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Yelmo De Teletransporte",
+    "name": "Yelmo de teletransporte",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
   },
   {
-    "name": "Yelmo Temible",
+    "name": "Yelmo temible",
     "type": "Objeto maravilloso",
     "price": "—",
     "weight": "—",
     "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Chirimía",
+    "type": "Instrumento musical",
+    "price": "2 po",
+    "weight": "0,5 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Cuerno (instrumento musical)",
+    "type": "Instrumento musical",
+    "price": "3 po",
+    "weight": "1 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Dulcémele",
+    "type": "Instrumento musical",
+    "price": "25 po",
+    "weight": "5 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Flauta",
+    "type": "Instrumento musical",
+    "price": "2 po",
+    "weight": "0,5 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Flauta de pan",
+    "type": "Instrumento musical",
+    "price": "12 po",
+    "weight": "1 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Gaita",
+    "type": "Instrumento musical",
+    "price": "30 po",
+    "weight": "3 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Laúd",
+    "type": "Instrumento musical",
+    "price": "35 po",
+    "weight": "1 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Lira",
+    "type": "Instrumento musical",
+    "price": "30 po",
+    "weight": "1 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Tambor",
+    "type": "Instrumento musical",
+    "price": "6 po",
+    "weight": "1,5 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Viola",
+    "type": "Instrumento musical",
+    "price": "30 po",
+    "weight": "0,5 kg",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Ajedrez dragón",
+    "type": "Juego",
+    "price": "1 po",
+    "weight": "—",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Apuesta de los tres dragones",
+    "type": "Juego",
+    "price": "1 po",
+    "weight": "—",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Dados",
+    "type": "Juego",
+    "price": "1 pp",
+    "weight": "—",
+    "source": "Manual del jugador"
+  },
+  {
+    "name": "Naipes",
+    "type": "Juego",
+    "price": "5 pp",
+    "weight": "—",
+    "source": "Manual del jugador"
   }
 ]
