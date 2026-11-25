@@ -5250,4 +5250,37 @@ import ITEMS from './items.json';
   .builder-checkbox:has(.builder-option-description)>span{font-weight:750;color:#30383b}
   .builder-option-description{grid-column:2;color:#626159;font:.68rem/1.4 system-ui,sans-serif;white-space:pre-wrap}
 
+  /* Las elecciones con checkbox/radio se presentan como tarjetas, sin casillas visibles */
+  .builder-checkbox-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.7rem!important}
+  .builder-checkbox{
+    position:relative!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+    gap:.45rem!important;min-width:0!important;min-height:92px!important;padding:.85rem 1rem!important;
+    border:1px solid #d4cbb9!important;border-left:4px solid #596267!important;border-radius:8px!important;
+    background:#fffdf8!important;color:#30312d!important;cursor:pointer!important;
+    box-shadow:0 2px 7px #332b1a0a!important;transition:border-color .15s,background .15s,box-shadow .15s!important
+  }
+  .builder-checkbox>input[type=checkbox],.builder-checkbox>input[type=radio]{
+    position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+    overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important
+  }
+  .builder-checkbox>span{display:block!important;padding-right:5.5rem!important;font-weight:750!important;color:#30383b!important;line-height:1.35!important}
+  .builder-checkbox>span b{color:#30383b!important}
+  .builder-checkbox::after{
+    content:'Seleccionar';position:absolute;top:.7rem;right:.7rem;padding:.18rem .42rem;
+    border:1px solid #d9d0c0;border-radius:4px;background:#f6f2e9;color:#777064;
+    font:600 .58rem/1.35 system-ui,sans-serif;letter-spacing:.02em
+  }
+  .builder-checkbox:has(input:checked){
+    border:2px solid #b18a45!important;border-left:5px solid #b18a45!important;background:#f5f0e4!important;
+    box-shadow:0 0 0 2px #b18a451c!important
+  }
+  .builder-checkbox:has(input:checked)::after{content:'Elegido';background:#30383b;color:#fff;border-color:#30383b}
+  .builder-checkbox:has(input:disabled):not(:has(input:checked)){opacity:.48!important;cursor:not-allowed!important;background:#f0eee9!important;box-shadow:none!important}
+  .builder-checkbox:has(input:focus-visible){outline:3px solid #b18a45!important;outline-offset:2px}
+  .builder-checkbox:has(.builder-option-description){display:flex!important;flex-direction:column!important;gap:.4rem!important}
+  .builder-checkbox:has(.builder-option-description)>span{padding-right:5.5rem!important;font-size:.9rem!important}
+  .builder-option-description{display:block!important;padding:0!important;color:#626159!important;font:.7rem/1.45 system-ui,sans-serif!important;white-space:pre-wrap!important}
+  .builder-checkbox-grid .builder-checkbox:has(.builder-option-description){min-height:150px!important}
+  @media(max-width:620px){.builder-checkbox-grid{grid-template-columns:1fr!important}.builder-checkbox{min-height:80px!important}}
+
 </style>
