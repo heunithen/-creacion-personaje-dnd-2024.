@@ -3465,7 +3465,7 @@ import ITEMS from './items.json';
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Habilidades','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Descripción', 'Notas'];
 
   function playerFeatureGroups(target: RawSheet) {
     const className = sheetClassName(target);
@@ -4753,23 +4753,44 @@ import ITEMS from './items.json';
             </section>
 
             <section class="nautical-actions">
-              <section class="sheet-section weapon-attacks-section">
-                <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
-                <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
-                <div class="weapon-attack-list">
-                  {#each playerWeaponAttacks(sheet) as weapon}
-                    <article class="weapon-attack-card">
-                      <h4>{weapon.name}</h4>
-                      <div class="weapon-attack-values">
-                        <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
-                        <div><span>Daño</span><button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button></div>
-                        <div><span>Alcance</span><strong>{weapon.range}</strong></div>
-                        <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
-                      </div>
-                    </article>
-                  {/each}
-                </div>
-              </section>
+                    {@const featureGroups = playerFeatureGroups(sheet)}
+                    <section class="sheet-section player-feature-section">
+                      <div class="sheet-section-title"><h3>Rasgos</h3></div>
+                      {#if featureGroups.traits.length}
+                        <div class="player-feature-list">
+                          {#each featureGroups.traits as feature, i}
+                            <details class="player-feature-card">
+                              <summary><span class="player-feature-name">{feature.name}</span><span class="player-feature-source">{feature.source}{#if feature.level} · Nivel {feature.level}{/if}</span></summary>
+                              {#if feature.description}<p>{feature.description}</p>{/if}
+                            </details>
+                          {/each}
+                        </div>
+                      {:else}<p class="muted nautical-empty">No hay rasgos registrados.</p>{/if}
+                    </section>
+                    <section class="sheet-section player-feat-section">
+                      <div class="sheet-section-title"><h3>Dotes</h3></div>
+                      {#if featureGroups.feats.length}
+                        <div class="player-feature-list">
+                          {#each featureGroups.feats as feat}
+                            <details class="player-feature-card">
+                              <summary><span class="player-feature-name">{feat.name}</span><span class="player-feature-source">Dote</span></summary>
+                              <p>{feat.description}</p>
+                            </details>
+                          {/each}
+                        </div>
+                      {:else}<p class="muted nautical-empty">No hay dotes registradas.</p>{/if}
+                    </section>
+                    {#each playerSheetPairs(playerSheetTab, sheet.sections || []).filter(pair=>!['RASGOS Y DOTES','DETALLES DE ESPECIE','PROGRESIÓN'].includes(String(pair.heading.name||'').toLocaleUpperCase())) as pair}
+                      <section class="sheet-section {sectionClass(pair.heading.name)}">
+                        <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
+                        <div class="stats-list">
+                          {#each pair.heading.stats || [] as stat, i}
+                            <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
+                          {/each}
+                        </div>
+                      </section>
+                    {/each}
+  
             </section>
 
             <section class="nautical-content">
@@ -4780,6 +4801,25 @@ import ITEMS from './items.json';
               </nav>
 
               <div class="nautical-tab-content">
+                {#if playerSheetTab === 'Acciones'}
+                  <section class="sheet-section weapon-attacks-section">
+                  <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
+                  <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
+                  <div class="weapon-attack-list">
+                  {#each playerWeaponAttacks(sheet) as weapon}
+                  <article class="weapon-attack-card">
+                  <h4>{weapon.name}</h4>
+                  <div class="weapon-attack-values">
+                  <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
+                  <div><span>Daño</span><button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button></div>
+                  <div><span>Alcance</span><strong>{weapon.range}</strong></div>
+                  <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
+                  </div>
+                  </article>
+                  {/each}
+                  </div>
+                  </section>
+                {/if}
                 {#if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
                     <div class="sheet-section-title"><h3>Lanzamiento de conjuros</h3></div>
@@ -4833,44 +4873,6 @@ import ITEMS from './items.json';
                     {/if}
                   </section>
                 {/if}
-                {#if playerSheetTab === 'Rasgos y competencias'}
-                  {@const featureGroups = playerFeatureGroups(sheet)}
-                  <section class="sheet-section player-feature-section">
-                    <div class="sheet-section-title"><h3>Rasgos</h3></div>
-                    {#if featureGroups.traits.length}
-                      <div class="player-feature-list">
-                        {#each featureGroups.traits as feature, i}
-                          <details class="player-feature-card">
-                            <summary><span class="player-feature-name">{feature.name}</span><span class="player-feature-source">{feature.source}{#if feature.level} · Nivel {feature.level}{/if}</span></summary>
-                            {#if feature.description}<p>{feature.description}</p>{/if}
-                          </details>
-                        {/each}
-                      </div>
-                    {:else}<p class="muted nautical-empty">No hay rasgos registrados.</p>{/if}
-                  </section>
-                  <section class="sheet-section player-feat-section">
-                    <div class="sheet-section-title"><h3>Dotes</h3></div>
-                    {#if featureGroups.feats.length}
-                      <div class="player-feature-list">
-                        {#each featureGroups.feats as feat}
-                          <details class="player-feature-card">
-                            <summary><span class="player-feature-name">{feat.name}</span><span class="player-feature-source">Dote</span></summary>
-                            <p>{feat.description}</p>
-                          </details>
-                        {/each}
-                      </div>
-                    {:else}<p class="muted nautical-empty">No hay dotes registradas.</p>{/if}
-                  </section>
-                  {#each playerSheetPairs(playerSheetTab, sheet.sections || []).filter(pair=>!['RASGOS Y DOTES','DETALLES DE ESPECIE','PROGRESIÓN'].includes(String(pair.heading.name||'').toLocaleUpperCase())) as pair}
-                    <section class="sheet-section {sectionClass(pair.heading.name)}">
-                      <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
-                      <div class="stats-list">
-                        {#each pair.heading.stats || [] as stat, i}
-                          <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
-                        {/each}
-                      </div>
-                    </section>
-                  {/each}
                 {:else if playerSheetTab !== 'Conjuros'}
                   {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
                     <section class="sheet-section {sectionClass(pair.heading.name)}">
