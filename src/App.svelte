@@ -5227,14 +5227,16 @@ import ITEMS from './items.json';
   :global(.rules-panel .rule-card),:global(.rules-panel .rule-description),:global(.rules-panel .rule-details),:global(.rules-panel .rule-source){color:#fff!important}
   :global(.rules-panel .rule-card){background:#13262e!important}
   :global(.rules-panel .rule-description){white-space:pre-wrap}
-  :global(.nautical-columns){container-type:inline-size;grid-template-columns:minmax(170px,.8fr) minmax(220px,1fr) minmax(260px,1.2fr)!important;gap:var(--gm-panel-gap)!important}
-  :global(.nautical-actions),:global(.nautical-content){min-width:0;max-height:calc(100vh - 14rem);overflow:auto;scrollbar-width:thin}
+  /* La hoja mantiene dos columnas superiores: habilidades y acciones.
+     El contenido con pestañas ocupa todo el ancho en una fila inferior. */
+  :global(.nautical-columns){container-type:inline-size;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;gap:var(--gm-panel-gap)!important;align-items:start}
+  :global(.nautical-skills),:global(.nautical-actions),:global(.nautical-content){min-width:0;max-height:none!important;height:auto!important;overflow:visible!important}
   :global(.nautical-actions){display:flex;flex-direction:column;gap:.5rem}
   :global(.nautical-actions .weapon-attacks-section){margin:0}
-  :global(.nautical-actions .action-heading){margin:0;padding:.65rem;border:1px solid #3fb8b8;border-radius:7px;background:#13262e}
+  :global(.nautical-actions .action-heading){margin:0;padding:.65rem;border:1px solid #3a6870;border-radius:7px;background:#13262e}
   :global(.nautical-actions .action-heading span){color:#b5bec3;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
-  @container (max-width:900px){:global(.nautical-columns){grid-template-columns:minmax(160px,.8fr) minmax(0,1fr)!important}:global(.nautical-content){grid-column:1/-1}}
-  @container (max-width:580px){:global(.nautical-columns){grid-template-columns:minmax(0,1fr)!important}:global(.nautical-content){grid-column:1}:global(.nautical-skills),:global(.nautical-actions),:global(.nautical-content){max-height:none}:global(.style-control-grid),:global(.style-control-grid fieldset){grid-template-columns:1fr}}
+  :global(.nautical-content){grid-column:1/-1}
+  @container (max-width:580px){:global(.nautical-columns){grid-template-columns:minmax(0,1fr)!important}:global(.nautical-content){grid-column:1}:global(.style-control-grid),:global(.style-control-grid fieldset){grid-template-columns:1fr}}
   /* Hoja de personaje: interfaz náutica en tres columnas */
   :global(.nautical-sheet){display:block!important;padding:0!important;overflow:hidden;background:#13262e!important;border:1px solid #3fb8b8!important;border-radius:12px!important;box-shadow:0 16px 40px #0b171d99!important;color:#ffffff!important}
   :global(.nautical-header){display:flex!important;align-items:center;gap:1rem;padding:1rem 1.2rem!important;margin:0!important;border:0!important;border-bottom:1px solid #3fb8b8!important;border-radius:0!important;background:linear-gradient(115deg,#13262e,#13262e 65%,#13262e)!important}
