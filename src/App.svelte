@@ -4263,7 +4263,7 @@ import ITEMS from './items.json';
                       <div><span>CD de salvación</span><strong>{sheetValueByNames(sheet, ['CD de salvación']) || '—'}</strong></div>
                       <div><span>Ataque de conjuro</span><strong>{sheetValueByNames(sheet, ['Ataque de conjuro']) || '—'}</strong></div>
                       <div class="spell-slot-summary"><span>Espacios de conjuros</span>
-                        <strong>{#if Object.values(sheetSpellSlots).some((value:number) => value > 0)}
+                        <strong>{#if Object.values(sheetSpellSlots).some(value => Number(value) > 0)}
                           {#each Object.entries(sheetSpellSlots).filter(([level,value]) => Number(value) > 0) as [level,maximum]}
                             <span class="spell-slot-value">Nivel {level}: {maximum}</span>
                           {/each}
