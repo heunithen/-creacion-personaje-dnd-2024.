@@ -3297,6 +3297,23 @@ import ITEMS from './items.json';
   function playerAttributes(sections: RawSection[] = sheet?.sections || []) {
     return sectionPairs(sections).filter(pair => sectionClass(String(pair.heading.name || '')) === 'attributes-section');
   }
+  function abilityScoreNumber(value: unknown): number | null {
+    const match = String(value ?? '').replace(/,/g,'.').match(/-?\d+(?:\.\d+)?/);
+    return match ? Number(match[0]) : null;
+  }
+  function abilityModifier(value: unknown): number | null {
+    const score = abilityScoreNumber(value);
+    return score === null ? null : Math.floor((score - 10) / 2);
+  }
+  function signedBonus(value: number): string {
+    return (value >= 0 ? '+' : '') + value;
+  }
+  function savingThrowNumber(ability: string, sections: RawSection[] = sheet?.sections || []): number | null {
+    const raw = savingThrowBonus(ability, sections);
+    const match = raw.replace(/−/g,'-').match(/[+-]?\d+/);
+    return match ? Number(match[0]) : null;
+  }
+
   function savingThrowRaw(ability: string, sections: RawSection[] = sheet?.sections || []) {
     const pair = sectionPairs(sections).find(item => String(item.heading.name || '').toLocaleUpperCase() === 'SALVACIONES');
     const index = (pair?.heading.stats || []).findIndex(stat => normalizeLevelText(String(stat.name || '')) === normalizeLevelText(ability));
@@ -4120,12 +4137,25 @@ import ITEMS from './items.json';
             <div class="attribute-plaque-row">
               {#each playerAttributes(sheet.sections || []) as pair}
                 {#each pair.heading.stats || [] as stat, i}
+                  {@const abilityValue = displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}
+                  {@const score = abilityScoreNumber(abilityValue)}
+                  {@const modifier = abilityModifier(abilityValue)}
+                  {@const saveBonus = savingThrowNumber(String(stat.name || ''), sheet.sections || [])}
                   <div class="attribute-plaque">
                     <span>{stat.name || ''}</span>
-                    <strong>{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value) || '—'}</strong>
+                    <strong class="ability-score">{score ?? '—'}</strong>
+                    {#if modifier !== null}
+                      <button type="button" class="inline-roll ability-bonus-roll" title="Tirar 1d20{signedBonus(modifier)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(modifier), String(stat.name || 'Característica'))}>{signedBonus(modifier)}</button>
+                    {:else}
+                      <span class="ability-bonus-empty">—</span>
+                    {/if}
                     <div class="saving-throw-line" class:proficient={savingThrowIsProficient(String(stat.name || ''), sheet.sections || [])}>
                       <span>Salvación</span>
-                      <strong>{savingThrowBonus(String(stat.name || ''), sheet.sections || [])}</strong>
+                      {#if saveBonus !== null}
+                        <button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(saveBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(saveBonus), 'Salvación de ' + String(stat.name || ''))}>{signedBonus(saveBonus)}</button>
+                      {:else}
+                        <strong>—</strong>
+                      {/if}
                     </div>
                   </div>
                 {/each}
@@ -4509,6 +4539,9 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats .attribute-plaque-row){display:grid;grid-column:1/-1;grid-template-columns:repeat(6,minmax(0,1fr));gap:.45rem;width:100%;min-width:0}
   :global(.nautical-quick-stats .attribute-plaque){min-width:0;min-height:4rem;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
   :global(.nautical-quick-stats .attribute-plaque strong){font-size:1.25rem}
+  :global(.nautical-quick-stats .attribute-plaque .ability-score){font-size:1.25rem;line-height:1.1}
+  :global(.nautical-quick-stats .attribute-plaque .ability-bonus-roll){align-self:center;margin:.08rem 0;padding:.08rem .35rem;font-size:.85rem;font-weight:800;line-height:1.2}
+  :global(.nautical-quick-stats .attribute-plaque .ability-bonus-empty){font-size:.8rem;color:#849b99}
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line){display:flex;align-items:center;justify-content:center;gap:.25rem;margin-top:.1rem;padding-top:.25rem;border-top:1px solid #28676b;font:600 .58rem/1.2 system-ui,sans-serif}
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line span){color:#849b99}
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line strong){font-size:.65rem;color:#aab9b7}
