@@ -121,6 +121,12 @@ export class GithubCharacterStorage {
     });
   }
 
+  async load(record: GithubCharacterRecord): Promise<any | null> {
+    const file = await this.getFile(record.path);
+    if (!file?.content) return null;
+    return JSON.parse(decodeContent(file.content));
+  }
+
   async remove(record: GithubCharacterRecord) {
     await this.deleteFile(record.path, 'Eliminar personaje ' + record.name);
     await this.updateIndex(index => {
