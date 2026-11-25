@@ -3345,6 +3345,11 @@ import ITEMS from './items.json';
   function savingThrowIsProficient(ability: string, sections: RawSection[] = sheet?.sections || []) {
     return /competente/i.test(savingThrowRaw(ability, sections));
   }
+  function skillIsProficient(skill: string, target: RawSheet = sheet) {
+    const raw = getCharacterStat(target, 'COMPETENCIAS', 'Habilidades');
+    const choices = splitChoiceList(raw.split(/;\\s*Pericia:/i)[0]);
+    return choices.some(choice => normalizeLevelText(choice) === normalizeLevelText(skill));
+  }
   function savingThrowBonus(ability: string, sections: RawSection[] = sheet?.sections || []) {
     return savingThrowRaw(ability, sections).replace(/\s*·\s*Competente/i, '').trim() || '—';
   }
@@ -4207,7 +4212,7 @@ import ITEMS from './items.json';
                   <div class="skill-column-labels"><span>Habilidad</span><span>Valor</span></div>
                   <div class="stats-list">
                     {#each pair.heading.stats || [] as stat, i}
-                      <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
+                      <div class="sheet-stat" class:proficient={skillIsProficient(String(stat.name || ''), sheet)}><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
                     {/each}
                   </div>
                 </section>
@@ -4584,7 +4589,7 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats>div>span){font-size:.56rem;line-height:1.15;color:#7fcac2;text-transform:uppercase;letter-spacing:.045em}
   :global(.nautical-quick-stats>div>strong){font-size:.9rem;line-height:1.15;color:#f1fffc;white-space:nowrap}
   :global(.nautical-quick-stats .attribute-plaque-row){display:grid;grid-column:1/-1;grid-template-columns:repeat(6,minmax(0,1fr));gap:.45rem;width:100%;min-width:0}
-  :global(.nautical-quick-stats .attribute-plaque){min-width:0;min-height:4rem;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
+  :global(.nautical-quick-stats .attribute-plaque){min-width:0;min-height:4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
   :global(.nautical-quick-stats .attribute-plaque strong){font-size:1.25rem}
   :global(.nautical-quick-stats .attribute-plaque .ability-score){font-size:1.25rem;line-height:1.1}
   :global(.nautical-quick-stats .attribute-plaque .ability-bonus-roll){align-self:center;margin:.08rem 0;padding:.08rem .35rem;font-size:.85rem;font-weight:800;line-height:1.2}
@@ -4594,6 +4599,8 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line strong){font-size:.65rem;color:#aab9b7}
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient span),
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient strong){color:#55d58a}
+  :global(.nautical-skills .sheet-stat.proficient .stat-label),
+  :global(.nautical-skills .sheet-stat.proficient .stat-value){color:#70bfff!important}
   :global(.nautical-quick-stats .hp-plaque){flex:2 1 10rem}
   :global(.nautical-import){padding:.8rem 1rem;background:#0b252b;border-bottom:1px solid #247b7e}
   :global(.nautical-columns){display:grid;grid-template-columns:minmax(190px,.82fr) minmax(0,2fr);gap:.65rem;padding:.7rem;align-items:start;background:radial-gradient(ellipse at 75% 0%,#17434a 0,#0a252b 50%,#071b20 100%)}
