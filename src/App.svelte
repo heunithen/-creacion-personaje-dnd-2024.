@@ -1935,7 +1935,6 @@
         throw new Error('La ficha se generó sin secciones. Revisa las elecciones y vuelve a intentarlo.');
       }
       builderPreview = generated;
-      builderPreviewTab = 'Resumen';
       builderStep = 6;
       keepBuilderAtTop();
     } catch (error) {
