@@ -4010,7 +4010,7 @@ import ITEMS from './items.json';
                 <label>Mostrar<select bind:value={spellClassFilter}><option value="Todas">Todos los estados</option><option value="Conocidos">Conocidos</option><option value="Preparados">Preparados</option><option value="Disponibles">Aún no conocidos</option></select></label>
               </div>
               <div class="spell-card-grid">
-                {#each sheetSpellCards.filter((spell: any) =>
+                {#each sheetSpellCards.filter((spell) =>
                   (spellLevelFilter === 'Todos' || String(spell.level) === spellLevelFilter) &&
                   (spellSchoolFilter === 'Todas' || spell.school === spellSchoolFilter) &&
                   (!spellSearch.trim() || (spell.name+' '+spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es'))) &&
