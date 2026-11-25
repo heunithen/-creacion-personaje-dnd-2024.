@@ -4149,7 +4149,7 @@ import ITEMS from './items.json';
               <p class="muted">La clase determina las capacidades, el estilo de combate y la progresión de tu aventurero.</p>
               
 
-              <h3>4. Clase y competencias</h3><p class="muted">Todas las clases del Manual del Jugador 2024. Se aplican únicamente los rasgos que se obtienen a nivel 1.</p>
+              
               <h4>Elige una clase</h4>
               <p class="muted">Selecciona la clase que define el entrenamiento y las capacidades principales del personaje. Cada tarjeta resume su estilo, característica principal, resistencia y acceso a la magia.</p>
               <div class="builder-class-grid">
@@ -4171,7 +4171,7 @@ import ITEMS from './items.json';
               <p class="muted">Tu vida antes de convertirte en aventurero determina competencias, dote de origen y equipo.</p>
               
 
-              <h3>3. Trasfondo</h3><p class="muted">El trasfondo determina competencias, equipo y una dote de origen.</p>
+              
               <label>Trasfondo<select value={builderBackgroundChosen ? builderData.background : ''} on:change={builderChooseBackground}><option value="">Elige un trasfondo</option>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
               {#if builderBackgroundChosen}
               {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
@@ -4194,7 +4194,7 @@ import ITEMS from './items.json';
               <p class="muted">La especie determina rasgos biológicos y capacidades innatas.</p>
               
 
-              <h3>2. Especie</h3><p class="muted">Ahora elige tu especie. También seleccionarás aquí el alineamiento de tu personaje.</p>
+              
               <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
               <label>Especie<select value={builderSpeciesChosen ? builderData.species : ''} on:change={builderChooseSpecies}><option value="">Elige una especie</option>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               {#if builderSpeciesChosen}
@@ -4240,8 +4240,7 @@ import ITEMS from './items.json';
               <p class="muted">Elige cómo generar las seis puntuaciones. Los aumentos del trasfondo se aplican en la etapa siguiente.</p>
               
 
-              <h3>5. Puntuaciones de característica</h3>
-              <p class="muted">Elige uno de los métodos del manual. Los aumentos de característica del trasfondo se aplican después y se muestran en el resultado.</p>
+              
               <label>Método para determinar las puntuaciones<select bind:value={builderData.method} on:change={builderSetAbilityMethod}><option value="standard">Arreglo estándar (15, 14, 13, 12, 10, 8)</option><option value="pointBuy">Compra de puntos (27 puntos)</option><option value="rolled">Tirada (4d6, descartar el menor)</option><option value="free">Creación libre (valores personalizados)</option></select></label>
               {#if builderData.method === 'rolled'}
                 <button type="button" class="secondary" on:click={builderRollScores}>Volver a tirar las seis puntuaciones</button>
@@ -4277,8 +4276,7 @@ import ITEMS from './items.json';
             {:else if builderStep===6}
               <h3>07. Competencias</h3>
               <p class="muted">Reúne las competencias de clase, trasfondo y especie. Las salvaciones se conceden automáticamente por clase.</p>
-              <h3>Competencias, rasgos, conjuros y equipo</h3>
-              <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
+              
               <div class="builder-info"><strong>Habilidades automáticas del trasfondo</strong><p>{BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><strong>Elige {BUILDER_CLASS_SKILLS[builderData.className].count} competencias de clase</strong></div>
               <div class="builder-choice-wrapper"><strong>Competencias de clase: elige {BUILDER_CLASS_SKILLS[builderData.className].count} habilidades</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Habilidades disponibles</strong><span>{builderData.classSkillChoices.filter(Boolean).length}/{BUILDER_CLASS_SKILLS[builderData.className].count}</span></div><div class="builder-checkbox-grid">{#each BUILDER_CLASS_SKILLS[builderData.className].options.filter(skill => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && skill !== builderData.speciesSkill && ![...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].includes(skill)) as skill}<label class="builder-checkbox"><input type="checkbox" checked={builderData.classSkillChoices.includes(skill)} on:change={(event) => builderToggleChoice('classSkillChoices',skill,BUILDER_CLASS_SKILLS[builderData.className].count,event)} disabled={!builderData.classSkillChoices.includes(skill) && builderData.classSkillChoices.filter(Boolean).length >= BUILDER_CLASS_SKILLS[builderData.className].count} /><span>{skill}</span></label>{/each}</div></div></div>
               
@@ -4335,8 +4333,7 @@ import ITEMS from './items.json';
               <h3>10. Idiomas</h3>
               <p class="muted">Selecciona los idiomas adicionales y evita repetir los que ya conoces.</p>
               
-              <h3>6. Idiomas y ajustes finales</h3>
-              <p class="muted">Elige los dos idiomas adicionales del personaje y revisa cualquier detalle que no haya quedado registrado en las opciones anteriores.</p>
+              
               <div class="builder-choice-wrapper"><strong>Dos idiomas adicionales (además del común)</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Idiomas adicionales</strong><span>{builderData.languages.length}/{2}</span></div><div class="builder-checkbox-grid">{#each BUILDER_STANDARD_LANGUAGES as language}<label class="builder-checkbox"><input type="checkbox" checked={builderData.languages.includes(language)} on:change={(event) => builderToggleChoice('languages',language,2,event)} disabled={!builderData.languages.includes(language) && builderData.languages.length >= (2)} /><span>{language}</span></label>{/each}</div></div></div>
               {#if builderData.className === 'Pícaro'}
                 <label>Idioma adicional de pícaro ({builderData.rogueLanguage ? 1 : 0}/1)<select bind:value={builderData.rogueLanguage}><option value="">Elige un idioma</option>{#each BUILDER_LANGUAGES.filter(language => !builderData.languages.includes(language) && language !== 'Jerga de ladrones') as language}<option>{language}</option>{/each}</select></label>
@@ -4348,7 +4345,7 @@ import ITEMS from './items.json';
               
               <h3>11. Detalles del personaje</h3>
               <p class="muted">Información narrativa opcional. El alineamiento describe la conducta del personaje; no limita sus decisiones.</p>
-              <label>Alineamiento<select bind:value={builderData.alignment}><option value="">Sin definir</option><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
+              
               <label>Edad<input bind:value={builderData.age} placeholder="Edad" /></label>
               <label>Altura<input bind:value={builderData.height} placeholder="Altura" /></label>
               <label>Apariencia<textarea bind:value={builderData.appearance} placeholder="Describe su apariencia" rows="2"></textarea></label>
