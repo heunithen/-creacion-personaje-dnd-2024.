@@ -1861,6 +1861,15 @@
     return result;
   }
   function finishBuilder() {
+    if (!builderCanFinish()) {
+      builderStepError = builderData.languages.length !== 2
+        ? 'Selecciona exactamente dos idiomas adicionales para continuar.'
+        : builderData.className === 'Pícaro' && !builderData.rogueLanguage
+          ? 'Selecciona el idioma adicional de Pícaro.'
+          : 'Hay elecciones obligatorias incompletas en los pasos anteriores. Vuelve atrás y revisa las opciones pendientes.';
+      return;
+    }
+    builderStepError = '';
     builderPreview = buildLevelOneSheet();
     builderStep = 6;
     keepBuilderAtTop();
@@ -3593,8 +3602,6 @@ import ITEMS from './items.json';
               {#if builderData.className === 'Pícaro'}
                 <label>Idioma adicional de pícaro ({builderData.rogueLanguage ? 1 : 0}/1)<select bind:value={builderData.rogueLanguage}><option value="">Elige un idioma</option>{#each BUILDER_LANGUAGES.filter(language => !builderData.languages.includes(language) && language !== 'Jerga de ladrones') as language}<option>{language}</option>{/each}</select></label>
               {/if}
-              <label>Competencias o elecciones adicionales<textarea bind:value={builderData.skills} rows="3" placeholder="Solo beneficios adicionales que no estén recogidos en las opciones anteriores" /></label>
-              <label>Notas<textarea bind:value={builderData.notes} rows="3" placeholder="Notas opcionales del personaje" /></label>
               <div class="builder-info"><strong>Resumen de equipo elegido</strong><p>Trasfondo: {builderData.backgroundEquipment === 'A' ? BUILDER_BACKGROUND_DATA[builderData.background].equipmentA : '50 po en monedas'}</p><p>Clase: {builderData.classEquipmentChoice === 'A' ? BUILDER_CLASS_DATA[builderData.className].equipmentA : builderData.classEquipmentChoice === 'C' ? '155 po en monedas' : builderData.className === 'Guerrero' ? BUILDER_CLASS_DATA[builderData.className].equipmentB : BUILDER_CLASS_DATA[builderData.className].equipmentB + ' en monedas'}</p></div>
 
             {/if}
@@ -3602,7 +3609,7 @@ import ITEMS from './items.json';
 {#if builderStepError}<p class="builder-step-error" role="alert">{builderStepError}</p>{/if}
             <div class="builder-actions">
               {#if builderStep > 0}<button class="secondary" on:click={builderBack}>Anterior</button>{/if}
-              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" on:click={finishBuilder} disabled={!builderCanFinish()}>Generar ficha de nivel 1</button>{/if}
+              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" on:click={finishBuilder}>Generar ficha de nivel 1</button>{/if}
             </div>
           {:else}
             <div class="section-heading"><h3>Personaje generado</h3><span class="count">Nivel 1</span></div>
