@@ -4014,7 +4014,7 @@ import ITEMS from './items.json';
                   (spellLevelFilter === 'Todos' || String(spell.level) === spellLevelFilter) &&
                   (spellSchoolFilter === 'Todas' || spell.school === spellSchoolFilter) &&
                   (!spellSearch.trim() || (spell.name+' '+spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es'))) &&
-                  (spellClassFilter === 'Todas' || (spellClassFilter === 'Conocidos' && spellIsKnown(sheet,spell)) || (spellClassFilter === 'Preparados' && spellIsPrepared(sheet,spell)) || (spellClassFilter === 'Disponibles' && !spellIsKnown(sheet,spell)))
+                  (spellClassFilter === 'Todas' || (spellClassFilter === 'Conocidos' && spellIsKnown(sheet!,spell)) || (spellClassFilter === 'Preparados' && spellIsPrepared(sheet!,spell)) || (spellClassFilter === 'Disponibles' && !spellIsKnown(sheet!,spell)))
                 ) as spell (spell.name)}
                   <article class:spell-known={spellIsKnown(sheet,spell)} class:spell-prepared={spellIsPrepared(sheet,spell)} class:spell-unavailable={Number(spell.level) > spellMaxLevel(sheet) && Number(spell.level) > 0} class:spell-cast={spellStates(sheet)[normalizeLevelText(spell.name)]?.cast} class="spell-card">
                     <header><span class="spell-level">{spell.level === 0 ? 'TRUCO' : 'NIVEL '+spell.level}</span><span class="spell-school">{spell.school}</span></header>
