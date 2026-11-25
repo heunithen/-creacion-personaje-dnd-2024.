@@ -4869,14 +4869,14 @@ import ITEMS from './items.json';
 
 <style>
   :global(:root){--paper:#13262e;--paper-deep:#1b2a33;--ink:#ffffff;--ink-soft:#b5bec3;--rule:#3a4a52;--red:#3fb8b8;--gold:#5fe6e0}
-  .builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#ffffff;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#b5bec3;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(95,230,224,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}.builder-panel .sheet-grid{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat strong{white-space:pre-wrap;overflow-wrap:anywhere}
+  .builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#1b2a33;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(95,230,224,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}.builder-panel .sheet-grid{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat strong{white-space:pre-wrap;overflow-wrap:anywhere}
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
-  .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#b5bec3;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
+  .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#ffffff;color:#ffffff;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#ffffff;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
+  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
 .spells-panel{margin-top:.5rem}
   .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
-  .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#ffffff;color:var(--ink);font:500 .82rem system-ui,sans-serif}
+  .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:var(--ink);font:500 .82rem system-ui,sans-serif}
   .spell-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
   .spell-list{display:grid;gap:.55rem;margin-top:.7rem}
   .spell-card{min-width:0;border:1px solid var(--rule);border-left:4px solid #3fb8b8;border-radius:5px;background:var(--paper);color:var(--ink);overflow:hidden}
@@ -4886,13 +4886,13 @@ import ITEMS from './items.json';
   .spell-level{grid-column:2;grid-row:1/3;align-self:center;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;color:#3fb8b8;font:700 .68rem system-ui,sans-serif;white-space:nowrap}
   .spell-subtitle{grid-column:1;color:var(--ink-soft);font:.7rem system-ui,sans-serif;overflow-wrap:anywhere}
   .spell-details{padding:.75rem .85rem;border-top:1px solid var(--rule);font:.78rem/1.5 system-ui,sans-serif}
-  .spell-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.15rem .75rem;padding:.55rem .65rem;border:1px solid var(--rule);border-radius:4px;background:#b5bec3}
+  .spell-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.15rem .75rem;padding:.55rem .65rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33}
   .spell-meta p{margin:.12rem 0;overflow-wrap:anywhere}
   .spell-description{margin:.7rem 0 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}
   .spell-source{display:block;margin-top:.6rem;color:var(--ink-soft);font-size:.65rem}
   .monsters-panel{margin-top:.5rem}
   .monster-filter{display:flex;align-items:center;gap:.65rem;margin:.8rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
-  .monster-filter select{min-width:130px;padding:.45rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#ffffff;color:var(--ink);font:600 .78rem system-ui,sans-serif}
+  .monster-filter select{min-width:130px;padding:.45rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:var(--ink);font:600 .78rem system-ui,sans-serif}
   .monster-list{display:grid;gap:.55rem}
   .monster-card{border:1px solid var(--rule);border-left:4px solid var(--red);border-radius:5px;background:var(--paper);color:var(--ink);overflow:hidden}
   .monster-card>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.18rem .7rem;align-items:center;padding:.7rem .8rem;cursor:pointer;list-style:none}
@@ -4905,7 +4905,7 @@ import ITEMS from './items.json';
   .monster-heading h3{margin:0;font:700 1.05rem Georgia,serif}
   .monster-heading span{color:var(--ink-soft);font-size:.7rem}
   .monster-combat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.35rem;margin:.65rem 0}
-  .monster-combat-grid div{display:grid;gap:.12rem;padding:.4rem;border:1px solid var(--rule);border-radius:4px;background:#b5bec3}
+  .monster-combat-grid div{display:grid;gap:.12rem;padding:.4rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33}
   .monster-combat-grid small{color:var(--ink-soft);font-size:.62rem;text-transform:uppercase}
   .monster-combat-grid strong{font-size:.78rem;overflow-wrap:anywhere}
   .monster-statblock p{margin:.38rem 0}
@@ -4915,7 +4915,7 @@ import ITEMS from './items.json';
   .monster-source{display:block;margin-top:.55rem;color:var(--ink-soft);font-size:.62rem}
 
   .monster-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:.1rem 0 .75rem}
-  .monster-info-item{display:grid;align-content:start;gap:.12rem;padding:.45rem .5rem;border:1px solid var(--rule);border-radius:4px;background:#b5bec3;min-width:0}
+  .monster-info-item{display:grid;align-content:start;gap:.12rem;padding:.45rem .5rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;min-width:0}
   .monster-info-item small{font-size:.62rem;font-weight:800;letter-spacing:.035em;text-transform:uppercase;color:var(--ink-soft)}
   .monster-info-item strong{font-size:.76rem;font-weight:650;overflow-wrap:anywhere;white-space:pre-wrap}
   .monster-content-section{margin:.75rem 0 0;padding-top:.45rem;border-top:2px solid var(--red)}
@@ -4932,22 +4932,22 @@ import ITEMS from './items.json';
   .sheet-notes{display:block;width:100%;margin-top:.35rem;font:.78rem/1.4 system-ui,sans-serif;text-align:center;color:var(--ink-soft)}
   .editable{box-sizing:border-box;border:1px solid transparent;border-radius:3px;background:transparent;color:inherit;min-width:0;padding:.16rem .22rem;resize:vertical}
   .editable:hover{border-color:rgba(63,184,184,.35);background:rgba(95,230,224,.22)}
-  .editable:focus{outline:1px solid var(--red);border-color:var(--red);background:#ffffff}
+  .editable:focus{outline:1px solid var(--red);border-color:var(--red);background:#1b2a33}
   .sheet-tabs{display:flex;gap:.35rem;overflow-x:auto;padding:.15rem 0 .65rem;margin-bottom:.7rem;border-bottom:1px solid var(--rule)}
-  .sheet-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.48rem .68rem;background:#b5bec3;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}
+  .sheet-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.48rem .68rem;background:#1b2a33;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}
   .sheet-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
   .custom-rolls{padding:.8rem;border:1px solid var(--rule);border-top:3px solid var(--gold);border-radius:5px;background:rgba(95,230,224,.43);color:var(--ink)}
   .custom-rolls h3{margin:0 0 .75rem;color:var(--red);font:700 .9rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em}
   .roll-creator{display:grid;grid-template-columns:minmax(0,2fr) minmax(5rem,1fr) minmax(5rem,1fr) auto;gap:.55rem;align-items:end}
   .roll-creator label{display:grid;gap:.25rem;color:var(--ink-soft);font:600 .7rem system-ui,sans-serif}
-  .roll-creator input,.roll-creator select{width:100%;min-width:0;box-sizing:border-box;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#ffffff;color:var(--ink);font:.85rem system-ui,sans-serif}
-  .roll-creator button,.roll-actions button{min-height:30px;padding:.32rem .55rem;border:1px solid var(--rule);border-radius:4px;background:#b5bec3;color:var(--ink);font:600 .68rem system-ui,sans-serif;cursor:pointer}
+  .roll-creator input,.roll-creator select{width:100%;min-width:0;box-sizing:border-box;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:var(--ink);font:.85rem system-ui,sans-serif}
+  .roll-creator button,.roll-actions button{min-height:30px;padding:.32rem .55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:var(--ink);font:600 .68rem system-ui,sans-serif;cursor:pointer}
   .roll-creator button{background:var(--ink);color:var(--paper);border-color:var(--ink)}
   .custom-roll-list{display:grid;gap:.55rem;margin-top:.9rem}
   .custom-roll-card{padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:rgba(95,230,224,.45)}
   .custom-roll-info,.roll-part-heading{display:flex;justify-content:space-between;gap:.5rem;align-items:center;margin-bottom:.4rem;color:var(--ink)}
   .custom-roll-info .remove-roll,.new-roll-part-title .remove-roll{border:0;background:transparent;color:var(--red);font-size:1rem;cursor:pointer}
-  .roll-notation{display:inline-block;padding:.22rem .5rem;border:1px solid #5fe6e0;border-radius:4px;background:#b5bec3;color:#0f1e26;font:700 .9rem/1.2 system-ui,sans-serif;letter-spacing:.025em}
+  .roll-notation{display:inline-block;padding:.22rem .5rem;border:1px solid #5fe6e0;border-radius:4px;background:#1b2a33;color:#0f1e26;font:700 .9rem/1.2 system-ui,sans-serif;letter-spacing:.025em}
   .roll-part{padding:.45rem 0;border-top:1px solid var(--rule)}
   .roll-part-heading strong{font:700 .82rem system-ui,sans-serif}
   .roll-actions{display:flex;flex-wrap:wrap;gap:.3rem;align-items:center}
@@ -4959,7 +4959,7 @@ import ITEMS from './items.json';
   .add-roll-part{justify-self:start}
   .roll-group-creator>button[type=submit]{justify-self:start}
   .roll-actions .remove-roll{flex:0 0 30px;padding:.25rem;font-size:.9rem;color:var(--red)}
-  .roll-result{display:block;margin-top:.5rem;padding:.45rem .55rem;border-radius:4px;background:#b5bec3;color:var(--ink);font:700 .82rem system-ui,sans-serif}
+  .roll-result{display:block;margin-top:.5rem;padding:.45rem .55rem;border-radius:4px;background:#1b2a33;color:var(--ink);font:700 .82rem system-ui,sans-serif}
   .sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;align-items:start}
   .sheet-section{min-width:0;padding:.7rem .8rem .65rem;border:1px solid var(--rule);border-top:3px solid var(--red);border-radius:5px;background:rgba(95,230,224,.43);break-inside:avoid}
   .sheet-section-title{display:flex;align-items:center;padding-bottom:.4rem;margin-bottom:.25rem;border-bottom:1px solid var(--rule)}
@@ -4969,9 +4969,9 @@ import ITEMS from './items.json';
   .sheet-stat:last-child{border-bottom:0}
   .stat-label{width:100%;color:var(--ink-soft);font:.73rem/1.35 system-ui,sans-serif}
   .stat-value{width:100%;min-height:3.2rem;color:var(--ink);text-align:left;font:500 .8rem/1.45 system-ui,sans-serif;overflow-wrap:anywhere;white-space:pre-wrap;overflow-y:auto;resize:vertical;padding:.35rem .4rem;background:rgba(95,230,224,.3)}\n  .features-section .sheet-stat{grid-template-columns:1fr;gap:.2rem;align-items:start}\n  .features-section .stat-label{font-weight:700;color:var(--ink)}\n  .features-section .stat-value{min-height:7rem;text-align:left;font:500 .82rem/1.5 system-ui,sans-serif;background:rgba(95,230,224,.48)}\n  .gm-character-sheet .sheet-stat strong{min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;font:500 .8rem/1.45 system-ui,sans-serif}
-  .combat-section{border-top-color:#0f1e26;background:#b5bec3}
+  .combat-section{border-top-color:#0f1e26;background:#1b2a33}
   .combat-section .section-name{color:#0f1e26}
-  .attributes-section{grid-column:1/-1;border-top-color:var(--gold);background:#b5bec3}
+  .attributes-section{grid-column:1/-1;border-top-color:var(--gold);background:#1b2a33}
   .attributes-section .section-name{color:#3fb8b8}
   .attributes-section .stats-list{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:.65rem}
   .attributes-section .sheet-stat{grid-template-columns:1fr;gap:.1rem;text-align:center;padding:.4rem .15rem;border:1px solid rgba(63,184,184,.25);margin:.12rem;border-radius:4px;background:rgba(95,230,224,.38)}
@@ -5011,7 +5011,7 @@ import ITEMS from './items.json';
   .gm-character-sheet .features-section .sheet-stat{grid-template-columns:1fr;gap:.25rem}
   .gm-character-sheet .features-section .sheet-stat strong{padding:.35rem .5rem;border-radius:4px;background:rgba(95,230,224,.5)}
   .gm-sheet-details[open] .gm-character-sheet{width:100%;box-sizing:border-box}
-  .chest-panel{margin-top:1rem}.chest-roll-actions{display:flex;justify-content:flex-start;margin:.8rem 0}.chest-result{display:grid;grid-template-columns:auto 1fr auto;gap:.75rem;align-items:center;padding:.85rem 1rem;margin:.75rem 0;border:1px solid var(--gold);border-radius:6px;background:#b5bec3;color:var(--ink)}.chest-result-number{font:700 .72rem system-ui,sans-serif;color:var(--red)}.chest-result strong{font:700 1rem Georgia,serif}.chest-result>span:last-child{font:.72rem system-ui,sans-serif;color:var(--ink-soft)}.chest-table-wrap{max-height:440px;overflow:auto;border:1px solid var(--rule);border-radius:5px}.chest-table{width:100%;border-collapse:collapse;background:rgba(95,230,224,.4);font:.78rem system-ui,sans-serif}.chest-table th{position:sticky;top:0;background:#b5bec3;color:var(--ink);text-align:left}.chest-table th,.chest-table td{padding:.42rem .6rem;border-bottom:1px solid rgba(63,184,184,.2)}.chest-table td:first-child{width:3.5rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}.chest-selected{background:#b5bec3;font-weight:700}
+  .chest-panel{margin-top:1rem}.chest-roll-actions{display:flex;justify-content:flex-start;margin:.8rem 0}.chest-result{display:grid;grid-template-columns:auto 1fr auto;gap:.75rem;align-items:center;padding:.85rem 1rem;margin:.75rem 0;border:1px solid var(--gold);border-radius:6px;background:#1b2a33;color:var(--ink)}.chest-result-number{font:700 .72rem system-ui,sans-serif;color:var(--red)}.chest-result strong{font:700 1rem Georgia,serif}.chest-result>span:last-child{font:.72rem system-ui,sans-serif;color:var(--ink-soft)}.chest-table-wrap{max-height:440px;overflow:auto;border:1px solid var(--rule);border-radius:5px}.chest-table{width:100%;border-collapse:collapse;background:rgba(95,230,224,.4);font:.78rem system-ui,sans-serif}.chest-table th{position:sticky;top:0;background:#1b2a33;color:var(--ink);text-align:left}.chest-table th,.chest-table td{padding:.42rem .6rem;border-bottom:1px solid rgba(63,184,184,.2)}.chest-table td:first-child{width:3.5rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}.chest-selected{background:#1b2a33;font-weight:700}
   .empty-state{text-align:center;padding:2rem}.save-panel{display:flex;flex-direction:column;gap:.8rem;margin-top:1rem}
   .save-panel .danger-text{align-self:center}
   .roster-panel{margin-top:1rem}.card-identity{min-width:0}
@@ -5055,26 +5055,26 @@ import ITEMS from './items.json';
   }
   :global(.master-tabs button.active),:global(.sheet-tabs button.active),
   :global(.player-tabs button.active),:global(.character-tabs button.active){
-    background:#3fb8b8!important;border-color:#3fb8b8!important;color:#ffffff!important
+    background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important
   }
-  :global(.primary){background:#3fb8b8!important;border:1px solid #3fb8b8!important;color:#ffffff!important}
-  :global(.primary:hover){background:#3fb8b8!important}
+  :global(.primary){background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important}
+  :global(.primary:hover){background:#13262e!important}
   :global(.danger-text),:global(.remove-roll){color:#5fe6e0!important}
   :global(.spell-level),:global(.monster-cr),:global(.count),:global(.free-tag){
-    background:#3fb8b8!important;border-color:#3fb8b8!important;color:#b5bec3!important
+    background:#13262e!important;border-color:#3fb8b8!important;color:#b5bec3!important
   }
   :global(.spell-meta),:global(.monster-combat-grid div),:global(.monster-attacks),
   :global(.monster-role),:global(.builder-info),:global(.builder-progress){
     background:#0b171d!important;border-color:#3fb8b8!important;color:#b5bec3!important
   }
-  :global(.builder-progress span){background:#3fb8b8!important}
-  :global(.roll-notation){background:#3fb8b8!important;border-color:#3fb8b8!important;color:#ffffff!important}
+  :global(.builder-progress span){background:#13262e!important}
+  :global(.roll-notation){background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important}
   :global(.chest-table-wrap){border-color:#3fb8b8!important}
   :global(.chest-table){background:#0b171d!important;color:#b5bec3!important}
-  :global(.chest-table th){background:#3fb8b8!important;color:#ffffff!important}
+  :global(.chest-table th){background:#13262e!important;color:#ffffff!important}
   :global(.chest-table td){border-bottom-color:#3fb8b8!important;color:#b5bec3!important}
-  :global(.chest-selected){background:#3fb8b8!important;color:#ffffff!important}
-  :global(.toast){background:#3fb8b8!important;border-color:#3fb8b8!important;color:#ffffff!important}
+  :global(.chest-selected){background:#13262e!important;color:#ffffff!important}
+  :global(.toast){background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important}
   :global(.sheet-stat),:global(.roll-entry),:global(.trait-view),:global(.traits-preview){border-color:#3fb8b8!important}
   :global(.gm-sheet-details summary),:global(.monster-source summary){color:#5fe6e0!important}
   :global(.character-sheet .features-section .sheet-stat strong){background:#0b171d!important}
@@ -5086,7 +5086,7 @@ import ITEMS from './items.json';
   :global(.inline-roll){display:inline;padding:0;border:0;background:transparent;color:#5fe6e0;font:inherit;font-weight:700;text-decoration:underline;text-decoration-color:rgba(95,230,224,.45);text-underline-offset:2px;cursor:pointer}
   :global(.inline-roll:hover){color:#b5bec3;text-decoration-color:currentColor}
   :global(.sheet-readonly-value){white-space:pre-wrap;overflow-wrap:anywhere}
-  :global(.character-sheet .editable:hover){background:#3fb8b8!important;border-color:#3fb8b8!important}
+  :global(.character-sheet .editable:hover){background:#13262e!important;border-color:#3fb8b8!important}
 
   /* Presentación de ficha inspirada en la jerarquía de D&D Beyond */
   :global(.app-shell){max-width:1180px}
@@ -5167,17 +5167,17 @@ import ITEMS from './items.json';
   }
  
   /* Hoja de personaje: interfaz náutica en tres columnas */
-  :global(.nautical-sheet){display:block!important;padding:0!important;overflow:hidden;background:#3fb8b8!important;border:1px solid #3fb8b8!important;border-radius:12px!important;box-shadow:0 16px 40px #0b171d99!important;color:#ffffff!important}
-  :global(.nautical-header){display:flex!important;align-items:center;gap:1rem;padding:1rem 1.2rem!important;margin:0!important;border:0!important;border-bottom:1px solid #3fb8b8!important;border-radius:0!important;background:linear-gradient(115deg,#3fb8b8,#3fb8b8 65%,#3fb8b8)!important}
-  :global(.portrait-frame){display:grid;place-items:center;flex:0 0 4.5rem;width:4.5rem;height:4.5rem;border:3px solid #3fb8b8;border-radius:50%;background:radial-gradient(circle,#3fb8b8,#3fb8b8 70%);color:#b5bec3;font-size:1.8rem;box-shadow:0 0 0 3px #3fb8b8}
+  :global(.nautical-sheet){display:block!important;padding:0!important;overflow:hidden;background:#13262e!important;border:1px solid #3fb8b8!important;border-radius:12px!important;box-shadow:0 16px 40px #0b171d99!important;color:#ffffff!important}
+  :global(.nautical-header){display:flex!important;align-items:center;gap:1rem;padding:1rem 1.2rem!important;margin:0!important;border:0!important;border-bottom:1px solid #3fb8b8!important;border-radius:0!important;background:linear-gradient(115deg,#13262e,#13262e 65%,#13262e)!important}
+  :global(.portrait-frame){display:grid;place-items:center;flex:0 0 4.5rem;width:4.5rem;height:4.5rem;border:3px solid #3fb8b8;border-radius:50%;background:radial-gradient(circle,#13262e,#13262e 70%);color:#b5bec3;font-size:1.8rem;box-shadow:0 0 0 3px #3fb8b8}
   :global(.nautical-header .sheet-banner-copy){flex:1;min-width:0}
   :global(.nautical-header .sheet-kicker){color:#b5bec3}
   :global(.nautical-header .character-name){color:#ffffff!important;margin:.2rem 0!important}
   :global(.nautical-header .sheet-banner-meta){color:#b5bec3}
   :global(.header-actions){display:flex;gap:.4rem;flex-wrap:wrap}
-  :global(.header-actions button){padding:.5rem .65rem;border:1px solid #3fb8b8;border-radius:5px;background:#3fb8b8;color:#b5bec3;font-size:.7rem}
-  :global(.nautical-quick-stats){display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.28rem;padding:.5rem .55rem;background:#3fb8b8;border-bottom:1px solid #3fb8b8}
-  :global(.nautical-quick-stats>div){min-width:0;display:flex;flex-direction:column;justify-content:center;gap:.12rem;padding:.32rem .25rem;border:1px solid #3fb8b8;border-radius:6px;background:linear-gradient(145deg,#3fb8b8,#3fb8b8)}
+  :global(.header-actions button){padding:.5rem .65rem;border:1px solid #3fb8b8;border-radius:5px;background:#13262e;color:#b5bec3;font-size:.7rem}
+  :global(.nautical-quick-stats){display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.28rem;padding:.5rem .55rem;background:#13262e;border-bottom:1px solid #3fb8b8}
+  :global(.nautical-quick-stats>div){min-width:0;display:flex;flex-direction:column;justify-content:center;gap:.12rem;padding:.32rem .25rem;border:1px solid #3fb8b8;border-radius:6px;background:linear-gradient(145deg,#13262e,#13262e)}
   :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
   :global(.nautical-quick-stats>div>span){font-size:.49rem;line-height:1.1;color:#b5bec3;text-transform:uppercase;letter-spacing:.015em}
   :global(.nautical-quick-stats>div>strong){font-size:.78rem;line-height:1.1;color:#ffffff;white-space:nowrap}
@@ -5201,11 +5201,11 @@ import ITEMS from './items.json';
   :global(.nautical-skills .sheet-stat .skill-number){font-size:1rem!important;font-weight:800!important;line-height:1.25!important;min-width:2.2rem;text-align:right}
   :global(.nautical-skills .sheet-stat.proficient .skill-number){color:#b5bec3!important}
   :global(.nautical-quick-stats .hp-plaque){flex:2 1 10rem}
-  :global(.nautical-import){padding:.8rem 1rem;background:#3fb8b8;border-bottom:1px solid #3fb8b8}
-  :global(.nautical-columns){display:grid;grid-template-columns:minmax(190px,.82fr) minmax(0,2fr);gap:.65rem;padding:.7rem;align-items:start;background:radial-gradient(ellipse at 75% 0%,#3fb8b8 0,#3fb8b8 50%,#3fb8b8 100%)}
+  :global(.nautical-import){padding:.8rem 1rem;background:#13262e;border-bottom:1px solid #3fb8b8}
+  :global(.nautical-columns){display:grid;grid-template-columns:minmax(190px,.82fr) minmax(0,2fr);gap:.65rem;padding:.7rem;align-items:start;background:radial-gradient(ellipse at 75% 0%,#13262e 0,#13262e 50%,#13262e 100%)}
   :global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){min-width:0;max-height:calc(100vh - 14rem);overflow:auto;scrollbar-color:#3fb8b8 #3fb8b8;scrollbar-width:thin}
   :global(.nautical-side),:global(.nautical-skills){display:flex;flex-direction:column;gap:.6rem}
-  :global(.nautical-columns .sheet-section){padding:.75rem!important;border:1px solid #3fb8b8!important;border-top:2px solid #5fe6e0!important;border-radius:8px!important;background:#3fb8b8ef!important;color:#ffffff!important}
+  :global(.nautical-columns .sheet-section){padding:.75rem!important;border:1px solid #3fb8b8!important;border-top:2px solid #5fe6e0!important;border-radius:8px!important;background:#13262eef!important;color:#ffffff!important}
   :global(.nautical-columns .sheet-section-title){border-bottom:1px solid #3fb8b8!important;margin-bottom:.35rem;padding-bottom:.45rem}
   :global(.nautical-columns .sheet-section-title h3){font:700 .78rem system-ui,sans-serif!important;letter-spacing:.07em;text-transform:uppercase;color:#b5bec3!important}
   :global(.nautical-columns .sheet-stat){display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.45rem;padding:.42rem .15rem;border-bottom:1px solid #3fb8b8!important}
@@ -5213,8 +5213,8 @@ import ITEMS from './items.json';
   :global(.nautical-columns .stat-value){font:600 .75rem system-ui,sans-serif;color:#ffffff!important;text-align:right}
   :global(.nautical-tabs){display:flex;gap:.2rem;overflow-x:auto;padding:.1rem .1rem .55rem;margin-bottom:.55rem;border-bottom:1px solid #3fb8b8;scrollbar-width:thin}
   :global(.nautical-tabs button){flex:0 0 auto;padding:.55rem .65rem;border:1px solid transparent!important;border-radius:5px 5px 0 0;background:transparent!important;color:#b5bec3!important;font-size:.68rem;font-weight:700;white-space:nowrap}
-  :global(.nautical-tabs button.active){border-color:#3fb8b8!important;background:#3fb8b8!important;color:#b5bec3!important}
-  :global(.weapon-attacks-section .weapon-mastery-summary){padding:.45rem .6rem;margin-bottom:.65rem;border:1px solid #3fb8b8;border-radius:6px;background:#3fb8b8;color:#b5bec3}
+  :global(.nautical-tabs button.active){border-color:#3fb8b8!important;background:#13262e!important;color:#b5bec3!important}
+  :global(.weapon-attacks-section .weapon-mastery-summary){padding:.45rem .6rem;margin-bottom:.65rem;border:1px solid #3fb8b8;border-radius:6px;background:#13262e;color:#b5bec3}
   :global(.weapon-attack-list){display:flex;flex-direction:column;gap:.5rem}
   :global(.weapon-attack-card){display:block;width:100%;padding:.65rem .75rem;border:1px solid #3fb8b8;border-radius:7px;background:#0b171d}
   :global(.weapon-attack-card h4){margin:0 0 .55rem;color:#b5bec3;font:700 .95rem Georgia,serif}
@@ -5298,7 +5298,7 @@ import ITEMS from './items.json';
     padding:.5rem .55rem!important;
     border:1px solid #3fb8b8!important;
     border-radius:6px!important;
-    background:linear-gradient(145deg,#3fb8b8,#3fb8b8)!important;
+    background:linear-gradient(145deg,#13262e,#13262e)!important;
   }
   :global(.nautical-quick-stats>.quick-stats-row>div>span){
     display:block!important;
@@ -5357,14 +5357,14 @@ import ITEMS from './items.json';
   }
 
   :global(.player-feature-list){display:flex;flex-direction:column;gap:.45rem}
-  :global(.player-feature-card){border:1px solid #3fb8b8;border-left:3px solid #5fe6e0;border-radius:6px;background:#3fb8b8;overflow:hidden}
+  :global(.player-feature-card){border:1px solid #3fb8b8;border-left:3px solid #5fe6e0;border-radius:6px;background:#13262e;overflow:hidden}
   :global(.player-feature-card summary){display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.65rem .75rem;cursor:pointer;list-style:none}
   :global(.player-feature-card summary::-webkit-details-marker){display:none}
   :global(.player-feature-name){color:#ffffff;font:700 .9rem/1.3 Georgia,serif;overflow-wrap:anywhere}
   :global(.player-feature-source){flex:0 0 auto;color:#b5bec3;font:650 .62rem/1.25 system-ui,sans-serif;text-align:right}
   :global(.player-feature-card>p){margin:0;padding:.15rem .75rem .75rem;color:#b5bec3;font:.78rem/1.55 system-ui,sans-serif;white-space:pre-wrap}
-  :global(.player-feature-card[open]){background:#3fb8b8}
-  :global(.player-feat-section .player-feature-card){border-color:#3fb8b8;border-left-color:#5fe6e0;background:#3fb8b8}
+  :global(.player-feature-card[open]){background:#13262e}
+  :global(.player-feat-section .player-feature-card){border-color:#3fb8b8;border-left-color:#5fe6e0;background:#13262e}
   :global(.player-feat-section .player-feature-source){color:#b5bec3}
 
   :global(.nautical-quick-stats>.quick-stats-row>div){align-items:center;text-align:center}
@@ -5374,9 +5374,9 @@ import ITEMS from './items.json';
  
   /* Selector visual de clases del creador */
   .builder-class-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin:.8rem 0 1rem}
-  .builder-class-card{display:flex;min-width:0;flex-direction:column;gap:.55rem;padding:.8rem;border:1px solid #3fb8b8;border-radius:9px;background:linear-gradient(150deg,#3fb8b8,#3fb8b8);cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+  .builder-class-card{display:flex;min-width:0;flex-direction:column;gap:.55rem;padding:.8rem;border:1px solid #3fb8b8;border-radius:9px;background:linear-gradient(150deg,#13262e,#13262e);cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
   .builder-class-card:hover{border-color:#5fe6e0;transform:translateY(-1px)}
-  .builder-class-card.selected{border:2px solid #5fe6e0;background:linear-gradient(150deg,#13262e,#3fb8b8);box-shadow:0 0 0 1px #5fe6e033}
+  .builder-class-card.selected{border:2px solid #5fe6e0;background:linear-gradient(150deg,#13262e,#13262e);box-shadow:0 0 0 1px #5fe6e033}
   .builder-class-card input{position:absolute;opacity:0;pointer-events:none}
   .builder-class-card-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem;color:#b5bec3;font:700 1rem Georgia,serif}
   .builder-class-card-heading>span{padding:.2rem .45rem;border:1px solid #3fb8b8;border-radius:5px;color:#b5bec3;font:700 .72rem system-ui,sans-serif}
@@ -5388,26 +5388,26 @@ import ITEMS from './items.json';
   @media(max-width:460px){.builder-class-grid{grid-template-columns:1fr}.builder-class-description{min-height:0}}
 
   /* Identidad visual unificada del creador */
-  :global(body){background:#b5bec3!important;color:#0f1e26!important}
-  .app-shell{background:#b5bec3!important;color:#0f1e26!important}
+  :global(body){background:#1b2a33!important;color:#0f1e26!important}
+  .app-shell{background:#1b2a33!important;color:#0f1e26!important}
   .topbar{background:#0f1e26!important;border-bottom:3px solid #5fe6e0!important;color:#ffffff!important}
   .topbar .brand,.topbar nav,.topbar small{color:#ffffff!important}
-  .panel,.builder-panel,.import-character-panel{background:#ffffff!important;border:1px solid #b5bec3!important;border-radius:9px!important;box-shadow:0 3px 12px #3fb8b810!important;color:#0f1e26!important}
+  .panel,.builder-panel,.import-character-panel{background:#1b2a33!important;border:1px solid #b5bec3!important;border-radius:9px!important;box-shadow:0 3px 12px #3fb8b810!important;color:#0f1e26!important}
   .section-heading{border-bottom:2px solid #5fe6e0!important}
   .section-heading h2,.builder-panel h3,.builder-panel h4{color:#ffffff!important}
   .builder-panel{gap:1rem!important}
   .builder-panel>label,.builder-panel label{color:#b5bec3!important}
-  .builder-panel input:not([type=checkbox]):not([type=radio]),.builder-panel select,.builder-panel textarea{background:#ffffff!important;color:#0f1e26!important;border:1px solid #b5bec3!important;border-radius:6px!important}
-  .builder-progress{height:7px!important;background:#b5bec3!important}
+  .builder-panel input:not([type=checkbox]):not([type=radio]),.builder-panel select,.builder-panel textarea{background:#1b2a33!important;color:#0f1e26!important;border:1px solid #b5bec3!important;border-radius:6px!important}
+  .builder-progress{height:7px!important;background:#1b2a33!important}
   .builder-progress span{background:#5fe6e0!important}
-  .builder-info,.builder-choice-wrapper,.builder-choice-field,.builder-name-block{background:#ffffff!important;border:1px solid #b5bec3!important;border-left:4px solid #5fe6e0!important;border-radius:7px!important;color:#ffffff!important}
+  .builder-info,.builder-choice-wrapper,.builder-choice-field,.builder-name-block{background:#1b2a33!important;border:1px solid #b5bec3!important;border-left:4px solid #5fe6e0!important;border-radius:7px!important;color:#ffffff!important}
   .builder-info small,.builder-panel .muted,.builder-panel .hint{color:#b5bec3!important}
   .builder-class-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.75rem!important}
-  .builder-class-card{background:#ffffff!important;border:1px solid #b5bec3!important;border-top:3px solid #13262e!important;border-radius:8px!important;color:#0f1e26!important;box-shadow:0 2px 7px #3fb8b80b!important}
-  .builder-class-card:hover{border-color:#5fe6e0!important;background:#ffffff!important}
-  .builder-class-card.selected{border:2px solid #5fe6e0!important;border-top:4px solid #5fe6e0!important;background:#ffffff!important;box-shadow:0 0 0 2px #5fe6e020!important}
+  .builder-class-card{background:#1b2a33!important;border:1px solid #b5bec3!important;border-top:3px solid #13262e!important;border-radius:8px!important;color:#0f1e26!important;box-shadow:0 2px 7px #3fb8b80b!important}
+  .builder-class-card:hover{border-color:#5fe6e0!important;background:#1b2a33!important}
+  .builder-class-card.selected{border:2px solid #5fe6e0!important;border-top:4px solid #5fe6e0!important;background:#1b2a33!important;box-shadow:0 0 0 2px #5fe6e020!important}
   .builder-class-card-heading{color:#ffffff!important}
-  .builder-class-card-heading>span{background:#b5bec3!important;border:1px solid #b5bec3!important;color:#3fb8b8!important}
+  .builder-class-card-heading>span{background:#1b2a33!important;border:1px solid #b5bec3!important;color:#3fb8b8!important}
   .builder-class-description{color:#b5bec3!important}
   .builder-class-meta{border-top:1px solid #b5bec3!important}
   .builder-class-meta>span{color:#3fb8b8!important}
@@ -5418,15 +5418,15 @@ import ITEMS from './items.json';
   .builder-name-block .name-generator-controls{display:flex;align-items:end;gap:.6rem;flex-wrap:wrap}
   .builder-name-block .name-generator-controls label{flex:1;min-width:130px}
   .builder-checkbox-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
-  .builder-checkbox{display:flex!important;align-items:flex-start!important;gap:.55rem!important;padding:.65rem .7rem!important;border:1px solid #b5bec3!important;border-left:3px solid #1b2a33!important;border-radius:6px!important;background:#ffffff!important;color:#ffffff!important;cursor:pointer}
-  .builder-checkbox:has(input:checked){border-color:#5fe6e0!important;border-left-color:#5fe6e0!important;background:#ffffff!important}
+  .builder-checkbox{display:flex!important;align-items:flex-start!important;gap:.55rem!important;padding:.65rem .7rem!important;border:1px solid #b5bec3!important;border-left:3px solid #1b2a33!important;border-radius:6px!important;background:#1b2a33!important;color:#ffffff!important;cursor:pointer}
+  .builder-checkbox:has(input:checked){border-color:#5fe6e0!important;border-left-color:#5fe6e0!important;background:#1b2a33!important}
   .builder-checkbox input{flex:0 0 auto;margin-top:.15rem;accent-color:#5fe6e0}
   .builder-choice-heading{color:#ffffff!important}
   .builder-actions{gap:.55rem!important}
   .builder-actions button,.builder-panel button{border-radius:6px!important}
   .builder-panel button.primary,.builder-actions .primary{background:#13262e!important;border:1px solid #13262e!important;color:#ffffff!important}
-  .builder-panel button.secondary,.builder-actions .secondary{background:#ffffff!important;border:1px solid #1b2a33!important;color:#ffffff!important}
-  .master-tabs button{background:#ffffff!important;color:#ffffff!important;border-color:#b5bec3!important}
+  .builder-panel button.secondary,.builder-actions .secondary{background:#1b2a33!important;border:1px solid #1b2a33!important;color:#ffffff!important}
+  .master-tabs button{background:#1b2a33!important;color:#ffffff!important;border-color:#b5bec3!important}
   .master-tabs button.active{background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
   footer{color:#b5bec3!important;border-top:1px solid #b5bec3!important}
   @media(max-width:620px){.builder-class-grid,.builder-species-grid,.builder-background-grid,.builder-checkbox-grid{grid-template-columns:1fr!important}}
@@ -5442,7 +5442,7 @@ import ITEMS from './items.json';
     position:relative!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
     gap:.45rem!important;min-width:0!important;min-height:92px!important;padding:.85rem 1rem!important;
     border:1px solid #b5bec3!important;border-left:4px solid #1b2a33!important;border-radius:8px!important;
-    background:#ffffff!important;color:#ffffff!important;cursor:pointer!important;
+    background:#1b2a33!important;color:#ffffff!important;cursor:pointer!important;
     box-shadow:0 2px 7px #3fb8b80a!important;transition:border-color .15s,background .15s,box-shadow .15s!important
   }
   .builder-checkbox>input[type=checkbox],.builder-checkbox>input[type=radio]{
@@ -5453,15 +5453,15 @@ import ITEMS from './items.json';
   .builder-checkbox>span b{color:#ffffff!important}
   .builder-checkbox::after{
     content:'Seleccionar';position:absolute;top:.7rem;right:.7rem;padding:.18rem .42rem;
-    border:1px solid #b5bec3;border-radius:4px;background:#ffffff;color:#b5bec3;
+    border:1px solid #b5bec3;border-radius:4px;background:#1b2a33;color:#b5bec3;
     font:600 .58rem/1.35 system-ui,sans-serif;letter-spacing:.02em
   }
   .builder-checkbox:has(input:checked){
-    border:2px solid #5fe6e0!important;border-left:5px solid #5fe6e0!important;background:#ffffff!important;
+    border:2px solid #5fe6e0!important;border-left:5px solid #5fe6e0!important;background:#1b2a33!important;
     box-shadow:0 0 0 2px #5fe6e01c!important
   }
   .builder-checkbox:has(input:checked)::after{content:'Elegido';background:#13262e;color:#ffffff;border-color:#ffffff}
-  .builder-checkbox:has(input:disabled):not(:has(input:checked)){opacity:.48!important;cursor:not-allowed!important;background:#b5bec3!important;box-shadow:none!important}
+  .builder-checkbox:has(input:disabled):not(:has(input:checked)){opacity:.48!important;cursor:not-allowed!important;background:#1b2a33!important;box-shadow:none!important}
   .builder-checkbox:has(input:focus-visible){outline:3px solid #5fe6e0!important;outline-offset:2px}
   .builder-checkbox:has(.builder-option-description){display:flex!important;flex-direction:column!important;gap:.4rem!important}
   .builder-checkbox:has(.builder-option-description)>span{padding-right:5.5rem!important;font-size:.9rem!important}
@@ -5473,18 +5473,18 @@ import ITEMS from './items.json';
 
   .github-config-panel{padding:.9rem;border:1px solid var(--rule);border-radius:7px;background:rgba(95,230,224,.42)}
   .github-folder-create{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem}
-  .github-folder-create input,.github-character-actions select{min-width:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px;background:#ffffff;color:var(--ink)}
+  .github-folder-create input,.github-character-actions select{min-width:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink)}
   .github-folder-list{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
-  .github-folder-chip{padding:.3rem .55rem;border:1px solid var(--rule);border-radius:20px;background:#ffffff;color:var(--ink-soft);font:.7rem system-ui,sans-serif}
+  .github-folder-chip{padding:.3rem .55rem;border:1px solid var(--rule);border-radius:20px;background:#1b2a33;color:var(--ink-soft);font:.7rem system-ui,sans-serif}
   .github-character-list{display:grid;gap:.55rem}
-  .github-character-row{display:grid;gap:.55rem;padding:.7rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:6px;background:#ffffff}
+  .github-character-row{display:grid;gap:.55rem;padding:.7rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:6px;background:#1b2a33}
   .github-character-row>div:first-child{display:grid;gap:.15rem}
   .github-character-row small{color:var(--ink-soft);font:.68rem system-ui,sans-serif}
   .github-character-actions{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
   .github-character-actions select{flex:1 1 150px}
-  .github-character-actions button{padding:.45rem .6rem;border:1px solid var(--rule);border-radius:5px;background:#ffffff;color:var(--ink);font:.7rem system-ui,sans-serif;cursor:pointer}
+  .github-character-actions button{padding:.45rem .6rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink);font:.7rem system-ui,sans-serif;cursor:pointer}
   .github-character-actions .danger-text{color:#3fb8b8}
-  .github-status{padding:.55rem .7rem;border-left:3px solid var(--gold);background:#ffffff}
+  .github-status{padding:.55rem .7rem;border-left:3px solid var(--gold);background:#1b2a33}
   @media(min-width:700px){.github-character-row{grid-template-columns:minmax(0,1fr) auto;align-items:center}}
 
 
@@ -5497,32 +5497,32 @@ import ITEMS from './items.json';
     --ocean:#3fb8b8;--slate:#3fb8b8;--aqua:#b5bec3;--aqua-mid:#5fe6e0;
     --text-main:#ffffff;--text-secondary:#b5bec3;--text-muted:#1b2a33;
   }
-  :global(body),:global(.app-shell),:global(.main){background:#3fb8b8!important;color:#ffffff!important}
-  :global(body){background:radial-gradient(ellipse at 50% 0%,#3fb8b8 0,#3fb8b8 45%,#3fb8b8 100%)!important}
+  :global(body),:global(.app-shell),:global(.main){background:#13262e!important;color:#ffffff!important}
+  :global(body){background:radial-gradient(ellipse at 50% 0%,#13262e 0,#13262e 45%,#13262e 100%)!important}
   :global(.topbar){background:#0f1e26!important;border-bottom:1px solid #3fb8b8!important;color:#ffffff!important}
   :global(.brand),:global(.brand strong),:global(.brand small){color:#ffffff!important}
   :global(.brand-mark),:global(.eyebrow),:global(.free-tag),:global(.count){color:#b5bec3!important}
   :global(.intro),:global(.connection),:global(.hint),:global(.muted),:global(.brand small){color:#b5bec3!important}
   :global(.panel),:global(.builder-panel),:global(.import-character-panel),:global(.character-card),:global(.monster-card),:global(.trait-editor),:global(.import-box),:global(.rolls-panel),:global(.roll-history),:global(.ddb-content-panel){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important;box-shadow:0 8px 24px #0b171d55!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important;box-shadow:0 8px 24px #0b171d55!important
   }
   :global(.section-heading h2),:global(.panel h2),:global(.builder-panel h3),:global(.builder-panel h4),:global(.character-card h3),:global(.monster-card h3),:global(.trait-view strong),:global(.roll-entry-top strong){color:#ffffff!important}
   :global(label),:global(.builder-panel>label),:global(.builder-panel label),:global(.items-search),:global(.items-filters label),:global(.spell-search),:global(.spell-filters label),:global(.monster-filter){color:#b5bec3!important}
   :global(input),:global(textarea),:global(select),:global(.builder-panel input),:global(.builder-panel select),:global(.builder-panel textarea),:global(.items-search input),:global(.items-filters input),:global(.items-filters select),:global(.spell-search input),:global(.spell-filters select),:global(.monster-filter select),:global(.github-folder-create input),:global(.github-character-actions select){
-    background:#3fb8b8!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
   }
   :global(input::placeholder),:global(textarea::placeholder){color:#b5bec3!important}
   :global(input:focus),:global(textarea:focus),:global(select:focus){border-color:#b5bec3!important;outline:1px solid #b5bec3!important}
-  :global(.primary),:global(.builder-panel button.primary),:global(.builder-actions .primary){background:#b5bec3!important;border:1px solid #b5bec3!important;color:#3fb8b8!important}
-  :global(.primary:hover){background:#b5bec3!important}
+  :global(.primary),:global(.builder-panel button.primary),:global(.builder-actions .primary){background:#1b2a33!important;border:1px solid #b5bec3!important;color:#3fb8b8!important}
+  :global(.primary:hover){background:#1b2a33!important}
   :global(.secondary),:global(.builder-panel button.secondary),:global(.builder-actions .secondary),:global(.topbar nav button),:global(.player-tabs button),:global(.master-tabs button),:global(.sheet-tabs button),:global(.nautical-tabs button){
-    background:#3fb8b8!important;border:1px solid #3fb8b8!important;color:#b5bec3!important
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#b5bec3!important
   }
   :global(.topbar nav button.active),:global(.player-tabs button.active),:global(.master-tabs button.active),:global(.sheet-tabs button.active),:global(.nautical-tabs button.active){
-    background:#b5bec3!important;border-color:#b5bec3!important;color:#3fb8b8!important
+    background:#1b2a33!important;border-color:#b5bec3!important;color:#3fb8b8!important
   }
   :global(.builder-info),:global(.builder-choice-wrapper),:global(.builder-choice-field),:global(.builder-name-block),:global(.builder-checkbox),:global(.builder-class-card),:global(.builder-skill-card),:global(.builder-option-card){
-    background:#3fb8b8!important;border:1px solid #3fb8b8!important;color:#ffffff!important;box-shadow:none!important
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important;box-shadow:none!important
   }
   :global(.builder-info),:global(.builder-choice-wrapper),:global(.builder-choice-field),:global(.builder-name-block){border-left:3px solid #b5bec3!important}
   :global(.builder-info *),:global(.builder-checkbox *),:global(.builder-class-card *),:global(.builder-skill-card *),:global(.builder-option-card *){color:inherit}
@@ -5532,15 +5532,15 @@ import ITEMS from './items.json';
   :global(.builder-class-meta){border-top:1px solid #3fb8b8!important}
   :global(.builder-class-meta>span){color:#b5bec3!important}
   :global(.builder-class-meta>strong){color:#ffffff!important}
-  :global(.builder-class-card:hover),:global(.builder-checkbox:hover){border-color:#b5bec3!important;background:#3fb8b8!important}
-  :global(.builder-class-card.selected),:global(.builder-checkbox:has(input:checked)){border-color:#b5bec3!important;border-left-color:#b5bec3!important;background:#3fb8b8!important;box-shadow:0 0 0 1px #b5bec333!important}
-  :global(.builder-checkbox:has(input:checked)::after){background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  :global(.builder-class-card:hover),:global(.builder-checkbox:hover){border-color:#b5bec3!important;background:#13262e!important}
+  :global(.builder-class-card.selected),:global(.builder-checkbox:has(input:checked)){border-color:#b5bec3!important;border-left-color:#b5bec3!important;background:#13262e!important;box-shadow:0 0 0 1px #b5bec333!important}
+  :global(.builder-checkbox:has(input:checked)::after){background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
   :global(.builder-checkbox input){accent-color:#b5bec3!important}
-  :global(.builder-progress){background:#3fb8b8!important}
-  :global(.builder-progress span){background:#b5bec3!important}
-  :global(.builder-option-badge),:global(.builder-class-card-heading>span){background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#b5bec3!important}
+  :global(.builder-progress){background:#13262e!important}
+  :global(.builder-progress span){background:#1b2a33!important}
+  :global(.builder-option-badge),:global(.builder-class-card-heading>span){background:#13262e!important;border:1px solid #5fe6e0!important;color:#b5bec3!important}
   :global(.character-sheet),:global(.nautical-sheet){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important;box-shadow:0 16px 40px #0b171d99!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important;box-shadow:0 16px 40px #0b171d99!important
   }
   :global(.nautical-header),:global(.ddb-character-header){background:#0f1e26!important;border-bottom:1px solid #3fb8b8!important;color:#ffffff!important}
   :global(.nautical-header .sheet-kicker),:global(.sheet-kicker){color:#b5bec3!important}
@@ -5548,104 +5548,104 @@ import ITEMS from './items.json';
   :global(.sheet-banner-meta){color:#b5bec3!important}
   :global(.sheet-banner-emblem),:global(.portrait-frame){border-color:#b5bec3!important;color:#ffffff!important}
   :global(.portrait-frame){box-shadow:0 0 0 3px #5fe6e0!important}
-  :global(.header-actions button){background:#3fb8b8!important;border:1px solid #b5bec3!important;color:#ffffff!important}
-  :global(.nautical-quick-stats){background:#3fb8b8!important;border-color:#5fe6e0!important}
+  :global(.header-actions button){background:#13262e!important;border:1px solid #b5bec3!important;color:#ffffff!important}
+  :global(.nautical-quick-stats){background:#13262e!important;border-color:#5fe6e0!important}
   :global(.nautical-quick-stats>div),:global(.sheet-quick-stats>div),:global(.attributes-section .sheet-stat){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
   }
   :global(.nautical-quick-stats>div>span),:global(.sheet-quick-stats>div>span),:global(.stat-label){color:#b5bec3!important}
   :global(.nautical-quick-stats>div>strong),:global(.sheet-quick-stats>div>strong),:global(.stat-value),:global(.sheet-stat strong){color:#ffffff!important}
   :global(.sheet-section),:global(.nautical-columns .sheet-section),:global(.ddb-content-panel){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;border-top:2px solid #b5bec3!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;border-top:2px solid #b5bec3!important;color:#ffffff!important
   }
   :global(.sheet-section-title),:global(.sheet-stat),:global(.sheet-tabs),:global(.master-tabs){border-color:#3fb8b8!important}
   :global(.sheet-section-title h3),:global(.section-name),:global(.nautical-columns .sheet-section-title h3){color:#b5bec3!important}
   :global(.nautical-columns .stat-label){color:#b5bec3!important}
   :global(.nautical-columns .stat-value){color:#ffffff!important}
-  :global(.nautical-tabs button.active),:global(.sheet-tabs button.active){background:#3fb8b8!important;color:#ffffff!important;border-bottom-color:#b5bec3!important}
+  :global(.nautical-tabs button.active),:global(.sheet-tabs button.active){background:#13262e!important;color:#ffffff!important;border-bottom-color:#b5bec3!important}
   :global(.nautical-tabs button),:global(.sheet-tabs button){color:#b5bec3!important}
-  :global(.nautical-columns),:global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){background-color:#3fb8b8!important;scrollbar-color:#b5bec3 #3fb8b8!important}
-  :global(.nautical-columns .sheet-section){background:#3fb8b8!important}
+  :global(.nautical-columns),:global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){background-color:#13262e!important;scrollbar-color:#b5bec3 #3fb8b8!important}
+  :global(.nautical-columns .sheet-section){background:#13262e!important}
   :global(.sheet-stat),:global(.roll-entry),:global(.trait-view),:global(.traits-preview){border-color:#3fb8b8!important}
   :global(.sheet-stat strong),:global(.trait-view strong),:global(.roll-part-heading strong){color:#ffffff!important}
   :global(.sheet-stat .stat-label),:global(.sheet-notes),:global(.monster-source),:global(.spell-source){color:#b5bec3!important}
-  :global(.items-table),:global(.chest-table){background:#3fb8b8!important;color:#ffffff!important}
-  :global(.items-table th),:global(.chest-table th){background:#3fb8b8!important;color:#ffffff!important}
+  :global(.items-table),:global(.chest-table){background:#13262e!important;color:#ffffff!important}
+  :global(.items-table th),:global(.chest-table th){background:#13262e!important;color:#ffffff!important}
   :global(.items-table td),:global(.chest-table td){color:#b5bec3!important;border-bottom-color:#3fb8b8!important}
   :global(.items-table td:first-child),:global(.chest-table td:first-child){color:#ffffff!important}
   :global(.spell-card),:global(.player-spell-card),:global(.player-feature-card),:global(.weapon-attack-card),:global(.github-character-row),:global(.github-folder-chip){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
   }
   :global(.spell-card *),:global(.player-spell-card *),:global(.player-feature-card *),:global(.weapon-attack-card *){color:inherit}
   :global(.spell-meta),:global(.spell-level),:global(.monster-cr),:global(.roll-notation),:global(.roll-result),:global(.chest-result){
-    background:#3fb8b8!important;border:1px solid #3fb8b8!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important
   }
   :global(.spell-name),:global(.player-spell-name),:global(.player-feature-name),:global(.weapon-attack-card h4){color:#ffffff!important}
   :global(.spell-source),:global(.player-spell-level),:global(.player-feature-source),:global(.weapon-attack-values span){color:#b5bec3!important}
   :global(.player-feature-card>p),:global(.spell-card p),:global(.monster-card p){color:#b5bec3!important}
   :global(.player-feature-card),:global(.player-spell-card){border-left-color:#b5bec3!important}
-  :global(.player-feat-section .player-feature-card){border-color:#5fe6e0!important;border-left-color:#b5bec3!important;background:#3fb8b8!important}
+  :global(.player-feat-section .player-feature-card){border-color:#5fe6e0!important;border-left-color:#b5bec3!important;background:#13262e!important}
   :global(.player-spell-checks input){accent-color:#b5bec3!important}
   :global(.trait-group h3),:global(.roll-result b),:global(.inline-roll),:global(.card-actions button),:global(.github-folder-chip){color:#b5bec3!important}
   :global(.inline-roll:hover){color:#b5bec3!important}
-  :global(.roll-notation),:global(.roll-result){background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important}
-  :global(.chest-result){background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  :global(.roll-notation),:global(.roll-result){background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  :global(.chest-result){background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
   :global(.chest-result-number),:global(.chest-result>span:last-child){color:#b5bec3!important}
   :global(.chest-table-wrap){border-color:#5fe6e0!important}
-  :global(.chest-selected){background:#3fb8b8!important;color:#ffffff!important}
-  :global(.github-status){background:#3fb8b8!important;border-left:3px solid #b5bec3!important;color:#ffffff!important}
-  :global(.github-character-actions button){background:#3fb8b8!important;border:1px solid #3fb8b8!important;color:#ffffff!important}
+  :global(.chest-selected){background:#13262e!important;color:#ffffff!important}
+  :global(.github-status){background:#13262e!important;border-left:3px solid #b5bec3!important;color:#ffffff!important}
+  :global(.github-character-actions button){background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important}
   :global(.github-character-actions .danger-text),:global(.danger-text),:global(.remove-roll){color:#5fe6e0!important}
-  :global(.toast){background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important}
+  :global(.toast){background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important}
   :global(.master-tabs button),:global(.sheet-tabs button){border-color:#3fb8b8!important}
-  :global(.master-tabs button.active){background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
-  :global(.sheet-tabs button.active){background:#3fb8b8!important;color:#ffffff!important;border-bottom-color:#b5bec3!important}
+  :global(.master-tabs button.active){background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  :global(.sheet-tabs button.active){background:#13262e!important;color:#ffffff!important;border-bottom-color:#b5bec3!important}
   :global(.saving-throw-line.proficient strong),:global(.nautical-skills .sheet-stat.proficient .stat-value),:global(.nautical-skills .sheet-stat.proficient .skill-number){color:#b5bec3!important}
   :global(.nautical-empty){border-color:#5fe6e0!important;color:#b5bec3!important}
   :global(footer){border-color:#3fb8b8!important;color:#b5bec3!important}
 
 
   /* Corrección final de contraste en herramientas del director */
-  :global(.gm-layout .master-tabs button){background:#3fb8b8!important;color:#b5bec3!important;border:1px solid #3fb8b8!important}
-  :global(.gm-layout .master-tabs button.active){background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
-  :global(.gm-layout .level-up-panel),:global(.gm-layout .subclass-level-preview),:global(.gm-layout .github-config-panel),:global(.gm-layout .github-character-row),:global(.gm-layout .builder-panel),:global(.gm-layout .custom-rolls),:global(.gm-layout .custom-roll-card),:global(.gm-layout .new-roll-part){background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  :global(.gm-layout .master-tabs button){background:#13262e!important;color:#b5bec3!important;border:1px solid #3fb8b8!important}
+  :global(.gm-layout .master-tabs button.active){background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  :global(.gm-layout .level-up-panel),:global(.gm-layout .subclass-level-preview),:global(.gm-layout .github-config-panel),:global(.gm-layout .github-character-row),:global(.gm-layout .builder-panel),:global(.gm-layout .custom-rolls),:global(.gm-layout .custom-roll-card),:global(.gm-layout .new-roll-part){background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
   :global(.gm-layout .level-up-panel label),:global(.gm-layout .builder-panel label),:global(.gm-layout .items-search),:global(.gm-layout .items-filters label),:global(.gm-layout .spell-search),:global(.gm-layout .spell-filters label),:global(.gm-layout .monster-filter),:global(.gm-layout .roll-creator label){color:#b5bec3!important}
-  :global(.gm-layout input),:global(.gm-layout textarea),:global(.gm-layout select){background:#3fb8b8!important;color:#ffffff!important;border:1px solid #3fb8b8!important}
+  :global(.gm-layout input),:global(.gm-layout textarea),:global(.gm-layout select){background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important}
   :global(.gm-layout input::placeholder),:global(.gm-layout textarea::placeholder){color:#b5bec3!important}
   :global(.gm-layout input:focus),:global(.gm-layout textarea:focus),:global(.gm-layout select:focus){border-color:#b5bec3!important;outline:1px solid #b5bec3!important}
-  :global(.gm-layout .builder-info),:global(.gm-layout .builder-choice-wrapper),:global(.gm-layout .builder-choice-field),:global(.gm-layout .builder-choice-heading),:global(.gm-layout .github-status),:global(.gm-layout .github-folder-chip){background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  :global(.gm-layout .builder-info),:global(.gm-layout .builder-choice-wrapper),:global(.gm-layout .builder-choice-field),:global(.gm-layout .builder-choice-heading),:global(.gm-layout .github-status),:global(.gm-layout .github-folder-chip){background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
   :global(.gm-layout .builder-info),:global(.gm-layout .github-status){border-left:3px solid #b5bec3!important}
   :global(.gm-layout .builder-info strong),:global(.gm-layout .builder-choice-wrapper strong),:global(.gm-layout .builder-choice-heading strong),:global(.gm-layout .subclass-level-preview strong),:global(.gm-layout .subclass-level-preview b){color:#ffffff!important}
   :global(.gm-layout .builder-info p),:global(.gm-layout .builder-info small),:global(.gm-layout .subclass-level-preview p){color:#b5bec3!important}
-  :global(.gm-layout .builder-checkbox){background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .builder-checkbox){background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
   :global(.gm-layout .builder-checkbox>span),:global(.gm-layout .builder-checkbox>span b){color:#ffffff!important}
-  :global(.gm-layout .builder-checkbox::after){background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
-  :global(.gm-layout .builder-checkbox:has(input:checked)){background:#3fb8b8!important;border-color:#b5bec3!important}
-  :global(.gm-layout .builder-checkbox:has(input:checked)::after){background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
-  :global(.gm-layout .builder-progress){background:#3fb8b8!important}
-  :global(.gm-layout .builder-progress span){background:#b5bec3!important}
-  :global(.gm-layout .gm-character-sheet .sheet-section),:global(.gm-layout .gm-character-sheet .combat-section),:global(.gm-layout .gm-character-sheet .attributes-section),:global(.gm-layout .gm-character-sheet .skills-section),:global(.gm-layout .gm-character-sheet .features-section),:global(.gm-layout .gm-character-sheet .magic-section),:global(.gm-layout .gm-character-sheet .equipment-section),:global(.gm-layout .gm-character-sheet .story-section),:global(.gm-layout .gm-character-sheet .general-section){background:#3fb8b8!important;color:#ffffff!important;border:1px solid #5fe6e0!important;border-top:2px solid #b5bec3!important}
+  :global(.gm-layout .builder-checkbox::after){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .builder-checkbox:has(input:checked)){background:#13262e!important;border-color:#b5bec3!important}
+  :global(.gm-layout .builder-checkbox:has(input:checked)::after){background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  :global(.gm-layout .builder-progress){background:#13262e!important}
+  :global(.gm-layout .builder-progress span){background:#1b2a33!important}
+  :global(.gm-layout .gm-character-sheet .sheet-section),:global(.gm-layout .gm-character-sheet .combat-section),:global(.gm-layout .gm-character-sheet .attributes-section),:global(.gm-layout .gm-character-sheet .skills-section),:global(.gm-layout .gm-character-sheet .features-section),:global(.gm-layout .gm-character-sheet .magic-section),:global(.gm-layout .gm-character-sheet .equipment-section),:global(.gm-layout .gm-character-sheet .story-section),:global(.gm-layout .gm-character-sheet .general-section){background:#13262e!important;color:#ffffff!important;border:1px solid #5fe6e0!important;border-top:2px solid #b5bec3!important}
   :global(.gm-layout .gm-character-sheet .sheet-section-title h3),:global(.gm-layout .gm-character-sheet .section-name){color:#b5bec3!important}
   :global(.gm-layout .gm-character-sheet .sheet-stat){background:transparent!important;border-color:#3fb8b8!important}
   :global(.gm-layout .gm-character-sheet .sheet-stat span),:global(.gm-layout .gm-character-sheet .stat-label){color:#b5bec3!important}
-  :global(.gm-layout .gm-character-sheet .sheet-stat strong),:global(.gm-layout .gm-character-sheet .stat-value),:global(.gm-layout .gm-character-sheet .features-section .sheet-stat strong){background:#3fb8b8!important;color:#ffffff!important}
-  :global(.gm-layout .items-filters fieldset),:global(.gm-layout .items-filters legend){background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
-  :global(.gm-layout .items-table),:global(.gm-layout .chest-table){background:#3fb8b8!important;color:#ffffff!important}
-  :global(.gm-layout .items-table th),:global(.gm-layout .chest-table th){background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
-  :global(.gm-layout .items-table td),:global(.gm-layout .chest-table td){background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .gm-character-sheet .sheet-stat strong),:global(.gm-layout .gm-character-sheet .stat-value),:global(.gm-layout .gm-character-sheet .features-section .sheet-stat strong){background:#13262e!important;color:#ffffff!important}
+  :global(.gm-layout .items-filters fieldset),:global(.gm-layout .items-filters legend){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .items-table),:global(.gm-layout .chest-table){background:#13262e!important;color:#ffffff!important}
+  :global(.gm-layout .items-table th),:global(.gm-layout .chest-table th){background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .items-table td),:global(.gm-layout .chest-table td){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
   :global(.gm-layout .items-table td:first-child),:global(.gm-layout .chest-table td:first-child){color:#ffffff!important}
-  :global(.gm-layout .chest-result),:global(.gm-layout .monster-combat-grid div),:global(.gm-layout .monster-info-item),:global(.gm-layout .spell-meta),:global(.gm-layout .monster-attacks),:global(.gm-layout .monster-role),:global(.gm-layout .monster-entry){background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .chest-result),:global(.gm-layout .monster-combat-grid div),:global(.gm-layout .monster-info-item),:global(.gm-layout .spell-meta),:global(.gm-layout .monster-attacks),:global(.gm-layout .monster-role),:global(.gm-layout .monster-entry){background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
   :global(.gm-layout .monster-heading){border-bottom-color:#b5bec3!important}
   :global(.gm-layout .monster-heading h3),:global(.gm-layout .monster-content-section h4){color:#b5bec3!important}
   :global(.gm-layout .monster-entry strong),:global(.gm-layout .monster-original),:global(.gm-layout .monster-name),:global(.gm-layout .spell-name){color:#ffffff!important}
-  :global(.gm-layout .monster-statblock),:global(.gm-layout .spell-details){background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
-  :global(.gm-layout .monster-cr),:global(.gm-layout .spell-level){background:#3fb8b8!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  :global(.gm-layout .monster-statblock),:global(.gm-layout .spell-details){background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .monster-cr),:global(.gm-layout .spell-level){background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
   :global(.gm-layout .monster-source),:global(.gm-layout .monster-attribution),:global(.gm-layout .spell-source),:global(.gm-layout .spell-subtitle),:global(.gm-layout .monster-subtitle){color:#b5bec3!important}
-  :global(.gm-layout .roll-notation),:global(.gm-layout .roll-result){background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  :global(.gm-layout .roll-notation),:global(.gm-layout .roll-result){background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
   :global(.gm-layout .roll-result b){color:#b5bec3!important}
-  :global(.gm-layout .roll-actions button),:global(.gm-layout .roll-creator button),:global(.gm-layout .add-roll-part),:global(.gm-layout .github-character-actions button){background:#3fb8b8!important;color:#ffffff!important;border:1px solid #3fb8b8!important}
-  :global(.gm-layout button.primary){background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
-  :global(.gm-layout button.secondary){background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .roll-actions button),:global(.gm-layout .roll-creator button),:global(.gm-layout .add-roll-part),:global(.gm-layout .github-character-actions button){background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important}
+  :global(.gm-layout button.primary){background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  :global(.gm-layout button.secondary){background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
   :global(.gm-layout .danger-text),:global(.gm-layout .remove-roll){color:#5fe6e0!important}
   :global(.gm-layout .gm-sheet-details summary){color:#b5bec3!important}
 
@@ -5660,8 +5660,8 @@ import ITEMS from './items.json';
     --text-main:#ffffff;--text-secondary:#b5bec3;--text-muted:#1b2a33;
     --line:#3fb8b8;--line-soft:#3fb8b8;
   }
-  :global(html),:global(body),:global(#app){background:#3fb8b8!important;color:#ffffff!important}
-  :global(body){background:radial-gradient(ellipse at 50% 0%,#3fb8b8 0,#3fb8b8 42%,#3fb8b8 100%)!important}
+  :global(html),:global(body),:global(#app){background:#13262e!important;color:#ffffff!important}
+  :global(body){background:radial-gradient(ellipse at 50% 0%,#13262e 0,#13262e 42%,#13262e 100%)!important}
   :global(.app-shell),:global(.main){color:#ffffff!important}
   :global(.topbar),:global(footer){border-color:#3fb8b8!important}
   :global(.brand),:global(.brand strong),:global(.section-heading h2),:global(.panel h2),
@@ -5681,7 +5681,7 @@ import ITEMS from './items.json';
   :global(.rules-panel),:global(.ddb-content-panel),:global(.data-import-panel),
   :global(.import-character-panel),:global(.github-config-panel),
   :global(.github-character-row),:global(.subclass-level-preview){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important;
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important;
     box-shadow:0 8px 24px #0b171d44!important
   }
   :global(.topbar nav button),:global(.secondary),:global(.player-tabs button),
@@ -5689,29 +5689,29 @@ import ITEMS from './items.json';
   :global(.header-actions button),:global(.roll-actions button),
   :global(.roll-creator button),:global(.add-roll-part),
   :global(.github-character-actions button){
-    background:#3fb8b8!important;border:1px solid #3fb8b8!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important
   }
   :global(.topbar nav button.active),:global(.player-tabs button.active),
   :global(.character-tabs button.active),:global(.master-tabs button.active),
   :global(.primary),:global(.builder-panel button.primary),
   :global(.builder-actions .primary){
-    background:#b5bec3!important;border:1px solid #b5bec3!important;color:#3fb8b8!important
+    background:#1b2a33!important;border:1px solid #b5bec3!important;color:#3fb8b8!important
   }
-  :global(.primary:hover){background:#b5bec3!important;color:#3fb8b8!important}
+  :global(.primary:hover){background:#1b2a33!important;color:#3fb8b8!important}
   :global(label),:global(.builder-choice-heading),:global(.stat-label),
   :global(.sheet-stat .stat-label){color:#b5bec3!important}
   :global(input),:global(textarea),:global(select),:global(.editable),
   :global(.sheet-readonly-value){
-    background:#3fb8b8!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
   }
   :global(input::placeholder),:global(textarea::placeholder){color:#b5bec3!important}
   :global(input:focus),:global(textarea:focus),:global(select:focus),
-  :global(.editable:focus){border-color:#b5bec3!important;outline:1px solid #b5bec3!important;background:#3fb8b8!important}
+  :global(.editable:focus){border-color:#b5bec3!important;outline:1px solid #b5bec3!important;background:#13262e!important}
   :global(.roll-entry),:global(.trait-view),:global(.traits-preview),
   :global(.subheading),:global(.sheet-section-title){border-color:#3fb8b8!important}
   :global(.roll-entry-top strong),:global(.trait-view strong),
   :global(.trait-view p),:global(.roll-entry p){color:#ffffff!important}
-  :global(.toast){background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important}
+  :global(.toast){background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important}
   :global(.danger-text),:global(.remove-roll){color:#5fe6e0!important}
 
   /* Creador: todas las tarjetas seleccionables comparten el mismo tratamiento */
@@ -5720,7 +5720,7 @@ import ITEMS from './items.json';
   :global(.builder-option-card),:global(.builder-option-description),
   :global(.builder-skill-card),:global(.builder-option-badge),
   :global(.builder-choice-heading),:global(.builder-checkbox){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
   }
   :global(.builder-choice-wrapper),:global(.builder-choice-field),
   :global(.builder-name-block){border-left:3px solid #b5bec3!important}
@@ -5730,32 +5730,32 @@ import ITEMS from './items.json';
   :global(.builder-class-card),:global(.builder-class-card:hover),
   :global(.builder-species-grid .builder-option-card),
   :global(.builder-background-grid .builder-option-card){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
   }
   :global(.builder-class-card-heading),:global(.builder-class-card-heading strong),
   :global(.builder-class-meta strong),:global(.builder-option-card strong){color:#ffffff!important}
   :global(.builder-class-card-heading>span),:global(.builder-class-meta>span),
-  :global(.builder-option-badge){color:#b5bec3!important;background:#3fb8b8!important;border-color:#5fe6e0!important}
+  :global(.builder-option-badge){color:#b5bec3!important;background:#13262e!important;border-color:#5fe6e0!important}
   :global(.builder-class-description),:global(.builder-class-meta),
   :global(.builder-class-meta>span){color:#b5bec3!important;border-color:#3fb8b8!important}
   :global(.builder-class-card.selected),:global(.builder-option-card.selected){
-    background:#3fb8b8!important;border:2px solid #b5bec3!important;color:#ffffff!important;
+    background:#13262e!important;border:2px solid #b5bec3!important;color:#ffffff!important;
     box-shadow:0 0 0 1px #b5bec333!important
   }
   :global(.builder-checkbox:has(input:checked)){
-    background:#3fb8b8!important;border-color:#b5bec3!important;color:#ffffff!important
+    background:#13262e!important;border-color:#b5bec3!important;color:#ffffff!important
   }
   :global(.builder-checkbox input){accent-color:#b5bec3!important}
   :global(.builder-panel button.secondary),:global(.builder-actions .secondary){
-    background:#3fb8b8!important;border:1px solid #3fb8b8!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important
   }
-  :global(.builder-progress){background:#3fb8b8!important}
-  :global(.builder-progress span){background:#b5bec3!important}
+  :global(.builder-progress){background:#13262e!important}
+  :global(.builder-progress span){background:#1b2a33!important}
 
   /* Hoja del jugador y ficha del director: ningún bloque de pergamino o fondo claro */
   :global(.character-sheet),:global(.gm-character-sheet),
   :global(.nautical-sheet),:global(.ddb-content-panel){
-    background:#3fb8b8!important;color:#ffffff!important;border:1px solid #5fe6e0!important
+    background:#13262e!important;color:#ffffff!important;border:1px solid #5fe6e0!important
   }
   :global(.character-sheet .sheet-banner),:global(.gm-character-sheet .sheet-banner){
     background:#0f1e26!important;color:#ffffff!important
@@ -5763,10 +5763,10 @@ import ITEMS from './items.json';
   :global(.character-sheet .character-name),:global(.gm-character-sheet .character-name),
   :global(.character-sheet .sheet-banner .character-name){color:#ffffff!important}
   :global(.character-sheet .sheet-tabs button),:global(.sheet-tabs button){
-    background:#3fb8b8!important;color:#b5bec3!important;border:1px solid #3fb8b8!important
+    background:#13262e!important;color:#b5bec3!important;border:1px solid #3fb8b8!important
   }
   :global(.character-sheet .sheet-tabs button.active),:global(.sheet-tabs button.active){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#b5bec3!important;
+    background:#13262e!important;color:#ffffff!important;border-color:#b5bec3!important;
     border-bottom:3px solid #b5bec3!important
   }
   :global(.character-sheet .sheet-section),:global(.gm-character-sheet .sheet-section),
@@ -5778,7 +5778,7 @@ import ITEMS from './items.json';
   :global(.gm-character-sheet .skills-section),:global(.gm-character-sheet .features-section),
   :global(.gm-character-sheet .magic-section),:global(.gm-character-sheet .equipment-section),
   :global(.gm-character-sheet .story-section),:global(.gm-character-sheet .general-section){
-    background:#3fb8b8!important;color:#ffffff!important;border:1px solid #5fe6e0!important;
+    background:#13262e!important;color:#ffffff!important;border:1px solid #5fe6e0!important;
     border-top:2px solid #b5bec3!important
   }
   :global(.character-sheet .sheet-section-title),:global(.gm-character-sheet .sheet-section-title){
@@ -5797,33 +5797,33 @@ import ITEMS from './items.json';
   }
   :global(.character-sheet .stat-value),:global(.gm-character-sheet .stat-value),
   :global(.character-sheet .sheet-stat strong),:global(.gm-character-sheet .sheet-stat strong){
-    background:#3fb8b8!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
   }
   :global(.character-sheet .editable),:global(.gm-character-sheet .editable){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
   }
 
   /* Hoja náutica principal: corrige subpaletas verdes, rojas y azules heredadas */
-  :global(.nautical-sheet){background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  :global(.nautical-sheet){background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
   :global(.nautical-header){background:#0f1e26!important;border-bottom:1px solid #3fb8b8!important}
   :global(.nautical-header .sheet-kicker),:global(.nautical-sheet .sheet-kicker){color:#b5bec3!important}
   :global(.nautical-header .character-name),:global(.nautical-header .sheet-banner-meta){color:#ffffff!important}
   :global(.nautical-header .sheet-banner-meta span+span){border-color:#3fb8b8!important}
   :global(.portrait-frame){border-color:#5fe6e0!important;box-shadow:0 0 0 3px #3fb8b8!important}
-  :global(.header-actions button){background:#3fb8b8!important;border:1px solid #b5bec3!important;color:#ffffff!important}
-  :global(.nautical-quick-stats){background:#3fb8b8!important;border-color:#5fe6e0!important}
+  :global(.header-actions button){background:#13262e!important;border:1px solid #b5bec3!important;color:#ffffff!important}
+  :global(.nautical-quick-stats){background:#13262e!important;border-color:#5fe6e0!important}
   :global(.nautical-quick-stats>div),:global(.nautical-quick-stats .quick-stats-row>div){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
   }
   :global(.nautical-quick-stats>div>span){color:#b5bec3!important}
   :global(.nautical-quick-stats>div>strong){color:#ffffff!important}
   :global(.nautical-quick-stats .attribute-plaque){
-    background:#3fb8b8!important;border:2px solid #b5bec3!important;color:#ffffff!important
+    background:#13262e!important;border:2px solid #b5bec3!important;color:#ffffff!important
   }
   :global(.nautical-quick-stats .attribute-plaque strong),
   :global(.nautical-quick-stats .attribute-plaque .ability-score){color:#ffffff!important}
   :global(.nautical-quick-stats .attribute-plaque .ability-bonus-roll){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
   }
   :global(.nautical-quick-stats .attribute-plaque .ability-bonus-empty),
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line span),
@@ -5831,10 +5831,10 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line){border-color:#3fb8b8!important}
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient span),
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient strong){color:#b5bec3!important}
-  :global(.nautical-columns){background:#3fb8b8!important}
+  :global(.nautical-columns){background:#13262e!important}
   :global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){color:#ffffff!important;scrollbar-color:#b5bec3 #3fb8b8!important}
   :global(.nautical-columns .sheet-section){
-    background:#3fb8b8!important;color:#ffffff!important;border:1px solid #5fe6e0!important;
+    background:#13262e!important;color:#ffffff!important;border:1px solid #5fe6e0!important;
     border-top:2px solid #b5bec3!important
   }
   :global(.nautical-columns .sheet-section-title){background:transparent!important;border-color:#3fb8b8!important}
@@ -5843,17 +5843,17 @@ import ITEMS from './items.json';
   :global(.nautical-columns .sheet-stat){background:transparent!important;border-color:#3fb8b8!important}
   :global(.nautical-columns .stat-label),:global(.nautical-columns .sheet-stat span){color:#b5bec3!important}
   :global(.nautical-columns .stat-value),:global(.nautical-columns .sheet-stat strong){
-    background:#3fb8b8!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
   }
   :global(.nautical-skills .sheet-stat.proficient .stat-label),
   :global(.nautical-skills .sheet-stat.proficient .stat-value),
   :global(.nautical-skills .sheet-stat.proficient .skill-number){color:#b5bec3!important}
   :global(.nautical-skills .sheet-stat .skill-number){color:#ffffff!important}
-  :global(.nautical-import){background:#3fb8b8!important;border-color:#5fe6e0!important;color:#ffffff!important}
+  :global(.nautical-import){background:#13262e!important;border-color:#5fe6e0!important;color:#ffffff!important}
   :global(.nautical-tabs){border-color:#5fe6e0!important}
   :global(.nautical-tabs button){background:transparent!important;color:#b5bec3!important;border-color:transparent!important}
   :global(.nautical-tabs button.active){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:transparent!important;
+    background:#13262e!important;color:#ffffff!important;border-color:transparent!important;
     border-bottom:3px solid #b5bec3!important
   }
   :global(.nautical-tab-content){background:transparent!important;color:#ffffff!important}
@@ -5861,7 +5861,7 @@ import ITEMS from './items.json';
   :global(.weapon-attack-values>div),:global(.spellcasting-summary-grid>div),
   :global(.spell-slot-summary),:global(.player-spell-card),
   :global(.player-feature-card),:global(.player-feat-section){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
   }
   :global(.weapon-attack-card h4),:global(.player-spell-name),
   :global(.player-feature-name){color:#ffffff!important}
@@ -5870,10 +5870,10 @@ import ITEMS from './items.json';
   :global(.weapon-attack-values strong),:global(.player-spell-description),
   :global(.player-spell-checks){color:#ffffff!important}
   :global(.weapon-attacks-section .weapon-mastery-summary){
-    background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important
   }
   :global(.skill-column-labels){color:#b5bec3!important}
-  :global(.nautical-empty){background:#3fb8b8!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  :global(.nautical-empty){background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
   :global(.nautical-sheet .inline-roll){color:#b5bec3!important}
 
   /* Cabecera y componentes del diseño D&D Beyond anterior */
@@ -5882,36 +5882,36 @@ import ITEMS from './items.json';
   :global(.sheet-quick-stats>div>span){color:#b5bec3!important}
   :global(.ddb-character-header .character-name),
   :global(.sheet-quick-stats>div>strong){color:#ffffff!important}
-  :global(.sheet-quick-stats>div){background:#3fb8b8!important;border:1px solid #5fe6e0!important}
-  :global(.sheet-banner-emblem){background:#3fb8b8!important;color:#b5bec3!important;border-color:#5fe6e0!important}
-  :global(.ddb-section-nav button){background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
-  :global(.ddb-section-nav button.active){background:#3fb8b8!important;color:#ffffff!important;border-bottom:3px solid #b5bec3!important}
+  :global(.sheet-quick-stats>div){background:#13262e!important;border:1px solid #5fe6e0!important}
+  :global(.sheet-banner-emblem){background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  :global(.ddb-section-nav button){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.ddb-section-nav button.active){background:#13262e!important;color:#ffffff!important;border-bottom:3px solid #b5bec3!important}
   :global(.sheet-quick-stats),:global(.continuous-sheet-grid){background:transparent!important;color:#ffffff!important}
 
   /* Manuales, inventario, conjuros, monstruos, tablas y gestión del GM */
-  :global(.items-table),:global(.chest-table){background:#3fb8b8!important;color:#ffffff!important}
-  :global(.items-table th),:global(.chest-table th){background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
-  :global(.items-table td),:global(.chest-table td){background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.items-table),:global(.chest-table){background:#13262e!important;color:#ffffff!important}
+  :global(.items-table th),:global(.chest-table th){background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  :global(.items-table td),:global(.chest-table td){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
   :global(.items-table td:first-child),:global(.chest-table td:first-child){color:#ffffff!important}
-  :global(.items-filters fieldset),:global(.items-filters legend){background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.items-filters fieldset),:global(.items-filters legend){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
   :global(.spell-card),:global(.monster-entry),:global(.monster-combat-grid div),
   :global(.monster-info-item),:global(.spell-meta),:global(.monster-attacks),
   :global(.monster-role),:global(.chest-result),:global(.roll-notation),:global(.roll-result){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
   }
   :global(.spell-card>summary),:global(.spell-name),:global(.monster-name),
   :global(.monster-entry strong),:global(.monster-original){color:#ffffff!important}
   :global(.spell-subtitle),:global(.monster-subtitle),:global(.monster-source),
   :global(.monster-attribution),:global(.spell-source),:global(.monster-info-item small),
   :global(.monster-combat-grid small){color:#b5bec3!important}
-  :global(.spell-details),:global(.monster-statblock){background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  :global(.spell-details),:global(.monster-statblock){background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
   :global(.monster-heading){border-bottom-color:#b5bec3!important}
   :global(.monster-heading h3),:global(.monster-content-section h4){color:#b5bec3!important}
   :global(.monster-content-section){border-top-color:#5fe6e0!important}
-  :global(.monster-cr),:global(.spell-level){background:#3fb8b8!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  :global(.monster-cr),:global(.spell-level){background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
   :global(.github-status),:global(.github-folder-chip),:global(.builder-info),
   :global(.builder-choice-wrapper),:global(.builder-choice-field){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important
   }
   :global(.github-character-row strong),:global(.github-character-row){color:#ffffff!important}
   :global(.github-character-row small){color:#b5bec3!important}
@@ -5922,19 +5922,19 @@ import ITEMS from './items.json';
   :global(.builder-panel>label),:global(.builder-panel label){color:#b5bec3!important}
   :global(.builder-panel input),:global(.builder-panel select),:global(.builder-panel textarea),
   :global(.github-folder-create input),:global(.github-character-actions select){
-    background:#3fb8b8!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
   }
-  :global(.builder-progress){background:#3fb8b8!important}
+  :global(.builder-progress){background:#13262e!important}
   :global(.builder-info),:global(.builder-name-block),:global(.builder-choice-wrapper),
   :global(.builder-choice-field),:global(.builder-option-card),:global(.builder-option-description),
   :global(.builder-skill-card),:global(.builder-checkbox){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important
   }
   :global(.builder-class-card),:global(.builder-class-card:hover){
-    background:#3fb8b8!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
   }
   :global(.builder-panel .builder-class-card.selected),:global(.builder-class-card.selected){
-    background:#3fb8b8!important;border:2px solid #b5bec3!important;color:#ffffff!important
+    background:#13262e!important;border:2px solid #b5bec3!important;color:#ffffff!important
   }
   :global(.builder-class-card-heading),:global(.builder-class-card-heading strong),
   :global(.builder-class-meta strong),:global(.builder-option-card strong){color:#ffffff!important}
@@ -5942,30 +5942,30 @@ import ITEMS from './items.json';
   :global(.builder-option-description),:global(.builder-skill-description){color:#b5bec3!important}
   :global(.builder-class-meta),:global(.builder-class-meta>span){border-color:#3fb8b8!important;color:#b5bec3!important}
   :global(.builder-class-card-heading>span),:global(.builder-option-badge){
-    background:#3fb8b8!important;color:#b5bec3!important;border-color:#5fe6e0!important
+    background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important
   }
   :global(.builder-checkbox:has(input:checked)){
-    background:#3fb8b8!important;border-color:#b5bec3!important;color:#ffffff!important
+    background:#13262e!important;border-color:#b5bec3!important;color:#ffffff!important
   }
   :global(.builder-checkbox:has(input:disabled):not(:has(input:checked))){
-    background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important
   }
   :global(.builder-checkbox:has(input:focus-visible)){outline-color:#b5bec3!important}
-  :global(.master-tabs button){background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
-  :global(.master-tabs button.active){background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  :global(.master-tabs button){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.master-tabs button.active){background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
   :global(.github-config-panel),:global(.github-character-row),:global(.github-folder-chip),
   :global(.github-status),:global(.github-character-actions button){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important
   }
   :global(.github-character-row small){color:#b5bec3!important}
   :global(.attributes-section),:global(.features-section .sheet-stat),
   :global(.features-section .sheet-stat strong),:global(.features-section .stat-value){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important
   }
-  :global(.attributes-section .sheet-stat){background:#3fb8b8!important;border-color:#3fb8b8!important}
-  :global(.editable:hover){background:#3fb8b8!important;border-color:#b5bec3!important}
-  :global(.sheet-tabs button){background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
-  :global(.sheet-tabs button.active){background:#3fb8b8!important;color:#ffffff!important;border-color:#b5bec3!important}
+  :global(.attributes-section .sheet-stat){background:#13262e!important;border-color:#3fb8b8!important}
+  :global(.editable:hover){background:#13262e!important;border-color:#b5bec3!important}
+  :global(.sheet-tabs button){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.sheet-tabs button.active){background:#13262e!important;color:#ffffff!important;border-color:#b5bec3!important}
 
 
   /* Auditoría integral final: eliminar superficies cálidas heredadas en todos los módulos */
@@ -5980,7 +5980,7 @@ import ITEMS from './items.json';
   :global(.weapon-attack-card),:global(.player-spell-card),
   :global(.player-feat-section .player-feature-card),:global(.subclass-level-preview),
   :global(.trait-editor),:global(.import-box),:global(.character-card),:global(.monster-card){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
   }
   :global(.combat-section),:global(.attributes-section){border-top-color:#b5bec3!important}
   :global(.sheet-section){border:1px solid #3fb8b8!important;border-top:2px solid #5fe6e0!important}
@@ -5990,19 +5990,19 @@ import ITEMS from './items.json';
   :global(.editable),:global(.editable:focus),:global(.stat-value),
   :global(.roll-creator input),:global(.roll-creator select),
   :global(.github-folder-create input),:global(.github-character-actions select){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
   }
-  :global(.editable:hover){background:#3fb8b8!important;border-color:#b5bec3!important}
+  :global(.editable:hover){background:#13262e!important;border-color:#b5bec3!important}
   :global(.roll-creator button),:global(.roll-actions button),
   :global(.sheet-tabs button),:global(.master-tabs button),
   :global(.player-tabs button),:global(.ddb-section-nav button){
-    background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important
   }
   :global(.sheet-tabs button.active),:global(.master-tabs button.active),
   :global(.player-tabs button.active),:global(.ddb-section-nav button.active){
-    background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important
+    background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important
   }
-  :global(.roll-notation),:global(.roll-result){background:#3fb8b8!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  :global(.roll-notation),:global(.roll-result){background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
   :global(.chest-result-number),:global(.chest-result>span:last-child),
   :global(.spellcasting-summary-grid>div>span),:global(.weapon-attack-values span),
   :global(.player-spell-checks label),:global(.monster-combat-grid small),
@@ -6016,15 +6016,15 @@ import ITEMS from './items.json';
   :global(.trait-group h3),:global(.roll-result b){color:#b5bec3!important}
   :global(.equipment-section),:global(.general-section),:global(.features-section),
   :global(.attacks-section),:global(.skills-section),:global(.spells-section){
-    background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
   }
   :global(.player-spell-level),:global(.player-feature-source),
   :global(.trait-level),:global(.free-tag),:global(.count){
     color:#b5bec3!important;border-color:#5fe6e0!important
   }
-  :global(.toast){background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important}
-  :global(.primary),:global(button.primary){background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
-  :global(.primary:hover),:global(button.primary:hover){background:#b5bec3!important}
+  :global(.toast){background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  :global(.primary),:global(button.primary){background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  :global(.primary:hover),:global(button.primary:hover){background:#1b2a33!important}
 
 
 
@@ -6130,4 +6130,64 @@ import ITEMS from './items.json';
 :global(.builder-checkbox:has(input:checked)){background:#1b2a33!important;border-color:#5fe6e0!important}
 :global(.eyebrow span),:global(.monster-stats),:global(.dice-status),:global(.roll-result span){color:#b5bec3!important}
 :global(.roll-entry p),:global(.trait-view p),:global(.monster-card p),:global(.character-card p){color:#b5bec3!important}
+
+/* Contraste definitivo: superficies oscuras y acentos con texto legible */
+:global(html),:global(body),:global(#app){background:#0b171d!important;color:#ffffff!important}
+:global(.app-shell),:global(.main),:global(.gm-layout){background:transparent!important;color:#ffffff!important}
+:global(.panel),:global(.builder-panel),:global(.level-up-panel),:global(.progression-panel),
+:global(.spellbook-panel),:global(.rules-panel),:global(.items-panel),:global(.spells-panel),
+:global(.monsters-panel),:global(.roster-panel),:global(.save-panel),:global(.chest-panel),
+:global(.github-config-panel),:global(.github-character-row),:global(.github-status),
+:global(.builder-info),:global(.builder-choice-wrapper),:global(.builder-choice-field),
+:global(.builder-option-card),:global(.builder-skill-card),:global(.builder-class-card),
+:global(.character-sheet),:global(.gm-character-sheet),:global(.nautical-sheet),
+:global(.sheet-section),:global(.combat-section),:global(.attributes-section),
+:global(.skills-section),:global(.features-section),:global(.magic-section),
+:global(.equipment-section),:global(.story-section),:global(.general-section),
+:global(.spell-card),:global(.spell-details),:global(.monster-entry),
+:global(.monster-statblock),:global(.monster-info-item),:global(.monster-attacks),
+:global(.monster-role),:global(.monster-combat-grid div),:global(.spell-meta),
+:global(.roll-notation),:global(.roll-result),:global(.chest-result),
+:global(.character-card),:global(.monster-card),:global(.trait-editor),
+:global(.import-box),:global(.custom-rolls),:global(.custom-roll-card),
+:global(.weapon-attack-card),:global(.weapon-mastery-summary),
+:global(.player-spell-card),:global(.player-feature-card),:global(.player-feat-section),
+:global(.subclass-level-preview),:global(.new-roll-part),:global(.nautical-quick-stats),
+:global(.nautical-quick-stats>div),:global(.sheet-quick-stats>div){
+ background:#13262e!important;color:#ffffff!important;border-color:#3a4a52!important
+}
+:global(input),:global(textarea),:global(select),:global(.editable),:global(.sheet-readonly-value){
+ background:#0b171d!important;color:#ffffff!important;border-color:#3a4a52!important
+}
+:global(input::placeholder),:global(textarea::placeholder){color:#8e9aa1!important}
+:global(button),:global(.secondary),:global(.master-tabs button),:global(.sheet-tabs button),
+:global(.player-tabs button),:global(.character-tabs button),:global(.ddb-section-nav button),
+:global(.roll-actions button),:global(.roll-creator button),:global(.header-actions button),
+:global(.github-character-actions button){
+ background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important
+}
+:global(button.active),:global(.master-tabs button.active),:global(.sheet-tabs button.active),
+:global(.player-tabs button.active),:global(.character-tabs button.active),
+:global(.ddb-section-nav button.active),:global(.nautical-tabs button.active),
+:global(button.primary),:global(.primary){
+ background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important
+}
+:global(.builder-class-card.selected),:global(.builder-option-card.selected),
+:global(.builder-checkbox:has(input:checked)){
+ background:#1b2a33!important;color:#ffffff!important;border:2px solid #5fe6e0!important
+}
+:global(.builder-progress){background:#1b2a33!important}
+:global(.builder-progress span){background:#5fe6e0!important}
+:global(.brand),:global(h1),:global(h2),:global(h3),:global(h4),
+:global(.character-name),:global(.sheet-stat strong),:global(.stat-value){color:#ffffff!important}
+:global(label),:global(.hint),:global(.muted),:global(.stat-label),
+:global(.sheet-stat span),:global(.builder-option-description),
+:global(.builder-skill-description),:global(.monster-source),
+:global(.spell-source),:global(.monster-subtitle),:global(.spell-subtitle),
+:global(.roll-entry p),:global(.trait-view p){color:#b5bec3!important}
+:global(.brand-mark),:global(.eyebrow),:global(.section-name),
+:global(.trait-level),:global(.roll-result b),:global(.card-symbol){color:#5fe6e0!important}
+:global(.toast){background:#1b2a33!important;color:#ffffff!important;border-color:#3fb8b8!important}
+:global(.chest-table th),:global(.items-table th){background:#1b2a33!important;color:#ffffff!important}
+:global(.chest-table td),:global(.items-table td){background:#13262e!important;color:#b5bec3!important;border-color:#3a4a52!important}
 </style>
