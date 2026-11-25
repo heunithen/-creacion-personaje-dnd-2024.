@@ -1861,7 +1861,7 @@
     refreshDerivedCharacterSheet(result);
     return result;
   }
-  function finishBuilder() {
+  async function finishBuilder() {
     if (!builderCanFinish()) {
       builderStepError = builderData.languages.length !== 2
         ? 'Selecciona exactamente dos idiomas adicionales para continuar.'
@@ -1875,6 +1875,7 @@
     builderPreviewTab = 'Datos';
     builderStep = 6;
     keepBuilderAtTop();
+    await saveBuilderCharacter();
   }
   async function saveBuilderCharacter() {
     if (!builderPreview) return;
@@ -1975,6 +1976,53 @@ import ITEMS from './items.json';
     newRollName = '';
     newRollParts = [createRollPart()];
     persistCustomRolls();
+  }
+
+  function rollableParts(value: string): { text: string; rollable: boolean; notation: string }[] {
+    const parts: { text: string; rollable: boolean; notation: string }[] = [];
+    const pattern = /[+-]?\d+d\d+(?:(?:kh|kl)\d+)?(?:\s*[+-]\s*\d+)?|[+-]\d+/gi;
+    let last = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(value)) !== null) {
+      if (match.index > last) parts.push({ text: value.slice(last, match.index), rollable: false, notation: '' });
+      const token = match[0].replace(/\s+/g, '');
+      const notation = /^[+-]\d+$/.test(token) ? '1d20' + token : token.replace(/^\+/, '');
+      parts.push({ text: match[0], rollable: true, notation });
+      last = match.index + match[0].length;
+    }
+    if (last < value.length) parts.push({ text: value.slice(last), rollable: false, notation: '' });
+    return parts.length ? parts : [{ text: value, rollable: false, notation: '' }];
+  }
+
+  async function sendSheetRoll(notation: string, label: string) {
+    if (!obrReady || (obrRole !== 'PLAYER' && obrRole !== 'GM')) {
+      notice = 'Las tiradas solo pueden enviarse desde Owlbear Rodeo.';
+      return;
+    }
+    if (!/^(?:\d+d(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\d+)?(?:[+-]\d+)?)$/i.test(notation)) {
+      notice = 'La notación de dados no es válida: ' + notation;
+      return;
+    }
+    try {
+      const ready = await checkDicePlusReady();
+      if (!ready) {
+        notice = 'Dice+ no está disponible en esta sala. Activa la extensión Dice+ para tirar.';
+        return;
+      }
+      const playerId = await OBR.player.getId();
+      const currentPlayerName = await OBR.player.getName();
+      const cleanLabel = label.replace(/[#+\-*/(),\r\n]/g, ' ').replace(/\s+/g, ' ').trim();
+      const rollId = 'forja_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+      lastRollId = rollId;
+      await OBR.broadcast.sendMessage('dice-plus/roll-request', {
+        rollId, playerId, playerName: currentPlayerName, rollTarget: 'everyone',
+        diceNotation: notation + (cleanLabel ? '#' + cleanLabel : ''),
+        showResults: true, timestamp: Date.now(), source: DICE_PLUS_SOURCE
+      }, { destination: 'ALL' });
+      notice = 'Tirada enviada a Dice+: ' + notation;
+    } catch {
+      notice = 'No se pudo enviar la tirada a Dice+.';
+    }
   }
 
   async function checkDicePlusReady(): Promise<boolean> {
@@ -3752,18 +3800,14 @@ import ITEMS from './items.json';
           <div class="sheet-grid">
             {#each visiblePairs(sheet.sections || [], activeTab) as pair}
               <section class="sheet-section {sectionClass(pair.heading.name)}">
-                <div class="sheet-section-title">
-                  <input class="section-name editable" aria-label="Nombre de sección" value={pair.heading.name || ''} on:input={(event) => editField(pair.heading, 'name', event)} />
-                </div>
+                <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
                 <div class="stats-list">
                   {#each pair.heading.stats || [] as stat, i}
                     <div class="sheet-stat">
-                      <input class="stat-label editable" aria-label="Nombre del campo" value={stat.name || ''} on:input={(event) => editField(stat, 'name', event)} />
-                      {#if pair.values?.stats?.[i]}
-                        <textarea class="stat-value editable" aria-label="Valor" rows="1" value={displayValue(pair.values.stats[i].value)} on:input={(event) => editStatValue(pair, stat, i, event)}></textarea>
-                      {:else}
-                        <textarea class="stat-value editable" aria-label="Valor" rows="3" value={displayValue(stat.value)} on:input={(event) => editStatValue(pair, stat, i, event)}></textarea>
-                      {/if}
+                      <span class="stat-label">{stat.name || ''}</span>
+                      <div class="stat-value sheet-readonly-value">{#each rollableParts(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)) as part, partIndex}
+                        {#if part.rollable}<button type="button" class="inline-roll" title="Tirar {part.notation} en Dice+" on:click={() => sendSheetRoll(part.notation, String(stat.name || pair.heading.name || 'Tirada'))}>{part.text}</button>{:else}<span>{part.text}</span>{/if}
+                      {/each}</div>
                     </div>
                   {/each}
                 </div>
@@ -3991,6 +4035,9 @@ import ITEMS from './items.json';
   :global(.attacks-section .stats-list > .sheet-stat > span){color:#ff6573!important}
   :global(.features-section .sheet-stat strong),:global(.magic-section .sheet-stat strong){color:#f2e9e9!important}
   :global(.attacks-section .stat-label),:global(.attacks-section .stats-list > .sheet-stat > span),:global(.attacks-section .sheet-stat strong){color:#ff6573!important}
+  :global(.inline-roll){display:inline;padding:0;border:0;background:transparent;color:#64aaff;font:inherit;font-weight:700;text-decoration:underline;text-decoration-color:rgba(100,170,255,.45);text-underline-offset:2px;cursor:pointer}
+  :global(.inline-roll:hover){color:#9ac8ff;text-decoration-color:currentColor}
+  :global(.sheet-readonly-value){white-space:pre-wrap;overflow-wrap:anywhere}
   :global(.character-sheet .editable:hover){background:#1a1011!important;border-color:#8c2732!important}
   @media(max-width:560px){:global(.spell-filters){grid-template-columns:1fr}}
 
