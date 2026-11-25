@@ -2261,7 +2261,7 @@ import ITEMS from './items.json';
       (itemPriceMax === '' || (price !== null && price <= Number(itemPriceMax))) &&
       (itemWeightMin === '' || (weight !== null && weight >= Number(itemWeightMin))) &&
       (itemWeightMax === '' || (weight !== null && weight <= Number(itemWeightMax)));
-  });
+  }) : [];
   const SPELL_CLASSES = ['Bardo', 'Brujo', 'Clérigo', 'Druida', 'Explorador', 'Hechicero', 'Mago', 'Paladín'];
   const SPELL_SCHOOLS = ['Abjuración', 'Adivinación', 'Conjuración', 'Encantamiento', 'Evocación', 'Ilusionismo', 'Nigromancia', 'Transmutación'];
   $: filteredSpells = (spellSearch.trim() || spellLevelFilter || spellClassFilter || spellSchoolFilter) ? SPELLS.filter(spell =>
@@ -2269,12 +2269,12 @@ import ITEMS from './items.json';
     (!spellClassFilter || spell.classes.includes(spellClassFilter.toLocaleLowerCase('es'))) &&
     (!spellSchoolFilter || spell.school === spellSchoolFilter) &&
     (!spellSearch.trim() || (spell.name + ' ' + spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es')))
-  );
-  const RULE_CATEGORIES = ['Todas', 'General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro', 'Abreviatura'];
-  $: filteredRules = RULES.filter(rule =>
-    (rulesCategoryFilter === 'Todas' || rule.category === rulesCategoryFilter) &&
+  ) : [];
+  const RULE_CATEGORIES = ['General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro', 'Abreviatura'];
+  $: filteredRules = (rulesCategoryFilter || rulesSearch.trim()) ? RULES.filter(rule =>
+    (!rulesCategoryFilter || rule.category === rulesCategoryFilter) &&
     (!rulesSearch.trim() || (rule.name + ' ' + rule.description + ' ' + rule.category).toLocaleLowerCase('es').includes(rulesSearch.trim().toLocaleLowerCase('es')))
-  );
+  ) : [];
 
   function persistCustomRolls() {
     localStorage.setItem('forja-custom-rolls', JSON.stringify(customRolls));
@@ -4183,12 +4183,11 @@ import ITEMS from './items.json';
             <fieldset><legend>Precio (po)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemPriceMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemPriceMax} placeholder="Sin máximo" /></label></fieldset>
             <fieldset><legend>Peso (kg)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemWeightMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemWeightMax} placeholder="Sin máximo" /></label></fieldset>
           </div>
-          <div class="items-table-wrap"><table class="items-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Peso</th><th>Manual</th></tr></thead><tbody>
+          <div class="items-table-wrap">{#if filteredItems.length === 0}<p class="muted">Selecciona un tipo, introduce un rango de precio o peso, o escribe una búsqueda para mostrar objetos.</p>{:else}<table class="items-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Peso</th><th>Manual</th></tr></thead><tbody>
             {#each filteredItems as item (item.name + item.source)}
               <tr><td>{item.name}</td><td>{item.type}</td><td>{item.price}</td><td>{item.weight}</td><td>{item.source}</td></tr>
             {/each}
-          </tbody></table></div>
-          {#if filteredItems.length === 0}<p class="muted">No hay objetos que coincidan con esos filtros. Los objetos sin precio o peso indicado no aparecen al aplicar ese filtro.</p>{/if}
+          </tbody></table>{/if}</div>
         </section>
       {:else if masterTab === 'Conjuros'}
         <section class="panel spells-panel">
@@ -4225,6 +4224,7 @@ import ITEMS from './items.json';
             </label>
           </div>
           <div class="spell-list">
+            {#if filteredSpells.length === 0}<p class="muted">Selecciona un nivel, clase o escuela, o escribe una búsqueda para mostrar conjuros.</p>{:else}
             {#each filteredSpells as spell}
               <details class="spell-card">
                 <summary>
@@ -4286,6 +4286,7 @@ import ITEMS from './items.json';
             </select>
           </label>
           <div class="rules-list">
+            {#if filteredRules.length === 0}<p class="muted">Selecciona una categoría o escribe una búsqueda para mostrar reglas.</p>{:else}
             {#each filteredRules as rule (rule.name)}
               <details class="rule-card">
                 <summary><span class="rule-name">{rule.name}</span><span class="rule-category">{rule.category}</span><span class="rule-page">PDF {rule.pdfPage}</span></summary>
@@ -4311,6 +4312,7 @@ import ITEMS from './items.json';
             </select>
           </label>
           <div class="monster-list">
+            {#if filteredMonsters.length === 0}<p class="muted">Selecciona un valor de desafío o escribe el nombre de un monstruo para mostrar criaturas.</p>{:else}
             {#each filteredMonsters as monster}
               <details class="monster-card">
                 <summary>
@@ -4341,6 +4343,7 @@ import ITEMS from './items.json';
                 </div>
               </details>
             {/each}
+            {/if}
           </div>
         </section>
       {/if}
