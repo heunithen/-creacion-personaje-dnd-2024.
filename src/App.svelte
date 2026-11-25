@@ -4752,29 +4752,27 @@ import ITEMS from './items.json';
               {/each}
             </section>
 
-            <section class="nautical-content">
             <section class="nautical-actions">
-              {#if playerSheetTab === 'Acciones'}
-                <section class="sheet-section weapon-attacks-section">
-                  <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
-                  <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
-                  <div class="weapon-attack-list">
-                    {#each playerWeaponAttacks(sheet) as weapon}
-                      <article class="weapon-attack-card">
-                        <h4>{weapon.name}</h4>
-                        <div class="weapon-attack-values">
-                          <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
-                          <div><span>Daño</span><button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button></div>
-                          <div><span>Alcance</span><strong>{weapon.range}</strong></div>
-                          <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
-                        </div>
-                      </article>
-                    {/each}
-                  </div>
-                </section>
-              {/if}
+              <section class="sheet-section weapon-attacks-section">
+                <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
+                <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
+                <div class="weapon-attack-list">
+                  {#each playerWeaponAttacks(sheet) as weapon}
+                    <article class="weapon-attack-card">
+                      <h4>{weapon.name}</h4>
+                      <div class="weapon-attack-values">
+                        <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
+                        <div><span>Daño</span><button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button></div>
+                        <div><span>Alcance</span><strong>{weapon.range}</strong></div>
+                        <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
+                      </div>
+                    </article>
+                  {/each}
+                </div>
+              </section>
             </section>
 
+            <section class="nautical-content">
               <nav class="nautical-tabs" aria-label="Secciones de la ficha">
                 {#each playerSheetTabs as tab}
                   <button type="button" class:active={playerSheetTab === tab} on:click={() => playerSheetTab = tab}>{tab}</button>
