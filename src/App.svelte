@@ -1731,7 +1731,7 @@
       else if(armorFormula.startsWith('13 + DES')) ac=13+dexMod;
       else if(armorFormula.startsWith('11 + DES')) ac=11+dexMod;
       else if(armorFormula.startsWith('10 + DES')) ac=10+dexMod;
-      if(ac!==null) setCharacterStat(target,'COMBATE','Clase de armadura',ac+' ('+armorFormula+')');
+      if(ac!==null) setCharacterStat(target,'COMBATE','Clase de armadura',String(ac));
     }
     const skillRaw=getCharacterStat(target,'COMPETENCIAS','Habilidades');
     const skillText=normalizeLevelText(skillRaw);
@@ -1865,7 +1865,7 @@
     };
     put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
     BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(finalAbilities[a])+' ('+mod(Number(finalAbilities[a]))+')'));
-    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,String(Math.max(1,hp))+' PG'); put(2,2,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,3,String(builderStartingAC())+' (según equipo inicial y rasgos)'); put(2,8,builderStartingACFormula()); put(2,4,(builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0) >= 0 ? '+' : '') + (builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0))); put(2,5,(b.species === 'Goliat' || (b.species === 'Elfo' && b.speciesChoice === 'Elfo de los bosques') ? '10,5 m' : '9 m')); put(2,6,proficiency); put(2,7,BUILDER_SAVES[b.className] || '—');
+    put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,String(Math.max(1,hp))+' PG'); put(2,2,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,3,String(builderStartingAC())); put(2,8,builderStartingACFormula()); put(2,4,(builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0) >= 0 ? '+' : '') + (builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0))); put(2,5,(b.species === 'Goliat' || (b.species === 'Elfo' && b.speciesChoice === 'Elfo de los bosques') ? '10,5 m' : '9 m')); put(2,6,proficiency); put(2,7,BUILDER_SAVES[b.className] || '—');
     const allFeatChoices = [...b.backgroundFeatChoices, ...(b.species === 'Humano' ? b.speciesFeatChoices : [])];
     const featSkills = allFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice));
     const featTools = allFeatChoices.filter(choice => !BUILDER_SKILL_OPTIONS.includes(choice));
@@ -3297,6 +3297,18 @@ import ITEMS from './items.json';
   function playerAttributes(sections: RawSection[] = sheet?.sections || []) {
     return sectionPairs(sections).filter(pair => sectionClass(String(pair.heading.name || '')) === 'attributes-section');
   }
+  function savingThrowRaw(ability: string, sections: RawSection[] = sheet?.sections || []) {
+    const pair = sectionPairs(sections).find(item => String(item.heading.name || '').toLocaleUpperCase() === 'SALVACIONES');
+    const index = (pair?.heading.stats || []).findIndex(stat => normalizeLevelText(String(stat.name || '')) === normalizeLevelText(ability));
+    if (index < 0) return '';
+    return displayValue(pair?.values?.stats?.[index]?.value) || displayValue(pair?.heading.stats?.[index]?.value);
+  }
+  function savingThrowIsProficient(ability: string, sections: RawSection[] = sheet?.sections || []) {
+    return /competente/i.test(savingThrowRaw(ability, sections));
+  }
+  function savingThrowBonus(ability: string, sections: RawSection[] = sheet?.sections || []) {
+    return savingThrowRaw(ability, sections).replace(/\s*·\s*Competente/i, '').trim() || '—';
+  }
 
   function sectionClass(name = '') {
     const n = name.toLocaleLowerCase();
@@ -4110,6 +4122,10 @@ import ITEMS from './items.json';
                 <div class="attribute-plaque">
                   <span>{stat.name || ''}</span>
                   <strong>{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value) || '—'}</strong>
+                  <div class="saving-throw-line" class:proficient={savingThrowIsProficient(String(stat.name || ''), sheet.sections || [])}>
+                    <span>Salvación</span>
+                    <strong>{savingThrowBonus(String(stat.name || ''), sheet.sections || [])}</strong>
+                  </div>
                 </div>
               {/each}
             {/each}
@@ -4129,16 +4145,6 @@ import ITEMS from './items.json';
 
           <div class="nautical-columns">
             <aside class="nautical-side">
-              {#each playerSidePairs('saves', sheet.sections || []) as pair}
-                <section class="sheet-section">
-                  <div class="sheet-section-title"><h3>{pair.heading.name || 'Salvaciones'}</h3></div>
-                  <div class="stats-list">
-                    {#each pair.heading.stats || [] as stat, i}
-                      <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
-                    {/each}
-                  </div>
-                </section>
-              {/each}
               {#each playerSidePairs('training', sheet.sections || []) as pair}
                 <section class="sheet-section">
                   <div class="sheet-section-title"><h3>{pair.heading.name || 'Competencias'}</h3></div>
@@ -4513,6 +4519,11 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats>div>strong){font-size:1rem;color:#f1fffc}
   :global(.nautical-quick-stats .attribute-plaque){flex:1 1 5.4rem;min-height:4rem;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
   :global(.nautical-quick-stats .attribute-plaque strong){font-size:1.25rem}
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line){display:flex;align-items:center;justify-content:center;gap:.25rem;margin-top:.1rem;padding-top:.25rem;border-top:1px solid #28676b;font:600 .58rem/1.2 system-ui,sans-serif}
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line span){color:#849b99}
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line strong){font-size:.65rem;color:#aab9b7}
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient span),
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient strong){color:#55d58a}
   :global(.nautical-quick-stats .hp-plaque){flex:2 1 10rem}
   :global(.nautical-import){padding:.8rem 1rem;background:#0b252b;border-bottom:1px solid #247b7e}
   :global(.nautical-columns){display:grid;grid-template-columns:minmax(175px,.82fr) minmax(190px,.95fr) minmax(360px,2fr);gap:.65rem;padding:.7rem;align-items:start;background:radial-gradient(ellipse at 75% 0%,#17434a 0,#0a252b 50%,#071b20 100%)}
