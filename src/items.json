@@ -997,56 +997,56 @@
     "name": "Caballo de guerra",
     "type": "Montura",
     "price": "400 po",
-    "weight": "270 kg",
+    "weight": "—",
     "source": "Manual del jugador"
   },
   {
     "name": "Caballo de monta",
     "type": "Montura",
     "price": "75 po",
-    "weight": "240 kg",
+    "weight": "—",
     "source": "Manual del jugador"
   },
   {
     "name": "Caballo de tiro",
     "type": "Montura",
     "price": "50 po",
-    "weight": "270 kg",
+    "weight": "—",
     "source": "Manual del jugador"
   },
   {
     "name": "Camello",
     "type": "Montura",
     "price": "50 po",
-    "weight": "225 kg",
+    "weight": "—",
     "source": "Manual del jugador"
   },
   {
     "name": "Elefante",
     "type": "Montura",
     "price": "200 po",
-    "weight": "660 kg",
+    "weight": "—",
     "source": "Manual del jugador"
   },
   {
     "name": "Mastín",
     "type": "Montura",
     "price": "25 po",
-    "weight": "97,5 kg",
+    "weight": "—",
     "source": "Manual del jugador"
   },
   {
     "name": "Mula",
     "type": "Montura",
     "price": "8 po",
-    "weight": "210 kg",
+    "weight": "—",
     "source": "Manual del jugador"
   },
   {
     "name": "Poni",
     "type": "Montura",
     "price": "30 po",
-    "weight": "112,5 kg",
+    "weight": "—",
     "source": "Manual del jugador"
   },
   {
