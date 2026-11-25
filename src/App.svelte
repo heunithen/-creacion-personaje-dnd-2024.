@@ -1969,7 +1969,7 @@
       builderSaving = false;
     }
   }
-  function startBuilder() { demoPreview = false; sheet = null; resetBuilder(); playerCreating = true; }
+  function startBuilder() { if (demoPreview) sheet = null; demoPreview = false; resetBuilder(); playerCreating = true; }
   function openDemoPreview() {
     const sample = createInitialBuilderData();
     sample.name = 'Aldric Valdemar';
