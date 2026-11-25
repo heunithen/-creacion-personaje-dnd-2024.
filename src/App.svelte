@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR, { buildImage } from '@owlbear-rodeo/sdk';
+  import characterSheetTemplateUrl from '../hojadepj1.webp?url';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
   const CHANNEL = 'com.heunithen.dnd2024-character-builder/character-sync';
@@ -3293,77 +3294,120 @@ import ITEMS from './items.json';
     }
     imageSheetBusy = true;
     try {
-      const width = 1800, height = 2200;
+      const template = new Image();
+      template.src = characterSheetTemplateUrl;
+      await new Promise<void>((resolve, reject) => {
+        template.onload = () => resolve();
+        template.onerror = () => reject(new Error('No se pudo cargar hojadepj1.webp.'));
+      });
+      const baseWidth = template.naturalWidth || 730;
+      const baseHeight = template.naturalHeight || 874;
+      const renderScale = 2;
+      const width = baseWidth * renderScale;
+      const height = baseHeight * renderScale;
       const canvas = document.createElement('canvas');
       canvas.width = width; canvas.height = height;
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('No se pudo crear el lienzo de la ficha.');
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, height);
-      ctx.strokeStyle = '#333333'; ctx.lineWidth = 8; ctx.strokeRect(22, 22, width - 44, height - 44);
-      ctx.fillStyle = '#333333'; ctx.fillRect(22, 22, width - 44, 14);
-      ctx.fillStyle = '#555555'; ctx.font = 'bold 48px Arial'; ctx.fillText('FAST CHARACTER', 95, 130);
-      ctx.fillStyle = '#111111'; ctx.textAlign = 'center'; ctx.font = 'bold 76px Georgia';
-      ctx.fillText(String(imageSheetTarget.name || 'PERSONAJE').toLocaleUpperCase('es').slice(0, 28), width / 2, 150);
-      ctx.textAlign = 'left'; ctx.font = '28px Arial'; ctx.fillStyle = '#333333';
-      const className = sheetClassName(imageSheetTarget) || 'Clase no indicada';
-      const level = sheetLevel(imageSheetTarget);
-      const species = sheetValueByNames(imageSheetTarget, ['Especie','Raza','Ascendencia']) || '';
-      const background = sheetValueByNames(imageSheetTarget, ['Trasfondo']) || '';
-      ctx.fillText(className + ' ' + level + (species ? ' · ' + species : '') + (background ? ' · ' + background : ''), 95, 205);
-      ctx.strokeStyle = '#888888'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(95, 245); ctx.lineTo(width - 95, 245); ctx.stroke();
+      ctx.scale(renderScale, renderScale);
+      ctx.drawImage(template, 0, 0, baseWidth, baseHeight);
 
+      const target = imageSheetTarget;
+      const value = (names: string[], sections: string[] = []) => sheetValueByNames(target, names, sections);
+      const text = (v: unknown) => String(v ?? '').trim();
       const abilityNames = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
-      const abilityValues = abilityNames.map(name => sheetValueByNames(imageSheetTarget!, [name], ['ATRIBUTOS','CARACTERÍSTICAS','CARACTERISTICAS']));
-      const cardY = 285, cardW = 245, cardH = 155, gap = 28;
-      abilityNames.forEach((name, index) => {
-        const x = 95 + index * (cardW + gap);
-        ctx.strokeStyle = '#888888'; ctx.lineWidth = 5; ctx.strokeRect(x, cardY, cardW, cardH);
-        ctx.fillStyle = '#555555'; ctx.font = 'bold 25px Arial'; ctx.textAlign = 'center'; ctx.fillText(name.toUpperCase(), x + cardW/2, cardY + 42);
-        ctx.fillStyle = '#111111'; ctx.font = 'bold 52px Arial'; ctx.fillText(abilityValues[index] || '—', x + cardW/2, cardY + 105);
+      const abilityShort = ['STR','DEX','CON','INT','WIS','CHA'];
+      const abilityY = [195,285,375,465,555,645];
+      const abilitySections = ['ATRIBUTOS','CARACTERÍSTICAS','CARACTERISTICAS'];
+      ctx.fillStyle = '#222'; ctx.textAlign = 'center'; ctx.font = 'bold 12px Arial';
+      abilityNames.forEach((name, i) => {
+        const x = 55, y = abilityY[i];
+        const raw = value([name], abilitySections);
+        const match = raw.match(/-?\d+/);
+        const score = match ? Number(match[0]) : NaN;
+        const mod = Number.isFinite(score) ? (score >= 10 ? '+' : '') + Math.floor((score - 10) / 2) : raw;
+        ctx.fillText(abilityShort[i], x, y - 16);
+        ctx.font = 'bold 21px Arial'; ctx.fillText(mod || '—', x, y + 5);
+        ctx.font = '11px Arial'; ctx.fillText(raw || '—', x, y + 25);
+        ctx.font = 'bold 12px Arial';
       });
-      ctx.textAlign = 'left';
-      const textSections: {title:string; lines:string[]}[] = [];
+
+      ctx.textAlign = 'left'; ctx.fillStyle = '#111';
+      ctx.font = 'bold 28px Georgia';
+      ctx.fillText(text(target.name || 'PERSONAJE').toLocaleUpperCase('es').slice(0, 25), 388, 57, 300);
+      ctx.font = '12px Arial';
+      const className = sheetClassName(target) || 'Clase';
+      const level = sheetLevel(target);
+      ctx.fillText(className + ' ' + level, 219, 87, 210);
+      ctx.fillText(value(['Experiencia','Puntos de experiencia','XP']) || '0', 449, 87, 110);
+      ctx.fillText(value(['Jugador','Nombre del jugador']) || '', 584, 87, 130);
+      ctx.fillText(value(['Especie','Raza','Ascendencia']) || '', 219, 124, 210);
+      ctx.fillText(value(['Trasfondo','Antecedente']) || '', 449, 124, 110);
+      ctx.fillText(value(['Campaña','ID de jugador']) || '', 584, 124, 130);
+      ctx.font = 'bold 21px Arial';
+      ctx.fillText(value(['Bonificador de competencia','Bono de competencia','Competencia']) || '—', 126, 190, 105);
+      ctx.font = 'bold 19px Arial';
+      ctx.fillText(value(['Clase de armadura','CA','Armadura']) || '—', 326, 230, 48);
+      ctx.fillText(value(['Iniciativa']) || '—', 412, 230, 48);
+      ctx.fillText(value(['Velocidad','Movimiento']) || '—', 470, 230, 58);
+      ctx.font = 'bold 19px Arial';
+      ctx.fillText(value(['Puntos de golpe máximos','PG máximos','Puntos de golpe','PG']) || '—', 340, 305, 58);
+      ctx.font = 'bold 15px Arial';
+      ctx.fillText(value(['Dado de golpe','Dados de golpe']) || '—', 442, 305, 55);
+
+      const sections: {title:string;lines:string[]}[] = [];
       let current: {title:string;lines:string[]}|null = null;
-      for (const raw of imageSheetText.split(/\\r?\\n/)) {
+      for (const raw of imageSheetText.split(/\r?\n/)) {
         const line = raw.trim();
         if (!line) continue;
         if (line.startsWith('## ')) {
-          current = { title: line.slice(3).toLocaleUpperCase('es'), lines: [] };
-          textSections.push(current);
+          current = {title:line.slice(3).toLocaleUpperCase('es'),lines:[]};
+          sections.push(current);
         } else {
-          if (!current) { current = { title: 'DATOS DEL PERSONAJE', lines: [] }; textSections.push(current); }
+          if (!current) { current={title:'DATOS DEL PERSONAJE',lines:[]}; sections.push(current); }
           current.lines.push(line);
         }
       }
-      const columns = [{x:95,y:500,w:760},{x:945,y:500,w:760}];
-      let columnIndex = 0;
-      for (const section of textSections) {
-        let col = columns[columnIndex];
-        if (col.y > 1880) { columnIndex = 1 - columnIndex; col = columns[columnIndex]; }
-        ctx.fillStyle = '#555555'; ctx.fillRect(col.x, col.y, col.w, 5); col.y += 42;
-        ctx.fillStyle = '#222222'; ctx.font = 'bold 27px Arial';
-        col.y = drawWrappedCanvasText(ctx, section.title, col.x, col.y, col.w, 34) + 8;
-        ctx.fillStyle = '#222222'; ctx.font = '21px Arial';
-        for (const line of section.lines) {
-          col.y = drawWrappedCanvasText(ctx, line, col.x + 8, col.y, col.w - 16, 29);
-          if (col.y > 2100) break;
-        }
-        col.y += 26;
-        if (col.y > columns[1-columnIndex].y) columnIndex = 1-columnIndex;
+      const left: typeof sections = [], middle: typeof sections = [], right: typeof sections = [];
+      for (const section of sections) {
+        const h = section.title.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+        if (/salvacion|habilidad|competencia|idioma|proficien|pasiva/.test(h)) left.push(section);
+        else if (/arma|ataque|equipo|rasgo|dote|accion|caracteristica de clase/.test(h)) middle.push(section);
+        else right.push(section);
       }
+      const drawSectionColumn = (items: typeof sections, x: number, yStart: number, w: number, bottom: number) => {
+        let y = yStart;
+        for (const section of items) {
+          if (y > bottom - 30) break;
+          ctx.fillStyle = '#888'; ctx.fillRect(x, y, w, 1);
+          y += 14;
+          ctx.fillStyle = '#333'; ctx.font = 'bold 9px Arial';
+          y = drawWrappedCanvasText(ctx, section.title, x, y, w, 11) + 3;
+          ctx.fillStyle = '#222'; ctx.font = '8px Arial';
+          for (const line of section.lines) {
+            y = drawWrappedCanvasText(ctx, line, x + 2, y, w - 4, 10);
+            if (y > bottom - 8) break;
+          }
+          y += 7;
+        }
+      };
+      drawSectionColumn(left, 50, 258, 190, 858);
+      drawSectionColumn(middle, 282, 365, 230, 858);
+      drawSectionColumn(right, 530, 178, 180, 858);
+
       const dataUrl = canvas.toDataURL('image/png');
       const viewport = await OBR.viewport.getPosition();
       const item = buildImage(
         { width, height, mime: 'image/png', url: dataUrl },
         { dpi: 150, offset: { x: 0, y: 0 } }
       ).build() as any;
-      item.name = 'Ficha · ' + (imageSheetTarget.name || 'Personaje');
+      item.name = 'Ficha · ' + (target.name || 'Personaje');
       item.layer = 'PROP';
       item.position = { x: viewport.x - width/2, y: viewport.y - height/2 };
       item.scale = { x: 1, y: 1 };
       await OBR.scene.items.addItems([item]);
       imageSheetOpen = false;
-      notice = 'Ficha de ' + (imageSheetTarget.name || 'personaje') + ' añadida a la escena como PROP. Puedes moverla y cambiar su tamaño en Owlbear.';
+      notice = 'Ficha generada usando hojadepj1.webp y añadida a la escena como PROP.';
     } catch (error) {
       console.error('No se pudo crear la ficha PROP:', error);
       notice = 'No se pudo añadir la ficha a la escena: ' + (error instanceof Error ? error.message : String(error));
