@@ -1133,6 +1133,35 @@
     'Paladín':'Combatiente juramentado que une destreza marcial con poder sagrado.',
     'Pícaro':'Especialista ágil en sigilo, precisión, pericia y aprovechar oportunidades.'
   };
+  function builderChooseBackground(event:Event) {
+    const value=(event.currentTarget as HTMLSelectElement).value;
+    if(!value) return;
+    builderBackgroundChosen=true;
+    builderData.background=value;
+    builderData.classSkillChoices=[];
+    builderData.backgroundToolChoice=(BUILDER_BACKGROUND_TOOL_OPTIONS[value]?.length===1?BUILDER_BACKGROUND_TOOL_OPTIONS[value][0]:'');
+    builderData.backgroundFeatChoices=[];
+    builderData.backgroundMagicCantrips=[];
+    builderData.backgroundMagicSpell='';
+    builderData.feat=BUILDER_BACKGROUND_DATA[value].feat;
+    builderData.abilityIncrease2=BUILDER_BACKGROUND_DATA[value].abilities[0];
+    builderData.abilityIncrease1=BUILDER_BACKGROUND_DATA[value].abilities[1];
+    builderData.abilityIncrease3=BUILDER_BACKGROUND_DATA[value].abilities[2];
+  }
+  function builderChooseSpecies(event:Event) {
+    const value=(event.currentTarget as HTMLSelectElement).value;
+    if(!value) return;
+    builderSpeciesChosen=true;
+    builderData.species=value;
+    builderData.speciesChoice=(BUILDER_SPECIES_CHOICES[value].length===1?BUILDER_SPECIES_CHOICES[value][0]:'');
+    builderData.speciesSkill='';
+    builderData.speciesMagicAbility='';
+    builderData.speciesSize=(['Aasimar','Humano','Tiefling'].includes(value)?'Mediano':'');
+    builderData.speciesBreathShape='Cono';
+    builderData.speciesFeatChoices=[];
+    builderData.speciesMagicCantrips=[];
+    builderData.speciesMagicSpell='';
+  }
   function builderSelectClass(className:string) {
     if (builderData.className === className) { builderClassChosen = true; return; }
     builderClassChosen = true;
