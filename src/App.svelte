@@ -4140,7 +4140,6 @@ import ITEMS from './items.json';
             {#if builderStep===0}
               <h3>01. Concepto del personaje</h3>
               <p class="muted">Primero identifica a tu aventurero. Estos datos no modifican sus capacidades.</p>
-              <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre del aventurero" /></label>
               <label>Nombre del jugador<input bind:value={builderData.player} placeholder="Jugador" /></label>
               <div class="builder-info"><strong>Imagen del personaje</strong><p>Podrás cargar un retrato más adelante o dejarlo para después.</p></div>
               <p class="hint">No necesitas completar todos los detalles narrativos ahora.</p>
@@ -4172,7 +4171,19 @@ import ITEMS from './items.json';
               
 
               
-              <label>Trasfondo<select value={builderBackgroundChosen ? builderData.background : ''} on:change={builderChooseBackground}><option value="">Elige un trasfondo</option>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
+              <h4>Elige un trasfondo</h4>
+              <div class="builder-class-grid builder-background-grid">
+                {#each BUILDER_BACKGROUNDS as item}
+                  <label class="builder-class-card builder-option-card" class:selected={builderBackgroundChosen && builderData.background === item}>
+                    <input type="radio" name="builder-background" value={item} checked={builderBackgroundChosen && builderData.background === item} on:change={() => builderChooseBackground({currentTarget:{value:item}} as unknown as Event)} />
+                    <span class="builder-class-card-heading"><strong>{item}</strong><span>Trasfondo</span></span>
+                    <span class="builder-class-description">Tu experiencia como {item.toLocaleLowerCase()} determina competencias, dote de origen y equipo.</span>
+                    <span class="builder-class-meta"><span>Características</span><strong>{BUILDER_BACKGROUND_DATA[item].abilities.join(' · ')}</strong></span>
+                    <span class="builder-class-meta"><span>Habilidades</span><strong>{BUILDER_BACKGROUND_DATA[item].skills.join(' · ')}</strong></span>
+                    <span class="builder-class-meta"><span>Dote</span><strong>{BUILDER_BACKGROUND_DATA[item].feat}</strong></span>
+                  </label>
+                {/each}
+              </div>
               {#if builderBackgroundChosen}
               {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
                 <div class="builder-choice-wrapper"><strong>Elecciones de la dote {BUILDER_BACKGROUND_DATA[builderData.background].feat}</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Opciones de la dote del trasfondo</strong><span>{builderData.backgroundFeatChoices.length}/{3}</span></div><div class="builder-checkbox-grid">{#each builderFeatChoiceOptions(BUILDER_BACKGROUND_DATA[builderData.background].feat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<label class="builder-checkbox"><input type="checkbox" checked={builderData.backgroundFeatChoices.includes(choice)} on:change={(event) => builderToggleChoice('backgroundFeatChoices',choice,3,event)} disabled={!builderData.backgroundFeatChoices.includes(choice) && builderData.backgroundFeatChoices.length >= (3)} /><span>{choice}</span></label>{/each}</div></div></div>
@@ -4196,17 +4207,25 @@ import ITEMS from './items.json';
 
               
               
-              <label>Especie<select value={builderSpeciesChosen ? builderData.species : ''} on:change={builderChooseSpecies}><option value="">Elige una especie</option>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
+              <h4>Elige una especie</h4>
+              <div class="builder-class-grid builder-species-grid">
+                {#each BUILDER_SPECIES as item}
+                  <label class="builder-class-card builder-option-card" class:selected={builderSpeciesChosen && builderData.species === item}>
+                    <input type="radio" name="builder-species" value={item} checked={builderSpeciesChosen && builderData.species === item} on:change={() => builderChooseSpecies({currentTarget:{value:item}} as unknown as Event)} />
+                    <span class="builder-class-card-heading"><strong>{item}</strong><span>Especie</span></span>
+                    <span class="builder-class-description">{BUILDER_SPECIES_TRAITS[item]}</span>
+                    <span class="builder-class-meta"><span>Rasgos y capacidades</span><strong>{BUILDER_SPECIES_CHOICES[item].length ? 'Incluye elección de linaje' : 'Rasgos propios de especie'}</strong></span>
+                  </label>
+                {/each}
+              </div>
               {#if builderSpeciesChosen}
-              <div class="name-generator-panel">
-                <div class="name-generator-heading"><strong>Generador de nombres</strong><span>Listas originales por especie</span></div>
+              <div class="builder-name-block">
+                <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Escribe el nombre de tu aventurero" /></label>
                 <div class="name-generator-controls">
-                  <p class="hint">Especie elegida: <strong>{builderData.species}</strong></p>
-                  <label>Sexo<select bind:value={nameGender}><option value="Hombre">Hombre</option><option value="Mujer">Mujer</option><option value="Otro">Otro</option></select></label>
+                  <label>Estilo de nombre<select bind:value={nameGender}><option value="Hombre">Masculino</option><option value="Mujer">Femenino</option><option value="Otro">Neutro</option></select></label>
+                  <button class="secondary name-generator-button" type="button" on:click={generateCharacterName}>Generar sugerencia</button>
                 </div>
-                <button class="secondary name-generator-button" type="button" on:click={generateCharacterName}>⚄ Generar nombre</button>
-                {#if lastGeneratedName}<p class="generated-name-note">Nombre del personaje: <strong>{lastGeneratedName}</strong></p>{:else}<p class="hint">Genera un nombre para tu personaje antes de continuar.</p>{/if}
-                <p class="hint">Nombres originales inspirados en cada especie; no son una lista oficial del manual.</p>
+                <p class="hint">El nombre se define aquí y se conserva durante toda la creación.</p>
               </div>
               {#if BUILDER_SPECIES_CHOICES[builderData.species].length > 0}
                 <label>{builderData.species === 'Dracónido' ? 'Linaje dracónico' : builderData.species === 'Elfo' ? 'Linaje élfico' : builderData.species === 'Gnomo' ? 'Linaje gnomo' : builderData.species === 'Goliat' ? 'Linaje gigante' : 'Legado infernal'}<select bind:value={builderData.speciesChoice}><option value="">Elige una opción</option>{#each BUILDER_SPECIES_CHOICES[builderData.species] as choice}<option>{choice}</option>{/each}</select></label>
@@ -4660,7 +4679,7 @@ import ITEMS from './items.json';
 </div>
 
 <style>
-  :global(:root){--paper:#080808;--paper-deep:#141414;--ink:#f4f1f1;--ink-soft:#c1b9ba;--rule:#76212a;--red:#d52332;--gold:#b52a36}
+  :global(:root){--paper:#f4f1e9;--paper-deep:#e8e1d2;--ink:#252522;--ink-soft:#68665f;--rule:#d2c7b0;--red:#343b40;--gold:#ad8742}
   .builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#fffdf8;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#e8dfce;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(255,255,255,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}.builder-panel .sheet-grid{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat{grid-template-columns:minmax(0,1fr)}.builder-panel .sheet-stat strong{white-space:pre-wrap;overflow-wrap:anywhere}
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
@@ -5178,5 +5197,49 @@ import ITEMS from './items.json';
   .builder-class-meta>strong{color:#f0f5f2;font:.72rem/1.35 system-ui,sans-serif}
   @media(max-width:760px){.builder-class-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:460px){.builder-class-grid{grid-template-columns:1fr}.builder-class-description{min-height:0}}
+
+  /* Identidad visual unificada del creador */
+  :global(body){background:#eeeae1!important;color:#282824!important}
+  .app-shell{background:#eeeae1!important;color:#282824!important}
+  .topbar{background:#252b2e!important;border-bottom:3px solid #b18a45!important;color:#f8f5ed!important}
+  .topbar .brand,.topbar nav,.topbar small{color:#f8f5ed!important}
+  .panel,.builder-panel,.import-character-panel{background:#fffdf8!important;border:1px solid #d5cbb8!important;border-radius:9px!important;box-shadow:0 3px 12px #342b1910!important;color:#292a27!important}
+  .section-heading{border-bottom:2px solid #b18a45!important}
+  .section-heading h2,.builder-panel h3,.builder-panel h4{color:#30383b!important}
+  .builder-panel{gap:1rem!important}
+  .builder-panel>label,.builder-panel label{color:#55564f!important}
+  .builder-panel input:not([type=checkbox]):not([type=radio]),.builder-panel select,.builder-panel textarea{background:#fff!important;color:#292a27!important;border:1px solid #c9bea8!important;border-radius:6px!important}
+  .builder-progress{height:7px!important;background:#e6dfd1!important}
+  .builder-progress span{background:#b18a45!important}
+  .builder-info,.builder-choice-wrapper,.builder-choice-field,.builder-name-block{background:#f8f5ed!important;border:1px solid #d6cbb7!important;border-left:4px solid #b18a45!important;border-radius:7px!important;color:#30312d!important}
+  .builder-info small,.builder-panel .muted,.builder-panel .hint{color:#68665f!important}
+  .builder-class-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.75rem!important}
+  .builder-class-card{background:#fffdf8!important;border:1px solid #d2c8b6!important;border-top:3px solid #454d50!important;border-radius:8px!important;color:#292a27!important;box-shadow:0 2px 7px #332b1a0b!important}
+  .builder-class-card:hover{border-color:#b18a45!important;background:#faf7ef!important}
+  .builder-class-card.selected{border:2px solid #b18a45!important;border-top:4px solid #b18a45!important;background:#f5f0e4!important;box-shadow:0 0 0 2px #b18a4520!important}
+  .builder-class-card-heading{color:#30383b!important}
+  .builder-class-card-heading>span{background:#eee8db!important;border:1px solid #d4c8b1!important;color:#765d2e!important}
+  .builder-class-description{color:#565750!important}
+  .builder-class-meta{border-top:1px solid #e2d9c9!important}
+  .builder-class-meta>span{color:#8b713e!important}
+  .builder-class-meta>strong{color:#30312d!important}
+  .builder-option-card{min-height:100%;cursor:pointer}
+  .builder-species-grid,.builder-background-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .builder-name-block{display:grid;gap:.7rem;padding:.85rem}
+  .builder-name-block .name-generator-controls{display:flex;align-items:end;gap:.6rem;flex-wrap:wrap}
+  .builder-name-block .name-generator-controls label{flex:1;min-width:130px}
+  .builder-checkbox-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+  .builder-checkbox{display:flex!important;align-items:flex-start!important;gap:.55rem!important;padding:.65rem .7rem!important;border:1px solid #d5cbb8!important;border-left:3px solid #596267!important;border-radius:6px!important;background:#fffdf8!important;color:#30312d!important;cursor:pointer}
+  .builder-checkbox:has(input:checked){border-color:#b18a45!important;border-left-color:#b18a45!important;background:#f5f0e4!important}
+  .builder-checkbox input{flex:0 0 auto;margin-top:.15rem;accent-color:#a9823e}
+  .builder-choice-heading{color:#30383b!important}
+  .builder-actions{gap:.55rem!important}
+  .builder-actions button,.builder-panel button{border-radius:6px!important}
+  .builder-panel button.primary,.builder-actions .primary{background:#30383b!important;border:1px solid #30383b!important;color:#fff!important}
+  .builder-panel button.secondary,.builder-actions .secondary{background:#f5f0e5!important;border:1px solid #b7a887!important;color:#393a35!important}
+  .master-tabs button{background:#f7f3e9!important;color:#4c4c45!important;border-color:#d2c7b0!important}
+  .master-tabs button.active{background:#30383b!important;color:#fff!important;border-color:#b18a45!important}
+  footer{color:#777267!important;border-top:1px solid #d4c9b6!important}
+  @media(max-width:620px){.builder-class-grid,.builder-species-grid,.builder-background-grid,.builder-checkbox-grid{grid-template-columns:1fr!important}}
 
 </style>
