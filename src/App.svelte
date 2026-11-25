@@ -1134,7 +1134,8 @@
     'Pícaro':'Especialista ágil en sigilo, precisión, pericia y aprovechar oportunidades.'
   };
   function builderSelectClass(className:string) {
-    if (builderData.className === className) return;
+    if (builderData.className === className) { builderClassChosen = true; return; }
+    builderClassChosen = true;
     builderData.className = className;
     builderData.classSkillChoices = [];
     builderData.classToolsChoices = [];
@@ -1595,6 +1596,7 @@
     if(builderStep===0) return true;
     if(builderStep===1) return builderClassChosen;
     if(builderStep===2) {
+      if(!builderBackgroundChosen) return false;
       const options=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
       const feat=BUILDER_BACKGROUND_DATA[builderData.background].feat;
       const abilities=BUILDER_BACKGROUND_DATA[builderData.background].abilities;
@@ -1604,6 +1606,7 @@
       return (!options.length||options.includes(builderData.backgroundToolChoice))&&builderOriginFeatChoicesOk(feat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell)&&increasesOk;
     }
     if(builderStep===3) {
+      if(!builderSpeciesChosen) return false;
       const choiceOk=BUILDER_SPECIES_CHOICES[builderData.species].length===0||BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice);
       const skillOk=!['Elfo','Humano'].includes(builderData.species)||(BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill)&&!BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(builderData.speciesSkill));
       const magicOk=!['Elfo','Gnomo','Tiefling'].includes(builderData.species)||['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
