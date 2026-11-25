@@ -4135,7 +4135,7 @@ import ITEMS from './items.json';
                   </label>
                 {/each}
               </div>
-              <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
+              {#if builderClassChosen}<div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>{/if}
                           
             {:else if builderStep===2}
               <h3>03. Elige tu trasfondo</h3>
@@ -4144,6 +4144,7 @@ import ITEMS from './items.json';
 
               <h3>3. Trasfondo</h3><p class="muted">El trasfondo determina competencias, equipo y una dote de origen.</p>
               <label>Trasfondo<select value={builderBackgroundChosen ? builderData.background : ''} on:change={(event) => { builderBackgroundChosen = true; builderData.background = (event.currentTarget as HTMLSelectElement).value; builderData.classSkillChoices = []; builderData.backgroundToolChoice = (BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]?.length === 1 ? BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background][0] : ''); builderData.backgroundFeatChoices = []; builderData.backgroundMagicCantrips = []; builderData.backgroundMagicSpell = ''; builderData.feat = BUILDER_BACKGROUND_DATA[builderData.background].feat; builderData.abilityIncrease2 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[0]; builderData.abilityIncrease1 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[1]; builderData.abilityIncrease3 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[2]; }}}><option value="">Elige un trasfondo</option>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
+              {#if builderBackgroundChosen}
               {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
                 <div class="builder-choice-wrapper"><strong>Elecciones de la dote {BUILDER_BACKGROUND_DATA[builderData.background].feat}</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Opciones de la dote del trasfondo</strong><span>{builderData.backgroundFeatChoices.length}/{3}</span></div><div class="builder-checkbox-grid">{#each builderFeatChoiceOptions(BUILDER_BACKGROUND_DATA[builderData.background].feat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<label class="builder-checkbox"><input type="checkbox" checked={builderData.backgroundFeatChoices.includes(choice)} on:change={(event) => builderToggleChoice('backgroundFeatChoices',choice,3,event)} disabled={!builderData.backgroundFeatChoices.includes(choice) && builderData.backgroundFeatChoices.length >= (3)} /><span>{choice}</span></label>{/each}</div></div></div>
               {:else if builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
@@ -4157,7 +4158,9 @@ import ITEMS from './items.json';
                 <label>Competencia con herramienta del trasfondo<select bind:value={builderData.backgroundToolChoice}><option value="">Elige una opción</option>{#each BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background] as tool}<option>{tool}</option>{/each}</select></label>
               {/if}
               
-            {:else if builderStep===3}
+            
+              {/if}
+              {:else if builderStep===3}
               <h3>04. Elige tu especie</h3>
               <p class="muted">La especie determina rasgos biológicos y capacidades innatas.</p>
               
@@ -4165,6 +4168,7 @@ import ITEMS from './items.json';
               <h3>2. Especie</h3><p class="muted">Ahora elige tu especie. También seleccionarás aquí el alineamiento de tu personaje.</p>
               <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
               <label>Especie<select value={builderSpeciesChosen ? builderData.species : ''} on:change={(event) => { builderSpeciesChosen = true; builderData.species = (event.currentTarget as HTMLSelectElement).value; builderData.speciesChoice = (BUILDER_SPECIES_CHOICES[builderData.species].length === 1 ? BUILDER_SPECIES_CHOICES[builderData.species][0] : ''); builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = (['Aasimar','Humano','Tiefling'].includes(builderData.species) ? 'Mediano' : ''); builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}}><option value="">Elige una especie</option>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
+              {#if builderSpeciesChosen}
               <div class="name-generator-panel">
                 <div class="name-generator-heading"><strong>Generador de nombres</strong><span>Listas originales por especie</span></div>
                 <div class="name-generator-controls">
@@ -4200,7 +4204,9 @@ import ITEMS from './items.json';
               {/if}
               <div class="builder-info"><strong>Rasgos automáticos de especie</strong><p>{BUILDER_SPECIES_TRAITS[builderData.species]}</p>{#if builderData.speciesChoice}<p>Elección: {builderData.speciesChoice}</p>{/if}</div>
                         
-            {:else if builderStep===4}
+            
+              {/if}
+              {:else if builderStep===4}
               <h3>05. Distribuye tus características</h3>
               <p class="muted">Elige cómo generar las seis puntuaciones. Los aumentos del trasfondo se aplican en la etapa siguiente.</p>
               
