@@ -4189,6 +4189,7 @@ import ITEMS from './items.json';
                 {/each}
               {/each}
             </div>
+            <div class="quick-stats-row">
             <div><span>Competencia</span><strong>{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
             <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
             <div><span>Dado de golpe</span><strong>{sheetValueByNames(sheet, ['Dados de golpe','Dado de golpe']) || '—'}</strong></div>
@@ -4196,6 +4197,7 @@ import ITEMS from './items.json';
             <div class="hp-plaque"><span>Puntos de golpe</span><strong>{sheetValueByNames(sheet, ['Puntos de golpe actuales','PG actuales']) || '—'} / {sheetValueByNames(sheet, ['Puntos de golpe máximos','PG máximos']) || '—'}</strong></div>
             <div><span>Clase de armadura</span><strong>{sheetValueByNames(sheet, ['Clase de armadura','CA']) || '—'}</strong></div>
             <div><span>Iniciativa</span><strong>{sheetValueByNames(sheet, ['Iniciativa']) || '—'}</strong></div>
+            </div>
           </section>
 
           {#if importOpen}
@@ -4590,6 +4592,10 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats>div>span){font-size:.49rem;line-height:1.1;color:#7fcac2;text-transform:uppercase;letter-spacing:.015em}
   :global(.nautical-quick-stats>div>strong){font-size:.78rem;line-height:1.1;color:#f1fffc;white-space:nowrap}
   :global(.nautical-quick-stats .attribute-plaque-row){display:grid;grid-column:1/-1;grid-template-columns:repeat(6,minmax(0,1fr));gap:.45rem;width:100%;min-width:0}
+  :global(.nautical-quick-stats .quick-stats-row){display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.28rem;width:100%;min-width:0}
+  :global(.nautical-quick-stats .quick-stats-row>div){min-width:0;padding:.28rem .2rem}
+  :global(.nautical-quick-stats .quick-stats-row>div>span){font-size:.47rem;white-space:nowrap;letter-spacing:0}
+  :global(.nautical-quick-stats .quick-stats-row>div>strong){font-size:.72rem}
   :global(.nautical-quick-stats .attribute-plaque){min-width:0;min-height:4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
   :global(.nautical-quick-stats .attribute-plaque strong){font-size:1.25rem}
   :global(.nautical-quick-stats .attribute-plaque .ability-score){font-size:1.25rem;line-height:1.1}
@@ -4652,7 +4658,6 @@ import ITEMS from './items.json';
   @media(max-width:760px){
     :global(.nautical-quick-stats){grid-template-columns:repeat(9,minmax(0,1fr))}
     :global(.nautical-quick-stats .attribute-plaque-row){grid-column:1/-1}
-    :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
   }
   @media(max-width:580px){
     :global(.nautical-quick-stats){grid-template-columns:repeat(9,minmax(0,1fr));gap:.16rem;padding:.35rem .25rem}
