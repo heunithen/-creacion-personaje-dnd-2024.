@@ -2377,9 +2377,15 @@ import ITEMS from './items.json';
   function spellIsPrepared(target: RawSheet, spell: any) {
     const saved = spellStates(target)[normalizeLevelText(spell.name)];
     if (typeof saved?.prepared === 'boolean') return saved.prepared;
-    const prepared = getCharacterStat(target, 'CONJUROS', 'Conjuros preparados de clase') + ', ' +
-      getCharacterStat(target, 'CONJUROS', 'Conjuros preparados de subclase') + ', ' +
-      getCharacterStat(target, 'CONJUROS', 'Conjuros de nivel 1');
+    const className = sheetClassName(target);
+    let prepared = [
+      getCharacterStat(target, 'CONJUROS', 'Conjuros preparados de clase'),
+      getCharacterStat(target, 'CONJUROS', 'Conjuros preparados de subclase')
+    ].join(', ');
+    if (normalizeLevelText(className) === 'mago') {
+      const levelText = getCharacterStat(target, 'CONJUROS', 'Conjuros de nivel 1');
+      prepared += ', ' + ((levelText.match(/Preparados:\\s*([^.]*)/i) || [])[1] || '');
+    }
     return prepared.toLocaleLowerCase('es').includes(spell.name.toLocaleLowerCase('es'));
   }
   function toggleSpellState(spell: any, action: 'known' | 'prepared' | 'cast') {
@@ -2392,22 +2398,7 @@ import ITEMS from './items.json';
       current.known = true;
       current.prepared = !spellIsPrepared(sheet, spell);
     }
-    if (action === 'cast') {
-      current.cast = !current.cast;
-      if (current.cast && Number(spell.level) > 0) {
-        const usage = slotUsage(sheet);
-        const levelKey = String(spell.level);
-        const maxima = spellSlotMaximums(sheet);
-        const used = Number(usage[levelKey] || 0);
-        if (used >= Number(maxima[levelKey] || 0)) {
-          notice = 'No quedan espacios de nivel ' + levelKey + '. Ajusta el nivel del espacio si lanzas el conjuro con otro nivel.';
-          current.cast = false;
-          return;
-        }
-        usage[levelKey] = used + 1;
-        setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Espacios gastados', JSON.stringify(usage));
-      }
-    }
+    if (action === 'cast') current.cast = !current.cast;
     states[key] = current;
     setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Estados de conjuros', JSON.stringify(states));
     saveSheetMutation();
@@ -2430,7 +2421,7 @@ import ITEMS from './items.json';
     notice = 'Usos de conjuros y espacios gastados reiniciados. Comprueba que el descanso permita recuperarlos.';
   }
   $: spellClassForSheet = sheet ? spellClassKey(sheet) : '';
-  $: sheetSpellCards = sheet ? SPELLS.filter((spell: any) => spell.classes.includes(spellClassForSheet)) : [];
+  $: sheetSpellCards = sheet ? SPELLS.filter((spell: any) => spell.classes.some((name: string) => normalizeLevelText(name) === spellClassForSheet)) : [];
   $: sheetSpellSlots = sheet ? spellSlotMaximums(sheet) : {};
   $: sheetSpellUsage = sheet ? slotUsage(sheet) : {};
   $: sheetFeatureData = sheet ? featureSourceGroups(sheet) : { className: '', level: 1, groups: [] };
