@@ -6988,4 +6988,189 @@ import ITEMS from './items.json';
     :global(.builder-panel .builder-review-details h4){grid-column:auto}
   }
 
+
+  /* Refinamiento tipográfico de la ficha: no altera columnas, orden ni pestañas. */
+  :global(.nautical-sheet){
+    padding:clamp(12px,1.8vw,22px)!important;
+    border-radius:12px!important;
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  }
+  :global(.nautical-header){
+    gap:16px!important;
+    padding:clamp(12px,1.8vw,20px)!important;
+    margin-bottom:12px!important;
+    border:1px solid #3a4a52!important;
+    border-radius:10px!important;
+    background:#0f1e26!important;
+  }
+  :global(.nautical-header .sheet-kicker){
+    font-size:11px!important;
+    line-height:1.4!important;
+    letter-spacing:.14em!important;
+    color:#8e9aa1!important;
+  }
+  :global(.nautical-header .character-name){
+    margin:5px 0 8px!important;
+    font-size:clamp(25px,3vw,34px)!important;
+    line-height:1.12!important;
+    letter-spacing:-.025em!important;
+  }
+  :global(.nautical-header .sheet-banner-meta){
+    gap:6px 12px!important;
+    font-size:12px!important;
+    line-height:1.5!important;
+  }
+  :global(.nautical-header .portrait-frame){
+    flex:0 0 76px!important;
+    width:76px!important;
+    height:76px!important;
+  }
+  :global(.nautical-header .header-actions button){
+    min-height:34px!important;
+    padding:7px 11px!important;
+    font-size:12px!important;
+  }
+  :global(.nautical-quick-stats){
+    gap:10px!important;
+    margin-bottom:14px!important;
+    padding:10px!important;
+    border:1px solid #3a4a52!important;
+    border-radius:10px!important;
+  }
+  :global(.nautical-quick-stats .attribute-plaque-row){gap:8px!important}
+  :global(.nautical-quick-stats .attribute-plaque){
+    min-height:104px!important;
+    padding:9px 6px!important;
+    border-radius:12px!important;
+    border-width:1px!important;
+  }
+  :global(.nautical-quick-stats .attribute-plaque>span:first-child){
+    color:#b5bec3!important;
+    font-size:11px!important;
+    font-weight:700!important;
+    line-height:1.25!important;
+    letter-spacing:.035em!important;
+  }
+  :global(.nautical-quick-stats .attribute-plaque .ability-score){
+    font-size:27px!important;
+    line-height:1.05!important;
+    font-weight:800!important;
+  }
+  :global(.nautical-quick-stats .attribute-plaque .ability-bonus-roll){
+    min-width:38px!important;
+    min-height:27px!important;
+    padding:3px 8px!important;
+    font-size:14px!important;
+    font-weight:800!important;
+  }
+  :global(.nautical-quick-stats .saving-throw-line){
+    gap:5px!important;
+    margin-top:4px!important;
+    padding-top:5px!important;
+    font-size:11px!important;
+  }
+  :global(.nautical-quick-stats .saving-throw-line button),
+  :global(.nautical-quick-stats .saving-throw-line strong){font-size:12px!important}
+  :global(.nautical-quick-stats>.quick-stats-row){gap:7px!important}
+  :global(.nautical-quick-stats>.quick-stats-row>div){
+    min-height:58px!important;
+    padding:9px 7px!important;
+    border-radius:8px!important;
+  }
+  :global(.nautical-quick-stats>.quick-stats-row>div>span){
+    color:#b5bec3!important;
+    font-size:10px!important;
+    font-weight:700!important;
+    line-height:1.3!important;
+    letter-spacing:.035em!important;
+    white-space:normal!important;
+  }
+  :global(.nautical-quick-stats>.quick-stats-row>div>strong){
+    color:#fff!important;
+    font-size:16px!important;
+    line-height:1.25!important;
+    font-weight:800!important;
+  }
+  :global(.nautical-columns .sheet-section){
+    padding:14px!important;
+    border-radius:10px!important;
+  }
+  :global(.nautical-columns .sheet-section-title){
+    margin-bottom:8px!important;
+    padding-bottom:8px!important;
+  }
+  :global(.nautical-columns .sheet-section-title h3),
+  :global(.nautical-columns .section-name){
+    font-size:14px!important;
+    line-height:1.3!important;
+    font-weight:800!important;
+    letter-spacing:.055em!important;
+  }
+  :global(.nautical-columns .skill-column-labels){
+    padding:5px 3px!important;
+    font-size:10px!important;
+    line-height:1.3!important;
+    letter-spacing:.07em!important;
+  }
+  :global(.nautical-columns .sheet-stat){
+    gap:9px!important;
+    padding:7px 3px!important;
+  }
+  :global(.nautical-columns .stat-label){
+    color:#b5bec3!important;
+    font-size:13px!important;
+    line-height:1.4!important;
+    font-weight:600!important;
+  }
+  :global(.nautical-columns .stat-value),
+  :global(.nautical-columns .sheet-readonly-value){
+    color:#fff!important;
+    font-size:13px!important;
+    line-height:1.5!important;
+  }
+  :global(.nautical-skills .sheet-stat .skill-number){
+    font-size:15px!important;
+    line-height:1.25!important;
+    font-weight:800!important;
+  }
+  :global(.nautical-columns .player-feature-card),
+  :global(.nautical-columns .player-feat-card),
+  :global(.nautical-columns .player-spell-card){
+    border-radius:9px!important;
+  }
+  :global(.nautical-tabs){
+    gap:6px!important;
+    margin-bottom:12px!important;
+    padding-bottom:8px!important;
+  }
+  :global(.nautical-tabs button){
+    min-height:38px!important;
+    padding:8px 13px!important;
+    border-radius:7px 7px 0 0!important;
+    font-size:12px!important;
+    line-height:1.25!important;
+    font-weight:700!important;
+  }
+  :global(.nautical-tab-content){
+    font-size:13px!important;
+    line-height:1.5!important;
+  }
+  :global(.nautical-tab-content h3),
+  :global(.nautical-tab-content h4){
+    line-height:1.3!important;
+  }
+  @media(max-width:760px){
+    :global(.nautical-quick-stats .attribute-plaque){min-height:96px!important}
+    :global(.nautical-quick-stats .attribute-plaque .ability-score){font-size:24px!important}
+    :global(.nautical-columns .sheet-section){padding:12px!important}
+  }
+  @media(max-width:480px){
+    :global(.nautical-header .portrait-frame){flex-basis:60px!important;width:60px!important;height:60px!important}
+    :global(.nautical-header .character-name){font-size:24px!important}
+    :global(.nautical-quick-stats>.quick-stats-row>div>span){font-size:10px!important}
+    :global(.nautical-quick-stats>.quick-stats-row>div>strong){font-size:15px!important}
+    :global(.nautical-tabs button){padding:8px 10px!important;font-size:11px!important}
+    :global(.nautical-columns .stat-label){font-size:12px!important}
+  }
+
 </style>
