@@ -2049,7 +2049,7 @@ import ITEMS from './items.json';
     let output = String(input ?? '');
     for (const [english, spanish] of [...MONSTER_ES_TERMS].sort((a,b) => b[0].length-a[0].length)) {
       const escaped = english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      output = output.replace(new RegExp('\\b' + escaped + '\\b','gi'), spanish);
+      output = output.replace(new RegExp('(^|[^A-Za-z])' + escaped + '(?=$|[^A-Za-z])','gi'), (match, prefix) => prefix + spanish);
     }
     return output;
   }
