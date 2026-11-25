@@ -2424,6 +2424,11 @@ import ITEMS from './items.json';
   }
   $: spellClassForSheet = sheet ? spellClassKey(sheet) : '';
   $: sheetSpellCards = sheet ? SPELLS.filter((spell: any) => spell.classes.some((name: string) => normalizeLevelText(name) === spellClassForSheet)) : [];
+  $: orderedSheetSpellCards = [...sheetSpellCards].sort((a: any, b: any) =>
+    Number(spellIsKnown(sheet, b)) - Number(spellIsKnown(sheet, a)) ||
+    Number(a.level) - Number(b.level) ||
+    String(a.name).localeCompare(String(b.name), 'es')
+  );
   $: sheetSpellSlots = sheet ? spellSlotMaximums(sheet) : {};
   $: sheetSpellUsage = sheet ? slotUsage(sheet) : {};
   $: sheetFeatureData = sheet ? featureSourceGroups(sheet) : { className: '', level: 1, groups: [] };
@@ -3129,6 +3134,21 @@ import ITEMS from './items.json';
     notice='Nivel '+nextLevel+' aplicado a '+updated.name+'. La ficha contiene los datos de clase, subclase, características, puntos de golpe y conjuros del nuevo nivel.';
   }
 
+  function repairGenericStatLabels(target: RawSheet | null | undefined) {
+    if (!target?.sections) return target;
+    const labels: Record<string, string[]> = {
+      CONJUROS: ['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Trucos de estilo de combate','Aptitud mágica de estilo de combate','CD de estilo de combate','Ataque de conjuro de estilo de combate','Lista de conjuros de estilo de combate','Arcanum místico','Conjuros de escuela','Opción de Furia elemental','Opción de Golpes benditos','Maestría sobre conjuros nivel 1','Maestría sobre conjuros nivel 2','Conjuros característicos']
+    };
+    for (const section of target.sections) {
+      const expected = labels[String(section.name || '').trim().toUpperCase()];
+      if (!expected || !Array.isArray(section.stats)) continue;
+      section.stats.forEach((stat, index) => {
+        if (/^Dato\\s*\\d+$/i.test(String(stat.name || '').trim()) && expected[index]) stat.name = expected[index];
+      });
+    }
+    return target;
+  }
+
   function sectionPairs(sections: RawSection[] = []) {
     const result: { heading: RawSection; values?: RawSection }[] = [];
     for (let i = 0; i < sections.length; i++) {
@@ -3202,7 +3222,7 @@ import ITEMS from './items.json';
     roomSheets = players.flatMap((p: any) => {
       const payload = p.metadata?.[KEY];
       if (!payload || payload.deleted || !payload.character) return [];
-      return [{ playerId: p.id, playerName: p.name || payload.playerName || 'Jugador', sheet: payload.character as RawSheet }];
+      return [{ playerId: p.id, playerName: p.name || payload.playerName || 'Jugador', sheet: repairGenericStatLabels(payload.character as RawSheet) as RawSheet }];
     });
   }
 
@@ -3220,7 +3240,7 @@ import ITEMS from './items.json';
       return;
     }
     if (payload?.character) {
-      sheet = payload.character as RawSheet;
+      sheet = repairGenericStatLabels(payload.character as RawSheet) as RawSheet;
       localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
     }
   }
@@ -4005,19 +4025,9 @@ import ITEMS from './items.json';
                 {/each}
                 {#if Object.keys(sheetSpellSlots).length === 0}<p class="muted">Esta clase no tiene espacios de conjuro registrados en su nivel actual.</p>{/if}
               </div>
-              <div class="spell-filters">
-                <label>Buscar conjuro<input type="search" bind:value={spellSearch} placeholder="Nombre o descripción..." /></label>
-                <label>Nivel<select bind:value={spellLevelFilter}><option value="Todos">Todos</option>{#each [0,1,2,3,4,5,6,7,8,9] as level}<option value={String(level)}>{level === 0 ? 'Trucos' : 'Nivel '+level}</option>{/each}</select></label>
-                <label>Escuela<select bind:value={spellSchoolFilter}><option value="Todas">Todas las escuelas</option>{#each SPELL_SCHOOLS as school}<option value={school}>{school}</option>{/each}</select></label>
-                <label>Mostrar<select bind:value={spellClassFilter}><option value="Todas">Todos los estados</option><option value="Conocidos">Conocidos</option><option value="Preparados">Preparados</option><option value="Disponibles">Aún no conocidos</option></select></label>
-              </div>
+              <div class="spell-card-order-note">Conocidos primero, ordenados por nivel; los demás conjuros aparecen debajo.</div>
               <div class="spell-card-grid">
-                {#each sheetSpellCards.filter((spell) =>
-                  (spellLevelFilter === 'Todos' || String(spell.level) === spellLevelFilter) &&
-                  (spellSchoolFilter === 'Todas' || spell.school === spellSchoolFilter) &&
-                  (!spellSearch.trim() || (spell.name+' '+spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es'))) &&
-                  (spellClassFilter === 'Todas' || (spellClassFilter === 'Conocidos' && spellIsKnown(sheet,spell)) || (spellClassFilter === 'Preparados' && spellIsPrepared(sheet,spell)) || (spellClassFilter === 'Disponibles' && !spellIsKnown(sheet,spell)))
-                ) as spell (spell.name)}
+                {#each orderedSheetSpellCards as spell (spell.name)}
                   <article class:spell-known={spellIsKnown(sheet,spell)} class:spell-prepared={spellIsPrepared(sheet,spell)} class:spell-unavailable={Number(spell.level) > spellMaxLevel(sheet) && Number(spell.level) > 0} class:spell-cast={spellStates(sheet)[normalizeLevelText(spell.name)]?.cast} class="spell-card">
                     <header><span class="spell-level">{spell.level === 0 ? 'TRUCO' : 'NIVEL '+spell.level}</span><span class="spell-school">{spell.school}</span></header>
                     <h3>{spell.name}</h3>
