@@ -1,9 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
+  import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
   const CHANNEL = 'com.heunithen.dnd2024-character-builder/character-sync';
+  const GITHUB_ROOM_KEY = 'com.heunithen.dnd2024-character-builder/github-storage';
 
   type RawStat = { id?: number; name?: string; value?: unknown; [key: string]: unknown };
   type RawSection = { id?: number; name?: string; stats?: RawStat[]; [key: string]: unknown };
@@ -808,7 +810,19 @@
   }
 
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas'];
+  const masterTabs = ['Personajes', 'Almacenamiento', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas'];
+  let githubConfig: GithubConfig | null = null;
+  let githubStore: GithubCharacterStorage | null = null;
+  let githubTokenDraft = '';
+  let githubOwnerDraft = 'heunithen';
+  let githubRepoDraft = '-creacion-personaje-dnd-2024.';
+  let githubBranchDraft = 'main';
+  let githubFolderDraft = '';
+  let cloudRecords: GithubCharacterRecord[] = [];
+  let cloudFolders: string[] = ['sin-partida'];
+  let cloudLoading = false;
+  let cloudStatus = 'Almacenamiento GitHub sin configurar.';
+
   type BuilderData = {
     name: string; player: string; age: string; height: string; appearance: string; personality: string; ideals: string; bonds: string; flaws: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
