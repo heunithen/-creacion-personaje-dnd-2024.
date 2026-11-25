@@ -4038,6 +4038,48 @@ import ITEMS from './items.json';
             </section>
           {/if}
         </section>
+      {:else if masterTab === 'Almacenamiento'}
+        <section class="panel roster-panel">
+          <div class="section-heading"><h2>Almacenamiento de personajes</h2><span class="count">GitHub</span></div>
+          <p class="muted">Los jugadores guardan y actualizan sus hojas desde OBR. Desde aquí puedes crear carpetas de partidas, mover personajes y eliminar hojas.</p>
+          <div class="builder-panel github-config-panel">
+            <h3>Conexión compartida</h3>
+            <p class="muted">Token personal de GitHub con permiso de lectura y escritura de contenidos únicamente para este repositorio. Se comparte en los metadatos de la sala OBR; todos los participantes de confianza podrán acceder a él.</p>
+            <label>Token de GitHub<input type="password" bind:value={githubTokenDraft} placeholder={githubConfig ? 'Token configurado (vacío para conservarlo)' : 'Pega aquí el token de GitHub'} /></label>
+            <label>Propietario del repositorio<input bind:value={githubOwnerDraft} /></label>
+            <label>Nombre del repositorio<input bind:value={githubRepoDraft} /></label>
+            <label>Rama<input bind:value={githubBranchDraft} /></label>
+            <div class="actions"><button class="primary" on:click={saveGithubRoomConfig}>Guardar conexión</button><button class="secondary" on:click={refreshGithubCharacters} disabled={!githubStore || cloudLoading}>Actualizar lista</button></div>
+          </div>
+          <div class="builder-panel">
+            <h3>Carpetas de partidas</h3>
+            <div class="github-folder-create"><input bind:value={githubFolderDraft} placeholder="Nombre de la partida" /><button class="primary" on:click={createGithubFolder} disabled={!githubStore}>Crear carpeta</button></div>
+            <div class="github-folder-list">{#each cloudFolders as folder}<span class="github-folder-chip">{folder === 'sin-partida' ? 'Sin partida' : folder}</span>{/each}</div>
+          </div>
+          <div class="builder-panel">
+            <div class="section-heading"><h3>Hojas guardadas</h3><span class="count">{cloudRecords.length}</span></div>
+            {#if cloudLoading}<p class="muted">Consultando GitHub…</p>
+            {:else if !cloudRecords.length}<p class="muted">No hay personajes guardados en el repositorio.</p>
+            {:else}
+              <div class="github-character-list">
+                {#each cloudRecords as record (record.playerId)}
+                  <article class="github-character-row">
+                    <div><strong>{record.name}</strong><small>{record.playerName} · {record.folder === 'sin-partida' ? 'Sin partida' : record.folder}</small></div>
+                    <div class="github-character-actions">
+                      <select bind:value={record.targetFolder} aria-label={'Mover ' + record.name + ' a una carpeta'}>
+                        <option value="sin-partida">Sin partida</option>
+                        {#each cloudFolders.filter(folder => folder !== 'sin-partida') as folder}<option value={folder}>{folder}</option>{/each}
+                      </select>
+                      <button class="secondary" on:click={() => moveGithubCharacter(record)} disabled={record.targetFolder === record.folder}>Mover</button>
+                      <button class="danger-text" on:click={() => deleteGithubCharacter(record)}>Eliminar</button>
+                    </div>
+                  </article>
+                {/each}
+              </div>
+            {/if}
+          </div>
+          <p class="muted github-status">{cloudStatus}</p>
+        </section>
       {:else if masterTab === 'Tiradas'}
         <section class="panel gm-rolls-panel">
           <div class="section-heading"><h2>Crear tiradas</h2><span class="count">Dice+</span></div>
@@ -5412,5 +5454,22 @@ import ITEMS from './items.json';
   @media(max-width:620px){.builder-checkbox-grid{grid-template-columns:1fr!important}.builder-checkbox{min-height:80px!important}}
 
   .builder-skill-description{display:block!important;padding:0!important;color:#68665f!important;font:.72rem/1.45 system-ui,sans-serif!important;white-space:normal!important}
+
+  .github-config-panel{padding:.9rem;border:1px solid var(--rule);border-radius:7px;background:rgba(255,255,255,.42)}
+  .github-folder-create{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem}
+  .github-folder-create input,.github-character-actions select{min-width:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px;background:#fffdf8;color:var(--ink)}
+  .github-folder-list{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.7rem}
+  .github-folder-chip{padding:.3rem .55rem;border:1px solid var(--rule);border-radius:20px;background:#f5f0e4;color:var(--ink-soft);font:.7rem system-ui,sans-serif}
+  .github-character-list{display:grid;gap:.55rem}
+  .github-character-row{display:grid;gap:.55rem;padding:.7rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:6px;background:#fffdf8}
+  .github-character-row>div:first-child{display:grid;gap:.15rem}
+  .github-character-row small{color:var(--ink-soft);font:.68rem system-ui,sans-serif}
+  .github-character-actions{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+  .github-character-actions select{flex:1 1 150px}
+  .github-character-actions button{padding:.45rem .6rem;border:1px solid var(--rule);border-radius:5px;background:#f5f0e4;color:var(--ink);font:.7rem system-ui,sans-serif;cursor:pointer}
+  .github-character-actions .danger-text{color:#8b3028}
+  .github-status{padding:.55rem .7rem;border-left:3px solid var(--gold);background:#f5f0e4}
+  @media(min-width:700px){.github-character-row{grid-template-columns:minmax(0,1fr) auto;align-items:center}}
+
 
 </style>
