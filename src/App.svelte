@@ -1466,6 +1466,46 @@
     if (magicClass) return cantrips.length===2 && new Set(cantrips).size===2 && cantrips.every(name=>BUILDER_SPELL_LISTS[magicClass].cantrips.includes(name)) && BUILDER_SPELL_LISTS[magicClass].level1.includes(spell);
     return true;
   }
+  function builderMissingFields(): string[] {
+    const missing: string[] = [];
+    const cls=BUILDER_CLASS_DATA[builderData.className];
+    const backgroundFeat=BUILDER_BACKGROUND_DATA[builderData.background].feat;
+    const featSkills=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_SKILL_OPTIONS.includes(choice));
+    if(!builderData.name.trim()) missing.push('Nombre del personaje (paso 2: pulsa «Generar nombre»).');
+    if(!builderData.alignment) missing.push('Alineamiento (paso 2).');
+    if(BUILDER_SPECIES_CHOICES[builderData.species].length && !BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice)) missing.push('Linaje o variante de especie (paso 2).');
+    if(['Aasimar','Humano','Tiefling'].includes(builderData.species) && !builderData.speciesSize) missing.push('Tamaño de la especie (paso 2).');
+    if(['Elfo','Gnomo','Tiefling'].includes(builderData.species) && !['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility)) missing.push('Aptitud mágica de linaje (paso 2).');
+    if(['Elfo','Humano'].includes(builderData.species) && !builderData.speciesSkill) missing.push('Habilidad adicional de especie (paso 2).');
+    if(builderData.species==='Humano' && !builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell)) missing.push('Elecciones de la dote de origen adicional humana (paso 2).');
+    const toolOptions=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
+    if(toolOptions.length && !toolOptions.includes(builderData.backgroundToolChoice)) missing.push('Competencia con herramienta del trasfondo (paso 3).');
+    if(!builderOriginFeatChoicesOk(backgroundFeat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell)) missing.push('Elecciones de la dote del trasfondo (paso 3).');
+    const bgAbilities=BUILDER_BACKGROUND_DATA[builderData.background].abilities;
+    const increasesOk=builderData.abilityIncreaseMode==='two'?bgAbilities.includes(builderData.abilityIncrease2)&&bgAbilities.includes(builderData.abilityIncrease1)&&builderData.abilityIncrease1!==builderData.abilityIncrease2:bgAbilities.includes(builderData.abilityIncrease1)&&bgAbilities.includes(builderData.abilityIncrease2)&&bgAbilities.includes(builderData.abilityIncrease3)&&new Set([builderData.abilityIncrease1,builderData.abilityIncrease2,builderData.abilityIncrease3]).size===3;
+    if(!increasesOk) missing.push('Distribución de aumentos de característica del trasfondo (paso 3).');
+    if(builderData.classSkillChoices.filter(Boolean).length!==BUILDER_CLASS_SKILLS[builderData.className].count) missing.push('Competencias de habilidad de clase: faltan '+(BUILDER_CLASS_SKILLS[builderData.className].count-builderData.classSkillChoices.filter(Boolean).length)+' (paso 4).');
+    if(cls.weaponCount && builderData.weaponMasteries.length!==cls.weaponCount) missing.push('Maestrías con armas: faltan '+(cls.weaponCount-builderData.weaponMasteries.length)+' (paso 4).');
+    const expectedTools=builderData.className==='Bardo'?3:builderData.className==='Monje'?1:0;
+    if(builderData.classToolsChoices.length!==expectedTools) missing.push('Competencias con herramientas de clase: faltan '+(expectedTools-builderData.classToolsChoices.length)+' (paso 4).');
+    if(cls.specialOptions.length && !cls.specialOptions.includes(builderData.classSpecialChoice)) missing.push((cls.specialLabel||'Elección especial de clase')+' (paso 4).');
+    if(builderData.className==='Pícaro' && builderData.classExpertise.length!==2) missing.push('Pericias de Pícaro: faltan '+(2-builderData.classExpertise.length)+' (paso 4).');
+    const bonusCantrip=(builderData.className==='Clérigo'&&builderData.classSpecialChoice==='Taumaturgo')||(builderData.className==='Druida'&&builderData.classSpecialChoice==='Naturalista')?1:0;
+    const cantripCount=cls.cantrips+bonusCantrip;
+    if(builderData.selectedCantrips.length!==cantripCount) missing.push('Trucos de clase: faltan '+(cantripCount-builderData.selectedCantrips.length)+' (paso 4).');
+    if(builderData.className==='Brujo'&&builderData.classSpecialChoice==='Pacto del grimorio'){
+      if(builderData.warlockTomeCantrips.length!==3) missing.push('Trucos del Pacto del grimorio: faltan '+(3-builderData.warlockTomeCantrips.length)+' (paso 4).');
+      if(builderData.warlockTomeRituals.length!==2) missing.push('Conjuros rituales del Pacto del grimorio: faltan '+(2-builderData.warlockTomeRituals.length)+' (paso 4).');
+    }
+    if(builderData.selectedSpells.length!==cls.spells) missing.push('Conjuros de nivel 1: faltan '+(cls.spells-builderData.selectedSpells.length)+' (paso 4).');
+    if(cls.spellbook && builderData.wizardSpellbook.length!==cls.spellbook) missing.push('Libro de conjuros del Mago: faltan '+(cls.spellbook-builderData.wizardSpellbook.length)+' (paso 4).');
+    const values=Object.values(builderData.abilities).map(Number), sorted=[...values].sort((a,b)=>b-a);
+    const abilitiesOk=builderData.method==='standard'?JSON.stringify(sorted)===JSON.stringify([15,14,13,12,10,8]):builderData.method==='pointBuy'?values.every(v=>v>=8&&v<=15)&&builderPointCost()===27:builderData.method==='rolled'?builderRolledScores.length===6&&JSON.stringify(sorted)===JSON.stringify([...builderRolledScores].sort((a,b)=>b-a)):BUILDER_ABILITY_NAMES.every(name=>Number.isInteger(Number(builderData.abilities[name]))&&Number(builderData.abilities[name])>=1&&Number(builderData.abilities[name])<=20);
+    if(!abilitiesOk) missing.push('Puntuaciones de característica: revisa el método elegido y sus seis valores (paso 5).');
+    if(builderData.languages.length!==2) missing.push('Idiomas adicionales: selecciona exactamente 2; actualmente '+builderData.languages.length+' (paso 6).');
+    if(builderData.className==='Pícaro' && !builderData.rogueLanguage) missing.push('Idioma adicional de Pícaro (paso 6).');
+    return missing;
+  }
   function builderCanFinish() {
     const cls = BUILDER_CLASS_DATA[builderData.className];
     const selectedClassSkills=builderData.classSkillChoices.filter(Boolean);
@@ -1862,12 +1902,9 @@
     return result;
   }
   async function finishBuilder() {
-    if (!builderCanFinish()) {
-      builderStepError = builderData.languages.length !== 2
-        ? 'Selecciona exactamente dos idiomas adicionales para continuar.'
-        : builderData.className === 'Pícaro' && !builderData.rogueLanguage
-          ? 'Selecciona el idioma adicional de Pícaro.'
-          : 'Hay elecciones obligatorias incompletas en los pasos anteriores. Vuelve atrás y revisa las opciones pendientes.';
+    const missing=builderMissingFields();
+    if (missing.length) {
+      builderStepError = 'No se puede generar la ficha. Revisa estos campos:\\n• '+missing.join('\\n• ');
       return;
     }
     builderStepError = '';
@@ -3533,7 +3570,7 @@ import ITEMS from './items.json';
 
               <h3>2. Especie</h3><p class="muted">Ahora elige tu especie. También seleccionarás aquí el alineamiento de tu personaje.</p>
               <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
-              <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = ''; builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
+              <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = (['Aasimar','Humano','Tiefling'].includes(builderData.species) ? 'Mediano' : ''); builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               <div class="name-generator-panel">
                 <div class="name-generator-heading"><strong>Generador de nombres</strong><span>Listas originales por especie</span></div>
                 <div class="name-generator-controls">
@@ -3571,7 +3608,7 @@ import ITEMS from './items.json';
                         {:else if builderStep === 2}
 
               <h3>3. Trasfondo</h3><p class="muted">El trasfondo determina competencias, equipo y una dote de origen.</p>
-              <label>Trasfondo<select bind:value={builderData.background} on:change={() => { builderData.classSkillChoices = []; builderData.backgroundToolChoice = ''; builderData.backgroundFeatChoices = []; builderData.backgroundMagicCantrips = []; builderData.backgroundMagicSpell = ''; builderData.feat = BUILDER_BACKGROUND_DATA[builderData.background].feat; builderData.abilityIncrease2 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[0]; builderData.abilityIncrease1 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[1]; builderData.abilityIncrease3 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[2]; }}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
+              <label>Trasfondo<select bind:value={builderData.background} on:change={() => { builderData.classSkillChoices = []; builderData.backgroundToolChoice = (BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]?.length === 1 ? BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background][0] : ''); builderData.backgroundFeatChoices = []; builderData.backgroundMagicCantrips = []; builderData.backgroundMagicSpell = ''; builderData.feat = BUILDER_BACKGROUND_DATA[builderData.background].feat; builderData.abilityIncrease2 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[0]; builderData.abilityIncrease1 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[1]; builderData.abilityIncrease3 = BUILDER_BACKGROUND_DATA[builderData.background].abilities[2]; }}>{#each BUILDER_BACKGROUNDS as item}<option>{item}</option>{/each}</select></label>
               {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
                 <div class="builder-choice-wrapper"><strong>Elecciones de la dote {BUILDER_BACKGROUND_DATA[builderData.background].feat}</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Opciones de la dote del trasfondo</strong><span>{builderData.backgroundFeatChoices.length}/{3}</span></div><div class="builder-checkbox-grid">{#each builderFeatChoiceOptions(BUILDER_BACKGROUND_DATA[builderData.background].feat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<label class="builder-checkbox"><input type="checkbox" checked={builderData.backgroundFeatChoices.includes(choice)} on:change={(event) => builderToggleChoice('backgroundFeatChoices',choice,3,event)} disabled={!builderData.backgroundFeatChoices.includes(choice) && builderData.backgroundFeatChoices.length >= (3)} /><span>{choice}</span></label>{/each}</div></div></div>
               {:else if builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
@@ -3599,7 +3636,7 @@ import ITEMS from './items.json';
                         {:else if builderStep === 3}
 
               <h3>4. Clase y competencias</h3><p class="muted">Todas las clases del Manual del Jugador 2024. Se aplican únicamente los rasgos que se obtienen a nivel 1.</p>
-              <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className} on:change={() => { builderData.classSkillChoices = []; builderData.classToolsChoices = []; builderData.classSpecialChoice = ''; builderData.warlockTomeCantrips = []; builderData.warlockTomeRituals = []; builderData.classExpertise = []; builderData.weaponMasteries = []; builderData.selectedCantrips = []; builderData.selectedSpells = []; builderData.wizardSpellbook = []; builderData.classEquipmentChoice = 'A'; }}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
+              <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className} on:change={() => { builderData.classSkillChoices = []; builderData.classToolsChoices = []; builderData.classSpecialChoice = (BUILDER_CLASS_DATA[builderData.className].specialOptions.length === 1 ? BUILDER_CLASS_DATA[builderData.className].specialOptions[0] : ''); builderData.warlockTomeCantrips = []; builderData.warlockTomeRituals = []; builderData.classExpertise = []; builderData.weaponMasteries = []; builderData.selectedCantrips = []; builderData.selectedSpells = []; builderData.wizardSpellbook = []; builderData.classEquipmentChoice = 'A'; }}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
               <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
                           <h3>Competencias, rasgos, conjuros y equipo</h3>
               <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
@@ -3678,7 +3715,7 @@ import ITEMS from './items.json';
 {#if builderStepError}<p class="builder-step-error" role="alert">{builderStepError}</p>{/if}
             <div class="builder-actions">
               {#if builderStep > 0}<button class="secondary" on:click={builderBack}>Anterior</button>{/if}
-              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button class="primary" on:click={finishBuilder}>Generar ficha de nivel 1</button>{/if}
+              {#if builderStep < 5}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button type="button" class="primary" on:click={finishBuilder}>Generar ficha de nivel 1</button>{/if}
             </div>
           {:else}
             <div class="section-heading"><h3>Personaje generado</h3><span class="count">Nivel 1</span></div>
