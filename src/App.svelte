@@ -4861,7 +4861,6 @@ import ITEMS from './items.json';
                       <p class="muted nautical-empty">No hay conjuros conocidos registrados.</p>
                     {/if}
                   </section>
-                {/if}
                 {:else if playerSheetTab !== 'Conjuros'}
                   {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
                     <section class="sheet-section {sectionClass(pair.heading.name)}">
