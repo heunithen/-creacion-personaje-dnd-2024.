@@ -4338,13 +4338,14 @@ import ITEMS from './items.json';
               {#if builderData.className === 'Pícaro'}
                 <label>Idioma adicional de pícaro ({builderData.rogueLanguage ? 1 : 0}/1)<select bind:value={builderData.rogueLanguage}><option value="">Elige un idioma</option>{#each BUILDER_LANGUAGES.filter(language => !builderData.languages.includes(language) && language !== 'Jerga de ladrones') as language}<option>{language}</option>{/each}</select></label>
               {/if}
-              <div class="builder-info"><strong>Resumen de equipo elegido</strong><p>Trasfondo: {builderData.backgroundEquipment === 'A' ? BUILDER_BACKGROUND_DATA[builderData.background].equipmentA : '50 po en monedas'}</p><p>Clase: {builderData.classEquipmentChoice === 'A' ? BUILDER_CLASS_DATA[builderData.className].equipmentA : builderData.classEquipmentChoice === 'C' ? '155 po en monedas' : builderData.className === 'Guerrero' ? BUILDER_CLASS_DATA[builderData.className].equipmentB : BUILDER_CLASS_DATA[builderData.className].equipmentB + ' en monedas'}</p></div>
+
 
             
             {:else if builderStep===10}
               
               <h3>11. Detalles del personaje</h3>
               <p class="muted">Información narrativa opcional. El alineamiento describe la conducta del personaje; no limita sus decisiones.</p>
+              <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
               
               <label>Edad<input bind:value={builderData.age} placeholder="Edad" /></label>
               <label>Altura<input bind:value={builderData.height} placeholder="Altura" /></label>
