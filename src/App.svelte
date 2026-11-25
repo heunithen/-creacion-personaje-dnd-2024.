@@ -2057,7 +2057,7 @@ import ITEMS from './items.json';
     const parts: { text: string; rollable: boolean; notation: string }[] = [];
     // Detecta dados (incluido d20 sin cantidad) y modificadores aislados como +1/-2.
     // El modificador aislado se interpreta como una prueba d20 con ese bonificador.
-    const pattern = /(?<![\w])(?:[+-]?\s*\d+\s*)?d\s*(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\s*\d+)?(?:\s*[+-]\s*\d+)?|[+\-−]\s*\d+/gi;
+    const pattern = /(?<![\w])(?:[+-]?\s*\d+\s*)?d\s*(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\s*\d+)?(?:\s*[+-]\s*\d+(?!\s*d))?|[+\-−]\s*\d+/gi;
     let last = 0;
     let match: RegExpExecArray | null;
     while ((match = pattern.exec(value)) !== null) {
