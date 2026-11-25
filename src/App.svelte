@@ -1471,6 +1471,8 @@
     const cls=BUILDER_CLASS_DATA[builderData.className];
     const backgroundFeat=BUILDER_BACKGROUND_DATA[builderData.background].feat;
     const featSkills=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_SKILL_OPTIONS.includes(choice));
+    if(!['A','B'].includes(builderData.backgroundEquipment)) missing.push('Opción de equipo del trasfondo (paso 3).');
+    if(!['A','B',...(builderData.className==='Guerrero'?['C']:[])].includes(builderData.classEquipmentChoice)) missing.push('Opción de equipo de clase (paso 4).');
     if(!builderData.name.trim()) missing.push('Nombre del personaje (paso 2: pulsa «Generar nombre»).');
     if(!builderData.alignment) missing.push('Alineamiento (paso 2).');
     if(BUILDER_SPECIES_CHOICES[builderData.species].length && !BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice)) missing.push('Linaje o variante de especie (paso 2).');
@@ -1504,6 +1506,7 @@
     if(!abilitiesOk) missing.push('Puntuaciones de característica: revisa el método elegido y sus seis valores (paso 5).');
     if(builderData.languages.length!==2) missing.push('Idiomas adicionales: selecciona exactamente 2; actualmente '+builderData.languages.length+' (paso 6).');
     if(builderData.className==='Pícaro' && !builderData.rogueLanguage) missing.push('Idioma adicional de Pícaro (paso 6).');
+    if(!builderCanFinish() && !missing.length) missing.push('Hay una elección que no coincide con las opciones permitidas. Revisa los pasos 2 a 6.');
     return missing;
   }
   function builderCanFinish() {
@@ -1601,6 +1604,7 @@
         builderStepError=stepFields.length
           ? 'Falta completar lo siguiente para avanzar:\\n• '+stepFields.join('\\n• ')
           : 'Hay una elección obligatoria incompleta en este paso. Revisa los campos visibles y vuelve a intentarlo.';
+        requestAnimationFrame(()=>document.querySelector('.builder-step-error')?.scrollIntoView({block:'center',behavior:'smooth'}));
         return;
       }
       builderStepError=''; builderStep+=1; keepBuilderAtTop();
@@ -1911,6 +1915,7 @@
     const missing=builderMissingFields();
     if (missing.length) {
       builderStepError = 'No se puede generar la ficha. Revisa estos campos:\\n• '+missing.join('\\n• ');
+      requestAnimationFrame(()=>document.querySelector('.builder-step-error')?.scrollIntoView({block:'center',behavior:'smooth'}));
       return;
     }
     builderStepError = '';
@@ -3576,7 +3581,7 @@ import ITEMS from './items.json';
 
               <h3>2. Especie</h3><p class="muted">Ahora elige tu especie. También seleccionarás aquí el alineamiento de tu personaje.</p>
               <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
-              <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = (['Aasimar','Humano','Tiefling'].includes(builderData.species) ? 'Mediano' : ''); builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
+              <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = (BUILDER_SPECIES_CHOICES[builderData.species].length === 1 ? BUILDER_SPECIES_CHOICES[builderData.species][0] : ''); builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = (['Aasimar','Humano','Tiefling'].includes(builderData.species) ? 'Mediano' : ''); builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               <div class="name-generator-panel">
                 <div class="name-generator-heading"><strong>Generador de nombres</strong><span>Listas originales por especie</span></div>
                 <div class="name-generator-controls">
