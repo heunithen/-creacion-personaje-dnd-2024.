@@ -1537,8 +1537,30 @@
             "value": "Mediano"
           }
         ]
+      },
+      {
+        "id": 1795638877917,
+        "name": "GESTIÓN DE FICHA",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Estados de conjuros",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 1795638877918,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "{\"prestidigitacion\":{\"known\":true,\"prepared\":true}}"
+          }
+        ]
       }
     ]
   },
-  "updatedAt": "2026-11-25T20:24:23.612Z"
+  "updatedAt": "2026-11-25T20:34:38.529Z"
 }
