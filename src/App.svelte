@@ -32,7 +32,7 @@
   let spellLevelFilter = 'Todos';
   let spellClassFilter = 'Todas';
   let spellSchoolFilter = 'Todas';
-  const tabs = ['Resumen', 'Acciones', 'Rasgos', 'Conjuros', 'Inventario', 'Historia', 'Tiradas', 'Reglas'];
+  const tabs = ['Características, salvaciones y sentidos', 'Usos limitados', 'Habilidades', 'Acciones', 'Inventario', 'Conjuros', 'Velocidad y defensas', 'Rasgos y características', 'Competencias y entrenamiento', 'Trasfondo', 'Notas', 'Extras'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
   let syncInProgress = false;
@@ -3166,16 +3166,19 @@ import ITEMS from './items.json';
 
   function sectionTab(name = '') {
     const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (/\b19\b.*recurso|recurso/.test(n)) return 'Ocultar';
     if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
-    if (/detalle[s]? de especie/.test(n)) return 'Rasgos';
-    if (/historia|personalidad|apariencia|trasfondo/.test(n)) return 'Historia';
-    if (/atributo|ability|salvacion|habilidad|competencia|skill|saving throw|proficien|personaje|datos/.test(n)) return 'Resumen';
-    if (/tirada|roll|dado/.test(n)) return 'Tiradas';
-    if (/equipo|inventario|objeto/.test(n)) return 'Inventario';
-    if (/rasgo|dote|caracteristica de clase|racial|especie/.test(n)) return 'Rasgos';
-    if (/combate|ataque|arma|weapon|armor/.test(n)) return 'Acciones';
-    return 'Resumen';
+    if (/uso[s]? limitado|limited use|recurso|recarga|cargas|charges/.test(n)) return 'Usos limitados';
+    if (/habilidad|skill|percepcion|investigacion|intuicion|acroba|sigilo|supervivencia/.test(n)) return 'Habilidades';
+    if (/inventario|equipo|objeto|inventory|equipment/.test(n)) return 'Inventario';
+    if (/velocidad|speed|defensa|defenses|resistencia|inmunidad|vulnerabilidad|puntos de golpe|hit points|armadura|armor class|clase de armadura/.test(n)) return 'Velocidad y defensas';
+    if (/rasgo|dote|caracteristica de clase|racial|especie|feature|trait/.test(n)) return 'Rasgos y características';
+    if (/competencia|entrenamiento|proficien|idioma|herramienta|tool|weapon training|armor training/.test(n)) return 'Competencias y entrenamiento';
+    if (/trasfondo|background|historia|personalidad|apariencia/.test(n)) return 'Trasfondo';
+    if (/nota[s]?|notes/.test(n)) return 'Notas';
+    if (/extra[s]?|compañero|mascota|familiar|extras/.test(n)) return 'Extras';
+    if (/atributo|ability|salvacion|saving throw|sentido|sense|personaje|datos/.test(n)) return 'Características, salvaciones y sentidos';
+    if (/combate|ataque|arma|weapon|action|acciones/.test(n)) return 'Acciones';
+    return 'Extras';
   }
 
   function visiblePairs(sections: RawSection[] = [], tab = activeTab) {
@@ -3933,8 +3936,8 @@ import ITEMS from './items.json';
                 <div class="sheet-banner-copy"><span class="sheet-kicker">FORJA DE AVENTUREROS · D&D 2024</span><h1 class="character-name">{builderPreview.name || 'Personaje'}</h1><span class="sheet-subtitle">Hoja de aventurero</span></div>
                 <div class="sheet-banner-emblem" aria-hidden="true">✦</div>
               </header>
-              <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha generada">
-                {#each tabs.filter(tab => tab !== 'Tiradas' && tab !== 'Reglas') as tab}
+              <nav class="sheet-tabs ddb-section-nav" role="tablist" aria-label="Secciones de la ficha generada">
+                {#each tabs as tab}
                   <button class:active={builderPreviewTab === tab} role="tab" aria-selected={builderPreviewTab === tab} on:click={() => builderPreviewTab = tab}>{tab}</button>
                 {/each}
               </nav>
@@ -3997,7 +4000,7 @@ import ITEMS from './items.json';
             <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
             <div><span>Competencia</span><strong>{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
           </section>
-          <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha">
+          <nav class="sheet-tabs ddb-section-nav" role="tablist" aria-label="Secciones de la ficha">
             {#each tabs as tab}<button class:active={activeTab === tab} role="tab" aria-selected={activeTab === tab} on:click={() => activeTab = tab}>{tab}</button>{/each}
           </nav>
           {#if activeTab === 'Rasgos'}
@@ -4017,7 +4020,7 @@ import ITEMS from './items.json';
                   </div>
                 </section>
               {/each}
-              {#each visiblePairs(sheet.sections || [], 'Rasgos') as pair}
+              {#each visiblePairs(sheet.sections || [], 'Rasgos y características') as pair}
                 <section class="sheet-section features-section"><div class="sheet-section-title"><h3>{pair.heading.name}</h3></div>
                   {#each pair.heading.stats || [] as stat, i}
                     {@const value = displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}
@@ -4054,6 +4057,11 @@ import ITEMS from './items.json';
                 {/each}
               </div>
               <button class="secondary" type="button" on:click={resetSpellUseStates}>Reiniciar marcas de uso y espacios (verifica el descanso)</button>
+            </section>
+          {:else if activeTab === 'Notas'}
+            <section class="ddb-content-panel">
+              <h2>Notas</h2>
+              <p>{sheet.notes || 'No hay notas registradas para este personaje.'}</p>
             </section>
           {:else if activeTab === 'Tiradas'}
             <section class="custom-rolls">
@@ -4399,5 +4407,30 @@ import ITEMS from './items.json';
   :global(.attributes-section .stat-label){color:#b9c2ce!important}
   @media(max-width:760px){:global(.sheet-quick-stats){grid-template-columns:repeat(3,minmax(0,1fr))}:global(.sheet-grid){grid-template-columns:1fr}:global(.attributes-section .stats-list){grid-template-columns:repeat(3,minmax(0,1fr))!important}}
   @media(max-width:520px){:global(.ddb-character-header){align-items:flex-start}:global(.sheet-banner-meta){display:grid;grid-template-columns:1fr 1fr}:global(.sheet-banner-meta span+span){padding-left:0;border-left:0}:global(.sheet-quick-stats){grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+  /* Organización de ficha inspirada en la navegación por secciones de D&D Beyond */
+  :global(.app-shell){max-width:1180px!important}
+  :global(main){max-width:1120px!important}
+  .character-sheet{display:grid;grid-template-columns:220px minmax(0,1fr);column-gap:1rem;align-items:start}
+  .character-sheet>.sheet-banner,.character-sheet>.sheet-quick-stats{grid-column:1/-1}
+  .character-sheet>.ddb-section-nav{grid-column:1;grid-row:auto;display:flex;flex-direction:column;align-items:stretch;gap:.18rem;overflow:visible;position:sticky;top:.5rem;max-height:calc(100vh - 1rem);overflow-y:auto;padding:.35rem;border:1px solid #353535;border-radius:7px;background:#17191d}
+  .character-sheet>.ddb-section-nav button{flex:0 0 auto;width:100%;min-height:38px;padding:.55rem .65rem;border:0;border-left:3px solid transparent;border-radius:3px;background:transparent;color:#d4d6da;text-align:left;font:600 .76rem/1.25 system-ui,sans-serif;white-space:normal}
+  .character-sheet>.ddb-section-nav button.active{border-left-color:#c69b45;background:#2b2e34;color:#fff}
+  .character-sheet>.ddb-section-nav button:hover{background:#25282e}
+  .character-sheet>.sheet-grid,.character-sheet>.progression-panel,.character-sheet>.spellbook-panel,.character-sheet>.custom-rolls,.character-sheet>.rules-panel,.character-sheet>.ddb-content-panel{grid-column:2;min-width:0}
+  .character-sheet>.sheet-grid{grid-template-columns:minmax(0,1fr);align-content:start}
+  .character-sheet>.sheet-grid .sheet-section{min-width:0}
+  .ddb-content-panel{padding:1rem;border:1px solid #34383f;border-radius:7px;background:#202329;color:#f3f3f3}
+  .ddb-content-panel h2{margin:0 0 .65rem;font:700 1.1rem system-ui,sans-serif}
+  .sheet-quick-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.5rem}
+  .sheet-quick-stats>div{min-width:0}
+  @media(max-width:720px){
+    .character-sheet{grid-template-columns:minmax(0,1fr);row-gap:.7rem}
+    .character-sheet>.ddb-section-nav{grid-column:1;position:static;max-height:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}
+    .character-sheet>.ddb-section-nav button{min-height:42px}
+    .character-sheet>.sheet-grid,.character-sheet>.progression-panel,.character-sheet>.spellbook-panel,.character-sheet>.custom-rolls,.character-sheet>.rules-panel,.character-sheet>.ddb-content-panel{grid-column:1}
+    .sheet-quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
 
 </style>
