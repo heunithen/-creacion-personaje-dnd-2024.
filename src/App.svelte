@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import OBR, { buildImage } from '@owlbear-rodeo/sdk';
+  import OBR, { buildImage, buildImageUpload } from '@owlbear-rodeo/sdk';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
   const CHANNEL = 'com.heunithen.dnd2024-character-builder/character-sync';
@@ -3394,14 +3394,30 @@ import ITEMS from './items.json';
       drawSectionColumn(middle, 282, 365, 230, 858);
       drawSectionColumn(right, 530, 178, 180, 858);
 
-      const dataUrl = canvas.toDataURL('image/png');
       const sceneReady = await OBR.scene.isReady();
       if (!sceneReady) throw new Error('No hay una escena abierta o todavía no está lista.');
+
+      // Owlbear necesita una URL de imagen alojada, no un data URL temporal del canvas.
+      const pngBlob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('No se pudo exportar el PNG de la ficha.')), 'image/png');
+      });
+      const safeName = (target.name || 'Personaje').replace(/[^a-zA-Z0-9_-]+/g, '-');
+      const pngFile = new File([pngBlob], 'Ficha-' + safeName + '.png', { type: 'image/png' });
+      await OBR.assets.uploadImages([
+        buildImageUpload(pngFile)
+          .name('Ficha · ' + (target.name || 'Personaje'))
+          .dpi(150)
+          .offset({ x: 0, y: 0 })
+          .build()
+      ], 'PROP');
+
+      const selectedImages = await OBR.assets.downloadImages(false, 'Ficha-' + safeName, 'PROP');
+      if (!selectedImages.length) {
+        throw new Error('La ficha PNG se exportó, pero no se seleccionó en el selector de recursos.');
+      }
+      const uploadedImage = selectedImages[0];
       const viewport = await OBR.viewport.getPosition();
-      const item = buildImage(
-        { width, height, mime: 'image/png', url: dataUrl },
-        { dpi: 150, offset: { x: 0, y: 0 } }
-      )
+      const item = buildImage(uploadedImage.image, uploadedImage.grid)
         .name('Ficha · ' + (target.name || 'Personaje'))
         .layer('PROP')
         .position({ x: viewport.x - baseWidth / 2, y: viewport.y - baseHeight / 2 })
@@ -3410,7 +3426,7 @@ import ITEMS from './items.json';
         .build();
       await OBR.scene.items.addItems([item]);
       imageSheetOpen = false;
-      notice = 'Ficha generada usando hojadepj1.webp y añadida a la escena como PROP.';
+      notice = 'Ficha PNG subida a tus recursos y añadida a la escena como PROP.';
     } catch (error) {
       console.error('No se pudo crear la ficha PROP:', error);
       const detail = error instanceof Error
