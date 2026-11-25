@@ -3764,9 +3764,12 @@ import ITEMS from './items.json';
             </div>
           {:else}
             <div class="section-heading"><h3>Personaje generado</h3><span class="count">Nivel 1</span></div>
-            <div class="character-sheet gm-character-sheet">
-              <div class="sheet-banner"><h2>{builderPreview.name}</h2></div>
-              <nav class="sheet-tabs" role="tablist" aria-label="Secciones de la ficha generada">
+            <article class="character-sheet">
+              <header class="sheet-banner">
+                <div class="sheet-banner-copy"><span class="sheet-kicker">FORJA DE AVENTUREROS · D&D 2024</span><h1 class="character-name">{builderPreview.name || 'Personaje'}</h1><span class="sheet-subtitle">Hoja de aventurero</span></div>
+                <div class="sheet-banner-emblem" aria-hidden="true">✦</div>
+              </header>
+              <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha generada">
                 {#each tabs.filter(tab => tab !== 'Tiradas' && tab !== 'Reglas') as tab}
                   <button class:active={builderPreviewTab === tab} role="tab" aria-selected={builderPreviewTab === tab} on:click={() => builderPreviewTab = tab}>{tab}</button>
                 {/each}
@@ -3774,15 +3777,24 @@ import ITEMS from './items.json';
               <div class="sheet-grid">
                 {#each visiblePairs(builderPreview.sections || [], builderPreviewTab) as pair}
                   <section class="sheet-section {sectionClass(pair.heading.name)}">
-                    <div class="sheet-section-title"><h3>{pair.heading.name}</h3></div>
-                    <div class="stats-list">{#each pair.heading.stats || [] as stat,i}<div class="sheet-stat"><span>{stat.name}</span><strong>{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value) || '—'}</strong></div>{/each}</div>
+                    <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
+                    <div class="stats-list">
+                      {#each pair.heading.stats || [] as stat, i}
+                        <div class="sheet-stat">
+                          <span class="stat-label">{stat.name || ''}</span>
+                          <div class="stat-value sheet-readonly-value">{#each rollableParts(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)) as part, partIndex}
+                            {#if part.rollable}<button type="button" class="inline-roll" title="Tirar {part.notation} en Dice+" on:click={() => sendSheetRoll(part.notation, String(stat.name || pair.heading.name || 'Tirada'))}>{part.text}</button>{:else}<span>{part.text}</span>{/if}
+                          {/each}</div>
+                        </div>
+                      {/each}
+                    </div>
                   </section>
                 {/each}
                 {#if visiblePairs(builderPreview.sections || [], builderPreviewTab).length === 0}
                   <p class="muted">No hay información en esta sección para el personaje.</p>
                 {/if}
               </div>
-            </div>
+            </article>
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
               <button type="button" class="primary" disabled={builderSaving} on:click={saveBuilderCharacter}>{builderSaving ? 'Guardando…' : 'Guardar personaje en mi ficha'}</button>
@@ -4110,13 +4122,11 @@ import ITEMS from './items.json';
   :global(.sheet-stat),:global(.roll-entry),:global(.trait-view),:global(.traits-preview){border-color:#4d1b21!important}
   :global(.gm-sheet-details summary),:global(.monster-source summary){color:#ff7a84!important}
   :global(.character-sheet .features-section .sheet-stat strong){background:#151010!important}
-  /* Los nombres de rasgos, conjuros y armas destacan en rojo. */
-  :global(.features-section .stat-label),:global(.features-section .stats-list > .sheet-stat > span),
-  :global(.magic-section .stat-label),:global(.magic-section .stats-list > .sheet-stat > span),
-  :global(.equipment-section .weapon-name),:global(.attacks-section .stat-label),
-  :global(.attacks-section .stats-list > .sheet-stat > span){color:#ff6573!important}
-  :global(.features-section .sheet-stat strong),:global(.magic-section .sheet-stat strong){color:#f2e9e9!important}
-  :global(.attacks-section .stat-label),:global(.attacks-section .stats-list > .sheet-stat > span),:global(.attacks-section .sheet-stat strong){color:#ff6573!important}
+  /* Los nombres y descripciones conservan el color neutro de la ficha; el rojo se usa solo en acentos. */
+  :global(.features-section .stat-label),:global(.magic-section .stat-label),
+  :global(.equipment-section .weapon-name),:global(.attacks-section .stat-label){color:#bcb2b4!important}
+  :global(.features-section .sheet-stat strong),:global(.magic-section .sheet-stat strong),
+  :global(.attacks-section .sheet-stat strong){color:#f4eeee!important}
   :global(.inline-roll){display:inline;padding:0;border:0;background:transparent;color:#64aaff;font:inherit;font-weight:700;text-decoration:underline;text-decoration-color:rgba(100,170,255,.45);text-underline-offset:2px;cursor:pointer}
   :global(.inline-roll:hover){color:#9ac8ff;text-decoration-color:currentColor}
   :global(.sheet-readonly-value){white-space:pre-wrap;overflow-wrap:anywhere}
