@@ -5649,4 +5649,272 @@ import ITEMS from './items.json';
   :global(.gm-layout .danger-text),:global(.gm-layout .remove-roll){color:#e6a0a0!important}
   :global(.gm-layout .gm-sheet-details summary){color:#5fe6e0!important}
 
+
+
+  /* AUDITORÍA VISUAL GLOBAL — paleta náutica aplicada a toda la aplicación */
+  :global(:root){
+    color-scheme:dark;
+    --ocean-0:#0b171d;--ocean-1:#0f1e26;--ocean-2:#13262e;
+    --slate-1:#1b2a33;--slate-2:#22333d;
+    --aqua:#5fe6e0;--aqua-mid:#3fb8b8;
+    --text-main:#fff;--text-secondary:#b5bec3;--text-muted:#8e9aa1;
+    --line:#3a4a52;--line-soft:#2a3a43;
+  }
+  :global(html),:global(body),:global(#app){background:#0b171d!important;color:#fff!important}
+  :global(body){background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#09151b 100%)!important}
+  :global(.app-shell),:global(.main){color:#fff!important}
+  :global(.topbar),:global(footer){border-color:#3a4a52!important}
+  :global(.brand),:global(.brand strong),:global(.section-heading h2),:global(.panel h2),
+  :global(.saved h2),:global(.character-card h3),:global(.monster-card h3){color:#fff!important}
+  :global(.brand-mark),:global(.eyebrow),:global(.free-tag),:global(.count),
+  :global(.card-symbol),:global(.card-actions button),:global(.roll-result b),
+  :global(.trait-group h3){color:#5fe6e0!important}
+  :global(.brand small),:global(.intro),:global(.connection),:global(.hint),
+  :global(.muted),:global(footer){color:#b5bec3!important}
+  :global(.panel),:global(.character-card),:global(.monster-card),
+  :global(.trait-editor),:global(.import-box),:global(.rolls-panel),
+  :global(.roll-history),:global(.roster-panel),:global(.chest-panel),
+  :global(.save-panel),:global(.items-panel),:global(.spells-panel),
+  :global(.monsters-panel),:global(.custom-rolls),:global(.custom-roll-card),
+  :global(.new-roll-part),:global(.roll-creator),:global(.builder-panel),
+  :global(.level-up-panel),:global(.progression-panel),:global(.spellbook-panel),
+  :global(.rules-panel),:global(.ddb-content-panel),:global(.data-import-panel),
+  :global(.import-character-panel),:global(.github-config-panel),
+  :global(.github-character-row),:global(.subclass-level-preview){
+    background:#0f1e26!important;color:#fff!important;border-color:#3fb8b8!important;
+    box-shadow:0 8px 24px #0004!important
+  }
+  :global(.topbar nav button),:global(.secondary),:global(.player-tabs button),
+  :global(.character-tabs button),:global(.master-tabs button),
+  :global(.header-actions button),:global(.roll-actions button),
+  :global(.roll-creator button),:global(.add-roll-part),
+  :global(.github-character-actions button){
+    background:#1b2a33!important;border:1px solid #3a4a52!important;color:#fff!important
+  }
+  :global(.topbar nav button.active),:global(.player-tabs button.active),
+  :global(.character-tabs button.active),:global(.master-tabs button.active),
+  :global(.primary),:global(.builder-panel button.primary),
+  :global(.builder-actions .primary){
+    background:#5fe6e0!important;border:1px solid #5fe6e0!important;color:#0f1e26!important
+  }
+  :global(.primary:hover){background:#79f1eb!important;color:#0f1e26!important}
+  :global(label),:global(.builder-choice-heading),:global(.stat-label),
+  :global(.sheet-stat .stat-label){color:#b5bec3!important}
+  :global(input),:global(textarea),:global(select),:global(.editable),
+  :global(.sheet-readonly-value){
+    background:#0b171d!important;color:#fff!important;border:1px solid #3a4a52!important
+  }
+  :global(input::placeholder),:global(textarea::placeholder){color:#8e9aa1!important}
+  :global(input:focus),:global(textarea:focus),:global(select:focus),
+  :global(.editable:focus){border-color:#5fe6e0!important;outline:1px solid #5fe6e0!important;background:#13262e!important}
+  :global(.roll-entry),:global(.trait-view),:global(.traits-preview),
+  :global(.subheading),:global(.sheet-section-title){border-color:#2a3a43!important}
+  :global(.roll-entry-top strong),:global(.trait-view strong),
+  :global(.trait-view p),:global(.roll-entry p){color:#fff!important}
+  :global(.toast){background:#1b2a33!important;border:1px solid #3fb8b8!important;color:#fff!important}
+  :global(.danger-text),:global(.remove-roll){color:#e6a0a0!important}
+
+  /* Creador: todas las tarjetas seleccionables comparten el mismo tratamiento */
+  :global(.builder-choice-wrapper),:global(.builder-choice-field),
+  :global(.builder-name-block),:global(.builder-info),
+  :global(.builder-option-card),:global(.builder-option-description),
+  :global(.builder-skill-card),:global(.builder-option-badge),
+  :global(.builder-choice-heading),:global(.builder-checkbox){
+    background:#13262e!important;color:#fff!important;border-color:#3a4a52!important
+  }
+  :global(.builder-choice-wrapper),:global(.builder-choice-field),
+  :global(.builder-name-block){border-left:3px solid #5fe6e0!important}
+  :global(.builder-info small),:global(.builder-panel .muted),
+  :global(.builder-panel .hint),:global(.builder-option-description),
+  :global(.builder-skill-description){color:#b5bec3!important}
+  :global(.builder-class-card),:global(.builder-class-card:hover),
+  :global(.builder-species-grid .builder-option-card),
+  :global(.builder-background-grid .builder-option-card){
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#fff!important
+  }
+  :global(.builder-class-card-heading),:global(.builder-class-card-heading strong),
+  :global(.builder-class-meta strong),:global(.builder-option-card strong){color:#fff!important}
+  :global(.builder-class-card-heading>span),:global(.builder-class-meta>span),
+  :global(.builder-option-badge){color:#5fe6e0!important;background:#0f1e26!important;border-color:#3fb8b8!important}
+  :global(.builder-class-description),:global(.builder-class-meta),
+  :global(.builder-class-meta>span){color:#b5bec3!important;border-color:#2a3a43!important}
+  :global(.builder-class-card.selected),:global(.builder-option-card.selected){
+    background:#1d3b40!important;border:2px solid #5fe6e0!important;color:#fff!important;
+    box-shadow:0 0 0 1px #5fe6e033!important
+  }
+  :global(.builder-checkbox:has(input:checked)){
+    background:#1d3b40!important;border-color:#5fe6e0!important;color:#fff!important
+  }
+  :global(.builder-checkbox input){accent-color:#5fe6e0!important}
+  :global(.builder-panel button.secondary),:global(.builder-actions .secondary){
+    background:#1b2a33!important;border:1px solid #3a4a52!important;color:#fff!important
+  }
+  :global(.builder-progress){background:#22333d!important}
+  :global(.builder-progress span){background:#5fe6e0!important}
+
+  /* Hoja del jugador y ficha del director: ningún bloque de pergamino o fondo claro */
+  :global(.character-sheet),:global(.gm-character-sheet),
+  :global(.nautical-sheet),:global(.ddb-content-panel){
+    background:#0f1e26!important;color:#fff!important;border:1px solid #3fb8b8!important
+  }
+  :global(.character-sheet .sheet-banner),:global(.gm-character-sheet .sheet-banner){
+    background:#1e1e1e!important;color:#fff!important
+  }
+  :global(.character-sheet .character-name),:global(.gm-character-sheet .character-name),
+  :global(.character-sheet .sheet-banner .character-name){color:#fff!important}
+  :global(.character-sheet .sheet-tabs button),:global(.sheet-tabs button){
+    background:#1b2a33!important;color:#b5bec3!important;border:1px solid #3a4a52!important
+  }
+  :global(.character-sheet .sheet-tabs button.active),:global(.sheet-tabs button.active){
+    background:#0f1e26!important;color:#fff!important;border-color:#5fe6e0!important;
+    border-bottom:3px solid #5fe6e0!important
+  }
+  :global(.character-sheet .sheet-section),:global(.gm-character-sheet .sheet-section),
+  :global(.character-sheet .combat-section),:global(.character-sheet .attributes-section),
+  :global(.character-sheet .skills-section),:global(.character-sheet .features-section),
+  :global(.character-sheet .magic-section),:global(.character-sheet .equipment-section),
+  :global(.character-sheet .story-section),:global(.character-sheet .general-section),
+  :global(.gm-character-sheet .combat-section),:global(.gm-character-sheet .attributes-section),
+  :global(.gm-character-sheet .skills-section),:global(.gm-character-sheet .features-section),
+  :global(.gm-character-sheet .magic-section),:global(.gm-character-sheet .equipment-section),
+  :global(.gm-character-sheet .story-section),:global(.gm-character-sheet .general-section){
+    background:#10232b!important;color:#fff!important;border:1px solid #3fb8b8!important;
+    border-top:2px solid #5fe6e0!important
+  }
+  :global(.character-sheet .sheet-section-title),:global(.gm-character-sheet .sheet-section-title){
+    background:transparent!important;border-bottom:1px solid #2a3a43!important
+  }
+  :global(.character-sheet .section-name),:global(.gm-character-sheet .section-name),
+  :global(.character-sheet .sheet-section-title h3),:global(.gm-character-sheet .sheet-section-title h3){
+    color:#5fe6e0!important
+  }
+  :global(.character-sheet .sheet-stat),:global(.gm-character-sheet .sheet-stat){
+    background:transparent!important;border-color:#2a3a43!important
+  }
+  :global(.character-sheet .stat-label),:global(.gm-character-sheet .stat-label),
+  :global(.character-sheet .sheet-stat span),:global(.gm-character-sheet .sheet-stat span){
+    color:#b5bec3!important
+  }
+  :global(.character-sheet .stat-value),:global(.gm-character-sheet .stat-value),
+  :global(.character-sheet .sheet-stat strong),:global(.gm-character-sheet .sheet-stat strong){
+    background:#13262e!important;color:#fff!important;border:1px solid #3a4a52!important
+  }
+  :global(.character-sheet .editable),:global(.gm-character-sheet .editable){
+    background:#0b171d!important;color:#fff!important;border-color:#3a4a52!important
+  }
+
+  /* Hoja náutica principal: corrige subpaletas verdes, rojas y azules heredadas */
+  :global(.nautical-sheet){background:#0f1e26!important;color:#fff!important;border-color:#3fb8b8!important}
+  :global(.nautical-header){background:#1e1e1e!important;border-bottom:1px solid #3a4a52!important}
+  :global(.nautical-header .sheet-kicker),:global(.nautical-sheet .sheet-kicker){color:#5fe6e0!important}
+  :global(.nautical-header .character-name),:global(.nautical-header .sheet-banner-meta){color:#fff!important}
+  :global(.nautical-header .sheet-banner-meta span+span){border-color:#3a4a52!important}
+  :global(.portrait-frame){border-color:#f28c28!important;box-shadow:0 0 0 3px #713e20!important}
+  :global(.header-actions button){background:#1b2a33!important;border:1px solid #5fe6e0!important;color:#fff!important}
+  :global(.nautical-quick-stats){background:#0b171d!important;border-color:#3fb8b8!important}
+  :global(.nautical-quick-stats>div),:global(.nautical-quick-stats .quick-stats-row>div){
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#fff!important
+  }
+  :global(.nautical-quick-stats>div>span){color:#b5bec3!important}
+  :global(.nautical-quick-stats>div>strong){color:#fff!important}
+  :global(.nautical-quick-stats .attribute-plaque){
+    background:#0f1e26!important;border:2px solid #5fe6e0!important;color:#fff!important
+  }
+  :global(.nautical-quick-stats .attribute-plaque strong),
+  :global(.nautical-quick-stats .attribute-plaque .ability-score){color:#fff!important}
+  :global(.nautical-quick-stats .attribute-plaque .ability-bonus-roll){
+    background:#0b171d!important;border:1px solid #3fb8b8!important;color:#fff!important
+  }
+  :global(.nautical-quick-stats .attribute-plaque .ability-bonus-empty),
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line span),
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line strong){color:#b5bec3!important}
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line){border-color:#2a3a43!important}
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient span),
+  :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient strong){color:#5fe6e0!important}
+  :global(.nautical-columns){background:#0b171d!important}
+  :global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){color:#fff!important;scrollbar-color:#5a6a72 #0b171d!important}
+  :global(.nautical-columns .sheet-section){
+    background:#0f1e26!important;color:#fff!important;border:1px solid #3fb8b8!important;
+    border-top:2px solid #5fe6e0!important
+  }
+  :global(.nautical-columns .sheet-section-title){background:transparent!important;border-color:#2a3a43!important}
+  :global(.nautical-columns .sheet-section-title h3),
+  :global(.nautical-columns .section-name){color:#fff!important}
+  :global(.nautical-columns .sheet-stat){background:transparent!important;border-color:#2a3a43!important}
+  :global(.nautical-columns .stat-label),:global(.nautical-columns .sheet-stat span){color:#b5bec3!important}
+  :global(.nautical-columns .stat-value),:global(.nautical-columns .sheet-stat strong){
+    background:#13262e!important;color:#fff!important;border:1px solid #3a4a52!important
+  }
+  :global(.nautical-skills .sheet-stat.proficient .stat-label),
+  :global(.nautical-skills .sheet-stat.proficient .stat-value),
+  :global(.nautical-skills .sheet-stat.proficient .skill-number){color:#5fe6e0!important}
+  :global(.nautical-skills .sheet-stat .skill-number){color:#fff!important}
+  :global(.nautical-import){background:#0f1e26!important;border-color:#3fb8b8!important;color:#fff!important}
+  :global(.nautical-tabs){border-color:#3fb8b8!important}
+  :global(.nautical-tabs button){background:transparent!important;color:#8e9aa1!important;border-color:transparent!important}
+  :global(.nautical-tabs button.active){
+    background:#0f1e26!important;color:#fff!important;border-color:transparent!important;
+    border-bottom:3px solid #5fe6e0!important
+  }
+  :global(.nautical-tab-content){background:transparent!important;color:#fff!important}
+  :global(.weapon-mastery-summary),:global(.weapon-attack-card),
+  :global(.weapon-attack-values>div),:global(.spellcasting-summary-grid>div),
+  :global(.spell-slot-summary),:global(.player-spell-card),
+  :global(.player-feature-card),:global(.player-feat-section){
+    background:#13262e!important;color:#fff!important;border-color:#3a4a52!important
+  }
+  :global(.weapon-attack-card h4),:global(.player-spell-name),
+  :global(.player-feature-name){color:#fff!important}
+  :global(.weapon-attack-values span),:global(.player-feature-source),
+  :global(.player-spell-level){color:#b5bec3!important}
+  :global(.weapon-attack-values strong),:global(.player-spell-description),
+  :global(.player-spell-checks){color:#fff!important}
+  :global(.weapon-attacks-section .weapon-mastery-summary){
+    background:#13262e!important;color:#b5bec3!important;border-color:#3a4a52!important
+  }
+  :global(.skill-column-labels){color:#5fe6e0!important}
+  :global(.nautical-empty){background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  :global(.nautical-sheet .inline-roll){color:#5fe6e0!important}
+
+  /* Cabecera y componentes del diseño D&D Beyond anterior */
+  :global(.ddb-character-header){background:#1e1e1e!important;color:#fff!important;border:1px solid #3a4a52!important}
+  :global(.ddb-character-header .sheet-kicker),
+  :global(.sheet-quick-stats>div>span){color:#b5bec3!important}
+  :global(.ddb-character-header .character-name),
+  :global(.sheet-quick-stats>div>strong){color:#fff!important}
+  :global(.sheet-quick-stats>div){background:#13262e!important;border:1px solid #3fb8b8!important}
+  :global(.sheet-banner-emblem){background:#13262e!important;color:#5fe6e0!important;border-color:#3fb8b8!important}
+  :global(.ddb-section-nav button){background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
+  :global(.ddb-section-nav button.active){background:#0f1e26!important;color:#fff!important;border-bottom:3px solid #5fe6e0!important}
+  :global(.sheet-quick-stats),:global(.continuous-sheet-grid){background:transparent!important;color:#fff!important}
+
+  /* Manuales, inventario, conjuros, monstruos, tablas y gestión del GM */
+  :global(.items-table),:global(.chest-table){background:#0f1e26!important;color:#fff!important}
+  :global(.items-table th),:global(.chest-table th){background:#1b2a33!important;color:#fff!important;border-color:#2a3a43!important}
+  :global(.items-table td),:global(.chest-table td){background:#0f1e26!important;color:#b5bec3!important;border-color:#2a3a43!important}
+  :global(.items-table td:first-child),:global(.chest-table td:first-child){color:#fff!important}
+  :global(.items-filters fieldset),:global(.items-filters legend){background:#13262e!important;color:#b5bec3!important;border-color:#3a4a52!important}
+  :global(.spell-card),:global(.monster-entry),:global(.monster-combat-grid div),
+  :global(.monster-info-item),:global(.spell-meta),:global(.monster-attacks),
+  :global(.monster-role),:global(.chest-result),:global(.roll-notation),:global(.roll-result){
+    background:#13262e!important;color:#fff!important;border-color:#3a4a52!important
+  }
+  :global(.spell-card>summary),:global(.spell-name),:global(.monster-name),
+  :global(.monster-entry strong),:global(.monster-original){color:#fff!important}
+  :global(.spell-subtitle),:global(.monster-subtitle),:global(.monster-source),
+  :global(.monster-attribution),:global(.spell-source),:global(.monster-info-item small),
+  :global(.monster-combat-grid small){color:#b5bec3!important}
+  :global(.spell-details),:global(.monster-statblock){background:#0f1e26!important;color:#fff!important;border-color:#2a3a43!important}
+  :global(.monster-heading){border-bottom-color:#5fe6e0!important}
+  :global(.monster-heading h3),:global(.monster-content-section h4){color:#5fe6e0!important}
+  :global(.monster-content-section){border-top-color:#3fb8b8!important}
+  :global(.monster-cr),:global(.spell-level){background:#0b171d!important;color:#5fe6e0!important;border-color:#3fb8b8!important}
+  :global(.github-status),:global(.github-folder-chip),:global(.builder-info),
+  :global(.builder-choice-wrapper),:global(.builder-choice-field){
+    background:#13262e!important;color:#fff!important;border-color:#3fb8b8!important
+  }
+  :global(.github-character-row strong),:global(.github-character-row){color:#fff!important}
+  :global(.github-character-row small){color:#b5bec3!important}
+  :global(.empty-state){color:#b5bec3!important}
+
 </style>
