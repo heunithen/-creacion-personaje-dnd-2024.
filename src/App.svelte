@@ -3447,8 +3447,8 @@ import ITEMS from './items.json';
                 {#each itemTypes as type}<option value={type}>{type === 'Todos' ? 'Todos los tipos' : type}</option>{/each}
               </select>
             </label>
-            <fieldset><legend>Precio (po)</legend><label>Mínimo<input type="number" min="0" step="0.01" bind:value={itemPriceMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="number" min="0" step="0.01" bind:value={itemPriceMax} placeholder="Sin máximo" /></label></fieldset>
-            <fieldset><legend>Peso (kg)</legend><label>Mínimo<input type="number" min="0" step="0.1" bind:value={itemWeightMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="number" min="0" step="0.1" bind:value={itemWeightMax} placeholder="Sin máximo" /></label></fieldset>
+            <fieldset><legend>Precio (po)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemPriceMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemPriceMax} placeholder="Sin máximo" /></label></fieldset>
+            <fieldset><legend>Peso (kg)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemWeightMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemWeightMax} placeholder="Sin máximo" /></label></fieldset>
           </div>
           <div class="items-table-wrap"><table class="items-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Peso</th><th>Manual</th></tr></thead><tbody>
             {#each filteredItems as item (item.name + item.source)}
