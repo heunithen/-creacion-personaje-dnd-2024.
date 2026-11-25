@@ -3661,13 +3661,28 @@ import ITEMS from './items.json';
   }
 
   async function createGithubFolder() {
-    if (!githubStore) return;
+    if (!githubStore) {
+      cloudStatus = 'No hay una conexión activa con GitHub. Guarda la conexión desde esta sala OBR.';
+      return;
+    }
+    if (!githubFolderDraft.trim()) {
+      cloudStatus = 'Escribe el nombre de la partida antes de crear la carpeta.';
+      return;
+    }
+    cloudLoading = true;
+    cloudStatus = 'Creando carpeta en GitHub…';
     try {
       const folder = await githubStore.createFolder(githubFolderDraft);
       githubFolderDraft = '';
-      await refreshGithubCharacters();
-      cloudStatus = 'Carpeta creada: ' + folder + '.';
-    } catch (error) { cloudStatus = 'No se pudo crear la carpeta: ' + (error instanceof Error ? error.message : String(error)); }
+      const index = await githubStore.readIndex();
+      cloudFolders = index.folders;
+      cloudRecords = index.characters.slice().sort((a,b) => a.name.localeCompare(b.name,'es')).map(record => ({ ...record, targetFolder: record.folder || 'sin-partida' }));
+      cloudStatus = 'Carpeta creada correctamente: ' + folder + '.';
+    } catch (error) {
+      cloudStatus = 'No se pudo crear la carpeta: ' + (error instanceof Error ? error.message : String(error));
+    } finally {
+      cloudLoading = false;
+    }
   }
 
   async function moveGithubCharacter(record: GithubCharacterRecord) {
@@ -4054,7 +4069,7 @@ import ITEMS from './items.json';
           </div>
           <div class="builder-panel">
             <h3>Carpetas de partidas</h3>
-            <div class="github-folder-create"><input bind:value={githubFolderDraft} placeholder="Nombre de la partida" /><button class="primary" on:click={createGithubFolder} disabled={!githubStore}>Crear carpeta</button></div>
+            <div class="github-folder-create"><input bind:value={githubFolderDraft} placeholder="Nombre de la partida" /><button class="primary" on:click={createGithubFolder} disabled={!githubStore || cloudLoading}>{cloudLoading ? 'Procesando…' : 'Crear carpeta'}</button></div>
             <div class="github-folder-list">{#each cloudFolders as folder}<span class="github-folder-chip">{folder === 'sin-partida' ? 'Sin partida' : folder}</span>{/each}</div>
           </div>
           <div class="builder-panel">
@@ -4079,7 +4094,7 @@ import ITEMS from './items.json';
               </div>
             {/if}
           </div>
-          <p class="muted github-status">{cloudStatus}</p>
+          <p class="muted github-status" role="status" aria-live="polite">{cloudStatus}</p>
         </section>
       {:else if masterTab === 'Tiradas'}
         <section class="panel gm-rolls-panel">
