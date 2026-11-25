@@ -3273,6 +3273,7 @@ import ITEMS from './items.json';
   function playerSheetPairs(tab: string, sections: RawSection[] = sheet?.sections || []) {
     return sectionPairs(sections).filter(pair => {
       const heading = String(pair.heading.name || '');
+      if (normalizeLevelText(heading) === 'combate') return false;
       const category = sectionTab(heading);
       if (tab === 'Acciones') return category === 'Acciones' || category === 'Velocidad y defensas';
       if (tab === 'Conjuros') return category === 'Conjuros';
@@ -4160,6 +4161,8 @@ import ITEMS from './items.json';
             </div>
             <div><span>Competencia</span><strong>{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
             <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
+            <div><span>Dado de golpe</span><strong>{sheetValueByNames(sheet, ['Dados de golpe','Dado de golpe']) || '—'}</strong></div>
+            <div><span>Percepción pasiva</span><strong>{sheetValueByNames(sheet, ['Percepción pasiva']) || '—'}</strong></div>
             <div class="hp-plaque"><span>Puntos de golpe</span><strong>{sheetValueByNames(sheet, ['Puntos de golpe actuales','PG actuales']) || '—'} / {sheetValueByNames(sheet, ['Puntos de golpe máximos','PG máximos']) || '—'}</strong></div>
             <div><span>Clase de armadura</span><strong>{sheetValueByNames(sheet, ['Clase de armadura','CA']) || '—'}</strong></div>
             <div><span>Iniciativa</span><strong>{sheetValueByNames(sheet, ['Iniciativa']) || '—'}</strong></div>
@@ -4529,10 +4532,11 @@ import ITEMS from './items.json';
   :global(.nautical-header .sheet-banner-meta){color:#a9c9c5}
   :global(.header-actions){display:flex;gap:.4rem;flex-wrap:wrap}
   :global(.header-actions button){padding:.5rem .65rem;border:1px solid #347f80;border-radius:5px;background:#102f35;color:#d9f4ef;font-size:.7rem}
-  :global(.nautical-quick-stats){display:flex;flex-wrap:wrap;gap:.45rem;padding:.8rem;background:#0a242a;border-bottom:1px solid #247b7e}
-  :global(.nautical-quick-stats>div){flex:1 1 5rem;min-width:5rem;display:flex;flex-direction:column;justify-content:center;gap:.25rem;padding:.55rem .6rem;border:1px solid #28676b;border-radius:7px;background:linear-gradient(145deg,#12373c,#0b252b)}
-  :global(.nautical-quick-stats>div>span){font-size:.61rem;color:#7fcac2;text-transform:uppercase;letter-spacing:.06em}
-  :global(.nautical-quick-stats>div>strong){font-size:1rem;color:#f1fffc}
+  :global(.nautical-quick-stats){display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:.4rem;padding:.65rem;background:#0a242a;border-bottom:1px solid #247b7e}
+  :global(.nautical-quick-stats>div){min-width:0;display:flex;flex-direction:column;justify-content:center;gap:.18rem;padding:.42rem .45rem;border:1px solid #28676b;border-radius:7px;background:linear-gradient(145deg,#12373c,#0b252b)}
+  :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
+  :global(.nautical-quick-stats>div>span){font-size:.56rem;line-height:1.15;color:#7fcac2;text-transform:uppercase;letter-spacing:.045em}
+  :global(.nautical-quick-stats>div>strong){font-size:.9rem;line-height:1.15;color:#f1fffc;white-space:nowrap}
   :global(.nautical-quick-stats .attribute-plaque-row){display:grid;grid-column:1/-1;grid-template-columns:repeat(6,minmax(0,1fr));gap:.45rem;width:100%;min-width:0}
   :global(.nautical-quick-stats .attribute-plaque){min-width:0;min-height:4rem;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
   :global(.nautical-quick-stats .attribute-plaque strong){font-size:1.25rem}
@@ -4580,7 +4584,15 @@ import ITEMS from './items.json';
     :global(.nautical-columns){grid-template-columns:minmax(150px,.8fr) minmax(170px,1fr)}
     :global(.nautical-content){grid-column:1/-1}
   }
+  @media(max-width:760px){
+    :global(.nautical-quick-stats){grid-template-columns:repeat(4,minmax(0,1fr))}
+    :global(.nautical-quick-stats .attribute-plaque-row){grid-column:1/-1}
+    :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
+  }
   @media(max-width:580px){
+    :global(.nautical-quick-stats){grid-template-columns:repeat(2,minmax(0,1fr))}
+    :global(.nautical-quick-stats .attribute-plaque-row){grid-column:1/-1}
+    :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
     :global(.nautical-header){flex-wrap:wrap}
     :global(.header-actions){width:100%;padding-left:5.5rem}
     :global(.nautical-columns){grid-template-columns:1fr}
