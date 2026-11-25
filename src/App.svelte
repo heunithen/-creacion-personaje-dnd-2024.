@@ -2403,6 +2403,7 @@ import ITEMS from './items.json';
         await OBR.broadcast.sendMessage(CHANNEL, {
           type: 'character-updated', playerId: id, playerName: name, character: snapshot
         }, { destination: 'ALL' });
+        await saveCharacterToGithub(snapshot, id, name);
       }
       syncStatus = 'Ficha sincronizada con la sala.';
     } catch {
@@ -3780,6 +3781,7 @@ import ITEMS from './items.json';
       try {
         obrRole = await OBR.player.getRole();
         playerName = await OBR.player.getName();
+        await loadGithubRoomConfig();
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
         if (!demoPreview) await restoreOwnSheet();
         await refreshPlayers();
@@ -3806,6 +3808,7 @@ import ITEMS from './items.json';
                 sheet = d.character as RawSheet;
                 localStorage.setItem('forja-raw-character',JSON.stringify(sheet));
                 await OBR.player.setMetadata({ [KEY]: { character: sheet, playerName, updatedAt: new Date().toISOString() } });
+                await saveOwnCharacterToGithub(sheet);
                 await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId:ownId,playerName,character:sheet},{destination:'ALL'});
                 notice = 'El director ha actualizado tu personaje al nivel '+getCharacterStat(sheet,'PERSONAJE','Nivel')+'.';
               } catch { notice = 'No se pudo recibir la subida de nivel. Importa la ficha actualizada desde el director.'; }
