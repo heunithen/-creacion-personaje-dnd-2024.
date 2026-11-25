@@ -17,7 +17,7 @@
   let obrReady = false;
   let obrRole = '';
   let playerName = '';
-  let activeTab = 'Características, salvaciones y sentidos';
+  let activeTab = 'Todas';
   let monsterCrFilter = 'Todos';
   let monsterSearch = '';
   let itemSearch = '';
@@ -32,7 +32,7 @@
   let spellLevelFilter = 'Todos';
   let spellClassFilter = 'Todas';
   let spellSchoolFilter = 'Todas';
-  const tabs = ['Características, salvaciones y sentidos', 'Usos limitados', 'Habilidades', 'Acciones', 'Inventario', 'Conjuros', 'Velocidad y defensas', 'Rasgos y características', 'Competencias y entrenamiento', 'Trasfondo', 'Notas', 'Extras'];
+
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
   let syncInProgress = false;
@@ -1099,7 +1099,7 @@
   let builderStep = 0;
   let builderRolledScores: number[] = [];
   let builderPreview: RawSheet | null = null;
-  let builderPreviewTab = 'Características, salvaciones y sentidos';
+
   let playerCreating = false;
   let builderSaving = false;
   const createInitialBuilderData = (): BuilderData => ({
@@ -3167,7 +3167,7 @@ import ITEMS from './items.json';
   function sectionTab(name = '') {
     const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
-    if (/uso[s]? limitado|limited use|recurso|recarga|cargas|charges/.test(n)) return 'Usos limitados';
+    if (/uso[s]? limitado|limited use|recurso|recarga|cargas|charges/.test(n)) return 'Rasgos y características';
     if (/habilidad|skill|percepcion|investigacion|intuicion|acroba|sigilo|supervivencia/.test(n)) return 'Habilidades';
     if (/inventario|equipo|objeto|inventory|equipment/.test(n)) return 'Inventario';
     if (/velocidad|speed|defensa|defenses|resistencia|inmunidad|vulnerabilidad|puntos de golpe|hit points|armadura|armor class|clase de armadura/.test(n)) return 'Velocidad y defensas';
@@ -3176,7 +3176,7 @@ import ITEMS from './items.json';
     if (/trasfondo|background|historia|personalidad|apariencia/.test(n)) return 'Trasfondo';
     if (/nota[s]?|notes/.test(n)) return 'Notas';
     if (/extra[s]?|compañero|mascota|familiar|extras/.test(n)) return 'Extras';
-    if (/atributo|ability|salvacion|saving throw|sentido|sense|personaje|datos/.test(n)) return 'Características, salvaciones y sentidos';
+    if (/atributo|ability|salvacion|saving throw|personaje|datos/.test(n)) return 'Características y salvaciones';
     if (/combate|ataque|arma|weapon|action|acciones/.test(n)) return 'Acciones';
     return 'Extras';
   }
@@ -3200,6 +3200,44 @@ import ITEMS from './items.json';
         };
       })
       .filter((pair): pair is { heading: RawSection; values?: RawSection } => Boolean(pair));
+  }
+
+  function continuousSheetPairs(sections: RawSection[] = []) {
+    const order = [
+      'Características y salvaciones',
+      'Velocidad y defensas',
+      'Habilidades',
+      'Acciones',
+      'Inventario',
+      'Conjuros',
+      'Rasgos y características',
+      'Competencias y entrenamiento',
+      'Trasfondo',
+      'Notas',
+      'Extras'
+    ];
+    return sectionPairs(sections)
+      .map(pair => {
+        const headingName = String(pair.heading.name || '').toLocaleLowerCase();
+        const hideEmpty = /rasgos y dotes|conjuros|detalle de conjuros/.test(headingName);
+        if (!hideEmpty) return pair;
+        const keptIndexes = (pair.heading.stats || []).map((stat, index) => {
+          const value = displayValue(pair.values?.stats?.[index]?.value) || displayValue(stat.value);
+          return value && !/^[-—]+$/.test(value.trim()) ? index : -1;
+        }).filter(index => index >= 0);
+        if (!keptIndexes.length) return null;
+        return {
+          ...pair,
+          heading: { ...pair.heading, stats: keptIndexes.map(index => pair.heading.stats![index]) },
+          values: pair.values ? { ...pair.values, stats: keptIndexes.map(index => pair.values!.stats?.[index]).filter(Boolean) } : undefined
+        };
+      })
+      .filter((pair): pair is { heading: RawSection; values?: RawSection } => Boolean(pair))
+      .sort((a, b) => {
+        const ai = order.indexOf(sectionTab(String(a.heading.name || '')));
+        const bi = order.indexOf(sectionTab(String(b.heading.name || '')));
+        return (ai < 0 ? order.length : ai) - (bi < 0 ? order.length : bi);
+      });
   }
 
   function sectionClass(name = '') {
@@ -3936,13 +3974,8 @@ import ITEMS from './items.json';
                 <div class="sheet-banner-copy"><span class="sheet-kicker">FORJA DE AVENTUREROS · D&D 2024</span><h1 class="character-name">{builderPreview.name || 'Personaje'}</h1><span class="sheet-subtitle">Hoja de aventurero</span></div>
                 <div class="sheet-banner-emblem" aria-hidden="true">✦</div>
               </header>
-              <nav class="sheet-tabs ddb-section-nav" role="tablist" aria-label="Secciones de la ficha generada">
-                {#each tabs as tab}
-                  <button class:active={builderPreviewTab === tab} role="tab" aria-selected={builderPreviewTab === tab} on:click={() => builderPreviewTab = tab}>{tab}</button>
-                {/each}
-              </nav>
               <div class="sheet-grid">
-                {#each visiblePairs(builderPreview.sections || [], builderPreviewTab) as pair}
+                {#each continuousSheetPairs(builderPreview.sections || []) as pair}
                   <section class="sheet-section {sectionClass(pair.heading.name)}">
                     <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
                     <div class="stats-list">
@@ -3957,7 +3990,7 @@ import ITEMS from './items.json';
                     </div>
                   </section>
                 {/each}
-                {#if visiblePairs(builderPreview.sections || [], builderPreviewTab).length === 0}
+                {#if continuousSheetPairs(builderPreview.sections || []).length === 0}
                   <p class="muted">No hay información en esta sección para el personaje.</p>
                 {/if}
               </div>
@@ -4000,150 +4033,26 @@ import ITEMS from './items.json';
             <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
             <div><span>Competencia</span><strong>{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
           </section>
-          <nav class="sheet-tabs ddb-section-nav" role="tablist" aria-label="Secciones de la ficha">
-            {#each tabs as tab}<button class:active={activeTab === tab} role="tab" aria-selected={activeTab === tab} on:click={() => activeTab = tab}>{tab}</button>{/each}
-          </nav>
-          {#if activeTab === 'Rasgos'}
-            <section class="progression-panel">
-              <div class="section-heading"><div><span class="sheet-kicker">PROGRESIÓN DE PERSONAJE</span><h2>Rasgos y capacidades</h2></div><span class="count">Nivel {sheetFeatureData.level} / 20</span></div>
-              <p class="muted">Los rasgos iluminados ya están desbloqueados. Los apagados pertenecen a niveles futuros.</p>
-              {#each sheetFeatureData.groups as group (group.level)}
-                <section class:progression-current={group.level === sheetFeatureData.level} class:progression-locked={group.level > sheetFeatureData.level} class="progression-level">
-                  <header><strong>Nivel {group.level}</strong><span>{group.level <= sheetFeatureData.level ? 'Desbloqueado' : 'Bloqueado'}</span></header>
-                  <div class="feature-card-grid">
-                    {#each group.features as feature (feature.name)}
-                      <details class:feature-locked={group.level > sheetFeatureData.level} class="progression-feature" open={group.level === sheetFeatureData.level && group.features.length === 1}>
-                        <summary><span class="feature-status">{group.level <= sheetFeatureData.level ? '◆' : '◇'}</span><span class="feature-title">{feature.name}</span><span class="feature-kind">{featureKind(feature.name)}</span></summary>
-                        <p>{feature.description}</p>
-                      </details>
-                    {/each}
-                  </div>
-                </section>
-              {/each}
-              {#each visiblePairs(sheet.sections || [], 'Rasgos y características') as pair}
-                <section class="sheet-section features-section"><div class="sheet-section-title"><h3>{pair.heading.name}</h3></div>
-                  {#each pair.heading.stats || [] as stat, i}
-                    {@const value = displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}
-                    {#if value && !/^[-—]+$/.test(value.trim())}
-                      <details class="progression-feature"><summary><span class="feature-title">{stat.name}</span><span class="feature-kind">Personaje</span></summary><p>{value}</p></details>
-                    {/if}
-                  {/each}
-                </section>
-              {/each}
-            </section>
-          {:else if activeTab === 'Conjuros'}
-            <section class="spellbook-panel">
-              <div class="section-heading"><div><span class="sheet-kicker">LIBRO DE CONJUROS</span><h2>Conjuros de {sheetClassName(sheet) || 'tu clase'}</h2></div><span class="count">{sheetSpellCards.length} conjuros</span></div>
-              <div class="spell-slot-tracker">
-                {#each Object.entries(sheetSpellSlots) as slot}
-                  <div class="spell-slot-counter"><strong>Nivel {slot[0]}</strong><span>{Math.max(0, Number(slot[1]) - Number(sheetSpellUsage[slot[0]] || 0))} / {slot[1]}</span><div class="slot-controls"><button type="button" aria-label="Gastar espacio" on:click={() => changeSlotUsage(String(slot[0]), 1)}>−</button><button type="button" aria-label="Recuperar espacio" on:click={() => changeSlotUsage(String(slot[0]), -1)}>+</button></div></div>
-                {/each}
-                {#if Object.keys(sheetSpellSlots).length === 0}<p class="muted">Esta clase no tiene espacios de conjuro registrados en su nivel actual.</p>{/if}
+          <section class="import-character-panel data-import-panel">
+            <div class="import-row">
+              <button class="secondary" on:click={() => importOpen = !importOpen}>Importar otro JSON</button>
+            </div>
+            {#if importOpen}
+              <div class="import-box">
+                <label>Archivo JSON<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
+                <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
               </div>
-              <div class="spell-card-order-note">Conocidos primero, ordenados por nivel; los demás conjuros aparecen debajo.</div>
-              <div class="spell-card-grid">
-                {#each orderedSheetSpellCards as spell (spell.name)}
-                  <article class:spell-known={spellIsKnown(sheet,spell)} class:spell-prepared={spellIsPrepared(sheet,spell)} class:spell-unavailable={Number(spell.level) > spellMaxLevel(sheet) && Number(spell.level) > 0} class:spell-cast={spellStates(sheet)[normalizeLevelText(spell.name)]?.cast} class="spell-card">
-                    <header><span class="spell-level">{spell.level === 0 ? 'TRUCO' : 'NIVEL '+spell.level}</span><span class="spell-school">{spell.school}</span></header>
-                    <h3>{spell.name}</h3>
-                    <p class="spell-meta">{spell.castingTime} · {spell.range} · {spell.duration}</p>
-                    <div class="spell-card-actions">
-                      <button type="button" disabled={Number(spell.level) > spellMaxLevel(sheet) && Number(spell.level) > 0} class:active={spellIsKnown(sheet,spell)} on:click={() => toggleSpellState(spell,'known')}>{spellIsKnown(sheet,spell) ? 'Conocido' : 'Conocer'}</button>
-                      <button type="button" disabled={!spellIsKnown(sheet,spell)} class:active={spellIsPrepared(sheet,spell)} on:click={() => toggleSpellState(spell,'prepared')}>{spellIsPrepared(sheet,spell) ? 'Preparado' : 'Preparar'}</button>
-                      <button type="button" disabled={!spellIsKnown(sheet,spell) || (Number(spell.level) > 0 && Number(sheetSpellUsage[String(spell.level)] || 0) >= Number(sheetSpellSlots[String(spell.level)] || 0))} class:active={spellStates(sheet)[normalizeLevelText(spell.name)]?.cast} on:click={() => toggleSpellState(spell,'cast')}>Lanzado</button>
-                    </div>
-                    <details class="spell-card-details"><summary>Ver descripción</summary><p>{spell.description}</p><small>Componentes: {spell.components} · Manual del Jugador 2024, pág. {spell.printedPage}</small></details>
-                  </article>
-                {/each}
-              </div>
-              <button class="secondary" type="button" on:click={resetSpellUseStates}>Reiniciar marcas de uso y espacios (verifica el descanso)</button>
-            </section>
-          {:else if activeTab === 'Notas'}
-            <section class="ddb-content-panel">
-              <h2>Notas</h2>
-              <p>{sheet.notes || 'No hay notas registradas para este personaje.'}</p>
-            </section>
-          {:else if activeTab === 'Tiradas'}
-            <section class="custom-rolls">
-              {#if customRolls.length}
-                <div class="custom-roll-list">
-                  {#each customRolls as group (group.id)}
-                    <article class="custom-roll-card">
-                      <div class="custom-roll-info"><strong>{group.name}</strong><button class="remove-roll" type="button" aria-label="Eliminar grupo" on:click={() => removeCustomRoll(group.id)}>×</button></div>
-                      {#each group.parts as part (part.id)}
-                        <div class="roll-part">
-                          <div class="roll-part-heading"><strong>{part.name}</strong><span class="roll-notation">1d{part.die}{part.bonus === 0 ? '' : (part.bonus > 0 ? '+' : '') + part.bonus}</span></div>
-                          <div class="roll-actions">
-                            <button type="button" on:click={() => performCustomRoll(group, part, 'normal')}>Tirar</button>
-                            <button type="button" on:click={() => performCustomRoll(group, part, 'advantage')}>Ventaja</button>
-                            <button type="button" on:click={() => performCustomRoll(group, part, 'disadvantage')}>Desventaja</button>
-                          </div>
-                        </div>
-                      {/each}
-                    </article>
-                  {/each}
-                </div>
-              {:else}<p class="muted">Todavía no hay tiradas guardadas.</p>{/if}
-              <h3>Crear tirada</h3>
-              <form class="roll-creator roll-group-creator" on:submit|preventDefault={addCustomRoll}>
-                <label>Nombre del grupo<input bind:value={newRollName} placeholder="Ej. Ataque con dagas" /></label>
-                {#each newRollParts as part, i (part.id)}
-                  <div class="new-roll-part">
-                    <div class="new-roll-part-title"><strong>Tirada {i + 1}</strong>{#if newRollParts.length > 1}<button type="button" class="remove-roll" on:click={() => removeRollPart(part.id)}>×</button>{/if}</div>
-                    <label>Nombre<input bind:value={part.name} placeholder="Ej. Ataque o Daño" /></label>
-                    <label>Dado<select bind:value={part.die}>{#each [4,6,8,10,12,20,100] as die}<option value={die}>d{die}</option>{/each}</select></label>
-                    <label>Bonificador<input type="number" bind:value={part.bonus} /></label>
-                  </div>
-                {/each}
-                <button type="button" class="add-roll-part" on:click={addRollPart}>+ Añadir otra tirada</button>
-                <button class="primary" type="submit">Crear grupo</button>
-              </form>
-            </section>
-          {:else if activeTab === 'Reglas'}
-            <section class="panel rules-panel player-rules-panel">
-              <div class="section-heading"><h2>Reglas · Manual del Jugador 2024</h2><span class="count">{filteredRules.length} / {RULES.length}</span></div>
-              <p class="muted">Glosario del Apéndice C. Consulta las definiciones de reglas durante la partida.</p>
-              <label class="rules-search">Buscar regla
-                <input type="search" bind:value={rulesSearch} placeholder="Ej. agarrado, cobertura, concentración..." />
-              </label>
-              <label class="rules-category-filter">Tipo de regla
-                <select bind:value={rulesCategoryFilter}>
-                  {#each RULE_CATEGORIES as category}<option value={category}>{category === 'Todas' ? 'Todas las categorías' : category}</option>{/each}
-                </select>
-              </label>
-              <div class="rules-list">
-                {#each filteredRules as rule (rule.name)}
-                  <details class="rule-card">
-                    <summary><span class="rule-name">{rule.name}</span><span class="rule-category">{rule.category}</span><span class="rule-page">PDF {rule.pdfPage}</span></summary>
-                    <div class="rule-details"><pre class="rule-description">{rule.description}</pre><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
-                  </details>
-                {/each}
-                {#if filteredRules.length === 0}<p class="muted">No hay reglas que coincidan con la búsqueda.</p>{/if}
-              </div>
-            </section>
-          {:else}
-          {#if activeTab === 'Resumen'}
-            <section class="import-character-panel data-import-panel">
-              <div class="import-row">
-                <button class="secondary" on:click={() => importOpen = !importOpen}>Importar otro JSON</button>
-              </div>
-              {#if importOpen}
-                <div class="import-box">
-                  <label>Archivo JSON<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
-                  <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
-                </div>
-              {/if}
-            </section>
-          {/if}
-          <div class="sheet-grid">
-            {#each visiblePairs(sheet.sections || [], activeTab) as pair}
+            {/if}
+          </section>
+          <div class="sheet-grid continuous-sheet-grid">
+            {#each continuousSheetPairs(sheet.sections || []) as pair}
               <section class="sheet-section {sectionClass(pair.heading.name)}">
                 <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
                 <div class="stats-list">
                   {#each pair.heading.stats || [] as stat, i}
                     <div class="sheet-stat">
                       <span class="stat-label">{stat.name || ''}</span>
-                      <div class="stat-value sheet-readonly-value">{#each rollableParts(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)) as part, partIndex}
+                      <div class="stat-value sheet-readonly-value">{#each rollableParts(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)) as part}
                         {#if part.rollable}<button type="button" class="inline-roll" title="Tirar {part.notation} en Dice+" on:click={() => sendSheetRoll(part.notation, String(stat.name || pair.heading.name || 'Tirada'))}>{part.text}</button>{:else}<span>{part.text}</span>{/if}
                       {/each}</div>
                     </div>
@@ -4151,8 +4060,13 @@ import ITEMS from './items.json';
                 </div>
               </section>
             {/each}
+            {#if sheet.notes}
+              <section class="sheet-section general-section notes-section">
+                <div class="sheet-section-title"><h3>Notas</h3></div>
+                <div class="sheet-notes-content">{sheet.notes}</div>
+              </section>
+            {/if}
           </div>
-          {/if}
         </article>
 
         <section class="panel save-panel">
@@ -4433,4 +4347,24 @@ import ITEMS from './items.json';
     .sheet-quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   }
 
+
+  /* Hoja continua: sin pestañas ni navegación lateral */
+  .character-sheet{display:block!important;grid-template-columns:minmax(0,1fr)!important;column-gap:0!important}
+  .character-sheet>.sheet-banner,.character-sheet>.sheet-quick-stats,
+  .character-sheet>.sheet-grid,.character-sheet>.progression-panel,
+  .character-sheet>.spellbook-panel,.character-sheet>.custom-rolls,
+  .character-sheet>.rules-panel,.character-sheet>.ddb-content-panel{grid-column:auto!important;grid-row:auto!important;min-width:0}
+  .character-sheet>.sheet-grid.continuous-sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;align-items:start}
+  .continuous-sheet-grid>.attributes-section{grid-column:1/-1}
+  .continuous-sheet-grid>.combat-section{grid-column:span 1}
+  .continuous-sheet-grid>.features-section{grid-column:1/-1}
+  .continuous-sheet-grid>.magic-section{grid-column:1/-1}
+  .continuous-sheet-grid>.notes-section{grid-column:1/-1}
+  .sheet-notes-content{white-space:pre-wrap;overflow-wrap:anywhere;color:#eee;line-height:1.55;font:.85rem/1.55 system-ui,sans-serif}
+  .data-import-panel{margin:.2rem 0 .8rem}
+  @media(max-width:760px){
+    .character-sheet>.sheet-grid.continuous-sheet-grid{grid-template-columns:minmax(0,1fr)}
+    .continuous-sheet-grid>.attributes-section,.continuous-sheet-grid>.features-section,
+    .continuous-sheet-grid>.magic-section,.continuous-sheet-grid>.notes-section{grid-column:auto}
+  }
 </style>
