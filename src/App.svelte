@@ -3615,6 +3615,94 @@ import ITEMS from './items.json';
     try { readPlayers(await OBR.party.getPlayers()); } catch {}
   }
 
+
+  async function loadGithubRoomConfig() {
+    try {
+      const metadata: any = await OBR.room.getMetadata();
+      const config = metadata?.[GITHUB_ROOM_KEY];
+      if (config?.token && config?.owner && config?.repo) {
+        githubConfig = { token: config.token, owner: config.owner, repo: config.repo, branch: config.branch || 'main' };
+        githubStore = new GithubCharacterStorage(githubConfig);
+        githubOwnerDraft = githubConfig.owner;
+        githubRepoDraft = githubConfig.repo;
+        githubBranchDraft = githubConfig.branch;
+        await refreshGithubCharacters();
+      }
+    } catch { cloudStatus = 'No se pudo leer la configuración compartida de GitHub de esta sala.'; }
+  }
+
+  async function saveGithubRoomConfig() {
+    if (obrRole !== 'GM') return;
+    const config: GithubConfig = {
+      token: githubTokenDraft.trim() || githubConfig?.token || '',
+      owner: githubOwnerDraft.trim(), repo: githubRepoDraft.trim(), branch: githubBranchDraft.trim() || 'main'
+    };
+    if (!config.token || !config.owner || !config.repo) { cloudStatus = 'Completa el token, propietario y repositorio.'; return; }
+    try {
+      await OBR.room.setMetadata({ [GITHUB_ROOM_KEY]: config });
+      githubConfig = config;
+      githubStore = new GithubCharacterStorage(config);
+      githubTokenDraft = '';
+      await refreshGithubCharacters();
+    } catch (error) { cloudStatus = 'No se pudo guardar la conexión: ' + (error instanceof Error ? error.message : String(error)); }
+  }
+
+  async function refreshGithubCharacters() {
+    if (!githubStore) { cloudStatus = 'Configura GitHub para consultar las hojas.'; return; }
+    cloudLoading = true;
+    try {
+      const index = await githubStore.readIndex();
+      cloudFolders = index.folders;
+      cloudRecords = index.characters.slice().sort((a,b) => a.name.localeCompare(b.name,'es')).map(record => ({ ...record, targetFolder: record.folder || 'sin-partida' }));
+      cloudStatus = `Repositorio conectado: ${cloudRecords.length} personaje(s) en ${cloudFolders.length} carpeta(s).`;
+    } catch (error) { cloudStatus = 'Error al consultar GitHub: ' + (error instanceof Error ? error.message : String(error)); }
+    finally { cloudLoading = false; }
+  }
+
+  async function createGithubFolder() {
+    if (!githubStore) return;
+    try {
+      const folder = await githubStore.createFolder(githubFolderDraft);
+      githubFolderDraft = '';
+      await refreshGithubCharacters();
+      cloudStatus = 'Carpeta creada: ' + folder + '.';
+    } catch (error) { cloudStatus = 'No se pudo crear la carpeta: ' + (error instanceof Error ? error.message : String(error)); }
+  }
+
+  async function moveGithubCharacter(record: GithubCharacterRecord) {
+    if (!githubStore || !record.targetFolder) return;
+    try {
+      await githubStore.move(record, record.targetFolder);
+      await refreshGithubCharacters();
+      cloudStatus = record.name + ' movido a ' + record.targetFolder + '.';
+    } catch (error) { cloudStatus = 'No se pudo mover el personaje: ' + (error instanceof Error ? error.message : String(error)); }
+  }
+
+  async function deleteGithubCharacter(record: GithubCharacterRecord) {
+    if (!githubStore) return;
+    try {
+      await githubStore.remove(record);
+      await refreshGithubCharacters();
+      cloudStatus = 'Personaje eliminado: ' + record.name + '.';
+    } catch (error) { cloudStatus = 'No se pudo eliminar el personaje: ' + (error instanceof Error ? error.message : String(error)); }
+  }
+
+  async function saveCharacterToGithub(snapshot: RawSheet, playerId: string, playerName: string) {
+    if (!githubStore) return;
+    try {
+      await githubStore.save(snapshot, playerId, playerName);
+      cloudStatus = 'Personaje guardado en GitHub: ' + (snapshot.name || playerName) + '.';
+    } catch (error) { cloudStatus = 'No se pudo guardar en GitHub: ' + (error instanceof Error ? error.message : String(error)); }
+  }
+
+  async function saveOwnCharacterToGithub(snapshot: RawSheet) {
+    try {
+      const id = await OBR.player.getId();
+      const name = await OBR.player.getName();
+      await saveCharacterToGithub(snapshot, id, name);
+    } catch (error) { cloudStatus = 'No se pudo guardar en GitHub: ' + (error instanceof Error ? error.message : String(error)); }
+  }
+
   async function restoreOwnSheet() {
     if (obrRole !== 'PLAYER') return;
     const metadata: any = await OBR.player.getMetadata();
