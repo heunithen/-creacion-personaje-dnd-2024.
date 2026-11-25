@@ -3377,7 +3377,7 @@ import ITEMS from './items.json';
                   <div class="character-sheet gm-character-sheet">
                     <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2></div>
                     <div class="sheet-grid">
-                      {#each sectionPairs(entry.sheet?.sections || []).filter(pair => sectionTab(String(pair.heading.name || '')) !== 'Ocultar') as pair}
+                      {#each sectionPairs(entry.sheet?.sections || []) as pair}
                         <section class="sheet-section {sectionClass(pair.heading.name)}">
                           <div class="sheet-section-title"><h3>{pair.heading.name || 'Sección'}</h3></div>
                           <div class="stats-list">
