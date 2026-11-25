@@ -30,7 +30,7 @@
   let itemWeightMax = '';
   let spellSearch = '';
   let rulesSearch = '';
-  let rulesCategoryFilter = 'Todas';
+  let rulesCategoryFilter = '';
   let spellLevelFilter = '';
   let spellClassFilter = '';
   let spellSchoolFilter = '';
@@ -842,7 +842,7 @@
       spellSchoolFilter = '';
     } else if (tab === 'Reglas') {
       rulesSearch = '';
-      rulesCategoryFilter = 'Todas';
+      rulesCategoryFilter = '';
     }
     masterTab = tab;
   }
@@ -2237,7 +2237,7 @@ import ITEMS from './items.json';
   }
 
   const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
-  $: filteredMonsters = MONSTERS.filter(monster => (!monsterCrFilter || monster.cr.startsWith(monsterCrFilter + ' ')) && monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()));
+  $: filteredMonsters = (monsterSearch.trim() || monsterCrFilter) ? MONSTERS.filter(monster => (!monsterCrFilter || monster.cr.startsWith(monsterCrFilter + ' ')) && (!monsterSearch.trim() || monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()))) : [];
   const itemTypes = ['Todos', ...Array.from(new Set(ITEMS.map(item => item.type))).sort((a,b) => a.localeCompare(b,'es'))];
   function itemPriceGold(price: string): number | null {
     const match = price.match(/^([\\d.,]+)\\s*(po|pp|pc|ppt)$/i);
@@ -2251,7 +2251,7 @@ import ITEMS from './items.json';
     const amount = Number(match[1].replace(/\\./g, '').replace(',', '.'));
     return Number.isFinite(amount) ? amount * (match[2].toLowerCase() === 'g' ? 0.001 : 1) : null;
   }
-  $: filteredItems = ITEMS.filter(item => {
+  $: filteredItems = (itemSearch.trim() || itemTypeFilter || itemPriceMin !== '' || itemPriceMax !== '' || itemWeightMin !== '' || itemWeightMax !== '') ? ITEMS.filter(item => {
     const query = itemSearch.trim().toLocaleLowerCase('es');
     const price = itemPriceGold(item.price);
     const weight = itemWeightKg(item.weight);
@@ -2264,7 +2264,7 @@ import ITEMS from './items.json';
   });
   const SPELL_CLASSES = ['Bardo', 'Brujo', 'Clérigo', 'Druida', 'Explorador', 'Hechicero', 'Mago', 'Paladín'];
   const SPELL_SCHOOLS = ['Abjuración', 'Adivinación', 'Conjuración', 'Encantamiento', 'Evocación', 'Ilusionismo', 'Nigromancia', 'Transmutación'];
-  $: filteredSpells = SPELLS.filter(spell =>
+  $: filteredSpells = (spellSearch.trim() || spellLevelFilter || spellClassFilter || spellSchoolFilter) ? SPELLS.filter(spell =>
     (!spellLevelFilter || String(spell.level) === spellLevelFilter) &&
     (!spellClassFilter || spell.classes.includes(spellClassFilter.toLocaleLowerCase('es'))) &&
     (!spellSchoolFilter || spell.school === spellSchoolFilter) &&
@@ -4176,7 +4176,7 @@ import ITEMS from './items.json';
           <div class="items-filters">
             <label>Tipo
               <select bind:value={itemTypeFilter}>
-                <option value="">Todos los tipos</option>
+                <option value="">Ninguno</option>
                 {#each itemTypes.filter(type => type !== 'Todos') as type}<option value={type}>{type === 'Todos' ? 'Todos los tipos' : type}</option>{/each}
               </select>
             </label>
@@ -4200,7 +4200,7 @@ import ITEMS from './items.json';
           <div class="spell-filters">
             <label>Nivel
               <select bind:value={spellLevelFilter}>
-                <option value="">Todos los niveles</option>
+                <option value="">Ninguno</option>
                 <option value="0">Trucos · Nivel 0</option>
                 {#each [1,2,3,4,5,6,7,8,9] as level}
                   <option value={String(level)}>Nivel {level}</option>
@@ -4209,7 +4209,7 @@ import ITEMS from './items.json';
             </label>
             <label>Clase
               <select bind:value={spellClassFilter}>
-                <option value="">Todas las clases</option>
+                <option value="">Ninguna</option>
                 {#each SPELL_CLASSES as className}
                   <option value={className}>{className}</option>
                 {/each}
@@ -4217,7 +4217,7 @@ import ITEMS from './items.json';
             </label>
             <label>Escuela
               <select bind:value={spellSchoolFilter}>
-                <option value="">Todas las escuelas</option>
+                <option value="">Ninguna</option>
                 {#each SPELL_SCHOOLS as school}
                   <option value={school}>{school}</option>
                 {/each}
@@ -4245,7 +4245,7 @@ import ITEMS from './items.json';
                 </div>
               </details>
             {/each}
-            {#if filteredSpells.length === 0}<p class="muted">No hay conjuros que coincidan con esos filtros.</p>{/if}
+            {/if}
           </div>
         </section>
       {:else if masterTab === 'Estilo'}
@@ -4282,7 +4282,7 @@ import ITEMS from './items.json';
           </label>
           <label class="rules-category-filter">Tipo de regla
             <select bind:value={rulesCategoryFilter}>
-              {#each RULE_CATEGORIES as category}<option value={category}>{category === 'Todas' ? 'Todas las categorías' : category}</option>{/each}
+              <option value="">Ninguna</option>{#each RULE_CATEGORIES as category}<option value={category}>{category}</option>{/each}
             </select>
           </label>
           <div class="rules-list">
@@ -4292,7 +4292,7 @@ import ITEMS from './items.json';
                 <div class="rule-details"><pre class="rule-description">{rule.description}</pre><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
               </details>
             {/each}
-            {#if filteredRules.length === 0}<p class="muted">No hay reglas que coincidan con la búsqueda.</p>{/if}
+            {/if}
           </div>
         </section>
       {:else}
@@ -4304,7 +4304,7 @@ import ITEMS from './items.json';
           </label>
           <label class="monster-filter">Filtrar por VD
             <select bind:value={monsterCrFilter}>
-              <option value="">Todos los valores de desafío</option>
+              <option value="">Ninguno</option>
               {#each MONSTER_CR_FILTERS.filter(cr => cr !== 'Todos') as cr}
                 <option value={cr}>{cr === 'Todos' ? 'Todos los VD' : 'VD ' + cr}</option>
               {/each}
