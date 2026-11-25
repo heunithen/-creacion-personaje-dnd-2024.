@@ -1787,19 +1787,19 @@
       general('PERSONAJE',['Nombre','Clase','Subclase','Nivel','Especie','Trasfondo','Alineamiento','Experiencia','Jugador']),
       general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
-      general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
+      general('SALVACIONES',BUILDER_ABILITY_NAMES),
+      general('HABILIDADES',BUILDER_SKILL_OPTIONS),
+      general('COMPETENCIAS',['Herramientas','Armaduras','Armas','Idiomas']),
       general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia','Invocaciones sobrenaturales','Detalles de invocaciones','Maniobras de maestro del combate','Estilos de combate']),
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Trucos de estilo de combate','Aptitud mágica de estilo de combate','CD de estilo de combate','Ataque de conjuro de estilo de combate','Lista de conjuros de estilo de combate','Arcanum místico','Conjuros de escuela','Opción de Furia elemental','Opción de Golpes benditos','Maestría sobre conjuros nivel 1','Maestría sobre conjuros nivel 2','Conjuros característicos']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
       general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})]),
-      general('HABILIDADES',BUILDER_SKILL_OPTIONS),
-      general('SALVACIONES',BUILDER_ABILITY_NAMES),
       general('DETALLES DEL TRASFONDO',['Aumentos de característica permitidos','Habilidades','Herramienta','Dote de origen','Equipo del trasfondo']),
-      general('DETALLES DE ESPECIE',['Elección de especie','Rasgos de especie','Competencia adicional','Elecciones mágicas','Tamaño']),
       general('INVENTARIO',['Equipo de clase','Equipo de trasfondo','Equipo adicional']),
       general('ATAQUES',['Armas incluidas en el equipo','Maestrías con armas','Competencia con armas','Perfiles de ataque']),
-      general('DETALLE DE CONJUROS',['Conjuros y descripciones'])
+      general('DETALLE DE CONJUROS',['Conjuros y descripciones']),
+      general('DETALLES DE ESPECIE',['Elección de especie','Rasgos de especie','Competencia adicional','Elecciones mágicas','Tamaño'])
     ];
     const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
     put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
@@ -2876,17 +2876,35 @@ import ITEMS from './items.json';
     const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (/\b19\b.*recurso|recurso/.test(n)) return 'Ocultar';
     if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
+    if (/detalle[s]? de especie/.test(n)) return 'Datos';
     if (/historia|personalidad|apariencia|trasfondo/.test(n)) return 'Datos';
     if (/atributo|ability/.test(n)) return 'Datos';
     if (/tirada|roll|dado/.test(n)) return 'Tiradas';
     if (/equipo|inventario|objeto/.test(n)) return 'Equipo';
     if (/salvacion|habilidad|competencia|skill|saving throw|proficien/.test(n)) return 'Competencias';
-    if (/combate|ataque|rasgo|dote|caracteristica de clase|especie|racial|weapon|armor/.test(n)) return 'Combate';
+    if (/combate|ataque|rasgo|dote|caracteristica de clase|racial|weapon|armor/.test(n)) return 'Combate';
     return 'Datos';
   }
 
   function visiblePairs(sections: RawSection[] = [], tab = activeTab) {
-    return sectionPairs(sections).filter(pair => sectionTab(String(pair.heading.name || '')) === tab);
+    return sectionPairs(sections)
+      .filter(pair => sectionTab(String(pair.heading.name || '')) === tab)
+      .map(pair => {
+        const headingName = String(pair.heading.name || '').toLocaleLowerCase();
+        const hideEmpty = /rasgos y dotes|conjuros|detalle de conjuros/.test(headingName);
+        if (!hideEmpty) return pair;
+        const keptIndexes = (pair.heading.stats || []).map((stat, index) => {
+          const value = displayValue(pair.values?.stats?.[index]?.value) || displayValue(stat.value);
+          return value && !/^[-—]+$/.test(value.trim()) ? index : -1;
+        }).filter(index => index >= 0);
+        if (!keptIndexes.length) return null;
+        return {
+          ...pair,
+          heading: { ...pair.heading, stats: keptIndexes.map(index => pair.heading.stats![index]) },
+          values: pair.values ? { ...pair.values, stats: keptIndexes.map(index => pair.values!.stats?.[index]).filter(Boolean) } : undefined
+        };
+      })
+      .filter((pair): pair is { heading: RawSection; values?: RawSection } => Boolean(pair));
   }
 
   function sectionClass(name = '') {
