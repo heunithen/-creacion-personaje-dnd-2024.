@@ -4230,7 +4230,7 @@ import ITEMS from './items.json';
                         <article class="weapon-attack-card">
                           <h4>{weapon.name}</h4>
                           <div class="weapon-attack-values">
-                            <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(weapon.attackBonus), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
+                            <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
                             <div><span>Daño</span><strong>{weapon.damage}</strong></div>
                             <div><span>Alcance</span><strong>{weapon.range}</strong></div>
                             <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
