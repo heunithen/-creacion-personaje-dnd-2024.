@@ -306,9 +306,9 @@ try {
     'La creación valida los seis pasos, bloquea la generación incompleta y permite revisar la ficha antes de exportarla.');
 
   report('builder-equipment-options-explicit',
-    app.includes('A — Equipo inicial:') &&
-    app.includes('B — Oro:') &&
-    app.includes('C — Oro: 155 po') &&
+    app.includes('<b>A — Equipo inicial:</b>') &&
+    app.includes("builderData.className === 'Guerrero' ? 'Equipo alternativo' : 'Oro'") &&
+    app.includes('C — Oro:</b> 155 po') &&
     app.includes('recibes estas monedas en lugar de los objetos del equipo A'),
     'Las opciones de equipo A, B y C explican qué objetos o monedas recibe el personaje.');
 
