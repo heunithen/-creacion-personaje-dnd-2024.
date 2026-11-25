@@ -91,3 +91,35 @@ input::placeholder,textarea::placeholder{color:var(--text-muted)}
 .roll-result b,.trait-group h3{color:var(--aqua)}
 .toast{background:var(--slate-1);border:1px solid var(--aqua-mid);color:var(--text-main)}
 footer{border-color:var(--line);color:var(--text-muted)}
+
+
+/* Tema náutico global: neutraliza cualquier estilo antiguo de la aplicación */
+:root{color-scheme:dark;background:#0b171d;color:#fff}
+html,body{background:#0b171d!important;color:#fff!important}
+body{background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#09151b 100%)!important}
+.app-shell,.main{background:transparent!important;color:#fff!important}
+.topbar{background:#0f1e26!important;border-color:#3a4a52!important;color:#fff!important}
+.panel,.character-card,.monster-card,.trait-editor,.import-box,.rolls-panel,.roll-history,
+.import-box,.spell-card,.monster-panel,.saved,.ability,.roll-entry,.trait-view{
+ background:#13262e!important;color:#fff!important;border-color:#3a6870!important
+}
+.section-heading,.subheading,.traits-preview{border-color:#2a3a43!important}
+h1,h2,h3,h4,strong,.brand,.brand strong{color:#fff}
+h1 em,.eyebrow,.brand-mark,.free-tag,.count,.card-symbol,.card-actions button,
+.roll-result b,.trait-group h3{color:#5fe6e0!important}
+p,.intro,.connection,.hint,.muted,.character-card p,.monster-card p,
+.roll-entry-top span,.roll-entry p,.trait-view p{color:#b5bec3!important}
+label{color:#b5bec3!important}
+input,textarea,select{background:#0b171d!important;color:#fff!important;border-color:#3a4a52!important}
+input:focus,textarea:focus,select:focus{border-color:#5fe6e0!important;outline-color:#5fe6e0!important}
+input::placeholder,textarea::placeholder{color:#8e9aa1!important}
+button,.secondary,.topbar nav button,.player-tabs button{
+ background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important
+}
+button.active,.topbar nav button.active,.player-tabs button.active{
+ background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important
+}
+.primary{background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+.primary:hover{background:#79f1eb!important}
+.toast{background:#1b2a33!important;color:#fff!important;border-color:#3fb8b8!important}
+footer{border-color:#3a4a52!important;color:#8e9aa1!important}
