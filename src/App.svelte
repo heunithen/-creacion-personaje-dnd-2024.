@@ -20,6 +20,12 @@
   let activeTab = 'Datos';
   let monsterCrFilter = 'Todos';
   let monsterSearch = '';
+  let itemSearch = '';
+  let itemTypeFilter = 'Todos';
+  let itemPriceMin = '';
+  let itemPriceMax = '';
+  let itemWeightMin = '';
+  let itemWeightMax = '';
   let spellSearch = '';
   let rulesSearch = '';
   let rulesCategoryFilter = 'Todas';
@@ -802,7 +808,7 @@
   }
 
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Crear personaje'];
+  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Crear personaje'];
   type BuilderData = {
     name: string; player: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
@@ -1859,6 +1865,7 @@
   import MONSTERS from './monsters.json';
   import RULES from './rules.json';
 import SPELLS from './spells.json';
+import ITEMS from './items.json';
 
 
   let customRolls: CustomRoll[] = [];
@@ -1877,6 +1884,30 @@ import SPELLS from './spells.json';
   const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
   const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
   $: filteredMonsters = MONSTERS.filter(monster => (monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')) && monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()));
+  const itemTypes = ['Todos', ...Array.from(new Set(ITEMS.map(item => item.type))).sort((a,b) => a.localeCompare(b,'es'))];
+  function itemPriceGold(price: string): number | null {
+    const match = price.match(/^([\\d.,]+)\\s*(po|pp|pc|ppt)$/i);
+    if (!match) return null;
+    const amount = Number(match[1].replace(/\\./g, '').replace(',', '.'));
+    return Number.isFinite(amount) ? amount * ({ po: 1, pp: 0.1, pc: 0.01, ppt: 10 } as Record<string, number>)[match[2].toLowerCase()] : null;
+  }
+  function itemWeightKg(weight: string): number | null {
+    const match = weight.match(/^([\\d.,]+)\\s*(kg|g)$/i);
+    if (!match) return null;
+    const amount = Number(match[1].replace(/\\./g, '').replace(',', '.'));
+    return Number.isFinite(amount) ? amount * (match[2].toLowerCase() === 'g' ? 0.001 : 1) : null;
+  }
+  $: filteredItems = ITEMS.filter(item => {
+    const query = itemSearch.trim().toLocaleLowerCase('es');
+    const price = itemPriceGold(item.price);
+    const weight = itemWeightKg(item.weight);
+    return (itemTypeFilter === 'Todos' || item.type === itemTypeFilter) &&
+      (!query || (item.name + ' ' + item.type + ' ' + item.source).toLocaleLowerCase('es').includes(query)) &&
+      (itemPriceMin === '' || (price !== null && price >= Number(itemPriceMin))) &&
+      (itemPriceMax === '' || (price !== null && price <= Number(itemPriceMax))) &&
+      (itemWeightMin === '' || (weight !== null && weight >= Number(itemWeightMin))) &&
+      (itemWeightMax === '' || (weight !== null && weight <= Number(itemWeightMax)));
+  });
   const SPELL_CLASSES = ['Bardo', 'Brujo', 'Clérigo', 'Druida', 'Explorador', 'Hechicero', 'Mago', 'Paladín'];
   const SPELL_SCHOOLS = ['Abjuración', 'Adivinación', 'Conjuración', 'Encantamiento', 'Evocación', 'Ilusionismo', 'Nigromancia', 'Transmutación'];
   $: filteredSpells = SPELLS.filter(spell =>
@@ -3403,6 +3434,29 @@ import SPELLS from './spells.json';
             {/each}
           </tbody></table></div>
         </section>
+      {:else if masterTab === 'Objetos'}
+        <section class="panel items-panel">
+          <div class="section-heading"><h2>Catálogo de objetos · D&D 2024</h2><span class="count">{filteredItems.length} / {ITEMS.length}</span></div>
+          <p class="muted">Objetos no mágicos del Manual del jugador y objetos mágicos de la Guía del Dungeon Master. Los precios y pesos que los manuales no especifican se muestran como «—» y no se inventan.</p>
+          <label class="items-search">Buscar por nombre
+            <input type="search" bind:value={itemSearch} placeholder="Nombre del objeto..." />
+          </label>
+          <div class="items-filters">
+            <label>Tipo
+              <select bind:value={itemTypeFilter}>
+                {#each itemTypes as type}<option value={type}>{type === 'Todos' ? 'Todos los tipos' : type}</option>{/each}
+              </select>
+            </label>
+            <fieldset><legend>Precio (po)</legend><label>Mínimo<input type="number" min="0" step="0.01" bind:value={itemPriceMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="number" min="0" step="0.01" bind:value={itemPriceMax} placeholder="Sin máximo" /></label></fieldset>
+            <fieldset><legend>Peso (kg)</legend><label>Mínimo<input type="number" min="0" step="0.1" bind:value={itemWeightMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="number" min="0" step="0.1" bind:value={itemWeightMax} placeholder="Sin máximo" /></label></fieldset>
+          </div>
+          <div class="items-table-wrap"><table class="items-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Peso</th><th>Manual</th></tr></thead><tbody>
+            {#each filteredItems as item (item.name + item.source)}
+              <tr><td>{item.name}</td><td>{item.type}</td><td>{item.price}</td><td>{item.weight}</td><td>{item.source}</td></tr>
+            {/each}
+          </tbody></table></div>
+          {#if filteredItems.length === 0}<p class="muted">No hay objetos que coincidan con esos filtros. Los objetos sin precio o peso indicado no aparecen al aplicar ese filtro.</p>{/if}
+        </section>
       {:else if masterTab === 'Conjuros'}
         <section class="panel spells-panel">
           <div class="section-heading"><h2>Conjuros · Manual del Jugador 2024</h2><span class="count">{filteredSpells.length} / {SPELLS.length}</span></div>
@@ -3654,7 +3708,8 @@ import SPELLS from './spells.json';
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#e8dfce;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#fff;color:#171313;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}.spells-panel{margin-top:.5rem}
+  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#fff;color:#171313;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#fff;color:#171313;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
+.spells-panel{margin-top:.5rem}
   .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
   .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#fff;color:var(--ink);font:500 .82rem system-ui,sans-serif}
   .spell-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
