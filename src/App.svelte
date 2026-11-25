@@ -3342,6 +3342,50 @@ import ITEMS from './items.json';
   let playerSheetTab = 'Acciones';
   const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
 
+  function playerFeatureGroups(target: RawSheet) {
+    const className = sheetClassName(target);
+    const level = sheetLevel(target);
+    const classFeatures = ((CLASS_FEATURES as any).classes?.[className] || [])
+      .filter((feature:any) => Number(feature.level) <= level)
+      .map((feature:any) => ({ name: feature.name, description: feature.description || '', source: 'Clase', level: Number(feature.level) }));
+    const species = getCharacterStat(target,'PERSONAJE','Especie');
+    const speciesText = BUILDER_SPECIES_TRAITS[species] || '';
+    const speciesFeatures:{name:string;description:string;source:string;level?:number}[] = [];
+    const speciesPattern = /([A-ZÁÉÍÓÚÜÑ][^.:]{1,45}):\s*([\s\S]*?)(?=(?:\.\s+[A-ZÁÉÍÓÚÜÑ][^.:]{1,45}:)|$)/g;
+    let match:RegExpExecArray|null;
+    while ((match = speciesPattern.exec(speciesText)) !== null) {
+      const name = match[1].trim();
+      const description = match[2].replace(/[.]\s*$/,'').trim();
+      if (normalizeLevelText(name) === 'tipo de criatura' || !description) continue;
+      if (!/(accion|competencia|conjuro|truco|ventaja|resistencia|vision|vuelo|ataque|daño|velocidad|tamaño|salvacion|hechizado|asustado|agarrado|inspiracion|descanso|curas|cura|habilidad|magia|linaje)/i.test(description)) continue;
+      speciesFeatures.push({ name, description, source: 'Especie' });
+    }
+    for (let n=1;n<=level;n++) {
+      const unlock = getSpeciesLevelUnlock(target,n);
+      unlock.features.forEach(feature => speciesFeatures.push({ ...feature, source: 'Especie', level:n }));
+    }
+    const savedSpecies = getCharacterStat(target,'RASGOS Y DOTES','Rasgos de especie');
+    const savedSpeciesBlocks = String(savedSpecies || '').split(/\n\s*\n/).map(block=>block.trim()).filter(Boolean);
+    savedSpeciesBlocks.forEach(block => {
+      const parsed = block.match(/^(?:Nivel\s+(\d+)\s*·\s*)?([^\n]+)\n([\s\S]+)$/i);
+      if (parsed && (!parsed[1] || Number(parsed[1]) <= level)) {
+        const name = parsed[2].trim();
+        if (!speciesFeatures.some(item=>normalizeLevelText(item.name)===normalizeLevelText(name))) speciesFeatures.push({name,description:parsed[3].trim(),source:'Especie',level:parsed[1]?Number(parsed[1]):undefined});
+      }
+    });
+    const featNames = [
+      ...splitChoiceList(getCharacterStat(target,'RASGOS Y DOTES','Dote de origen')),
+      ...splitChoiceList(getCharacterStat(target,'RASGOS Y DOTES','Dotes adicionales')),
+      ...splitChoiceList(getCharacterStat(target,'DOTE Y OPCIONES','Dote de origen')),
+      ...splitChoiceList(getCharacterStat(target,'DETALLES DEL TRASFONDO','Dote de origen'))
+    ].filter(name => name && !/^[-—]+$/.test(name));
+    const feats = [...new Map(featNames.map(name=>[normalizeLevelText(name),{name,description:'Dote obtenida por el personaje. Sus elecciones y beneficios registrados se muestran en las competencias, conjuros y otros rasgos de la ficha.',source:'Dote'}])).values()];
+    return {
+      traits:[...classFeatures,...speciesFeatures].filter((item,index,list)=>list.findIndex(other=>normalizeLevelText(other.name)===normalizeLevelText(item.name))===index),
+      feats
+    };
+  }
+
   function playerSheetPairs(tab: string, sections: RawSection[] = sheet?.sections || []) {
     return sectionPairs(sections).filter(pair => {
       const heading = String(pair.heading.name || '');
@@ -4390,25 +4434,60 @@ import ITEMS from './items.json';
                     {/if}
                   </section>
                 {/if}
-                {#if playerSheetTab !== 'Conjuros'}
-                {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
-                  <section class="sheet-section {sectionClass(pair.heading.name)}">
-                    <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
-                    <div class="stats-list">
-                      {#each pair.heading.stats || [] as stat, i}
-                        <div class="sheet-stat">
-                          <span class="stat-label">{stat.name || ''}</span>
-                          <div class="stat-value sheet-readonly-value">{#each rollableParts(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)) as part}
-                            {#if part.rollable}<button type="button" class="inline-roll" title="Tirar {part.notation} en Dice+" on:click={() => sendSheetRoll(part.notation, String(stat.name || pair.heading.name || 'Tirada'))}>{part.text}</button>{:else}<span>{part.text}</span>{/if}
-                          {/each}</div>
-                        </div>
-                      {/each}
-                    </div>
+                {#if playerSheetTab === 'Rasgos y competencias'}
+                  {@const featureGroups = playerFeatureGroups(sheet)}
+                  <section class="sheet-section player-feature-section">
+                    <div class="sheet-section-title"><h3>Rasgos</h3></div>
+                    {#if featureGroups.traits.length}
+                      <div class="player-feature-list">
+                        {#each featureGroups.traits as feature, i}
+                          <details class="player-feature-card">
+                            <summary><span class="player-feature-name">{feature.name}</span><span class="player-feature-source">{feature.source}{#if feature.level} · Nivel {feature.level}{/if}</span></summary>
+                            {#if feature.description}<p>{feature.description}</p>{/if}
+                          </details>
+                        {/each}
+                      </div>
+                    {:else}<p class="muted nautical-empty">No hay rasgos registrados.</p>{/if}
                   </section>
-                {/each}
-                {#if playerSheetTab !== 'Conjuros' && playerSheetPairs(playerSheetTab, sheet.sections || []).length === 0}
-                  <p class="muted nautical-empty">No hay información registrada en esta sección.</p>
-                {/if}
+                  <section class="sheet-section player-feat-section">
+                    <div class="sheet-section-title"><h3>Dotes</h3></div>
+                    {#if featureGroups.feats.length}
+                      <div class="player-feature-list">
+                        {#each featureGroups.feats as feat}
+                          <details class="player-feature-card">
+                            <summary><span class="player-feature-name">{feat.name}</span><span class="player-feature-source">Dote</span></summary>
+                            <p>{feat.description}</p>
+                          </details>
+                        {/each}
+                      </div>
+                    {:else}<p class="muted nautical-empty">No hay dotes registradas.</p>{/if}
+                  </section>
+                  {#each playerSheetPairs(playerSheetTab, sheet.sections || []).filter(pair=>!['RASGOS Y DOTES','DETALLES DE ESPECIE','PROGRESIÓN'].includes(String(pair.heading.name||'').toLocaleUpperCase())) as pair}
+                    <section class="sheet-section {sectionClass(pair.heading.name)}">
+                      <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
+                      <div class="stats-list">
+                        {#each pair.heading.stats || [] as stat, i}
+                          <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
+                        {/each}
+                      </div>
+                    </section>
+                  {/each}
+                {:else if playerSheetTab !== 'Conjuros'}
+                  {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
+                    <section class="sheet-section {sectionClass(pair.heading.name)}">
+                      <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
+                      <div class="stats-list">
+                        {#each pair.heading.stats || [] as stat, i}
+                          <div class="sheet-stat">
+                            <span class="stat-label">{stat.name || ''}</span>
+                            <div class="stat-value sheet-readonly-value">{#each rollableParts(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)) as part}
+                              {#if part.rollable}<button type="button" class="inline-roll" title="Tirar {part.notation} en Dice+" on:click={() => sendSheetRoll(part.notation, String(stat.name || pair.heading.name || 'Tirada'))}>{part.text}</button>{:else}<span>{part.text}</span>{/if}
+                            {/each}</div>
+                          </div>
+                        {/each}
+                      </div>
+                    </section>
+                  {/each}
                 {/if}
                 {#if playerSheetTab === 'Notas' && sheet.notes}
                   <section class="sheet-section notes-section"><div class="sheet-section-title"><h3>Notas</h3></div><div class="sheet-notes-content">{sheet.notes}</div></section>
@@ -4919,4 +4998,14 @@ import ITEMS from './items.json';
     :global(.player-spell-checks){flex-direction:row;flex-wrap:wrap;gap:.8rem}
   }
 
+  :global(.player-feature-list){display:flex;flex-direction:column;gap:.45rem}
+  :global(.player-feature-card){border:1px solid #286d70;border-left:3px solid #40aaa4;border-radius:6px;background:#092127;overflow:hidden}
+  :global(.player-feature-card summary){display:flex;align-items:center;justify-content:space-between;gap:.6rem;padding:.65rem .75rem;cursor:pointer;list-style:none}
+  :global(.player-feature-card summary::-webkit-details-marker){display:none}
+  :global(.player-feature-name){color:#f1fffc;font:700 .9rem/1.3 Georgia,serif;overflow-wrap:anywhere}
+  :global(.player-feature-source){flex:0 0 auto;color:#78c9c2;font:650 .62rem/1.25 system-ui,sans-serif;text-align:right}
+  :global(.player-feature-card>p){margin:0;padding:.15rem .75rem .75rem;color:#d4e5e2;font:.78rem/1.55 system-ui,sans-serif;white-space:pre-wrap}
+  :global(.player-feature-card[open]){background:#0d2b30}
+  :global(.player-feat-section .player-feature-card){border-color:#594b2b;border-left-color:#b58b42;background:#17170f}
+  :global(.player-feat-section .player-feature-source){color:#d5b36e}
 </style>
