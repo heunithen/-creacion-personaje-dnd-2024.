@@ -4031,7 +4031,7 @@ import ITEMS from './items.json';
               </div>
               <button class="secondary" type="button" on:click={resetSpellUseStates}>Reiniciar marcas de uso y espacios (verifica el descanso)</button>
             </section>
-          {#if activeTab === 'Tiradas'}
+          {:else if activeTab === 'Tiradas'}
             <section class="custom-rolls">
               {#if customRolls.length}
                 <div class="custom-roll-list">
