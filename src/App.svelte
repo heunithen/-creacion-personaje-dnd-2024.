@@ -5008,4 +5008,9 @@ import ITEMS from './items.json';
   :global(.player-feature-card[open]){background:#0d2b30}
   :global(.player-feat-section .player-feature-card){border-color:#594b2b;border-left-color:#b58b42;background:#17170f}
   :global(.player-feat-section .player-feature-source){color:#d5b36e}
+
+  :global(.nautical-quick-stats>.quick-stats-row>div){align-items:center;text-align:center}
+  :global(.nautical-quick-stats>.quick-stats-row>div>span),
+  :global(.nautical-quick-stats>.quick-stats-row>div>strong){display:block;width:100%;text-align:center}
+  :global(.nautical-skills .sheet-stat .skill-number){font-size:1.25rem!important;font-weight:800!important;line-height:1.2!important;text-align:center!important;justify-self:center}
 </style>
