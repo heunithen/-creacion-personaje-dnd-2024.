@@ -4753,12 +4753,11 @@ import ITEMS from './items.json';
             </section>
 
             <section class="nautical-actions">
-                    {@const featureGroups = playerFeatureGroups(sheet)}
                     <section class="sheet-section player-feature-section">
                       <div class="sheet-section-title"><h3>Rasgos</h3></div>
-                      {#if featureGroups.traits.length}
+                      {#if playerFeatureGroups(sheet).traits.length}
                         <div class="player-feature-list">
-                          {#each featureGroups.traits as feature, i}
+                          {#each playerFeatureGroups(sheet).traits as feature, i}
                             <details class="player-feature-card">
                               <summary><span class="player-feature-name">{feature.name}</span><span class="player-feature-source">{feature.source}{#if feature.level} · Nivel {feature.level}{/if}</span></summary>
                               {#if feature.description}<p>{feature.description}</p>{/if}
@@ -4769,9 +4768,9 @@ import ITEMS from './items.json';
                     </section>
                     <section class="sheet-section player-feat-section">
                       <div class="sheet-section-title"><h3>Dotes</h3></div>
-                      {#if featureGroups.feats.length}
+                      {#if playerFeatureGroups(sheet).feats.length}
                         <div class="player-feature-list">
-                          {#each featureGroups.feats as feat}
+                          {#each playerFeatureGroups(sheet).feats as feat}
                             <details class="player-feature-card">
                               <summary><span class="player-feature-name">{feat.name}</span><span class="player-feature-source">Dote</span></summary>
                               <p>{feat.description}</p>
