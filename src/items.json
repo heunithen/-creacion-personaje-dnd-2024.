@@ -3792,5 +3792,180 @@
     "price": "5 pp",
     "weight": "—",
     "source": "Manual del jugador"
+  },
+  {
+    "name": "Escopeta",
+    "type": "Arma",
+    "price": "—",
+    "weight": "3,5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Pistola semiautomática",
+    "type": "Arma",
+    "price": "—",
+    "weight": "1,5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Revólver",
+    "type": "Arma",
+    "price": "—",
+    "weight": "1,5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Rifle automático",
+    "type": "Arma",
+    "price": "—",
+    "weight": "4 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Rifle de caza",
+    "type": "Arma",
+    "price": "—",
+    "weight": "4 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Pistola láser",
+    "type": "Arma",
+    "price": "—",
+    "weight": "1 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Rifle de antimateria",
+    "type": "Arma",
+    "price": "—",
+    "weight": "5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Rifle láser",
+    "type": "Arma",
+    "price": "—",
+    "weight": "3,5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Bomba",
+    "type": "Explosivo",
+    "price": "100 po",
+    "weight": "0,5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Dinamita (barra)",
+    "type": "Explosivo",
+    "price": "—",
+    "weight": "0,5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Granada de fragmentación",
+    "type": "Explosivo",
+    "price": "—",
+    "weight": "0,5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Granada de humo",
+    "type": "Explosivo",
+    "price": "50 po",
+    "weight": "1 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Lanzagranadas",
+    "type": "Explosivo",
+    "price": "—",
+    "weight": "3,5 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Pólvora (barril)",
+    "type": "Explosivo",
+    "price": "250 po",
+    "weight": "10 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Pólvora (cuerno)",
+    "type": "Explosivo",
+    "price": "35 po",
+    "weight": "1 kg",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Ariete",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Balista",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Caldero suspendido",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Cañón",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Cañón de relámpagos",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Fundíbulo",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Lanzabarriles",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Mangana",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Torre de asedio",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
+  },
+  {
+    "name": "Vehículo lanzallamas",
+    "type": "Equipo de asedio",
+    "price": "—",
+    "weight": "—",
+    "source": "Guía del Dungeon Master"
   }
 ]
