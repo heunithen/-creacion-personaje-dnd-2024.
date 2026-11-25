@@ -1912,18 +1912,28 @@
     refreshDerivedCharacterSheet(result);
     return result;
   }
-  async function finishBuilder() {
-    const missing=builderMissingFields();
-    if (missing.length) {
-      builderStepError = 'No se puede generar la ficha. Revisa estos campos:\\n• '+missing.join('\\n• ');
-      requestAnimationFrame(()=>document.querySelector('.builder-step-error')?.scrollIntoView({block:'center',behavior:'smooth'}));
-      return;
-    }
+  function finishBuilder() {
     builderStepError = '';
-    builderPreview = buildLevelOneSheet();
-    builderPreviewTab = 'Datos';
-    builderStep = 6;
-    keepBuilderAtTop();
+    try {
+      const missing = builderMissingFields();
+      if (missing.length) {
+        builderStepError = 'No se puede generar la ficha. Revisa estos campos:\\n• ' + missing.join('\\n• ');
+        requestAnimationFrame(() => document.querySelector('.builder-step-error')?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+        return;
+      }
+      const generated = buildLevelOneSheet();
+      if (!generated || !Array.isArray(generated.sections) || !generated.sections.length) {
+        throw new Error('La ficha se generó sin secciones. Revisa las elecciones y vuelve a intentarlo.');
+      }
+      builderPreview = generated;
+      builderPreviewTab = 'Datos';
+      builderStep = 6;
+      keepBuilderAtTop();
+    } catch (error) {
+      console.error('Error al generar la ficha:', error);
+      builderStepError = 'No se pudo generar la ficha: ' + (error instanceof Error ? error.message : String(error));
+      requestAnimationFrame(() => document.querySelector('.builder-step-error')?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+    }
   }
   async function saveBuilderCharacter() {
     if (!builderPreview || builderSaving) return;
