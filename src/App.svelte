@@ -3977,8 +3977,17 @@ import ITEMS from './items.json';
       {/if}
       {#if sheet && !playerCreating}
         <article class="character-sheet">
-          <header class="sheet-banner">
-            <div class="sheet-banner-copy"><span class="sheet-kicker">FORJA DE AVENTUREROS · D&D 2024</span><h1 class="character-name">{sheet.name || 'Personaje'}</h1><span class="sheet-subtitle">Hoja de aventurero</span></div>
+          <header class="sheet-banner ddb-character-header">
+            <div class="sheet-banner-copy">
+              <span class="sheet-kicker">D&D · 2024</span>
+              <h1 class="character-name">{sheet.name || 'Personaje'}</h1>
+              <div class="sheet-banner-meta">
+                <span>{sheetClassName(sheet) || 'Clase sin definir'} · Nivel {sheetLevel(sheet)}</span>
+                <span>{sheetValueByNames(sheet, ['Especie','Raza']) || 'Especie sin definir'}</span>
+                <span>{sheetValueByNames(sheet, ['Trasfondo','Antecedente']) || 'Trasfondo sin definir'}</span>
+                <span>{sheetValueByNames(sheet, ['Nombre del jugador','Jugador']) || playerName || 'Jugador'}</span>
+              </div>
+            </div>
             <div class="sheet-banner-emblem" aria-hidden="true">✦</div>
           </header>
           <section class="sheet-quick-stats" aria-label="Datos rápidos del personaje">
@@ -4358,4 +4367,37 @@ import ITEMS from './items.json';
   :global(.inline-roll:hover){color:#9ac8ff;text-decoration-color:currentColor}
   :global(.sheet-readonly-value){white-space:pre-wrap;overflow-wrap:anywhere}
   :global(.character-sheet .editable:hover){background:#1a1011!important;border-color:#8c2732!important}
+
+  /* Presentación de ficha inspirada en la jerarquía de D&D Beyond */
+  :global(.app-shell){max-width:1180px}
+  :global(.main){max-width:1120px;width:100%}
+  :global(.character-sheet){width:100%;max-width:none;padding:1.1rem;border-radius:10px;background:#17191d!important;border:1px solid #343a43!important;color:#f4f5f7!important}
+  :global(.ddb-character-header){display:flex!important;align-items:center;justify-content:space-between;gap:1rem;padding:1.15rem 1.25rem!important;margin:0 0 .85rem!important;border-radius:8px!important;background:#252a32!important;text-align:left!important}
+  :global(.ddb-character-header .sheet-banner-copy){min-width:0;text-align:left}
+  :global(.ddb-character-header .sheet-kicker){display:block;color:#aab6c5;font:700 .68rem/1.3 system-ui,sans-serif;letter-spacing:.12em}
+  :global(.ddb-character-header .character-name){margin:.25rem 0 .45rem!important;color:#fff!important;text-align:left!important;font:700 clamp(1.45rem,3vw,2.15rem)/1.15 system-ui,sans-serif!important}
+  :global(.sheet-banner-meta){display:flex;flex-wrap:wrap;gap:.35rem .9rem;color:#d0d6df;font:500 .76rem/1.4 system-ui,sans-serif}
+  :global(.sheet-banner-meta span+span){padding-left:.8rem;border-left:1px solid #59616d}
+  :global(.sheet-banner-emblem){display:grid;place-items:center;flex:0 0 3.4rem;width:3.4rem;height:3.4rem;border:1px solid #59616d;border-radius:50%;color:#d5b36e;font-size:1.7rem}
+  :global(.sheet-quick-stats){display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.55rem;margin:0 0 .9rem}
+  :global(.sheet-quick-stats>div){display:flex;min-width:0;flex-direction:column;justify-content:center;gap:.25rem;padding:.7rem .8rem;border:1px solid #3b424d;border-radius:7px;background:#22262d}
+  :global(.sheet-quick-stats>div>span){color:#aeb7c3;font:600 .65rem/1.25 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.055em}
+  :global(.sheet-quick-stats>div>strong){color:#fff;font:700 1.05rem/1.25 system-ui,sans-serif;overflow-wrap:anywhere}
+  :global(.sheet-tabs){display:flex;gap:.3rem;overflow-x:auto;padding:.25rem .15rem .65rem;margin:0 0 .9rem;border-bottom:1px solid #414956;scrollbar-width:thin}
+  :global(.sheet-tabs button){flex:0 0 auto;padding:.58rem .9rem;border:0!important;border-bottom:3px solid transparent!important;border-radius:5px 5px 0 0!important;background:transparent!important;color:#c0c7d1!important;font:600 .76rem system-ui,sans-serif;white-space:nowrap}
+  :global(.sheet-tabs button.active){border-bottom-color:#d5b36e!important;background:#2a3039!important;color:#fff!important}
+  :global(.sheet-grid){grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+  :global(.sheet-section){border:1px solid #3b424d!important;border-top:3px solid #68788d!important;border-radius:7px!important;background:#22262d!important;padding:.85rem!important}
+  :global(.sheet-section-title){border-bottom:1px solid #414956!important}
+  :global(.sheet-section-title h3),:global(.section-name){color:#f2f4f7!important}
+  :global(.stat-label){color:#aeb7c3!important}
+  :global(.stat-value),:global(.sheet-stat strong){color:#f3f5f8!important}
+  :global(.sheet-stat){border-bottom-color:#3c424b!important}
+  :global(.attributes-section){grid-column:1/-1;background:#252a32!important;border-top-color:#d5b36e!important}
+  :global(.attributes-section .stats-list){grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:.45rem}
+  :global(.attributes-section .sheet-stat){border:1px solid #454d59!important;border-radius:6px!important;background:#1b1f25!important}
+  :global(.attributes-section .stat-label){color:#b9c2ce!important}
+  @media(max-width:760px){:global(.sheet-quick-stats){grid-template-columns:repeat(3,minmax(0,1fr))}:global(.sheet-grid){grid-template-columns:1fr}:global(.attributes-section .stats-list){grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+  @media(max-width:520px){:global(.ddb-character-header){align-items:flex-start}:global(.sheet-banner-meta){display:grid;grid-template-columns:1fr 1fr}:global(.sheet-banner-meta span+span){padding-left:0;border-left:0}:global(.sheet-quick-stats){grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
