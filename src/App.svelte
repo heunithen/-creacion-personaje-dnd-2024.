@@ -810,7 +810,7 @@
   let masterTab = 'Personajes';
   const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas'];
   type BuilderData = {
-    name: string; player: string; className: string; species: string; background: string;
+    name: string; player: string; age: string; height: string; appearance: string; personality: string; ideals: string; bonds: string; flaws: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
     abilityIncreaseMode: 'two' | 'three'; abilityIncrease2: string; abilityIncrease1: string;
     abilityIncrease3: string; backgroundEquipment: 'A' | 'B'; backgroundToolChoice: string; classEquipmentChoice: string;
