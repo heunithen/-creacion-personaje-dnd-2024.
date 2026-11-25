@@ -3289,7 +3289,7 @@ import ITEMS from './items.json';
       const heading = String(pair.heading.name || '').toLocaleLowerCase();
       const category = sectionTab(heading);
       if (kind === 'skills') return category === 'Habilidades';
-      if (kind === 'training') return category === 'Competencias y entrenamiento';
+      if (kind === 'training') return category === 'Rasgos y competencias';
       return /salvaci|saving throw/.test(heading);
     });
   }
