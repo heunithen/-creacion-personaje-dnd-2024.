@@ -47,10 +47,20 @@ export class GithubCharacterStorage {
   }
 
   private async writeFile(path: string, content: string, message: string) {
-    const current = await this.getFile(path);
-    const body: any = { message, content: encodeContent(content), branch: this.config.branch };
-    if (current?.sha) body.sha = current.sha;
-    return this.request(`/contents/${encodePath(path)}`, { method: 'PUT', body: JSON.stringify(body) });
+    // GitHub can return 409 if another player updates the index between
+    // reading its SHA and writing it. Re-read the latest SHA and retry.
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const current = await this.getFile(path);
+      const body: any = { message, content: encodeContent(content), branch: this.config.branch };
+      if (current?.sha) body.sha = current.sha;
+      try {
+        return await this.request(`/contents/${encodePath(path)}`, { method: 'PUT', body: JSON.stringify(body) });
+      } catch (error) {
+        const messageText = error instanceof Error ? error.message : String(error);
+        if (!messageText.includes('GitHub 409') || attempt === 4) throw error;
+        await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+      }
+    }
   }
 
   private async deleteFile(path: string, message: string) {
@@ -73,14 +83,31 @@ export class GithubCharacterStorage {
     await this.writeFile(`${ROOT}/indice.json`, JSON.stringify(index, null, 2), 'Actualizar índice de personajes');
   }
 
+  private async updateIndex(change: (latest: GithubCharacterIndex) => void) {
+    // Rebuild the change from the latest index after a conflict so concurrent
+    // character saves and folder operations do not overwrite each other.
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const latest = await this.readIndex();
+      change(latest);
+      try {
+        await this.writeIndex(latest);
+        return;
+      } catch (error) {
+        const messageText = error instanceof Error ? error.message : String(error);
+        if (!messageText.includes('GitHub 409') || attempt === 4) throw error;
+        await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+      }
+    }
+  }
+
   private characterPath(folder: string, playerId: string) {
     const safeId = playerId.replace(/[^a-zA-Z0-9_-]/g, '-');
     return folder === 'sin-partida' ? `${ROOT}/sin-partida/${safeId}.json` : `${ROOT}/partidas/${folder}/${safeId}.json`;
   }
 
   async save(character: any, playerId: string, playerName: string) {
-    const index = await this.readIndex();
-    const previous = index.characters.find(item => item.playerId === playerId);
+    const initialIndex = await this.readIndex();
+    const previous = initialIndex.characters.find(item => item.playerId === playerId);
     const folder = previous?.folder || 'sin-partida';
     const path = previous?.path || this.characterPath(folder, playerId);
     const record: GithubCharacterRecord = {
@@ -88,39 +115,40 @@ export class GithubCharacterStorage {
       path, folder, updatedAt: new Date().toISOString()
     };
     await this.writeFile(path, JSON.stringify({ playerId, playerName, character, updatedAt: record.updatedAt }, null, 2), 'Guardar personaje ' + record.name);
-    index.characters = [...index.characters.filter(item => item.playerId !== playerId), record];
-    await this.writeIndex(index);
+    await this.updateIndex(index => {
+      index.characters = [...index.characters.filter(item => item.playerId !== playerId), record];
+    });
   }
 
   async createFolder(name: string) {
     const folder = name.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
     if (!folder || folder === 'sin-partida') throw new Error('Escribe un nombre válido para la partida.');
-    const index = await this.readIndex();
-    if (!index.folders.includes(folder)) index.folders.push(folder);
     await this.writeFile(`${ROOT}/partidas/${folder}/.gitkeep`, ' ', 'Crear carpeta de partida ' + folder);
-    await this.writeIndex(index);
+    await this.updateIndex(index => {
+      if (!index.folders.includes(folder)) index.folders.push(folder);
+    });
     return folder;
   }
 
   async move(record: GithubCharacterRecord, folder: string) {
     if (!folder || folder === record.folder) return;
-    const index = await this.readIndex();
     const destination = this.characterPath(folder, record.playerId);
     const sourceFile = await this.getFile(record.path);
     if (!sourceFile?.content) throw new Error('No se encontró el archivo original del personaje.');
     if (await this.getFile(destination)) throw new Error('Ya existe un archivo de personaje con ese nombre en la carpeta de destino.');
     await this.writeFile(destination, decodeContent(sourceFile.content), 'Mover personaje ' + record.name);
     await this.deleteFile(record.path, 'Retirar personaje de su carpeta anterior');
-    index.characters = index.characters.map(item => item.playerId === record.playerId
-      ? { ...item, path: destination, folder, updatedAt: new Date().toISOString() }
-      : item);
-    await this.writeIndex(index);
+    await this.updateIndex(index => {
+      index.characters = index.characters.map(item => item.playerId === record.playerId
+        ? { ...item, path: destination, folder, updatedAt: new Date().toISOString() }
+        : item);
+    });
   }
 
   async remove(record: GithubCharacterRecord) {
     await this.deleteFile(record.path, 'Eliminar personaje ' + record.name);
-    const index = await this.readIndex();
-    index.characters = index.characters.filter(item => item.playerId !== record.playerId);
-    await this.writeIndex(index);
+    await this.updateIndex(index => {
+      index.characters = index.characters.filter(item => item.playerId !== record.playerId);
+    });
   }
 }
