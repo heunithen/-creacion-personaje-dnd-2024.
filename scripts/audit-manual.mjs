@@ -285,6 +285,41 @@ try {
     app.includes("'Recursos según tabla de clase'") &&
     app.includes("'Nivel de clase',nextLevel"));
 
+
+  const barbarianAspectChoice = choiceFile.choices.find((choice) => choice.id === 'barbarian.wildHeart.aspect');
+  const wildHeartSubclass = Object.keys(subclasses.classes?.['Bárbaro'] ?? {}).find((name) => norm(name) === norm('SENDA DEL CORAZÓN SALVAJE'));
+  const levelTextNorm = (value) => String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim();
+  report('barbarian-wild-heart-aspect-level-six',
+    Boolean(barbarianAspectChoice && wildHeartSubclass &&
+      levelTextNorm(barbarianAspectChoice.subclass) === levelTextNorm(wildHeartSubclass) &&
+      barbarianAspectChoice.level === 6 &&
+      app.includes('needsBarbarianWildAspect') &&
+      app.includes('levelUpBarbarianAspect')),
+    'Aspecto de lo salvaje debe mostrarse, validarse y guardarse al subir al nivel 6 de la Senda del corazón salvaje.');
+
+  report('builder-creation-validation-and-preview',
+    app.includes('function builderStepCanAdvance()') &&
+    app.includes('function builderCanFinish()') &&
+    app.includes('disabled={!builderCanFinish()}') &&
+    app.includes('function finishBuilder()') &&
+    app.includes('builderStep = 6'),
+    'La creación valida los seis pasos, bloquea la generación incompleta y permite revisar la ficha antes de exportarla.');
+
+  report('builder-equipment-options-explicit',
+    app.includes('A — Equipo inicial:') &&
+    app.includes('B — Oro:') &&
+    app.includes('C — Oro: 155 po') &&
+    app.includes('recibes estas monedas en lugar de los objetos del equipo A'),
+    'Las opciones de equipo A, B y C explican qué objetos o monedas recibe el personaje.');
+
+  report('level-up-preserves-and-records-progression',
+    app.includes("setCharacterStat(updated,'PROGRESIÓN','Historial de niveles'") &&
+    app.includes("setCharacterStat(updated,'PROGRESIÓN','Recursos según tabla de clase'") &&
+    app.includes("setCharacterStat(updated,'PROGRESIÓN','Rasgos de subclase acumulados'") &&
+    app.includes("setCharacterStat(updated,'PERSONAJE','Nivel'") &&
+    app.includes('refreshDerivedCharacterSheet(updated)'),
+    'La subida conserva el historial, actualiza recursos y rasgos de subclase y recalcula los valores derivados de la ficha.');
+
   const passed = checks.filter((item) => item.status === 'OK').length;
   console.log(JSON.stringify({
     audit: 'D&D 2024 · todas las clases',
