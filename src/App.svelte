@@ -2048,7 +2048,7 @@ import ITEMS from './items.json';
   function translateMonsterText(input: string): string {
     let output = String(input ?? '');
     for (const [english, spanish] of [...MONSTER_ES_TERMS].sort((a,b) => b[0].length-a[0].length)) {
-      const escaped = english.replace(/[.*+?^${}()|[\]\\]/g, '\\const escaped = english.replace(/[|\\{}()[\]^$+*?.-]/g, '\\  const MONSTER_CR_FILTERS =');');
+      const escaped = english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       output = output.replace(new RegExp('\\b' + escaped + '\\b','gi'), spanish);
     }
     return output;
