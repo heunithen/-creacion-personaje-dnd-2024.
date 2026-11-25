@@ -2052,7 +2052,7 @@ import ITEMS from './items.json';
     const input = event.currentTarget as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-    file.text().then((contents) => {
+    file.text().then(async (contents) => {
       const imported = JSON.parse(contents) as RawSheet;
       if (!imported || typeof imported !== 'object' || !Array.isArray(imported.sections)) {
         throw new Error('Formato de ficha no válido');
