@@ -6321,4 +6321,44 @@ import ITEMS from './items.json';
   :global(.builder-checkbox-grid){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
   @media(max-width:520px){:global(.builder-class-grid),:global(.builder-checkbox-grid){grid-template-columns:1fr!important}}
 
+
+
+  /* Ajuste de competencias y elecciones múltiples del creador.
+     La regla general .builder-panel input estaba convirtiendo cada checkbox
+     en un campo de texto de ancho completo. */
+  :global(.builder-panel .builder-checkbox){
+    box-sizing:border-box!important;display:flex!important;flex-direction:row!important;
+    align-items:flex-start!important;gap:10px!important;width:100%!important;
+    min-width:0!important;min-height:0!important;margin:0!important;padding:10px 12px!important;
+    border:1px solid #3a4a52!important;border-left:3px solid #3a4a52!important;
+    border-radius:8px!important;background:#13262e!important;color:#ffffff!important;
+    line-height:1.4!important;cursor:pointer!important;
+  }
+  :global(.builder-panel .builder-checkbox > input[type="checkbox"]){
+    display:block!important;appearance:auto!important;-webkit-appearance:checkbox!important;
+    flex:0 0 17px!important;width:17px!important;min-width:17px!important;max-width:17px!important;
+    height:17px!important;margin:2px 0 0!important;padding:0!important;border:0!important;
+    border-radius:3px!important;background:transparent!important;accent-color:#5fe6e0!important;
+    box-shadow:none!important;
+  }
+  :global(.builder-panel .builder-checkbox > span){
+    display:block!important;flex:1 1 auto!important;min-width:0!important;
+    margin:0!important;padding:0!important;color:#ffffff!important;font-size:.82rem!important;line-height:1.4!important;
+  }
+  :global(.builder-panel .builder-checkbox > small),
+  :global(.builder-panel .builder-checkbox .builder-skill-description){
+    display:block!important;flex:1 1 100%!important;min-width:0!important;
+    margin:3px 0 0!important;padding:0!important;color:#b5bec3!important;
+    font-size:.72rem!important;line-height:1.45!important;
+  }
+  :global(.builder-panel .builder-checkbox:has(input:checked)){
+    border-color:#5fe6e0!important;border-left-color:#5fe6e0!important;background:#1b2a33!important;
+  }
+  :global(.builder-panel .builder-checkbox:has(input:disabled)){opacity:.55!important;cursor:not-allowed!important}
+  :global(.builder-panel .builder-checkbox-grid){
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-items:stretch!important;gap:8px!important;min-width:0!important;
+  }
+  @media(max-width:520px){:global(.builder-panel .builder-checkbox-grid){grid-template-columns:1fr!important}}
+
 </style>
