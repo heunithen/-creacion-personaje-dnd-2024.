@@ -3972,7 +3972,7 @@ import ITEMS from './items.json';
                   <span class="monster-cr">CR {monster.cr.split(' ')[0] || '—'}</span>
                 </summary>
                 <div class="monster-statblock">
-                  {@const profile = parseMonsterProfile(monster)}
+                  {#each [parseMonsterProfile(monster)] as profile}
                   <div class="monster-info-grid">
                     {#each profile.info as item}
                       <div class="monster-info-item"><small>{item.label}</small><strong>{item.value}</strong></div>
@@ -3989,7 +3989,8 @@ import ITEMS from './items.json';
                       {/each}
                     </section>
                   {/each}
-                  <small class="monster-source">Monster Manual 2024 · PDF p. {monster.pdfPage ?? '—'} · Página impresa {monster.printedPage ?? '—'}</small>
+                  {/each}
+                  <small class="monster-source">Manual de Monstruos 2024 · PDF p. {monster.pdfPage ?? '—'} · Página impresa {monster.printedPage ?? '—'}</small>
                 </div>
               </details>
             {/each}
