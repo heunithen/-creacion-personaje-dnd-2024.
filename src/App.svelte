@@ -20,10 +20,10 @@
   let obrRole = '';
   let playerName = '';
   let activeTab = 'Todas';
-  let monsterCrFilter = '0';
+  let monsterCrFilter = '';
   let monsterSearch = '';
   let itemSearch = '';
-  let itemTypeFilter = 'Todos';
+  let itemTypeFilter = '';
   let itemPriceMin = '';
   let itemPriceMax = '';
   let itemWeightMin = '';
@@ -31,9 +31,9 @@
   let spellSearch = '';
   let rulesSearch = '';
   let rulesCategoryFilter = 'Todas';
-  let spellLevelFilter = 'Todos';
-  let spellClassFilter = 'Todas';
-  let spellSchoolFilter = 'Todas';
+  let spellLevelFilter = '';
+  let spellClassFilter = '';
+  let spellSchoolFilter = '';
 
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
@@ -809,8 +809,19 @@
     lastChestRoll = { total, dice, lootNumber, category: loot.category, name: loot.name, priceLabel: loot.priceLabel };
   }
 
+  let visualStyle = { background:'#0b171d', panel:'#13262e', card:'#1b2a33', border:'#3a6870', text:'#ffffff', muted:'#b5bec3', accent:'#5fe6e0', fontSize:14, headingSize:18, panelPadding:12, panelGap:10, radius:8 };
+  function applyVisualStyle() {
+    const root = document.documentElement;
+    const vars: Record<string,string> = {'--gm-bg':visualStyle.background,'--gm-panel':visualStyle.panel,'--gm-card':visualStyle.card,'--gm-border':visualStyle.border,'--gm-text':visualStyle.text,'--gm-muted':visualStyle.muted,'--gm-accent':visualStyle.accent,'--gm-font-size':visualStyle.fontSize+'px','--gm-heading-size':visualStyle.headingSize+'px','--gm-panel-padding':visualStyle.panelPadding+'px','--gm-panel-gap':visualStyle.panelGap+'px','--gm-radius':visualStyle.radius+'px'};
+    Object.entries(vars).forEach(([key,value])=>root.style.setProperty(key,value));
+    try { localStorage.setItem('forja-visual-style',JSON.stringify(visualStyle)); } catch {}
+  }
+  function resetVisualStyle() {
+    visualStyle = { background:'#0b171d', panel:'#13262e', card:'#1b2a33', border:'#3a6870', text:'#ffffff', muted:'#b5bec3', accent:'#5fe6e0', fontSize:14, headingSize:18, panelPadding:12, panelGap:10, radius:8 };
+    applyVisualStyle();
+  }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Almacenamiento', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas'];
+  const masterTabs = ['Personajes', 'Almacenamiento', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Estilo'];
   let githubConfig: GithubConfig | null = null;
   let githubStore: GithubCharacterStorage | null = null;
   let githubTokenDraft = '';
@@ -2203,7 +2214,7 @@ import ITEMS from './items.json';
   }
 
   const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
-  $: filteredMonsters = MONSTERS.filter(monster => (monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')) && monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()));
+  $: filteredMonsters = MONSTERS.filter(monster => (!monsterCrFilter || monster.cr.startsWith(monsterCrFilter + ' ')) && monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()));
   const itemTypes = ['Todos', ...Array.from(new Set(ITEMS.map(item => item.type))).sort((a,b) => a.localeCompare(b,'es'))];
   function itemPriceGold(price: string): number | null {
     const match = price.match(/^([\\d.,]+)\\s*(po|pp|pc|ppt)$/i);
@@ -2221,7 +2232,7 @@ import ITEMS from './items.json';
     const query = itemSearch.trim().toLocaleLowerCase('es');
     const price = itemPriceGold(item.price);
     const weight = itemWeightKg(item.weight);
-    return (itemTypeFilter === 'Todos' || item.type === itemTypeFilter) &&
+    return (!itemTypeFilter || item.type === itemTypeFilter) &&
       (!query || (item.name + ' ' + item.type + ' ' + item.source).toLocaleLowerCase('es').includes(query)) &&
       (itemPriceMin === '' || (price !== null && price >= Number(itemPriceMin))) &&
       (itemPriceMax === '' || (price !== null && price <= Number(itemPriceMax))) &&
@@ -2231,9 +2242,9 @@ import ITEMS from './items.json';
   const SPELL_CLASSES = ['Bardo', 'Brujo', 'Clérigo', 'Druida', 'Explorador', 'Hechicero', 'Mago', 'Paladín'];
   const SPELL_SCHOOLS = ['Abjuración', 'Adivinación', 'Conjuración', 'Encantamiento', 'Evocación', 'Ilusionismo', 'Nigromancia', 'Transmutación'];
   $: filteredSpells = SPELLS.filter(spell =>
-    (spellLevelFilter === 'Todos' || String(spell.level) === spellLevelFilter) &&
-    (spellClassFilter === 'Todas' || spell.classes.includes(spellClassFilter.toLocaleLowerCase('es'))) &&
-    (spellSchoolFilter === 'Todas' || spell.school === spellSchoolFilter) &&
+    (!spellLevelFilter || String(spell.level) === spellLevelFilter) &&
+    (!spellClassFilter || spell.classes.includes(spellClassFilter.toLocaleLowerCase('es'))) &&
+    (!spellSchoolFilter || spell.school === spellSchoolFilter) &&
     (!spellSearch.trim() || (spell.name + ' ' + spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es')))
   );
   const RULE_CATEGORIES = ['Todas', 'General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro', 'Abreviatura'];
@@ -3453,8 +3464,8 @@ import ITEMS from './items.json';
 
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Habilidades','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
-  let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
+  let playerSheetTab = 'Conjuros';
+  const playerSheetTabs = ['Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
 
   function playerFeatureGroups(target: RawSheet) {
     const className = sheetClassName(target);
@@ -3774,6 +3785,7 @@ import ITEMS from './items.json';
   }
 
   onMount(() => {
+    try { const savedVisualStyle=localStorage.getItem('forja-visual-style'); if(savedVisualStyle) visualStyle={...visualStyle,...JSON.parse(savedVisualStyle)}; applyVisualStyle(); } catch { applyVisualStyle(); }
     try {
       const params = new URLSearchParams(window.location.search);
       if (params.get('preview') === '1') openDemoPreview();
@@ -4164,7 +4176,8 @@ import ITEMS from './items.json';
           <div class="items-filters">
             <label>Tipo
               <select bind:value={itemTypeFilter}>
-                {#each itemTypes as type}<option value={type}>{type === 'Todos' ? 'Todos los tipos' : type}</option>{/each}
+                <option value="">Todos los tipos</option>
+                {#each itemTypes.filter(type => type !== 'Todos') as type}<option value={type}>{type === 'Todos' ? 'Todos los tipos' : type}</option>{/each}
               </select>
             </label>
             <fieldset><legend>Precio (po)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemPriceMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemPriceMax} placeholder="Sin máximo" /></label></fieldset>
@@ -4187,7 +4200,7 @@ import ITEMS from './items.json';
           <div class="spell-filters">
             <label>Nivel
               <select bind:value={spellLevelFilter}>
-                <option value="Todos">Todos los niveles</option>
+                <option value="">Todos los niveles</option>
                 <option value="0">Trucos · Nivel 0</option>
                 {#each [1,2,3,4,5,6,7,8,9] as level}
                   <option value={String(level)}>Nivel {level}</option>
@@ -4196,7 +4209,7 @@ import ITEMS from './items.json';
             </label>
             <label>Clase
               <select bind:value={spellClassFilter}>
-                <option value="Todas">Todas las clases</option>
+                <option value="">Todas las clases</option>
                 {#each SPELL_CLASSES as className}
                   <option value={className}>{className}</option>
                 {/each}
@@ -4204,7 +4217,7 @@ import ITEMS from './items.json';
             </label>
             <label>Escuela
               <select bind:value={spellSchoolFilter}>
-                <option value="Todas">Todas las escuelas</option>
+                <option value="">Todas las escuelas</option>
                 {#each SPELL_SCHOOLS as school}
                   <option value={school}>{school}</option>
                 {/each}
@@ -4234,6 +4247,31 @@ import ITEMS from './items.json';
             {/each}
             {#if filteredSpells.length === 0}<p class="muted">No hay conjuros que coincidan con esos filtros.</p>{/if}
           </div>
+        </section>
+      {:else if masterTab === 'Estilo'}
+        <section class="panel style-panel">
+          <div class="section-heading"><h2>Estilo de la aplicación</h2><span class="count">Configuración global</span></div>
+          <p class="muted">Modifica colores, tamaños y espacios de la interfaz. Los cambios se guardan en este navegador.</p>
+          <div class="style-control-grid">
+            <fieldset><legend>Colores</legend>
+              <label>Fondo general<input type="color" bind:value={visualStyle.background} on:input={applyVisualStyle} /></label>
+              <label>Paneles<input type="color" bind:value={visualStyle.panel} on:input={applyVisualStyle} /></label>
+              <label>Tarjetas y controles<input type="color" bind:value={visualStyle.card} on:input={applyVisualStyle} /></label>
+              <label>Bordes<input type="color" bind:value={visualStyle.border} on:input={applyVisualStyle} /></label>
+              <label>Texto principal<input type="color" bind:value={visualStyle.text} on:input={applyVisualStyle} /></label>
+              <label>Texto secundario<input type="color" bind:value={visualStyle.muted} on:input={applyVisualStyle} /></label>
+              <label>Acento<input type="color" bind:value={visualStyle.accent} on:input={applyVisualStyle} /></label>
+            </fieldset>
+            <fieldset><legend>Tamaños y distribución</legend>
+              <label>Texto: {visualStyle.fontSize}px<input type="range" min="11" max="20" bind:value={visualStyle.fontSize} on:input={applyVisualStyle} /></label>
+              <label>Títulos: {visualStyle.headingSize}px<input type="range" min="14" max="30" bind:value={visualStyle.headingSize} on:input={applyVisualStyle} /></label>
+              <label>Espacio interior: {visualStyle.panelPadding}px<input type="range" min="6" max="28" bind:value={visualStyle.panelPadding} on:input={applyVisualStyle} /></label>
+              <label>Separación: {visualStyle.panelGap}px<input type="range" min="4" max="24" bind:value={visualStyle.panelGap} on:input={applyVisualStyle} /></label>
+              <label>Redondeo: {visualStyle.radius}px<input type="range" min="0" max="20" bind:value={visualStyle.radius} on:input={applyVisualStyle} /></label>
+            </fieldset>
+          </div>
+          <div class="style-preview"><strong>Vista previa</strong><div class="style-preview-card"><h3>Panel de ejemplo</h3><p>Texto principal y descripción secundaria.</p><button class="primary">Botón de ejemplo</button></div></div>
+          <div class="actions"><button class="secondary" on:click={resetVisualStyle}>Restablecer estilo</button></div>
         </section>
       {:else if masterTab === 'Reglas'}
         <section class="panel rules-panel">
@@ -4266,7 +4304,8 @@ import ITEMS from './items.json';
           </label>
           <label class="monster-filter">Filtrar por VD
             <select bind:value={monsterCrFilter}>
-              {#each MONSTER_CR_FILTERS as cr}
+              <option value="">Todos los valores de desafío</option>
+              {#each MONSTER_CR_FILTERS.filter(cr => cr !== 'Todos') as cr}
                 <option value={cr}>{cr === 'Todos' ? 'Todos los VD' : 'VD ' + cr}</option>
               {/each}
             </select>
@@ -4713,14 +4752,7 @@ import ITEMS from './items.json';
               {/each}
             </section>
 
-            <section class="nautical-content">
-              <nav class="nautical-tabs" aria-label="Secciones de la ficha">
-                {#each playerSheetTabs as tab}
-                  <button type="button" class:active={playerSheetTab === tab} on:click={() => playerSheetTab = tab}>{tab}</button>
-                {/each}
-              </nav>
-              <div class="nautical-tab-content">
-                {#if playerSheetTab === 'Acciones'}
+            <section class="nautical-actions"><div class="nautical-tabs action-heading"><span>Acciones</span></div>
                   <section class="sheet-section weapon-attacks-section">
                     <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
                     <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
@@ -4738,7 +4770,15 @@ import ITEMS from './items.json';
                       {/each}
                     </div>
                   </section>
-                {/if}
+            </section>
+
+            <section class="nautical-content">
+              <nav class="nautical-tabs" aria-label="Secciones de la ficha">
+                {#each playerSheetTabs as tab}
+                  <button type="button" class:active={playerSheetTab === tab} on:click={() => playerSheetTab = tab}>{tab}</button>
+                {/each}
+              </nav>
+              <div class="nautical-tab-content">
                 {#if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
                     <div class="sheet-section-title"><h3>Lanzamiento de conjuros</h3></div>
@@ -5166,6 +5206,35 @@ import ITEMS from './items.json';
     .continuous-sheet-grid>.magic-section,.continuous-sheet-grid>.notes-section{grid-column:auto}
   }
  
+
+  /* Controles de apariencia centralizados en la pestaña Estilo */
+  :global(:root){--gm-bg:#0b171d;--gm-panel:#13262e;--gm-card:#1b2a33;--gm-border:#3a6870;--gm-text:#fff;--gm-muted:#b5bec3;--gm-accent:#5fe6e0;--gm-font-size:14px;--gm-heading-size:18px;--gm-panel-padding:12px;--gm-panel-gap:10px;--gm-radius:8px}
+  :global(.main){font-size:var(--gm-font-size)}
+  :global(.panel){background:var(--gm-panel)!important;color:var(--gm-text)!important;border-color:var(--gm-border)!important;border-radius:var(--gm-radius)!important;padding:var(--gm-panel-padding)!important}
+  :global(.panel h2),:global(.panel h3){font-size:var(--gm-heading-size)}
+  :global(.panel p),:global(.panel label),:global(.muted){color:var(--gm-muted)}
+  :global(.panel input),:global(.panel select),:global(.panel textarea){font-size:var(--gm-font-size)}
+  :global(.style-control-grid){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gm-panel-gap)}
+  :global(.style-control-grid fieldset){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;padding:1rem;border:1px solid var(--gm-border);border-radius:var(--gm-radius);background:var(--gm-bg)}
+  :global(.style-control-grid legend){padding:0 .4rem;color:var(--gm-accent);font-weight:800}
+  :global(.style-control-grid label){display:grid;gap:.35rem;color:var(--gm-muted);font-size:.78rem}
+  :global(.style-control-grid input[type=color]){width:100%;height:38px;padding:3px;background:var(--gm-card);border:1px solid var(--gm-border);border-radius:5px}
+  :global(.style-control-grid input[type=range]){width:100%;accent-color:var(--gm-accent)}
+  :global(.style-preview){margin-top:1rem;padding:1rem;border:1px dashed var(--gm-border);border-radius:var(--gm-radius)}
+  :global(.style-preview-card){margin-top:.6rem;padding:var(--gm-panel-padding);background:var(--gm-panel);border:1px solid var(--gm-border);border-radius:var(--gm-radius);color:var(--gm-text)}
+  :global(.style-preview-card h3){font-size:var(--gm-heading-size);margin:.2rem 0}
+  :global(.style-preview-card p){color:var(--gm-muted)}
+  :global(.rules-panel .rule-card),:global(.rules-panel .rule-description),:global(.rules-panel .rule-details),:global(.rules-panel .rule-source){color:#fff!important}
+  :global(.rules-panel .rule-card){background:#13262e!important}
+  :global(.rules-panel .rule-description){white-space:pre-wrap}
+  :global(.nautical-columns){container-type:inline-size;grid-template-columns:minmax(170px,.8fr) minmax(220px,1fr) minmax(260px,1.2fr)!important;gap:var(--gm-panel-gap)!important}
+  :global(.nautical-actions),:global(.nautical-content){min-width:0;max-height:calc(100vh - 14rem);overflow:auto;scrollbar-width:thin}
+  :global(.nautical-actions){display:flex;flex-direction:column;gap:.5rem}
+  :global(.nautical-actions .weapon-attacks-section){margin:0}
+  :global(.nautical-actions .action-heading){margin:0;padding:.65rem;border:1px solid #3fb8b8;border-radius:7px;background:#13262e}
+  :global(.nautical-actions .action-heading span){color:#b5bec3;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+  @container (max-width:900px){:global(.nautical-columns){grid-template-columns:minmax(160px,.8fr) minmax(0,1fr)!important}:global(.nautical-content){grid-column:1/-1}}
+  @container (max-width:580px){:global(.nautical-columns){grid-template-columns:minmax(0,1fr)!important}:global(.nautical-content){grid-column:1}:global(.nautical-skills),:global(.nautical-actions),:global(.nautical-content){max-height:none}:global(.style-control-grid),:global(.style-control-grid fieldset){grid-template-columns:1fr}}
   /* Hoja de personaje: interfaz náutica en tres columnas */
   :global(.nautical-sheet){display:block!important;padding:0!important;overflow:hidden;background:#13262e!important;border:1px solid #3fb8b8!important;border-radius:12px!important;box-shadow:0 16px 40px #0b171d99!important;color:#ffffff!important}
   :global(.nautical-header){display:flex!important;align-items:center;gap:1rem;padding:1rem 1.2rem!important;margin:0!important;border:0!important;border-bottom:1px solid #3fb8b8!important;border-radius:0!important;background:linear-gradient(115deg,#13262e,#13262e 65%,#13262e)!important}
