@@ -20,7 +20,7 @@
   let obrRole = '';
   let playerName = '';
   let activeTab = 'Todas';
-  let monsterCrFilter = 'Todos';
+  let monsterCrFilter = '0';
   let monsterSearch = '';
   let itemSearch = '';
   let itemTypeFilter = 'Todos';
