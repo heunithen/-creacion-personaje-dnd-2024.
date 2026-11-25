@@ -4673,4 +4673,66 @@ import ITEMS from './items.json';
     :global(.nautical-quick-stats .attribute-plaque){flex:1 1 26%}
   }
 
+
+  /* Estadísticas superiores: tarjetas independientes y legibles */
+  :global(.nautical-quick-stats){
+    display:flex!important;
+    flex-direction:column!important;
+    gap:.45rem!important;
+    padding:.5rem!important;
+  }
+  :global(.nautical-quick-stats>.attribute-plaque-row),
+  :global(.nautical-quick-stats>.quick-stats-row){
+    width:100%!important;
+    min-width:0!important;
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+  }
+  :global(.nautical-quick-stats>.quick-stats-row){
+    display:grid!important;
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+    gap:.4rem!important;
+  }
+  :global(.nautical-quick-stats>.quick-stats-row>div){
+    display:flex!important;
+    min-width:0!important;
+    min-height:3.4rem;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    justify-content:center!important;
+    gap:.3rem!important;
+    padding:.5rem .55rem!important;
+    border:1px solid #28676b!important;
+    border-radius:6px!important;
+    background:linear-gradient(145deg,#12373c,#0b252b)!important;
+  }
+  :global(.nautical-quick-stats>.quick-stats-row>div>span){
+    display:block!important;
+    font-size:.62rem!important;
+    line-height:1.2!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  :global(.nautical-quick-stats>.quick-stats-row>div>strong){
+    display:block!important;
+    font-size:.95rem!important;
+    line-height:1.2!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  :global(.nautical-quick-stats>.quick-stats-row>.hp-plaque){
+    grid-column:auto!important;
+  }
+  @media(max-width:760px){
+    :global(.nautical-quick-stats>.quick-stats-row){
+      grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    }
+  }
+  @media(max-width:480px){
+    :global(.nautical-quick-stats>.quick-stats-row){
+      grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    }
+  }
+
 </style>
