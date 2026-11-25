@@ -6259,4 +6259,23 @@ import ITEMS from './items.json';
 :global(.toast){background:#1b2a33!important;color:#ffffff!important;border-color:#3fb8b8!important}
 :global(.chest-table th),:global(.items-table th){background:#1b2a33!important;color:#ffffff!important}
 :global(.chest-table td),:global(.items-table td){background:#13262e!important;color:#b5bec3!important;border-color:#3a4a52!important}
+
+  /* Aplicación efectiva de las variables del configurador global */
+  :global(html),:global(body),:global(#app){background:var(--gm-bg)!important}
+  :global(.app-shell),:global(.main){color:var(--gm-text)!important}
+  :global(.topbar),:global(.nautical-sheet),:global(.nautical-columns){background:var(--gm-bg)!important}
+  :global(.panel),:global(.character-sheet),:global(.sheet-section),:global(.character-card),:global(.monster-card),:global(.spell-card),:global(.weapon-attack-card),:global(.player-feature-card),:global(.player-spell-card),:global(.builder-option-card),:global(.builder-class-card),:global(.trait-editor),:global(.import-box),:global(.custom-roll-card),:global(.ddb-content-panel),:global(.chest-result),:global(.roll-result){background:var(--gm-panel)!important;color:var(--gm-text)!important;border-color:var(--gm-border)!important;border-radius:var(--gm-radius)!important}
+  :global(input),:global(textarea),:global(select),:global(.editable){background:var(--gm-bg)!important;color:var(--gm-text)!important;border-color:var(--gm-border)!important}
+  :global(button),:global(.secondary),:global(.master-tabs button),:global(.nautical-tabs button){background:var(--gm-card)!important;color:var(--gm-muted)!important;border-color:var(--gm-border)!important}
+  :global(button.active),:global(.master-tabs button.active),:global(.nautical-tabs button.active),:global(button.primary),:global(.primary){background:var(--gm-accent)!important;color:var(--gm-bg)!important;border-color:var(--gm-accent)!important}
+  :global(h1),:global(h2),:global(h3),:global(h4),:global(.character-name),:global(.stat-value),:global(.rule-name){color:var(--gm-text)!important}
+  :global(.muted),:global(.hint),:global(label),:global(.stat-label),:global(.sheet-notes-content),:global(.rule-description),:global(.rule-source){color:var(--gm-muted)!important}
+  :global(.brand-mark),:global(.eyebrow),:global(.section-name),:global(.trait-level),:global(.count),:global(.card-symbol){color:var(--gm-accent)!important}
+  :global(.panel),:global(.sheet-section),:global(.character-card),:global(.monster-card){padding:var(--gm-panel-padding)!important}
+  :global(.nautical-columns){gap:var(--gm-panel-gap)!important}
+  :global(.nautical-columns .sheet-section-title),:global(.sheet-stat),:global(.sheet-section-title){border-color:var(--gm-border)!important}
+  :global(.rules-panel .rule-description),:global(.rules-panel .rule-details),:global(.rules-panel .rule-source){color:#fff!important}
+  :global(.style-preview-card){background:var(--gm-panel)!important;color:var(--gm-text)!important;border-color:var(--gm-border)!important}
+  :global(.style-preview-card p){color:var(--gm-muted)!important}
+
 </style>
