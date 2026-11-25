@@ -1852,7 +1852,16 @@
       general('DETALLE DE CONJUROS',['Conjuros y descripciones']),
       general('DETALLES DE ESPECIE',['Elección de especie','Rasgos de especie','Competencia adicional','Elecciones mágicas','Tamaño'])
     ];
-    const put = (pair:number,index:number,value:string) => { pairs[pair].values.stats[index].value = value; };
+    const put = (pair:number,index:number,value:string) => {
+      const target = pairs[pair];
+      if (!target || index < 0) throw new Error('No se encontró la sección o el campo de ficha solicitado (sección ' + pair + ', campo ' + index + ').');
+      const headingStats = target.heading.stats || (target.heading.stats = []);
+      while (headingStats.length <= index) headingStats.push({ id: headingStats.length + 1, name: 'Dato ' + (headingStats.length + 1), value: '' });
+      const valueSection = target.values || (target.values = { id: Date.now() + pair, name: 'VALORES', stats: [] });
+      const valueStats = valueSection.stats || (valueSection.stats = []);
+      while (valueStats.length <= index) valueStats.push({ id: valueStats.length + 1, name: '✎', value: '' });
+      valueStats[index].value = value;
+    };
     put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
     BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(finalAbilities[a])+' ('+mod(Number(finalAbilities[a]))+')'));
     put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,String(Math.max(1,hp))+' PG'); put(2,2,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,3,String(builderStartingAC())+' (según equipo inicial y rasgos)'); put(2,8,builderStartingACFormula()); put(2,4,(builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0) >= 0 ? '+' : '') + (builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0))); put(2,5,(b.species === 'Goliat' || (b.species === 'Elfo' && b.speciesChoice === 'Elfo de los bosques') ? '10,5 m' : '9 m')); put(2,6,proficiency); put(2,7,BUILDER_SAVES[b.className] || '—');
