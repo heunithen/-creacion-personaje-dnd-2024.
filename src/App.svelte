@@ -5917,4 +5917,54 @@ import ITEMS from './items.json';
   :global(.github-character-row small){color:#b5bec3!important}
   :global(.empty-state){color:#b5bec3!important}
 
+
+  /* Corrección específica de superficies beige que sobrevivían a la paleta global */
+  :global(.builder-panel>label),:global(.builder-panel label){color:#b5bec3!important}
+  :global(.builder-panel input),:global(.builder-panel select),:global(.builder-panel textarea),
+  :global(.github-folder-create input),:global(.github-character-actions select){
+    background:#0b171d!important;color:#fff!important;border:1px solid #3a4a52!important
+  }
+  :global(.builder-progress){background:#22333d!important}
+  :global(.builder-info),:global(.builder-name-block),:global(.builder-choice-wrapper),
+  :global(.builder-choice-field),:global(.builder-option-card),:global(.builder-option-description),
+  :global(.builder-skill-card),:global(.builder-checkbox){
+    background:#13262e!important;color:#fff!important;border-color:#3fb8b8!important
+  }
+  :global(.builder-class-card),:global(.builder-class-card:hover){
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#fff!important
+  }
+  :global(.builder-panel .builder-class-card.selected),:global(.builder-class-card.selected){
+    background:#1d3b40!important;border:2px solid #5fe6e0!important;color:#fff!important
+  }
+  :global(.builder-class-card-heading),:global(.builder-class-card-heading strong),
+  :global(.builder-class-meta strong),:global(.builder-option-card strong){color:#fff!important}
+  :global(.builder-class-description),:global(.builder-class-meta),
+  :global(.builder-option-description),:global(.builder-skill-description){color:#b5bec3!important}
+  :global(.builder-class-meta),:global(.builder-class-meta>span){border-color:#2a3a43!important;color:#b5bec3!important}
+  :global(.builder-class-card-heading>span),:global(.builder-option-badge){
+    background:#0f1e26!important;color:#5fe6e0!important;border-color:#3fb8b8!important
+  }
+  :global(.builder-checkbox:has(input:checked)){
+    background:#1d3b40!important;border-color:#5fe6e0!important;color:#fff!important
+  }
+  :global(.builder-checkbox:has(input:disabled):not(:has(input:checked))){
+    background:#13262e!important;color:#8e9aa1!important;border-color:#3a4a52!important
+  }
+  :global(.builder-checkbox:has(input:focus-visible)){outline-color:#5fe6e0!important}
+  :global(.master-tabs button){background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
+  :global(.master-tabs button.active){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+  :global(.github-config-panel),:global(.github-character-row),:global(.github-folder-chip),
+  :global(.github-status),:global(.github-character-actions button){
+    background:#13262e!important;color:#fff!important;border-color:#3fb8b8!important
+  }
+  :global(.github-character-row small){color:#b5bec3!important}
+  :global(.attributes-section),:global(.features-section .sheet-stat),
+  :global(.features-section .sheet-stat strong),:global(.features-section .stat-value){
+    background:#10232b!important;color:#fff!important;border-color:#3fb8b8!important
+  }
+  :global(.attributes-section .sheet-stat){background:#13262e!important;border-color:#3a4a52!important}
+  :global(.editable:hover){background:#13262e!important;border-color:#5fe6e0!important}
+  :global(.sheet-tabs button){background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
+  :global(.sheet-tabs button.active){background:#0f1e26!important;color:#fff!important;border-color:#5fe6e0!important}
+
 </style>
