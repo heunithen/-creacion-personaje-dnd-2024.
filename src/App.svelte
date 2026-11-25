@@ -4542,3 +4542,4 @@ import ITEMS from './items.json';
   :global(.inline-roll:hover){color:#9ac8ff;text-decoration-color:currentColor}
   :global(.sheet-readonly-value){white-space:pre-wrap;overflow-wrap:anywhere}
   :global(.character-sheet .editable:hover){background:#1a1011!important;border-color:#8c2732!important}
+</style>
