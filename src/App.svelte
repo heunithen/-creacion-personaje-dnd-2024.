@@ -6026,4 +6026,70 @@ import ITEMS from './items.json';
   :global(.primary),:global(button.primary){background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
   :global(.primary:hover),:global(button.primary:hover){background:#b5bec3!important}
 
+
+
+/* PALETA CANÓNICA ÚNICA — Forja de Aventureros */
+:global(:root){
+ --paper:#13262e;--paper-deep:#1b2a33;--ink:#ffffff;--ink-soft:#b5bec3;
+ --rule:#3a4a52;--red:#3fb8b8;--gold:#5fe6e0;
+ --ocean-0:#0b171d;--ocean-1:#0f1e26;--ocean-2:#13262e;
+ --slate-1:#1b2a33;--slate-2:#22333d;--aqua:#5fe6e0;--aqua-mid:#3fb8b8;
+ --text-main:#ffffff;--text-secondary:#b5bec3;--text-muted:#8e9aa1;--line:#3a4a52
+}
+:global(html),:global(body){background:#0b171d!important;color:#ffffff!important}
+:global(body){background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#0b171d 100%)!important}
+:global(.app-shell),:global(.main){color:#ffffff!important}
+:global(.topbar){background:#0f1e26!important;border-color:#3a4a52!important}
+:global(.brand),:global(.brand strong),:global(h1),:global(h2),:global(h3),:global(h4){color:#ffffff!important}
+:global(.brand small),:global(.intro),:global(.connection),:global(.hint),:global(.muted),:global(.stat-label),:global(.monster-source),:global(.spell-source){color:#b5bec3!important}
+:global(.brand-mark),:global(.eyebrow),:global(.section-name),:global(.trait-group h3){color:#5fe6e0!important}
+:global(.panel),:global(.character-card),:global(.monster-card),:global(.trait-editor),:global(.import-box),
+:global(.ability),:global(.builder-panel),:global(.level-up-panel),:global(.items-panel),
+:global(.character-sheet),:global(.sheet-section),:global(.custom-rolls),:global(.custom-roll-card),
+:global(.spell-card),:global(.monster-statblock),:global(.ddb-content-panel),:global(.github-config-panel),
+:global(.github-character-row),:global(.github-folder-chip),:global(.github-status),:global(.builder-info),
+:global(.builder-choice-wrapper),:global(.builder-choice-field),:global(.builder-option-card),
+:global(.builder-skill-card),:global(.builder-class-card),:global(.weapon-attack-card),
+:global(.weapon-mastery-summary),:global(.player-spell-card),:global(.player-feature-card),
+:global(.player-feat-section),:global(.new-roll-part){background:#13262e!important;color:#ffffff!important;border-color:#3a6870!important}
+:global(.spell-meta),:global(.monster-combat-grid div),:global(.monster-info-item),
+:global(.monster-attacks),:global(.monster-role),:global(.monster-entry),
+:global(.roll-result),:global(.roll-notation),:global(.chest-result),
+:global(.sheet-quick-stats>div),:global(.builder-option-description),
+:global(.subclass-level-preview),:global(.traits-preview),:global(.trait-view){background:#1b2a33!important;color:#ffffff!important;border-color:#3a4a52!important}
+:global(input),:global(textarea),:global(select){background:#0b171d!important;color:#ffffff!important;border-color:#3a4a52!important}
+:global(input:focus),:global(textarea:focus),:global(select:focus){border-color:#5fe6e0!important;outline-color:#5fe6e0!important}
+:global(input::placeholder),:global(textarea::placeholder){color:#8e9aa1!important}
+:global(button),:global(.secondary),:global(.master-tabs button),:global(.sheet-tabs button),
+:global(.player-tabs button),:global(.ddb-section-nav button),:global(.roll-actions button){
+ background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important
+}
+:global(button.active),:global(.master-tabs button.active),:global(.sheet-tabs button.active),
+:global(.player-tabs button.active),:global(.ddb-section-nav button.active){
+ background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important
+}
+:global(.primary),:global(button.primary){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+:global(.primary:hover),:global(button.primary:hover){background:#79f1eb!important}
+:global(.sheet-section-title),:global(.sheet-stat),:global(.roll-entry),:global(.trait-view),
+:global(.traits-preview),:global(.subheading),:global(.monster-source),:global(.spell-source){border-color:#3a4a52!important}
+:global(.stat-value),:global(.sheet-stat strong),:global(.character-name),:global(.spell-name),
+:global(.monster-name),:global(.monster-entry strong),:global(.weapon-attack-card h4),
+:global(.player-feature-name),:global(.chest-result strong){color:#ffffff!important}
+:global(.spell-subtitle),:global(.monster-subtitle),:global(.monster-info-item small),
+:global(.monster-combat-grid small),:global(.player-feature-source),:global(.player-spell-level),
+:global(.weapon-attack-values span),:global(.chest-result-number),:global(.chest-result>span:last-child){color:#b5bec3!important}
+:global(.roll-result b),:global(.trait-level),:global(.card-symbol){color:#5fe6e0!important}
+:global(.toast){background:#1b2a33!important;color:#ffffff!important;border-color:#3fb8b8!important}
+:global(footer){border-color:#3a4a52!important;color:#8e9aa1!important}
+:global(.builder-progress){background:#1b2a33!important}
+:global(.builder-progress span){background:#5fe6e0!important}
+:global(.chest-table th),:global(.items-table th){background:#1b2a33!important;color:#ffffff!important}
+:global(.chest-table td),:global(.items-table td){background:#13262e!important;color:#b5bec3!important;border-color:#3a4a52!important}
+:global(.chest-table td:first-child),:global(.items-table td:first-child){color:#ffffff!important}
+:global(.editable),:global(.stat-value){background:#0b171d!important;color:#ffffff!important}
+:global(.editable:hover){background:#13262e!important;border-color:#5fe6e0!important}
+:global(.monster-heading){border-bottom-color:#5fe6e0!important}
+:global(.monster-content-section){border-top-color:#3fb8b8!important}
+:global(.monster-content-section h4){color:#5fe6e0!important}
+:global(.empty-state){color:#b5bec3!important}
 </style>
