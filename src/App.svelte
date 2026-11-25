@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import OBR from '@owlbear-rodeo/sdk';
+  import OBR, { buildImage } from '@owlbear-rodeo/sdk';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
   const CHANNEL = 'com.heunithen.dnd2024-character-builder/character-sync';
@@ -38,6 +38,10 @@
   let syncInProgress = false;
   let syncPending = false;
   let fileInput: HTMLInputElement;
+  let imageSheetOpen = false;
+  let imageSheetTarget: RawSheet | null = null;
+  let imageSheetText = '';
+  let imageSheetBusy = false;
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
   const CHEST_LOOT = [
@@ -3245,6 +3249,129 @@ import ITEMS from './items.json';
     }
   }
 
+
+  function buildCharacterImageText(target: RawSheet): string {
+    const lines: string[] = [];
+    for (const pair of sectionPairs(target.sections || [])) {
+      const sectionName = String(pair.heading.name || '').trim();
+      if (!sectionName || /gestión de ficha|valores|detalle de conjuros/i.test(sectionName)) continue;
+      const entries = (pair.heading.stats || []).map((stat, index) => {
+        const value = displayValue(pair.values?.stats?.[index]?.value ?? stat.value);
+        return value && !/^[-—]+$/.test(value.trim()) ? String(stat.name || 'Dato') + ': ' + value : '';
+      }).filter(Boolean);
+      if (entries.length) lines.push('## ' + sectionName, ...entries, '');
+    }
+    return lines.join('\n').trim();
+  }
+
+  function openCharacterImage(target: RawSheet) {
+    imageSheetTarget = target;
+    imageSheetText = buildCharacterImageText(target);
+    imageSheetOpen = true;
+  }
+
+  function drawWrappedCanvasText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number {
+    const words = String(text).split(/\\s+/);
+    let line = '';
+    for (const word of words) {
+      const candidate = line ? line + ' ' + word : word;
+      if (ctx.measureText(candidate).width > maxWidth && line) {
+        ctx.fillText(line, x, y);
+        y += lineHeight;
+        line = word;
+      } else line = candidate;
+    }
+    if (line) { ctx.fillText(line, x, y); y += lineHeight; }
+    return y;
+  }
+
+  async function addCharacterImageProp() {
+    if (!imageSheetTarget || imageSheetBusy) return;
+    if (!obrReady || !OBR.isAvailable) {
+      notice = 'Abre la extensión dentro de una sala de Owlbear Rodeo para colocar la ficha como PROP.';
+      return;
+    }
+    imageSheetBusy = true;
+    try {
+      const width = 1800, height = 2200;
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('No se pudo crear el lienzo de la ficha.');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, height);
+      ctx.strokeStyle = '#333333'; ctx.lineWidth = 8; ctx.strokeRect(22, 22, width - 44, height - 44);
+      ctx.fillStyle = '#333333'; ctx.fillRect(22, 22, width - 44, 14);
+      ctx.fillStyle = '#555555'; ctx.font = 'bold 48px Arial'; ctx.fillText('FAST CHARACTER', 95, 130);
+      ctx.fillStyle = '#111111'; ctx.textAlign = 'center'; ctx.font = 'bold 76px Georgia';
+      ctx.fillText(String(imageSheetTarget.name || 'PERSONAJE').toLocaleUpperCase('es').slice(0, 28), width / 2, 150);
+      ctx.textAlign = 'left'; ctx.font = '28px Arial'; ctx.fillStyle = '#333333';
+      const className = sheetClassName(imageSheetTarget) || 'Clase no indicada';
+      const level = sheetLevel(imageSheetTarget);
+      const species = sheetValueByNames(imageSheetTarget, ['Especie','Raza','Ascendencia']) || '';
+      const background = sheetValueByNames(imageSheetTarget, ['Trasfondo']) || '';
+      ctx.fillText(className + ' ' + level + (species ? ' · ' + species : '') + (background ? ' · ' + background : ''), 95, 205);
+      ctx.strokeStyle = '#888888'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(95, 245); ctx.lineTo(width - 95, 245); ctx.stroke();
+
+      const abilityNames = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+      const abilityValues = abilityNames.map(name => sheetValueByNames(imageSheetTarget!, [name], ['ATRIBUTOS','CARACTERÍSTICAS','CARACTERISTICAS']));
+      const cardY = 285, cardW = 245, cardH = 155, gap = 28;
+      abilityNames.forEach((name, index) => {
+        const x = 95 + index * (cardW + gap);
+        ctx.strokeStyle = '#888888'; ctx.lineWidth = 5; ctx.strokeRect(x, cardY, cardW, cardH);
+        ctx.fillStyle = '#555555'; ctx.font = 'bold 25px Arial'; ctx.textAlign = 'center'; ctx.fillText(name.toUpperCase(), x + cardW/2, cardY + 42);
+        ctx.fillStyle = '#111111'; ctx.font = 'bold 52px Arial'; ctx.fillText(abilityValues[index] || '—', x + cardW/2, cardY + 105);
+      });
+      ctx.textAlign = 'left';
+      const textSections: {title:string; lines:string[]}[] = [];
+      let current: {title:string;lines:string[]}|null = null;
+      for (const raw of imageSheetText.split(/\\r?\\n/)) {
+        const line = raw.trim();
+        if (!line) continue;
+        if (line.startsWith('## ')) {
+          current = { title: line.slice(3).toLocaleUpperCase('es'), lines: [] };
+          textSections.push(current);
+        } else {
+          if (!current) { current = { title: 'DATOS DEL PERSONAJE', lines: [] }; textSections.push(current); }
+          current.lines.push(line);
+        }
+      }
+      const columns = [{x:95,y:500,w:760},{x:945,y:500,w:760}];
+      let columnIndex = 0;
+      for (const section of textSections) {
+        let col = columns[columnIndex];
+        if (col.y > 1880) { columnIndex = 1 - columnIndex; col = columns[columnIndex]; }
+        ctx.fillStyle = '#555555'; ctx.fillRect(col.x, col.y, col.w, 5); col.y += 42;
+        ctx.fillStyle = '#222222'; ctx.font = 'bold 27px Arial';
+        col.y = drawWrappedCanvasText(ctx, section.title, col.x, col.y, col.w, 34) + 8;
+        ctx.fillStyle = '#222222'; ctx.font = '21px Arial';
+        for (const line of section.lines) {
+          col.y = drawWrappedCanvasText(ctx, line, col.x + 8, col.y, col.w - 16, 29);
+          if (col.y > 2100) break;
+        }
+        col.y += 26;
+        if (col.y > columns[1-columnIndex].y) columnIndex = 1-columnIndex;
+      }
+      const dataUrl = canvas.toDataURL('image/png');
+      const viewport = await OBR.viewport.getPosition();
+      const item = buildImage(
+        { width, height, mime: 'image/png', url: dataUrl },
+        { dpi: 150, offset: { x: 0, y: 0 } }
+      ).build() as any;
+      item.name = 'Ficha · ' + (imageSheetTarget.name || 'Personaje');
+      item.layer = 'PROP';
+      item.position = { x: viewport.x - width/2, y: viewport.y - height/2 };
+      item.scale = { x: 1, y: 1 };
+      await OBR.scene.items.addItems([item]);
+      imageSheetOpen = false;
+      notice = 'Ficha de ' + (imageSheetTarget.name || 'personaje') + ' añadida a la escena como PROP. Puedes moverla y cambiar su tamaño en Owlbear.';
+    } catch (error) {
+      console.error('No se pudo crear la ficha PROP:', error);
+      notice = 'No se pudo añadir la ficha a la escena: ' + (error instanceof Error ? error.message : String(error));
+    } finally {
+      imageSheetBusy = false;
+    }
+  }
+
   async function exportSheet() {
     if (!sheet) return;
     const json = JSON.stringify(sheet, null, 2);
@@ -3957,6 +4084,15 @@ import ITEMS from './items.json';
                 {/if}
               </div>
             </article>
+            <section class="character-image-export">
+              <div class="section-heading"><h3>Ficha estática para Owlbear</h3><span class="count">PROP</span></div>
+              <p class="muted">Prepara una versión imprimible de la ficha. Puedes editar el texto antes de convertirlo en una imagen estática y colocarla en la escena.</p>
+              <button class="secondary" type="button" on:click={() => openCharacterImage(builderPreview!)}>Preparar ficha como imagen</button>
+              {#if imageSheetOpen && imageSheetTarget === builderPreview}
+                <label>Texto de la ficha · editable<textarea class="character-image-text" bind:value={imageSheetText} rows="12"></textarea></label>
+                <div class="actions"><button class="secondary" type="button" on:click={() => imageSheetOpen = false}>Cancelar</button><button class="primary" type="button" disabled={imageSheetBusy} on:click={addCharacterImageProp}>{imageSheetBusy ? 'Generando…' : 'Generar imagen y añadir como PROP'}</button></div>
+              {/if}
+            </section>
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
               <button type="button" class="primary" disabled={builderSaving} on:click={saveBuilderCharacter}>{builderSaving ? 'Guardando…' : 'Guardar personaje en mi ficha'}</button>
@@ -3970,6 +4106,13 @@ import ITEMS from './items.json';
       {#if sheet && !playerCreating}
         <section class="panel player-character-actions">
           <button class="secondary" on:click={startBuilder}>Crear personaje nuevo</button>
+          <button class="secondary" on:click={() => openCharacterImage(sheet!)}>Preparar ficha como imagen PROP</button>
+          {#if imageSheetOpen && imageSheetTarget === sheet}
+            <div class="character-image-export">
+              <label>Texto de la ficha · editable<textarea class="character-image-text" bind:value={imageSheetText} rows="12"></textarea></label>
+              <div class="actions"><button class="secondary" type="button" on:click={() => imageSheetOpen = false}>Cancelar</button><button class="primary" type="button" disabled={imageSheetBusy} on:click={addCharacterImageProp}>{imageSheetBusy ? 'Generando…' : 'Generar imagen y añadir como PROP'}</button></div>
+            </div>
+          {/if}
         </section>
       {/if}
       {#if sheet && !playerCreating}
@@ -4480,6 +4623,8 @@ import ITEMS from './items.json';
   .spell-card-details small{color:#a99b9d;font-size:.62rem}
   @media(max-width:650px){.spell-filters{grid-template-columns:1fr 1fr}.spell-filters label:first-child{grid-column:1/-1}.feature-card-grid,.spell-card-grid{grid-template-columns:1fr}}
 
+  .character-image-export{display:grid;gap:.75rem;margin:1rem 0;padding:1rem;border:1px solid #7d4148;border-radius:9px;background:#100b0c}
+  .character-image-text{min-height:260px;font: .78rem/1.5 ui-monospace,monospace;white-space:pre-wrap}
   .sheet-quick-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.45rem;padding:.65rem;margin:.7rem 0 1rem;border:1px solid #54232a;border-radius:8px;background:linear-gradient(120deg,#160b0d,#090909)}
   .sheet-quick-stats>div{display:grid;gap:.25rem;min-width:0;padding:.35rem .45rem;border-right:1px solid #54232a}
   .sheet-quick-stats>div:last-child{border-right:0}
