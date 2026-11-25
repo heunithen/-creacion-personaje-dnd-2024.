@@ -3197,7 +3197,7 @@ import ITEMS from './items.json';
     if (/inventario|equipo|objeto|inventory|equipment/.test(n)) return 'Inventario';
     if (/velocidad|speed|defensa|defenses|resistencia|inmunidad|vulnerabilidad|puntos de golpe|hit points|armadura|armor class|clase de armadura/.test(n)) return 'Velocidad y defensas';
     if (/rasgo|dote|caracteristica de clase|racial|especie|feature|trait/.test(n)) return 'Rasgos y características';
-    if (/competencia|entrenamiento|proficien|idioma|herramienta|tool|weapon training|armor training/.test(n)) return 'Competencias y entrenamiento';
+    if (/competencia|entrenamiento|proficien|idioma|herramienta|tool|weapon training|armor training/.test(n)) return 'Rasgos y competencias';
     if (/trasfondo|background|historia|personalidad|apariencia/.test(n)) return 'Trasfondo';
     if (/nota[s]?|notes/.test(n)) return 'Notas';
     if (/extra[s]?|compañero|mascota|familiar|extras/.test(n)) return 'Extras';
@@ -3235,8 +3235,8 @@ import ITEMS from './items.json';
       'Acciones',
       'Inventario',
       'Conjuros',
+      'Rasgos y competencias',
       'Rasgos y características',
-      'Competencias y entrenamiento',
       'Trasfondo',
       'Notas',
       'Extras'
@@ -3266,9 +3266,9 @@ import ITEMS from './items.json';
   }
 
   let builderPreviewTab = 'Características y salvaciones';
-  const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Habilidades','Acciones','Inventario','Conjuros','Rasgos y características','Competencias y entrenamiento','Trasfondo','Notas','Extras'];
+  const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Habilidades','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Rasgos y características', 'Descripción', 'Notas'];
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
 
   function playerSheetPairs(tab: string, sections: RawSection[] = sheet?.sections || []) {
     return sectionPairs(sections).filter(pair => {
@@ -3277,7 +3277,7 @@ import ITEMS from './items.json';
       if (tab === 'Acciones') return category === 'Acciones' || category === 'Velocidad y defensas';
       if (tab === 'Conjuros') return category === 'Conjuros';
       if (tab === 'Inventario') return category === 'Inventario';
-      if (tab === 'Rasgos y características') return category === 'Rasgos y características' || category === 'Extras';
+      if (tab === 'Rasgos y competencias') return category === 'Rasgos y competencias' || category === 'Rasgos y características' || category === 'Extras';
       if (tab === 'Descripción') return category === 'Trasfondo';
       if (tab === 'Notas') return category === 'Notas';
       return false;
@@ -3315,7 +3315,7 @@ import ITEMS from './items.json';
     if (/ataque|arma/.test(n)) return 'attacks-section';
     if (/atribut|característic|ability|ability score/.test(n)) return 'attributes-section';
     if (/combate|ataque|armadura|punto de golpe|defensa/.test(n)) return 'combat-section';
-    if (/habilidad|salvaci|competenc/.test(n)) return 'skills-section';
+    if (/habilidad|salvaci/.test(n)) return 'skills-section';
     if (/rasgo|dote|característica de clase|especie|racial/.test(n)) return 'features-section';
     if (/conjuro|magia|hechizo/.test(n)) return 'magic-section';
     if (/equipo|inventario|objeto/.test(n)) return 'equipment-section';
@@ -4144,19 +4144,6 @@ import ITEMS from './items.json';
           {/if}
 
           <div class="nautical-columns">
-            <aside class="nautical-side">
-              {#each playerSidePairs('training', sheet.sections || []) as pair}
-                <section class="sheet-section">
-                  <div class="sheet-section-title"><h3>{pair.heading.name || 'Competencias'}</h3></div>
-                  <div class="stats-list">
-                    {#each pair.heading.stats || [] as stat, i}
-                      <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
-                    {/each}
-                  </div>
-                </section>
-              {/each}
-            </aside>
-
             <section class="nautical-skills">
               {#each playerSidePairs('skills', sheet.sections || []) as pair}
                 <section class="sheet-section skills-section">
