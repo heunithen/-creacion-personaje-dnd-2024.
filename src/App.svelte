@@ -3239,6 +3239,37 @@ import ITEMS from './items.json';
       });
   }
 
+  let playerSheetTab = 'Acciones';
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Rasgos y características', 'Descripción', 'Notas'];
+
+  function playerSheetPairs(tab: string, sections: RawSection[] = sheet?.sections || []) {
+    return sectionPairs(sections).filter(pair => {
+      const heading = String(pair.heading.name || '');
+      const category = sectionTab(heading);
+      if (tab === 'Acciones') return category === 'Acciones' || category === 'Velocidad y defensas';
+      if (tab === 'Conjuros') return category === 'Conjuros';
+      if (tab === 'Inventario') return category === 'Inventario';
+      if (tab === 'Rasgos y características') return category === 'Rasgos y características' || category === 'Extras';
+      if (tab === 'Descripción') return category === 'Trasfondo';
+      if (tab === 'Notas') return category === 'Notas';
+      return false;
+    });
+  }
+
+  function playerSidePairs(kind: 'saves' | 'skills' | 'training', sections: RawSection[] = sheet?.sections || []) {
+    return sectionPairs(sections).filter(pair => {
+      const heading = String(pair.heading.name || '').toLocaleLowerCase();
+      const category = sectionTab(heading);
+      if (kind === 'skills') return category === 'Habilidades';
+      if (kind === 'training') return category === 'Competencias y entrenamiento';
+      return /salvaci|saving throw/.test(heading);
+    });
+  }
+
+  function playerAttributes(sections: RawSection[] = sheet?.sections || []) {
+    return sectionPairs(sections).filter(pair => sectionClass(String(pair.heading.name || '')) === 'attributes-section');
+  }
+
   function sectionClass(name = '') {
     const n = name.toLocaleLowerCase();
     if (/ataque|arma/.test(n)) return 'attacks-section';
@@ -4011,8 +4042,9 @@ import ITEMS from './items.json';
         </section>
       {/if}
       {#if sheet && !playerCreating}
-        <article class="character-sheet">
-          <header class="sheet-banner ddb-character-header">
+        <article class="character-sheet nautical-sheet">
+          <header class="sheet-banner ddb-character-header nautical-header">
+            <div class="portrait-frame" aria-hidden="true"><span>✦</span></div>
             <div class="sheet-banner-copy">
               <span class="sheet-kicker">D&D · 2024</span>
               <h1 class="character-name">{sheet.name || 'Personaje'}</h1>
@@ -4023,48 +4055,103 @@ import ITEMS from './items.json';
                 <span>{sheetValueByNames(sheet, ['Nombre del jugador','Jugador']) || playerName || 'Jugador'}</span>
               </div>
             </div>
-            <div class="sheet-banner-emblem" aria-hidden="true">✦</div>
+            <div class="header-actions">
+              <button type="button" on:click={() => importOpen = !importOpen}>Gestionar</button>
+              <button type="button" on:click={exportSheet}>Exportar</button>
+            </div>
           </header>
-          <section class="sheet-quick-stats" aria-label="Datos rápidos del personaje">
-            <div><span>Puntos de golpe</span><strong>{sheetValueByNames(sheet, ['Puntos de golpe actuales','PG actuales']) || '—'} / {sheetValueByNames(sheet, ['Puntos de golpe máximos','PG máximos']) || '—'}</strong></div>
+
+          <section class="sheet-quick-stats nautical-quick-stats" aria-label="Características y estadísticas">
+            {#each playerAttributes(sheet.sections || []) as pair}
+              {#each pair.heading.stats || [] as stat, i}
+                <div class="attribute-plaque">
+                  <span>{stat.name || ''}</span>
+                  <strong>{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value) || '—'}</strong>
+                </div>
+              {/each}
+            {/each}
+            <div><span>Competencia</span><strong>{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
+            <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
+            <div class="hp-plaque"><span>Puntos de golpe</span><strong>{sheetValueByNames(sheet, ['Puntos de golpe actuales','PG actuales']) || '—'} / {sheetValueByNames(sheet, ['Puntos de golpe máximos','PG máximos']) || '—'}</strong></div>
             <div><span>Clase de armadura</span><strong>{sheetValueByNames(sheet, ['Clase de armadura','CA']) || '—'}</strong></div>
             <div><span>Iniciativa</span><strong>{sheetValueByNames(sheet, ['Iniciativa']) || '—'}</strong></div>
-            <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
-            <div><span>Competencia</span><strong>{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
           </section>
-          <section class="import-character-panel data-import-panel">
-            <div class="import-row">
-              <button class="secondary" on:click={() => importOpen = !importOpen}>Importar otro JSON</button>
-            </div>
-            {#if importOpen}
-              <div class="import-box">
-                <label>Archivo JSON<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
-                <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
-              </div>
-            {/if}
-          </section>
-          <div class="sheet-grid continuous-sheet-grid">
-            {#each continuousSheetPairs(sheet.sections || []) as pair}
-              <section class="sheet-section {sectionClass(pair.heading.name)}">
-                <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
-                <div class="stats-list">
-                  {#each pair.heading.stats || [] as stat, i}
-                    <div class="sheet-stat">
-                      <span class="stat-label">{stat.name || ''}</span>
-                      <div class="stat-value sheet-readonly-value">{#each rollableParts(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)) as part}
-                        {#if part.rollable}<button type="button" class="inline-roll" title="Tirar {part.notation} en Dice+" on:click={() => sendSheetRoll(part.notation, String(stat.name || pair.heading.name || 'Tirada'))}>{part.text}</button>{:else}<span>{part.text}</span>{/if}
-                      {/each}</div>
+
+          {#if importOpen}
+            <section class="import-character-panel data-import-panel nautical-import">
+              <label>Importar otro personaje (JSON)<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
+              <button class="secondary" on:click={() => importOpen = false}>Cerrar</button>
+            </section>
+          {/if}
+
+          <div class="nautical-columns">
+            <aside class="nautical-side">
+              {#each playerSidePairs('saves', sheet.sections || []) as pair}
+                <section class="sheet-section">
+                  <div class="sheet-section-title"><h3>{pair.heading.name || 'Salvaciones'}</h3></div>
+                  <div class="stats-list">
+                    {#each pair.heading.stats || [] as stat, i}
+                      <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
+                    {/each}
+                  </div>
+                </section>
+              {/each}
+              {#each playerSidePairs('training', sheet.sections || []) as pair}
+                <section class="sheet-section">
+                  <div class="sheet-section-title"><h3>{pair.heading.name || 'Competencias'}</h3></div>
+                  <div class="stats-list">
+                    {#each pair.heading.stats || [] as stat, i}
+                      <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
+                    {/each}
+                  </div>
+                </section>
+              {/each}
+            </aside>
+
+            <section class="nautical-skills">
+              {#each playerSidePairs('skills', sheet.sections || []) as pair}
+                <section class="sheet-section skills-section">
+                  <div class="sheet-section-title"><h3>{pair.heading.name || 'Habilidades'}</h3></div>
+                  <div class="skill-column-labels"><span>Habilidad</span><span>Valor</span></div>
+                  <div class="stats-list">
+                    {#each pair.heading.stats || [] as stat, i}
+                      <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
+                    {/each}
+                  </div>
+                </section>
+              {/each}
+            </section>
+
+            <section class="nautical-content">
+              <nav class="nautical-tabs" aria-label="Secciones de la ficha">
+                {#each playerSheetTabs as tab}
+                  <button type="button" class:active={playerSheetTab === tab} on:click={() => playerSheetTab = tab}>{tab}</button>
+                {/each}
+              </nav>
+              <div class="nautical-tab-content">
+                {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
+                  <section class="sheet-section {sectionClass(pair.heading.name)}">
+                    <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
+                    <div class="stats-list">
+                      {#each pair.heading.stats || [] as stat, i}
+                        <div class="sheet-stat">
+                          <span class="stat-label">{stat.name || ''}</span>
+                          <div class="stat-value sheet-readonly-value">{#each rollableParts(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)) as part}
+                            {#if part.rollable}<button type="button" class="inline-roll" title="Tirar {part.notation} en Dice+" on:click={() => sendSheetRoll(part.notation, String(stat.name || pair.heading.name || 'Tirada'))}>{part.text}</button>{:else}<span>{part.text}</span>{/if}
+                          {/each}</div>
+                        </div>
+                      {/each}
                     </div>
-                  {/each}
-                </div>
-              </section>
-            {/each}
-            {#if sheet.notes}
-              <section class="sheet-section general-section notes-section">
-                <div class="sheet-section-title"><h3>Notas</h3></div>
-                <div class="sheet-notes-content">{sheet.notes}</div>
-              </section>
-            {/if}
+                  </section>
+                {/each}
+                {#if playerSheetPairs(playerSheetTab, sheet.sections || []).length === 0}
+                  <p class="muted nautical-empty">No hay información registrada en esta sección.</p>
+                {/if}
+                {#if playerSheetTab === 'Notas' && sheet.notes}
+                  <section class="sheet-section notes-section"><div class="sheet-section-title"><h3>Notas</h3></div><div class="sheet-notes-content">{sheet.notes}</div></section>
+                {/if}
+              </div>
+            </section>
           </div>
         </article>
 
@@ -4366,4 +4453,42 @@ import ITEMS from './items.json';
     .continuous-sheet-grid>.attributes-section,.continuous-sheet-grid>.features-section,
     .continuous-sheet-grid>.magic-section,.continuous-sheet-grid>.notes-section{grid-column:auto}
   }
+ 
+  /* Hoja de personaje: interfaz náutica en tres columnas */
+  :global(.nautical-sheet){display:block!important;padding:0!important;overflow:hidden;background:#071b20!important;border:1px solid #247b7e!important;border-radius:12px!important;box-shadow:0 16px 40px #0009!important;color:#e8f7f4!important}
+  :global(.nautical-header){display:flex!important;align-items:center;gap:1rem;padding:1rem 1.2rem!important;margin:0!important;border:0!important;border-bottom:1px solid #287c7d!important;border-radius:0!important;background:linear-gradient(115deg,#0b3035,#10272d 65%,#0a1c23)!important}
+  :global(.portrait-frame){display:grid;place-items:center;flex:0 0 4.5rem;width:4.5rem;height:4.5rem;border:3px solid #b66b3c;border-radius:50%;background:radial-gradient(circle,#31545a,#0a2027 70%);color:#e8c18e;font-size:1.8rem;box-shadow:0 0 0 3px #4a2b20}
+  :global(.nautical-header .sheet-banner-copy){flex:1;min-width:0}
+  :global(.nautical-header .sheet-kicker){color:#6dd3ca}
+  :global(.nautical-header .character-name){color:#f4fffc!important;margin:.2rem 0!important}
+  :global(.nautical-header .sheet-banner-meta){color:#a9c9c5}
+  :global(.header-actions){display:flex;gap:.4rem;flex-wrap:wrap}
+  :global(.header-actions button){padding:.5rem .65rem;border:1px solid #347f80;border-radius:5px;background:#102f35;color:#d9f4ef;font-size:.7rem}
+  :global(.nautical-quick-stats){display:flex;flex-wrap:wrap;gap:.45rem;padding:.8rem;background:#0a242a;border-bottom:1px solid #247b7e}
+  :global(.nautical-quick-stats>div){flex:1 1 5rem;min-width:5rem;display:flex;flex-direction:column;justify-content:center;gap:.25rem;padding:.55rem .6rem;border:1px solid #28676b;border-radius:7px;background:linear-gradient(145deg,#12373c,#0b252b)}
+  :global(.nautical-quick-stats>div>span){font-size:.61rem;color:#7fcac2;text-transform:uppercase;letter-spacing:.06em}
+  :global(.nautical-quick-stats>div>strong){font-size:1rem;color:#f1fffc}
+  :global(.nautical-quick-stats .attribute-plaque){flex:1 1 5.4rem;min-height:4rem;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
+  :global(.nautical-quick-stats .attribute-plaque strong){font-size:1.25rem}
+  :global(.nautical-quick-stats .hp-plaque){flex:2 1 10rem}
+  :global(.nautical-import){padding:.8rem 1rem;background:#0b252b;border-bottom:1px solid #247b7e}
+  :global(.nautical-columns){display:grid;grid-template-columns:minmax(175px,.82fr) minmax(190px,.95fr) minmax(360px,2fr);gap:.65rem;padding:.7rem;align-items:start;background:radial-gradient(ellipse at 75% 0%,#17434a 0,#0a252b 50%,#071b20 100%)}
+  :global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){min-width:0;max-height:calc(100vh - 14rem);overflow:auto;scrollbar-color:#267d7d #092127;scrollbar-width:thin}
+  :global(.nautical-side),:global(.nautical-skills){display:flex;flex-direction:column;gap:.6rem}
+  :global(.nautical-columns .sheet-section){padding:.75rem!important;border:1px solid #286d70!important;border-top:2px solid #40aaa4!important;border-radius:8px!important;background:#0b252beF!important;color:#e8f7f4!important}
+  :global(.nautical-columns .sheet-section-title){border-bottom:1px solid #28595c!important;margin-bottom:.35rem;padding-bottom:.45rem}
+  :global(.nautical-columns .sheet-section-title h3){font:700 .78rem system-ui,sans-serif!important;letter-spacing:.07em;text-transform:uppercase;color:#80d8ce!important}
+  :global(.nautical-columns .sheet-stat){display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.45rem;padding:.42rem .15rem;border-bottom:1px solid #1c484c!important}
+  :global(.nautical-columns .stat-label){font-size:.72rem;color:#b8d1ce!important}
+  :global(.nautical-columns .stat-value){font:600 .75rem system-ui,sans-serif;color:#f2fffc!important;text-align:right}
+  :global(.nautical-tabs){display:flex;gap:.2rem;overflow-x:auto;padding:.1rem .1rem .55rem;margin-bottom:.55rem;border-bottom:1px solid #26777a;scrollbar-width:thin}
+  :global(.nautical-tabs button){flex:0 0 auto;padding:.55rem .65rem;border:1px solid transparent!important;border-radius:5px 5px 0 0;background:transparent!important;color:#a9c9c5!important;font-size:.68rem;font-weight:700;white-space:nowrap}
+  :global(.nautical-tabs button.active){border-color:#318c8b!important;background:#123a3e!important;color:#8ce4d9!important}
+  :global(.nautical-tab-content){display:flex;flex-direction:column;gap:.6rem}
+  :global(.skill-column-labels){display:flex;justify-content:space-between;padding:.2rem .15rem;color:#5fb9b3;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em}
+  :global(.nautical-empty){padding:1rem;text-align:center;border:1px dashed #286d70;border-radius:7px}
+  :global(.nautical-sheet .inline-roll){color:#75dcd2}
+  @media(max-width:900px){:global(.nautical-columns){grid-template-columns:minmax(150px,.8fr) minmax(170px,1fr)}:global(.nautical-content){grid-column:1/-1;max-height:none}:global(.nautical-side),:global(.nautical-skills){max-height:32rem}}
+  @media(max-width:580px){:global(.nautical-header){flex-wrap:wrap}:global(.header-actions){width:100%;padding-left:5.5rem}:global(.nautical-columns){grid-template-columns:1fr}:global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){grid-column:1;max-height:none}:global(.nautical-quick-stats .attribute-plaque){flex:1 1 26%}}
+
 </style>
