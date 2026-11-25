@@ -1116,6 +1116,35 @@
     builderStep = 0; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
+  const BUILDER_CLASS_GUIDANCE: Record<string,string> = {
+    'Bárbaro':'Combatiente resistente que canaliza la furia para dominar el combate cuerpo a cuerpo.',
+    'Bardo':'Artista versátil que combina habilidades, apoyo al grupo y magia.',
+    'Brujo':'Lanzador de conjuros cuyo poder procede de un pacto con una entidad sobrenatural.',
+    'Clérigo':'Campeón de una fuerza divina que combina magia y capacidades de apoyo o combate.',
+    'Druida':'Guardián de la naturaleza que utiliza magia natural y puede adoptar formas animales.',
+    'Explorador':'Viajero y cazador experto en supervivencia, exploración y combate.',
+    'Guerrero':'Especialista en armas y armaduras con gran versatilidad marcial.',
+    'Hechicero':'Lanzador de conjuros cuya magia nace de un poder innato.',
+    'Mago':'Estudioso de la magia que aprende y amplía su repertorio mediante el estudio.',
+    'Monje':'Combatiente disciplinado que domina su cuerpo y canaliza su energía interior.',
+    'Paladín':'Combatiente juramentado que une destreza marcial con poder sagrado.',
+    'Pícaro':'Especialista ágil en sigilo, precisión, pericia y aprovechar oportunidades.'
+  };
+  function builderSelectClass(className:string) {
+    if (builderData.className === className) return;
+    builderData.className = className;
+    builderData.classSkillChoices = [];
+    builderData.classToolsChoices = [];
+    builderData.classSpecialChoice = BUILDER_CLASS_DATA[className].specialOptions.length === 1 ? BUILDER_CLASS_DATA[className].specialOptions[0] : '';
+    builderData.warlockTomeCantrips = [];
+    builderData.warlockTomeRituals = [];
+    builderData.classExpertise = [];
+    builderData.weaponMasteries = [];
+    builderData.selectedCantrips = [];
+    builderData.selectedSpells = [];
+    builderData.wizardSpellbook = [];
+    builderData.classEquipmentChoice = 'A';
+  }
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
   const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
   const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Iniciado en la magia (Mago)','Matón de taberna','Músico','Sanador'];
@@ -4137,7 +4166,20 @@ import ITEMS from './items.json';
                         {:else if builderStep === 3}
 
               <h3>4. Clase y competencias</h3><p class="muted">Todas las clases del Manual del Jugador 2024. Se aplican únicamente los rasgos que se obtienen a nivel 1.</p>
-              <label>¿Qué clase tendrá el personaje?<select bind:value={builderData.className} on:change={() => { builderData.classSkillChoices = []; builderData.classToolsChoices = []; builderData.classSpecialChoice = (BUILDER_CLASS_DATA[builderData.className].specialOptions.length === 1 ? BUILDER_CLASS_DATA[builderData.className].specialOptions[0] : ''); builderData.warlockTomeCantrips = []; builderData.warlockTomeRituals = []; builderData.classExpertise = []; builderData.weaponMasteries = []; builderData.selectedCantrips = []; builderData.selectedSpells = []; builderData.wizardSpellbook = []; builderData.classEquipmentChoice = 'A'; }}>{#each BUILDER_CLASSES as item}<option>{item}</option>{/each}</select></label>
+              <h4>Elige una clase</h4>
+              <p class="muted">Selecciona la clase que define el entrenamiento y las capacidades principales del personaje. Cada tarjeta resume su estilo, característica principal, resistencia y acceso a la magia.</p>
+              <div class="builder-class-grid">
+                {#each BUILDER_CLASSES as item}
+                  <label class="builder-class-card" class:selected={builderData.className === item}>
+                    <input type="radio" name="builder-class" value={item} checked={builderData.className === item} on:change={() => builderSelectClass(item)} />
+                    <span class="builder-class-card-heading"><strong>{item}</strong><span>d{BUILDER_HIT_DIE[item]}</span></span>
+                    <span class="builder-class-description">{BUILDER_CLASS_GUIDANCE[item]}</span>
+                    <span class="builder-class-meta"><span>Característica clave</span><strong>{BUILDER_PRIMARY[item]}</strong></span>
+                    <span class="builder-class-meta"><span>Salvaciones</span><strong>{BUILDER_SAVES[item]}</strong></span>
+                    <span class="builder-class-meta"><span>Magia</span><strong>{BUILDER_CLASS_DATA[item].cantrips || BUILDER_CLASS_DATA[item].spells || BUILDER_CLASS_DATA[item].spellbook ? 'Sí' : 'No'}</strong></span>
+                  </label>
+                {/each}
+              </div>
               <div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>
                           <h3>Competencias, rasgos, conjuros y equipo</h3>
               <p class="muted">Completa las elecciones que dependen de la clase y del trasfondo. Puedes consultar los detalles antes de generar la ficha.</p>
@@ -5013,4 +5055,20 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats>.quick-stats-row>div>span),
   :global(.nautical-quick-stats>.quick-stats-row>div>strong){display:block;width:100%;text-align:center}
   :global(.nautical-skills .sheet-stat .skill-number){font-size:1.25rem!important;font-weight:800!important;line-height:1.2!important;text-align:center!important;justify-self:center}
+ 
+  /* Selector visual de clases del creador */
+  .builder-class-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin:.8rem 0 1rem}
+  .builder-class-card{display:flex;min-width:0;flex-direction:column;gap:.55rem;padding:.8rem;border:1px solid #36545a;border-radius:9px;background:linear-gradient(150deg,#172a30,#101b20);cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+  .builder-class-card:hover{border-color:#5ca8a2;transform:translateY(-1px)}
+  .builder-class-card.selected{border:2px solid #c69b45;background:linear-gradient(150deg,#29352e,#17251f);box-shadow:0 0 0 1px #c69b4533}
+  .builder-class-card input{position:absolute;opacity:0;pointer-events:none}
+  .builder-class-card-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem;color:#f5e6c5;font:700 1rem Georgia,serif}
+  .builder-class-card-heading>span{padding:.2rem .45rem;border:1px solid #52777a;border-radius:5px;color:#9ed6ce;font:700 .72rem system-ui,sans-serif}
+  .builder-class-description{min-height:3.8rem;color:#c3d2d0;font:.75rem/1.45 system-ui,sans-serif}
+  .builder-class-meta{display:flex;flex-direction:column;gap:.12rem;padding-top:.4rem;border-top:1px solid #29454a}
+  .builder-class-meta>span{color:#81aaa8;font:600 .58rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.05em}
+  .builder-class-meta>strong{color:#f0f5f2;font:.72rem/1.35 system-ui,sans-serif}
+  @media(max-width:760px){.builder-class-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:460px){.builder-class-grid{grid-template-columns:1fr}.builder-class-description{min-height:0}}
+
 </style>
