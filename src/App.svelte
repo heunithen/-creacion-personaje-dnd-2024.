@@ -1099,6 +1099,7 @@
   let builderStep = 0;
   let builderRolledScores: number[] = [];
   let builderPreview: RawSheet | null = null;
+  let builderPreviewTab = 'Datos';
   let playerCreating = false;
   const createInitialBuilderData = (): BuilderData => ({
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
@@ -1871,6 +1872,7 @@
     }
     builderStepError = '';
     builderPreview = buildLevelOneSheet();
+    builderPreviewTab = 'Datos';
     builderStep = 6;
     keepBuilderAtTop();
   }
@@ -3615,13 +3617,21 @@ import ITEMS from './items.json';
             <div class="section-heading"><h3>Personaje generado</h3><span class="count">Nivel 1</span></div>
             <div class="character-sheet gm-character-sheet">
               <div class="sheet-banner"><h2>{builderPreview.name}</h2></div>
+              <nav class="sheet-tabs" role="tablist" aria-label="Secciones de la ficha generada">
+                {#each tabs.filter(tab => tab !== 'Tiradas' && tab !== 'Reglas') as tab}
+                  <button class:active={builderPreviewTab === tab} role="tab" aria-selected={builderPreviewTab === tab} on:click={() => builderPreviewTab = tab}>{tab}</button>
+                {/each}
+              </nav>
               <div class="sheet-grid">
-                {#each sectionPairs(builderPreview.sections || []) as pair}
+                {#each visiblePairs(builderPreview.sections || [], builderPreviewTab) as pair}
                   <section class="sheet-section {sectionClass(pair.heading.name)}">
                     <div class="sheet-section-title"><h3>{pair.heading.name}</h3></div>
-                    <div class="stats-list">{#each pair.heading.stats || [] as stat,i}<div class="sheet-stat"><span>{stat.name}</span><strong>{displayValue(pair.values?.stats?.[i]?.value) || '—'}</strong></div>{/each}</div>
+                    <div class="stats-list">{#each pair.heading.stats || [] as stat,i}<div class="sheet-stat"><span>{stat.name}</span><strong>{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value) || '—'}</strong></div>{/each}</div>
                   </section>
                 {/each}
+                {#if visiblePairs(builderPreview.sections || [], builderPreviewTab).length === 0}
+                  <p class="muted">No hay información en esta sección para el personaje.</p>
+                {/if}
               </div>
             </div>
             <div class="builder-actions">
