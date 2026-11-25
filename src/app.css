@@ -21,118 +21,28 @@ select{display:block;width:100%;margin-top:8px;padding:12px 13px;background:#0b1
 
 .add-trait{margin:0 0 18px}.trait-editor{background:#0f1e26;border:1px solid #3fb8b8;border-radius:9px;padding:16px;margin:14px 0}.trait-editor-head{display:flex;justify-content:space-between;align-items:center;color:#b5bec3;font-size:12px}.trait-editor label{margin:12px 0}.traits-preview{border-top:1px solid #13262e;margin-top:26px;padding-top:22px}.trait-group{margin-top:18px}.trait-group h3{font:400 17px 'Libre Baskerville',serif;color:#b5bec3;margin:0 0 8px}.trait-view{padding:12px 0;border-top:1px solid #13262e}.trait-view strong{font-size:13px;color:#b5bec3}.trait-view p{white-space:pre-wrap;font-size:12px;line-height:1.6;color:#1b2a33;margin:7px 0 0}.trait-level{margin-left:10px;color:#5fe6e0;font-size:10px}
 
-/* Paleta negra y roja para la extensión */
-:root{color-scheme:dark;color:#ffffff;background:#0b171d}
-body{background:radial-gradient(ellipse at 50% -15%,#3fb8b8 0,#0b171d 42%,#0b171d 85%);color:#ffffff}
-.app-shell{color:#ffffff}
-.topbar{border-bottom:1px solid #3fb8b8}
-.brand{color:#ffffff}.brand-mark{color:#3fb8b8}
-.topbar nav button,.secondary{background:#0b171d;border:1px solid #3fb8b8;color:#b5bec3}
-.topbar nav button.active{background:#3fb8b8;border-color:#3fb8b8;color:#ffffff}
-.panel{background:#0b171d;border:1px solid #3fb8b8;color:#ffffff;box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.section-heading h2,.panel h2{color:#ffffff}
-label{color:#b5bec3}
-input,textarea,select{background:#0b171d;border:1px solid #3fb8b8;color:#ffffff}
-input:focus,textarea:focus,select:focus{border-color:#3fb8b8;outline:1px solid #3fb8b8}
-input::placeholder,textarea::placeholder{color:#1b2a33}
-.primary{background:#3fb8b8;border:1px solid #3fb8b8;color:#ffffff}
-.primary:hover{background:#3fb8b8}
-.player-tabs button{background:#0b171d;border:1px solid #3fb8b8;color:#b5bec3}
-.player-tabs button.active{background:#3fb8b8;border-color:#3fb8b8;color:#ffffff}
-.character-card,.monster-card,.trait-editor,.import-box{background:#0b171d;border:1px solid #3fb8b8;color:#b5bec3}
-.character-card p,.monster-card p,.hint,.muted{color:#b5bec3}
-.roll-entry,.trait-view,.traits-preview{border-color:#3fb8b8}
-.roll-entry-top strong,.trait-view strong{color:#ffffff}
-.roll-result b,.trait-group h3{color:#5fe6e0}
-.toast{background:#3fb8b8;border:1px solid #3fb8b8;color:#ffffff}
-footer{border-top:1px solid #3fb8b8;color:#1b2a33}
 
-
-/* Identidad visual unificada: fantasía náutica */
-:root{
-  color-scheme:dark;
-  --ocean-0:#3fb8b8;
-  --ocean-1:#3fb8b8;
-  --ocean-2:#3fb8b8;
-  --slate-1:#3fb8b8;
-  --slate-2:#3fb8b8;
-  --aqua:#b5bec3;
-  --aqua-mid:#5fe6e0;
-  --text-main:#ffffff;
-  --text-secondary:#b5bec3;
-  --text-muted:#1b2a33;
-  --line:#3fb8b8;
-  --line-soft:#3fb8b8;
-  --warm:#5fe6e0;
-}
-html,body{background:var(--ocean-0);color:var(--text-main)}
-body{background:radial-gradient(ellipse at 50% 0%,#3fb8b8 0,var(--ocean-1) 42%,#3fb8b8 100%)}
-button,input,select,textarea{color:var(--text-main)}
-::selection{background:var(--aqua);color:var(--ocean-1)}
-.app-shell{color:var(--text-main)}
-.topbar{border-color:var(--line)}
-.brand,.brand strong{color:var(--text-main)}
-.brand-mark,.eyebrow,.free-tag,.count{color:var(--aqua)}
-.brand small,.intro,.connection,.hint,.muted{color:var(--text-secondary)}
-.topbar nav button,.secondary,.player-tabs button{background:var(--slate-1);border:1px solid var(--aqua-mid);color:var(--text-main)}
-.topbar nav button.active,.player-tabs button.active{background:var(--aqua);border-color:var(--aqua);color:var(--ocean-1)}
-.panel,.character-card,.monster-card,.trait-editor,.import-box{background:var(--ocean-1);border:1px solid var(--aqua-mid);color:var(--text-main)}
-.section-heading h2,.panel h2,.saved h2,.character-card h3,.monster-card h3{color:var(--text-main)}
-label{color:var(--text-secondary)}
-input,textarea,select{background:var(--ocean-0);border:1px solid var(--line);color:var(--text-main)}
-input:focus,textarea:focus,select:focus{border-color:var(--aqua);outline:1px solid var(--aqua)}
-input::placeholder,textarea::placeholder{color:var(--text-muted)}
-.primary{background:var(--aqua);border:1px solid var(--aqua);color:var(--ocean-1)}
-.primary:hover{background:#b5bec3}
-.character-card p,.monster-card p,.roll-entry-top span,.roll-entry p{color:var(--text-secondary)}
-.card-symbol,.card-actions button,.danger-text{color:var(--aqua)}
-.danger-text{color:#5fe6e0}
-.roll-entry,.trait-view,.traits-preview,.subheading{border-color:var(--line-soft)}
-.roll-result b,.trait-group h3{color:var(--aqua)}
-.toast{background:var(--slate-1);border:1px solid var(--aqua-mid);color:var(--text-main)}
-footer{border-color:var(--line);color:var(--text-muted)}
-
-
-/* Tema náutico global: neutraliza cualquier estilo antiguo de la aplicación */
-:root{color-scheme:dark;background:#3fb8b8;color:#ffffff}
-html,body{background:#3fb8b8!important;color:#ffffff!important}
-body{background:radial-gradient(ellipse at 50% 0%,#3fb8b8 0,#3fb8b8 42%,#3fb8b8 100%)!important}
-.app-shell,.main{background:transparent!important;color:#ffffff!important}
-.topbar{background:#3fb8b8!important;border-color:#3fb8b8!important;color:#ffffff!important}
-.panel,.character-card,.monster-card,.trait-editor,.import-box,.rolls-panel,.roll-history,
-.import-box,.spell-card,.monster-panel,.saved,.ability,.roll-entry,.trait-view{
- background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important
-}
-.section-heading,.subheading,.traits-preview{border-color:#3fb8b8!important}
-h1,h2,h3,h4,strong,.brand,.brand strong{color:#ffffff}
-h1 em,.eyebrow,.brand-mark,.free-tag,.count,.card-symbol,.card-actions button,
-.roll-result b,.trait-group h3{color:#b5bec3!important}
-p,.intro,.connection,.hint,.muted,.character-card p,.monster-card p,
-.roll-entry-top span,.roll-entry p,.trait-view p{color:#b5bec3!important}
-label{color:#b5bec3!important}
-input,textarea,select{background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
-input:focus,textarea:focus,select:focus{border-color:#b5bec3!important;outline-color:#b5bec3!important}
-input::placeholder,textarea::placeholder{color:#1b2a33!important}
-button,.secondary,.topbar nav button,.player-tabs button{
- background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important
-}
-button.active,.topbar nav button.active,.player-tabs button.active{
- background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important
-}
-.primary{background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
-.primary:hover{background:#b5bec3!important}
-.toast{background:#3fb8b8!important;color:#ffffff!important;border-color:#5fe6e0!important}
-footer{border-color:#3fb8b8!important;color:#1b2a33!important}
-
-
-/* Paleta única global: Forja de Aventureros */
-:root{color-scheme:dark;--ocean-0:#0b171d;--ocean-1:#0f1e26;--ocean-2:#13262e;--slate-1:#1b2a33;--slate-2:#22333d;--aqua:#5fe6e0;--aqua-mid:#3fb8b8;--text-main:#fff;--text-secondary:#b5bec3;--text-muted:#8e9aa1;--line:#3a4a52}
+/* Paleta canónica global — no se acumulan temas alternativos */
+:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;color:#fff;background:#0b171d;
+--ocean-0:#0b171d;--ocean-1:#0f1e26;--ocean-2:#13262e;--slate-1:#1b2a33;--slate-2:#22333d;
+--aqua:#5fe6e0;--aqua-mid:#3fb8b8;--text-main:#fff;--text-secondary:#b5bec3;--text-muted:#8e9aa1;--line:#3a4a52}
 html,body{background:#0b171d!important;color:#fff!important}
-body{background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#09151b 100%)!important}
+body{background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#0b171d 100%)!important}
 ::selection{background:#5fe6e0!important;color:#0f1e26!important}
-.topbar{background:#0f1e26!important;border-color:#3a4a52!important}.brand,.brand strong{color:#fff!important}.brand small,.intro,.connection{color:#b5bec3!important}.brand-mark,.eyebrow{color:#5fe6e0!important}
-.panel,.character-card,.monster-card,.trait-editor,.import-box,.ability{background:#13262e!important;color:#fff!important;border-color:#3a6870!important}
-input,textarea,select{background:#0b171d!important;color:#fff!important;border-color:#3a4a52!important}input:focus,textarea:focus,select:focus{border-color:#5fe6e0!important;outline-color:#5fe6e0!important}
-button,.secondary{background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}.primary,button.primary{background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+.topbar{background:#0f1e26!important;border-color:#3a4a52!important}
+.brand,.brand strong,h1,h2,h3,h4{color:#fff!important}
+.brand small,.intro,.connection,.hint,.muted,.monster-source{color:#b5bec3!important}
+.brand-mark,.eyebrow{color:#5fe6e0!important}
+.panel,.character-card,.monster-card,.trait-editor,.import-box,.ability,.rolls-panel,.roll-history{
+background:#13262e!important;color:#fff!important;border:1px solid #3a6870!important}
+input,textarea,select{background:#0b171d!important;color:#fff!important;border:1px solid #3a4a52!important}
+input:focus,textarea:focus,select:focus{border-color:#5fe6e0!important;outline-color:#5fe6e0!important}
+input::placeholder,textarea::placeholder{color:#8e9aa1!important}
+button,.secondary,.topbar nav button,.player-tabs button{background:#1b2a33!important;color:#b5bec3!important;border:1px solid #3a4a52!important}
 button.active,.topbar nav button.active,.player-tabs button.active{background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
-.toast{background:#1b2a33!important;color:#fff!important;border-color:#3fb8b8!important}footer{border-color:#3a4a52!important;color:#8e9aa1!important}
+.primary,button.primary{background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+.character-card p,.monster-card p,.roll-entry-top span,.roll-entry p,.trait-view p{color:#b5bec3!important}
+.card-symbol,.roll-result b,.trait-group h3{color:#5fe6e0!important}
+.roll-entry,.trait-view,.traits-preview,.subheading{border-color:#3a4a52!important}
+.toast{background:#1b2a33!important;color:#fff!important;border-color:#3fb8b8!important}
+footer{border-color:#3a4a52!important;color:#8e9aa1!important}
