@@ -1133,8 +1133,8 @@
     'Paladín':'Combatiente juramentado que une destreza marcial con poder sagrado.',
     'Pícaro':'Especialista ágil en sigilo, precisión, pericia y aprovechar oportunidades.'
   };
-  function builderChooseBackground(event:Event) {
-    const value=(event.currentTarget as HTMLSelectElement).value;
+  function builderChooseBackground(event:Event|string) {
+    const value=typeof event === 'string' ? event : (event.currentTarget as HTMLSelectElement).value;
     if(!value) return;
     builderBackgroundChosen=true;
     builderData.background=value;
@@ -1148,8 +1148,8 @@
     builderData.abilityIncrease1=BUILDER_BACKGROUND_DATA[value].abilities[1];
     builderData.abilityIncrease3=BUILDER_BACKGROUND_DATA[value].abilities[2];
   }
-  function builderChooseSpecies(event:Event) {
-    const value=(event.currentTarget as HTMLSelectElement).value;
+  function builderChooseSpecies(event:Event|string) {
+    const value=typeof event === 'string' ? event : (event.currentTarget as HTMLSelectElement).value;
     if(!value) return;
     builderSpeciesChosen=true;
     builderData.species=value;
@@ -4178,7 +4178,7 @@ import ITEMS from './items.json';
               <div class="builder-class-grid builder-background-grid">
                 {#each BUILDER_BACKGROUNDS as item}
                   <label class="builder-class-card builder-option-card" class:selected={builderBackgroundChosen && builderData.background === item}>
-                    <input type="radio" name="builder-background" value={item} checked={builderBackgroundChosen && builderData.background === item} on:change={() => builderChooseBackground({currentTarget:{value:item}} as unknown as Event)} />
+                    <input type="radio" name="builder-background" value={item} checked={builderBackgroundChosen && builderData.background === item} on:change={() => builderChooseBackground(item)} />
                     <span class="builder-class-card-heading"><strong>{item}</strong><span>Trasfondo</span></span>
                     <span class="builder-class-description">Tu experiencia como {item.toLocaleLowerCase()} determina competencias, dote de origen y equipo.</span>
                     <span class="builder-class-meta"><span>Características</span><strong>{BUILDER_BACKGROUND_DATA[item].abilities.join(' · ')}</strong></span>
@@ -4214,7 +4214,7 @@ import ITEMS from './items.json';
               <div class="builder-class-grid builder-species-grid">
                 {#each BUILDER_SPECIES as item}
                   <label class="builder-class-card builder-option-card" class:selected={builderSpeciesChosen && builderData.species === item}>
-                    <input type="radio" name="builder-species" value={item} checked={builderSpeciesChosen && builderData.species === item} on:change={() => builderChooseSpecies({currentTarget:{value:item}} as unknown as Event)} />
+                    <input type="radio" name="builder-species" value={item} checked={builderSpeciesChosen && builderData.species === item} on:change={() => builderChooseSpecies(item)} />
                     <span class="builder-class-card-heading"><strong>{item}</strong><span>Especie</span></span>
                     <span class="builder-class-description">{BUILDER_SPECIES_TRAITS[item]}</span>
                     <span class="builder-class-meta"><span>Rasgos y capacidades</span><strong>{BUILDER_SPECIES_CHOICES[item].length ? 'Incluye elección de linaje' : 'Rasgos propios de especie'}</strong></span>
