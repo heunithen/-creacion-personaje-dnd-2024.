@@ -17,7 +17,7 @@
   let obrReady = false;
   let obrRole = '';
   let playerName = '';
-  let activeTab = 'Resumen';
+  let activeTab = 'Características, salvaciones y sentidos';
   let monsterCrFilter = 'Todos';
   let monsterSearch = '';
   let itemSearch = '';
@@ -1099,7 +1099,7 @@
   let builderStep = 0;
   let builderRolledScores: number[] = [];
   let builderPreview: RawSheet | null = null;
-  let builderPreviewTab = 'Resumen';
+  let builderPreviewTab = 'Características, salvaciones y sentidos';
   let playerCreating = false;
   let builderSaving = false;
   const createInitialBuilderData = (): BuilderData => ({
