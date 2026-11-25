@@ -3239,6 +3239,8 @@ import ITEMS from './items.json';
       });
   }
 
+  let builderPreviewTab = 'Características y salvaciones';
+  const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Habilidades','Acciones','Inventario','Conjuros','Rasgos y características','Competencias y entrenamiento','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
   const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Rasgos y características', 'Descripción', 'Notas'];
 
@@ -4004,8 +4006,11 @@ import ITEMS from './items.json';
                 <div class="sheet-banner-copy"><span class="sheet-kicker">FORJA DE AVENTUREROS · D&D 2024</span><h1 class="character-name">{builderPreview.name || 'Personaje'}</h1><span class="sheet-subtitle">Hoja de aventurero</span></div>
                 <div class="sheet-banner-emblem" aria-hidden="true">✦</div>
               </header>
+              <nav class="sheet-tabs builder-preview-tabs" aria-label="Secciones de la ficha de vista previa">
+                {#each builderPreviewTabs as tab}<button type="button" class:active={builderPreviewTab===tab} on:click={() => builderPreviewTab=tab}>{tab}</button>{/each}
+              </nav>
               <div class="sheet-grid">
-                {#each continuousSheetPairs(builderPreview.sections || []) as pair}
+                {#each visiblePairs(builderPreview.sections || [], builderPreviewTab) as pair}
                   <section class="sheet-section {sectionClass(pair.heading.name)}">
                     <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
                     <div class="stats-list">
