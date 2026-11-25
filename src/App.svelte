@@ -1853,7 +1853,7 @@
     put(progressionIndex,1,levelOneFeatureDetails || classLevelOne?.features || classData.features || '—');
     put(4,0,[levelOneFeatureDetails,classChoices,BUILDER_SPECIES_TRAITS[b.species]||'',speciesChoices,b.traits].filter(Boolean).join('\n\n'));
     put(4,6,b.className==='Brujo'?b.classSpecialChoice:''); put(4,7,b.className==='Brujo'?builderClassChoiceDescription('Brujo',b.classSpecialChoice):'');
-    Object.entries(classResources).forEach(([key,value],i)=>put(progressionIndex,i+2,String(value)));
+
     const spellNames=[...b.selectedCantrips,...speciesCantrips,...(b.species==='Gnomo'&&b.speciesChoice==='Gnomo de los bosques'?['Hablar con los animales']:[]),...b.backgroundMagicCantrips,...(b.species==='Humano'?b.speciesMagicCantrips:[]),...b.warlockTomeCantrips,...b.selectedSpells,...b.wizardSpellbook,b.backgroundMagicSpell,...(b.species==='Humano'?[b.speciesMagicSpell]:[]),...(b.className==='Explorador'?['Marca del cazador']:[]),...(b.className==='Brujo'&&b.classSpecialChoice==='Pacto del grimorio'?b.warlockTomeRituals:[])].filter(Boolean);
     put(detailSpellsIndex,0,describeSpells(spellNames));
     const result={id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente de creación del jugador. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
@@ -2909,6 +2909,7 @@ import ITEMS from './items.json';
 
   function sectionClass(name = '') {
     const n = name.toLocaleLowerCase();
+    if (/ataque|arma/.test(n)) return 'attacks-section';
     if (/atribut|característic|ability|ability score/.test(n)) return 'attributes-section';
     if (/combate|ataque|armadura|punto de golpe|defensa/.test(n)) return 'combat-section';
     if (/habilidad|salvaci|competenc/.test(n)) return 'skills-section';
@@ -3989,6 +3990,7 @@ import ITEMS from './items.json';
   :global(.equipment-section .weapon-name),:global(.attacks-section .stat-label),
   :global(.attacks-section .stats-list > .sheet-stat > span){color:#ff6573!important}
   :global(.features-section .sheet-stat strong),:global(.magic-section .sheet-stat strong){color:#f2e9e9!important}
+  :global(.attacks-section .stat-label),:global(.attacks-section .stats-list > .sheet-stat > span),:global(.attacks-section .sheet-stat strong){color:#ff6573!important}
   :global(.character-sheet .editable:hover){background:#1a1011!important;border-color:#8c2732!important}
   @media(max-width:560px){:global(.spell-filters){grid-template-columns:1fr}}
 
