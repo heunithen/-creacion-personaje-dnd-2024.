@@ -305,10 +305,10 @@ try {
     app.includes('function builderMissingFields(): string[]') &&
     app.includes('No se puede generar la ficha. Revisa estos campos:') &&
     app.includes('Falta completar lo siguiente para avanzar:') &&
-    app.includes('builderStep = 6') &&
+    app.includes('builderStep = 12') &&\n    app.includes('Etapa {builderStep+1} de 12') &&
     app.includes('builderPreviewTab') &&
     app.includes('visiblePairs(builderPreview.sections || [], builderPreviewTab)'),
-    'La creación valida los seis pasos, explica las elecciones incompletas y muestra la ficha final organizada en pestañas.');
+    'La creación valida las doce etapas, explica las elecciones incompletas y muestra la ficha final organizada en pestañas.');
 
   report('builder-equipment-options-explicit',
     app.includes('<b>A — Equipo inicial:</b>') &&
