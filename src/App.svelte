@@ -3465,7 +3465,7 @@ import ITEMS from './items.json';
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Habilidades','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
+  const playerSheetTabs = ['Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
 
   function playerFeatureGroups(target: RawSheet) {
     const className = sheetClassName(target);
@@ -4753,30 +4753,34 @@ import ITEMS from './items.json';
             </section>
 
             <section class="nautical-content">
+            <section class="nautical-actions">
+              {#if playerSheetTab === 'Acciones'}
+                <section class="sheet-section weapon-attacks-section">
+                  <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
+                  <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
+                  <div class="weapon-attack-list">
+                    {#each playerWeaponAttacks(sheet) as weapon}
+                      <article class="weapon-attack-card">
+                        <h4>{weapon.name}</h4>
+                        <div class="weapon-attack-values">
+                          <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
+                          <div><span>Daño</span><button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button></div>
+                          <div><span>Alcance</span><strong>{weapon.range}</strong></div>
+                          <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
+                        </div>
+                      </article>
+                    {/each}
+                  </div>
+                </section>
+              {/if}
+            </section>
+
               <nav class="nautical-tabs" aria-label="Secciones de la ficha">
                 {#each playerSheetTabs as tab}
                   <button type="button" class:active={playerSheetTab === tab} on:click={() => playerSheetTab = tab}>{tab}</button>
                 {/each}
               </nav>
-                {#if playerSheetTab === 'Acciones'}
-                  <section class="sheet-section weapon-attacks-section">
-                    <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
-                    <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
-                    <div class="weapon-attack-list">
-                      {#each playerWeaponAttacks(sheet) as weapon}
-                        <article class="weapon-attack-card">
-                          <h4>{weapon.name}</h4>
-                          <div class="weapon-attack-values">
-                            <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
-                            <div><span>Daño</span><button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button></div>
-                            <div><span>Alcance</span><strong>{weapon.range}</strong></div>
-                            <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
-                          </div>
-                        </article>
-                      {/each}
-                    </div>
-                  </section>
-                {/if}
+
               <div class="nautical-tab-content">
                 {#if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
@@ -6353,4 +6357,34 @@ import ITEMS from './items.json';
   }
   @media(max-width:520px){:global(.builder-panel .builder-checkbox-grid){grid-template-columns:1fr!important}}
 
+
+  /* Distribución de la ficha: habilidades a la izquierda y acciones a la derecha. */
+  :global(.nautical-columns){display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:.75rem!important;align-items:start!important}
+  :global(.nautical-skills),:global(.nautical-actions){grid-row:1;min-width:0;max-height:none!important;height:auto!important;overflow:visible!important}
+  :global(.nautical-skills){grid-column:1}
+  :global(.nautical-actions){grid-column:2;display:flex;flex-direction:column;gap:.65rem}
+  :global(.nautical-actions .sheet-section){margin:0}
+  :global(.nautical-content){grid-column:1/-1!important;grid-row:2;min-width:0;max-height:none!important;height:auto!important;overflow:visible!important}
+  @media(max-width:580px){
+    :global(.nautical-columns){grid-template-columns:minmax(0,1fr)!important}
+    :global(.nautical-skills),:global(.nautical-actions),:global(.nautical-content){grid-column:1!important;grid-row:auto!important}
+  }
+
+  /* Contraste del creador: texto blanco sobre superficies oscuras. */
+  :global(.builder-panel),:global(.builder-panel *:not(input):not(textarea):not(select):not(option)){
+    color:#ffffff!important
+  }
+  :global(.builder-panel>label),:global(.builder-panel label),:global(.builder-panel .muted),
+  :global(.builder-panel .hint),:global(.builder-panel small),:global(.builder-panel .builder-class-description),
+  :global(.builder-panel .builder-option-description),:global(.builder-panel .builder-skill-description){
+    color:#b5bec3!important
+  }
+  :global(.builder-panel input:not([type=checkbox]):not([type=radio])),
+  :global(.builder-panel textarea),:global(.builder-panel select),:global(.builder-panel option){
+    background:#13262e!important;color:#ffffff!important;-webkit-text-fill-color:#ffffff!important
+  }
+  :global(.builder-panel .builder-class-card),:global(.builder-panel .builder-option-card),
+  :global(.builder-panel .builder-checkbox),:global(.builder-panel .builder-skill-card){
+    color:#ffffff!important
+  }
 </style>
