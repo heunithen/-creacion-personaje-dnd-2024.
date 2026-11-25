@@ -2398,7 +2398,14 @@ import ITEMS from './items.json';
   function spellIsKnown(target: RawSheet | null, spell: any) {
     if (!target) return false;
     const saved = spellStates(target)[normalizeLevelText(spell.name)];
-    return saved?.known === true || spellKnownNames(target).has(normalizeLevelText(spell.name));
+    if (typeof saved?.known === 'boolean') return saved.known;
+    return spellKnownNames(target).has(normalizeLevelText(spell.name));
+  }
+  function playerKnownSpellCards(target: RawSheet) {
+    const states = spellStates(target);
+    return SPELLS.filter((spell: any) => spellIsKnown(target, spell) ||
+      states[normalizeLevelText(spell.name)]?.prepared === true)
+      .sort((a: any, b: any) => Number(a.level) - Number(b.level) || String(a.name).localeCompare(String(b.name), 'es'));
   }
   function spellIsPrepared(target: RawSheet | null, spell: any) {
     if (!target) return false;
@@ -4248,6 +4255,60 @@ import ITEMS from './items.json';
                     </div>
                   </section>
                 {/if}
+                {#if playerSheetTab === 'Conjuros'}
+                  <section class="sheet-section player-spellcasting-summary">
+                    <div class="sheet-section-title"><h3>Lanzamiento de conjuros</h3></div>
+                    <div class="spellcasting-summary-grid">
+                      <div><span>Aptitud mágica</span><strong>{sheetValueByNames(sheet, ['Aptitud mágica']) || '—'}</strong></div>
+                      <div><span>CD de salvación</span><strong>{sheetValueByNames(sheet, ['CD de salvación']) || '—'}</strong></div>
+                      <div><span>Ataque de conjuro</span><strong>{sheetValueByNames(sheet, ['Ataque de conjuro']) || '—'}</strong></div>
+                      <div class="spell-slot-summary"><span>Espacios de conjuros</span>
+                        <strong>{#if Object.values(sheetSpellSlots).some((value:number) => value > 0)}
+                          {#each Object.entries(sheetSpellSlots).filter(([level,value]) => Number(value) > 0) as [level,maximum]}
+                            <span class="spell-slot-value">Nivel {level}: {maximum}</span>
+                          {/each}
+                        {:else}
+                          {sheetValueByNames(sheet, ['Espacios por nivel','Espacios de conjuro']) || '—'}
+                        {/if}</strong>
+                      </div>
+                    </div>
+                  </section>
+                  <section class="sheet-section player-spell-list-section">
+                    <div class="sheet-section-title"><h3>Conjuros</h3></div>
+                    {#if playerKnownSpellCards(sheet).length}
+                      <div class="player-spell-list">
+                        {#each playerKnownSpellCards(sheet) as spell (spell.name)}
+                          <article class="player-spell-card">
+                            <details>
+                              <summary>
+                                <span class="player-spell-name">{spell.name}</span>
+                                <span class="player-spell-level">{spell.level === 0 ? 'Truco' : 'Nivel ' + spell.level}</span>
+                              </summary>
+                              <div class="player-spell-description">
+                                <div class="spell-meta">
+                                  <p><strong>Escuela:</strong> {spell.school || '—'}</p>
+                                  <p><strong>Tiempo:</strong> {spell.castingTime || '—'}</p>
+                                  <p><strong>Alcance:</strong> {spell.range || '—'}</p>
+                                  <p><strong>Componentes:</strong> {spell.components || '—'}</p>
+                                  <p><strong>Duración:</strong> {spell.duration || '—'}</p>
+                                  {#if spell.special?.length}<p><strong>Especial:</strong> {spell.special.join(', ')}</p>{/if}
+                                </div>
+                                <p class="spell-description">{spell.description || 'Descripción no disponible.'}</p>
+                              </div>
+                            </details>
+                            <div class="player-spell-checks">
+                              <label><input type="checkbox" checked={spellIsKnown(sheet, spell)} on:change={() => toggleSpellState(spell, 'known')} /> Conocido</label>
+                              <label><input type="checkbox" checked={spellIsPrepared(sheet, spell)} on:change={() => toggleSpellState(spell, 'prepared')} /> Preparado</label>
+                            </div>
+                          </article>
+                        {/each}
+                      </div>
+                    {:else}
+                      <p class="muted nautical-empty">No hay conjuros conocidos registrados.</p>
+                    {/if}
+                  </section>
+                {/if}
+                {#if playerSheetTab !== 'Conjuros'}
                 {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
                   <section class="sheet-section {sectionClass(pair.heading.name)}">
                     <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
@@ -4263,8 +4324,9 @@ import ITEMS from './items.json';
                     </div>
                   </section>
                 {/each}
-                {#if playerSheetPairs(playerSheetTab, sheet.sections || []).length === 0}
+                {#if playerSheetTab !== 'Conjuros' && playerSheetPairs(playerSheetTab, sheet.sections || []).length === 0}
                   <p class="muted nautical-empty">No hay información registrada en esta sección.</p>
+                {/if}
                 {/if}
                 {#if playerSheetTab === 'Notas' && sheet.notes}
                   <section class="sheet-section notes-section"><div class="sheet-section-title"><h3>Notas</h3></div><div class="sheet-notes-content">{sheet.notes}</div></section>
@@ -4733,6 +4795,34 @@ import ITEMS from './items.json';
     :global(.nautical-quick-stats>.quick-stats-row){
       grid-template-columns:repeat(2,minmax(0,1fr))!important;
     }
+  }
+
+
+  /* Vista compacta de conjuros del personaje */
+  :global(.spellcasting-summary-grid){display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
+  :global(.spellcasting-summary-grid>div){display:flex;min-width:0;flex-direction:column;gap:.25rem;padding:.65rem .7rem;border:1px solid #76212a;border-radius:6px;background:#121010}
+  :global(.spellcasting-summary-grid>div>span){color:#c5aeb0;font:650 .65rem/1.25 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.035em}
+  :global(.spellcasting-summary-grid>div>strong){color:#fff;font:750 .95rem/1.3 system-ui,sans-serif;overflow-wrap:anywhere}
+  :global(.spellcasting-summary-grid .spell-slot-summary){grid-column:1/-1}
+  :global(.spell-slot-summary>strong){display:flex;flex-wrap:wrap;gap:.35rem .8rem}
+  :global(.spell-slot-value){font-size:.82rem}
+  :global(.player-spell-list){display:flex;flex-direction:column;gap:.5rem}
+  :global(.player-spell-card){display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.65rem;align-items:center;padding:.55rem .65rem;border:1px solid #76212a;border-left:3px solid #b52a36;border-radius:6px;background:#101010}
+  :global(.player-spell-card details){min-width:0}
+  :global(.player-spell-card summary){display:flex;align-items:center;justify-content:space-between;gap:.5rem;cursor:pointer;list-style:none}
+  :global(.player-spell-card summary::-webkit-details-marker){display:none}
+  :global(.player-spell-name){font:700 .9rem/1.25 Georgia,serif;color:#fff;overflow-wrap:anywhere}
+  :global(.player-spell-level){flex:0 0 auto;padding:.2rem .4rem;border:1px solid #76212a;border-radius:4px;color:#ffb5ba;font:650 .65rem system-ui,sans-serif}
+  :global(.player-spell-description){padding-top:.55rem}
+  :global(.player-spell-description .spell-meta){grid-template-columns:repeat(2,minmax(0,1fr));background:#171313;color:#eee;border-color:#76212a}
+  :global(.player-spell-checks){display:flex;flex-direction:column;gap:.35rem;min-width:6.3rem}
+  :global(.player-spell-checks label){display:flex;align-items:center;gap:.35rem;color:#ddd;font:600 .68rem system-ui,sans-serif;white-space:nowrap}
+  :global(.player-spell-checks input){width:1rem;height:1rem;margin:0;accent-color:#c32232}
+  @media(max-width:520px){
+    :global(.spellcasting-summary-grid){grid-template-columns:repeat(2,minmax(0,1fr))}
+    :global(.spellcasting-summary-grid .spell-slot-summary){grid-column:1/-1}
+    :global(.player-spell-card){grid-template-columns:minmax(0,1fr);gap:.45rem}
+    :global(.player-spell-checks){flex-direction:row;flex-wrap:wrap;gap:.8rem}
   }
 
 </style>
