@@ -1096,7 +1096,7 @@
     builderData.name = name;
     lastGeneratedName = name;
   }
-  let builderStep = 0;
+  let builderStep = 0;\n  let builderClassChosen = false;
   let builderRolledScores: number[] = [];
   let builderPreview: RawSheet | null = null;
 
@@ -1113,7 +1113,7 @@
   function resetBuilder() {
     builderData = createInitialBuilderData();
     builderData.player = playerName || '';
-    builderStep = 0; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
+    builderStep = 0; builderClassChosen = false; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_CLASS_GUIDANCE: Record<string,string> = {
@@ -1590,7 +1590,7 @@
   }
   function builderStepCanAdvance():boolean {
     if(builderStep===0) return true;
-    if(builderStep===1) return Boolean(builderData.className);
+    if(builderStep===1) return builderClassChosen;
     if(builderStep===2) {
       const options=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
       const feat=BUILDER_BACKGROUND_DATA[builderData.background].feat;
@@ -4119,8 +4119,8 @@ import ITEMS from './items.json';
               <p class="muted">Selecciona la clase que define el entrenamiento y las capacidades principales del personaje. Cada tarjeta resume su estilo, característica principal, resistencia y acceso a la magia.</p>
               <div class="builder-class-grid">
                 {#each BUILDER_CLASSES as item}
-                  <label class="builder-class-card" class:selected={builderData.className === item}>
-                    <input type="radio" name="builder-class" value={item} checked={builderData.className === item} on:change={() => builderSelectClass(item)} />
+                  <label class="builder-class-card" class:selected={builderClassChosen && builderData.className === item}>
+                    <input type="radio" name="builder-class" value={item} checked={builderClassChosen && builderData.className === item} on:change={() => builderSelectClass(item)} />
                     <span class="builder-class-card-heading"><strong>{item}</strong><span>d{BUILDER_HIT_DIE[item]}</span></span>
                     <span class="builder-class-description">{BUILDER_CLASS_GUIDANCE[item]}</span>
                     <span class="builder-class-meta"><span>Característica clave</span><strong>{BUILDER_PRIMARY[item]}</strong></span>
@@ -4321,7 +4321,7 @@ import ITEMS from './items.json';
               <p class="muted">Comprueba tus elecciones antes de generar la hoja definitiva.</p>
               <div class="builder-info"><strong>{builderData.name || 'Personaje sin nombre'}</strong><p>{builderData.species} · {builderData.className} · {builderData.background}</p></div>
               <div class="builder-info"><strong>Características finales</strong>{#each BUILDER_ABILITY_NAMES as ability}<p>{ability}: {builderAdjustedAbilities()[ability]} ({builderModifier(builderAdjustedAbilities()[ability])>=0?'+':''}{builderModifier(builderAdjustedAbilities()[ability])})</p>{/each}</div>
-              <div class="builder-info"><strong>Valores derivados</strong><p>Puntos de golpe: {builderStartingHP()} PG</p><p>Clase de armadura: {builderStartingAC()}</p><p>Iniciativa: {builderModifier(builderAdjustedAbilities().Destreza)>=0?'+':''}{builderModifier(builderAdjustedAbilities().Destreza)}</p></div>
+              <div class="builder-info"><strong>Valores derivados</strong><p>Puntos de golpe: {BUILDER_HIT_DIE[builderData.className] + builderModifier(builderAdjustedAbilities().Constitución)} PG</p><p>Clase de armadura: {builderStartingAC()}</p><p>Iniciativa: {builderModifier(builderAdjustedAbilities().Destreza)>=0?'+':''}{builderModifier(builderAdjustedAbilities().Destreza)}</p></div>
               <div class="builder-info"><strong>Resumen</strong><p>Salvaciones: {BUILDER_SAVES[builderData.className]}</p><p>Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}</p><p>Dote de origen: {BUILDER_BACKGROUND_DATA[builderData.background].feat}</p><p>Idiomas adicionales: {builderData.languages.join(', ') || 'Pendientes'}</p></div>
             {/if}
             {#if builderStepError}<p class="builder-step-error" role="alert">{builderStepError}</p>{/if}
