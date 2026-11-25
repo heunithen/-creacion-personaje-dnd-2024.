@@ -46,3 +46,6 @@ button.active,.topbar nav button.active,.player-tabs button.active{background:#5
 .roll-entry,.trait-view,.traits-preview,.subheading{border-color:#3a4a52!important}
 .toast{background:#1b2a33!important;color:#fff!important;border-color:#3fb8b8!important}
 footer{border-color:#3a4a52!important;color:#8e9aa1!important}
+
+.eyebrow span,.monster-stats,.dice-status,.roll-result span{color:#b5bec3!important}
+.roll-entry p,.trait-view p,.monster-card p,.character-card p{color:#b5bec3!important}
