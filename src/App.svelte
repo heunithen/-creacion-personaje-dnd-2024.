@@ -1109,6 +1109,7 @@
   let builderData: BuilderData = createInitialBuilderData();
   function resetBuilder() {
     builderData = createInitialBuilderData();
+    builderData.player = playerName || '';
     builderStep = 0; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
@@ -1514,14 +1515,15 @@
   }
   function builderStepCanAdvance():boolean {
     const cls=BUILDER_CLASS_DATA[builderData.className], backgroundFeat=BUILDER_BACKGROUND_DATA[builderData.background].feat, speciesFeat=builderData.speciesExtraFeat;
-    if(builderStep===0) return Boolean(builderData.name.trim()) && Boolean(builderData.alignment);
+    if(builderStep===0) return Boolean(builderData.name.trim());
     if(builderStep===1) {
+      const alignmentOk=Boolean(builderData.alignment);
       const choiceOk=BUILDER_SPECIES_CHOICES[builderData.species].length===0 || BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice);
       const skillOk=!['Elfo','Humano'].includes(builderData.species) || (BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(builderData.speciesSkill));
       const magicOk=!['Elfo','Gnomo','Tiefling'].includes(builderData.species) || ['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
       const sizeOk=!['Aasimar','Humano','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesSize);
       const featOk=builderData.species!=='Humano' || (builderOriginFeatChoicesOk(speciesFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell) && builderData.speciesFeatChoices.every(choice=>builderFeatChoiceOptions(speciesFeat).includes(choice)));
-      return choiceOk&&skillOk&&magicOk&&sizeOk&&featOk;
+      return alignmentOk&&choiceOk&&skillOk&&magicOk&&sizeOk&&featOk;
     }
     if(builderStep===2) {
       const options=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[], toolOk=!options.length||options.includes(builderData.backgroundToolChoice);
@@ -1550,7 +1552,7 @@
   }
   function builderNext() {
     if(builderStep<5) {
-      if(!builderStepCanAdvance()) { builderStepError=['Escribe el nombre y elige el alineamiento.','Completa las elecciones obligatorias de la especie.','Completa la dote, herramienta y aumentos del trasfondo.','Completa las competencias, rasgos, conjuros y equipo de la clase.','Revisa las seis puntuaciones según el método elegido.'][builderStep]||'Completa las elecciones obligatorias.'; return; }
+      if(!builderStepCanAdvance()) { builderStepError=['Escribe el nombre del personaje.','Elige el alineamiento y completa las elecciones obligatorias de la especie.','Completa la dote, herramienta y aumentos del trasfondo.','Completa las competencias, rasgos, conjuros y equipo de la clase.','Revisa las seis puntuaciones según el método elegido.'][builderStep]||'Completa las elecciones obligatorias.'; return; }
       builderStepError=''; builderStep+=1;
     }
   }
@@ -3443,14 +3445,14 @@ import ITEMS from './items.json';
           {#if !builderPreview || builderStep < 6}
             <div class="builder-progress"><span style="width:{(Math.min(builderStep + 1, 6) / 6) * 100}%"></span></div>
             {#if builderStep === 0}
-              <h3>1. Nombre y alineamiento</h3>
-              <p class="muted">Primero define la identidad básica del personaje. El nombre del jugador es opcional.</p>
-              <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre" /></label>
-              <label>Jugador<input bind:value={builderData.player} placeholder="Nombre del jugador (opcional)" /></label>
-              <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
+              <h3>1. Nombre del personaje</h3>
+              <p class="muted">Te guiaremos paso a paso por la creación de tu personaje. Primero, escribe el nombre que tendrá tu aventurero.</p>
+              <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre del personaje" /></label>
+              <p class="builder-player-name"><strong>Jugador:</strong> {playerName || builderData.player || 'Jugador'}</p>
             {:else if builderStep === 1}
 
-              <h3>2. Especie</h3><p class="muted">Elige una especie. El personaje obtiene sus rasgos de especie.</p>
+              <h3>2. Especie</h3><p class="muted">Elige la especie y el alineamiento de tu personaje. Después podrás completar sus rasgos.</p>
+              <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
               <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = ''; builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               <div class="name-generator-panel">
                 <div class="name-generator-heading"><strong>Generador de nombres</strong><span>Listas originales por especie</span></div>
@@ -3742,7 +3744,7 @@ import ITEMS from './items.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.41</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.42</span></footer>
 </div>
 
 <style>
