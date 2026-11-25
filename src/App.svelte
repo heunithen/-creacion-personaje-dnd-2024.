@@ -1794,7 +1794,7 @@
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Trucos de estilo de combate','Aptitud mágica de estilo de combate','CD de estilo de combate','Ataque de conjuro de estilo de combate','Lista de conjuros de estilo de combate','Arcanum místico','Conjuros de escuela','Opción de Furia elemental','Opción de Golpes benditos','Maestría sobre conjuros nivel 1','Maestría sobre conjuros nivel 2','Conjuros característicos']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
-      general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos',...Object.keys((LEVEL_PROGRESSION as any).classes?.[b.className]?.rows?.[0]?.resources || {})]),
+      general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos']),
       general('DETALLES DEL TRASFONDO',['Aumentos de característica permitidos','Habilidades','Herramienta','Dote de origen','Equipo del trasfondo']),
       general('INVENTARIO',['Equipo de clase','Equipo de trasfondo','Equipo adicional']),
       general('ATAQUES',['Armas incluidas en el equipo','Maestrías con armas','Competencia con armas','Perfiles de ataque']),
@@ -1849,7 +1849,7 @@
     const detailSpellsIndex=detailIndex('DETALLE DE CONJUROS');
     const progressionIndex = detailIndex('PROGRESIÓN');
     put(progressionIndex,0,'1');
-    const levelOneFeatureDetails=getClassFeaturesAtLevel(b.className,1).map((feature:any)=>feature.name+'\n'+feature.description).join('\n\n');
+    const levelOneFeatureDetails=getClassFeaturesAtLevel(b.className,1).map((feature:any)=>feature.name).filter(Boolean).join(', ');
     put(progressionIndex,1,levelOneFeatureDetails || classLevelOne?.features || classData.features || '—');
     put(4,0,[levelOneFeatureDetails,classChoices,BUILDER_SPECIES_TRAITS[b.species]||'',speciesChoices,b.traits].filter(Boolean).join('\n\n'));
     put(4,6,b.className==='Brujo'?b.classSpecialChoice:''); put(4,7,b.className==='Brujo'?builderClassChoiceDescription('Brujo',b.classSpecialChoice):'');
@@ -3983,6 +3983,12 @@ import ITEMS from './items.json';
   :global(.sheet-stat),:global(.roll-entry),:global(.trait-view),:global(.traits-preview){border-color:#4d1b21!important}
   :global(.gm-sheet-details summary),:global(.monster-source summary){color:#ff7a84!important}
   :global(.character-sheet .features-section .sheet-stat strong){background:#151010!important}
+  /* Los nombres de rasgos, conjuros y armas destacan en rojo. */
+  :global(.features-section .stat-label),:global(.features-section .stats-list > .sheet-stat > span),
+  :global(.magic-section .stat-label),:global(.magic-section .stats-list > .sheet-stat > span),
+  :global(.equipment-section .weapon-name),:global(.attacks-section .stat-label),
+  :global(.attacks-section .stats-list > .sheet-stat > span){color:#ff6573!important}
+  :global(.features-section .sheet-stat strong),:global(.magic-section .sheet-stat strong){color:#f2e9e9!important}
   :global(.character-sheet .editable:hover){background:#1a1011!important;border-color:#8c2732!important}
   @media(max-width:560px){:global(.spell-filters){grid-template-columns:1fr}}
 
