@@ -1,5 +1,5 @@
 export type GithubConfig = { token: string; owner: string; repo: string; branch: string };
-export type GithubCharacterRecord = { playerId: string; playerName: string; name: string; path: string; folder: string; updatedAt: string; targetFolder?: string };
+export type GithubCharacterRecord = { playerId: string; playerName: string; name: string; path: string; folder?: string; updatedAt: string };
 export type GithubCharacterIndex = { folders: string[]; characters: GithubCharacterRecord[] };
 
 const ROOT = 'personajes';
@@ -100,48 +100,24 @@ export class GithubCharacterStorage {
     }
   }
 
-  private characterPath(folder: string, playerId: string) {
+  private characterPath(playerId: string) {
     const safeId = playerId.replace(/[^a-zA-Z0-9_-]/g, '-');
-    return folder === 'sin-partida' ? `${ROOT}/sin-partida/${safeId}.json` : `${ROOT}/partidas/${folder}/${safeId}.json`;
+    return `${ROOT}/${safeId}.json`;
   }
 
   async save(character: any, playerId: string, playerName: string) {
     const initialIndex = await this.readIndex();
     const previous = initialIndex.characters.find(item => item.playerId === playerId);
-    const folder = previous?.folder || 'sin-partida';
-    const path = previous?.path || this.characterPath(folder, playerId);
+    const path = this.characterPath(playerId);
     const record: GithubCharacterRecord = {
       playerId, playerName: playerName || 'Jugador', name: character.name || 'Personaje sin nombre',
-      path, folder, updatedAt: new Date().toISOString()
+      path, updatedAt: new Date().toISOString()
     };
     await this.writeFile(path, JSON.stringify({ playerId, playerName, character, updatedAt: record.updatedAt }, null, 2), 'Guardar personaje ' + record.name);
+    // Migrate an older character file out of its former match folder.
+    if (previous?.path && previous.path !== path) await this.deleteFile(previous.path, 'Migrar personaje al almacenamiento general');
     await this.updateIndex(index => {
       index.characters = [...index.characters.filter(item => item.playerId !== playerId), record];
-    });
-  }
-
-  async createFolder(name: string) {
-    const folder = name.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
-    if (!folder || folder === 'sin-partida') throw new Error('Escribe un nombre válido para la partida.');
-    await this.writeFile(`${ROOT}/partidas/${folder}/.gitkeep`, ' ', 'Crear carpeta de partida ' + folder);
-    await this.updateIndex(index => {
-      if (!index.folders.includes(folder)) index.folders.push(folder);
-    });
-    return folder;
-  }
-
-  async move(record: GithubCharacterRecord, folder: string) {
-    if (!folder || folder === record.folder) return;
-    const destination = this.characterPath(folder, record.playerId);
-    const sourceFile = await this.getFile(record.path);
-    if (!sourceFile?.content) throw new Error('No se encontró el archivo original del personaje.');
-    if (await this.getFile(destination)) throw new Error('Ya existe un archivo de personaje con ese nombre en la carpeta de destino.');
-    await this.writeFile(destination, decodeContent(sourceFile.content), 'Mover personaje ' + record.name);
-    await this.deleteFile(record.path, 'Retirar personaje de su carpeta anterior');
-    await this.updateIndex(index => {
-      index.characters = index.characters.map(item => item.playerId === record.playerId
-        ? { ...item, path: destination, folder, updatedAt: new Date().toISOString() }
-        : item);
     });
   }
 
