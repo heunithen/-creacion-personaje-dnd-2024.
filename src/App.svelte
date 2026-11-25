@@ -4213,7 +4213,7 @@ import ITEMS from './items.json';
                   <div class="skill-column-labels"><span>Habilidad</span><span>Valor</span></div>
                   <div class="stats-list">
                     {#each pair.heading.stats || [] as stat, i}
-                      <div class="sheet-stat" class:proficient={skillIsProficient(String(stat.name || ''), sheet)}><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
+                      <div class="sheet-stat" class:proficient={skillIsProficient(String(stat.name || ''), sheet)}><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value skill-number">{(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)).replace(/\s*[·,]?\s*Competente\b/gi, '').replace(/\s*\(Competencia\)/gi, '')}</div></div>
                     {/each}
                   </div>
                 </section>
@@ -4584,11 +4584,11 @@ import ITEMS from './items.json';
   :global(.nautical-header .sheet-banner-meta){color:#a9c9c5}
   :global(.header-actions){display:flex;gap:.4rem;flex-wrap:wrap}
   :global(.header-actions button){padding:.5rem .65rem;border:1px solid #347f80;border-radius:5px;background:#102f35;color:#d9f4ef;font-size:.7rem}
-  :global(.nautical-quick-stats){display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:.4rem;padding:.65rem;background:#0a242a;border-bottom:1px solid #247b7e}
-  :global(.nautical-quick-stats>div){min-width:0;display:flex;flex-direction:column;justify-content:center;gap:.18rem;padding:.42rem .45rem;border:1px solid #28676b;border-radius:7px;background:linear-gradient(145deg,#12373c,#0b252b)}
+  :global(.nautical-quick-stats){display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:.28rem;padding:.5rem .55rem;background:#0a242a;border-bottom:1px solid #247b7e}
+  :global(.nautical-quick-stats>div){min-width:0;display:flex;flex-direction:column;justify-content:center;gap:.12rem;padding:.32rem .25rem;border:1px solid #28676b;border-radius:6px;background:linear-gradient(145deg,#12373c,#0b252b)}
   :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
-  :global(.nautical-quick-stats>div>span){font-size:.56rem;line-height:1.15;color:#7fcac2;text-transform:uppercase;letter-spacing:.045em}
-  :global(.nautical-quick-stats>div>strong){font-size:.9rem;line-height:1.15;color:#f1fffc;white-space:nowrap}
+  :global(.nautical-quick-stats>div>span){font-size:.49rem;line-height:1.1;color:#7fcac2;text-transform:uppercase;letter-spacing:.015em}
+  :global(.nautical-quick-stats>div>strong){font-size:.78rem;line-height:1.1;color:#f1fffc;white-space:nowrap}
   :global(.nautical-quick-stats .attribute-plaque-row){display:grid;grid-column:1/-1;grid-template-columns:repeat(6,minmax(0,1fr));gap:.45rem;width:100%;min-width:0}
   :global(.nautical-quick-stats .attribute-plaque){min-width:0;min-height:4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #328b89}
   :global(.nautical-quick-stats .attribute-plaque strong){font-size:1.25rem}
@@ -4602,6 +4602,8 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient strong){color:#55d58a}
   :global(.nautical-skills .sheet-stat.proficient .stat-label),
   :global(.nautical-skills .sheet-stat.proficient .stat-value){color:#70bfff!important}
+  :global(.nautical-skills .sheet-stat .skill-number){font-size:1rem!important;font-weight:800!important;line-height:1.25!important;min-width:2.2rem;text-align:right}
+  :global(.nautical-skills .sheet-stat.proficient .skill-number){color:#70bfff!important}
   :global(.nautical-quick-stats .hp-plaque){flex:2 1 10rem}
   :global(.nautical-import){padding:.8rem 1rem;background:#0b252b;border-bottom:1px solid #247b7e}
   :global(.nautical-columns){display:grid;grid-template-columns:minmax(190px,.82fr) minmax(0,2fr);gap:.65rem;padding:.7rem;align-items:start;background:radial-gradient(ellipse at 75% 0%,#17434a 0,#0a252b 50%,#071b20 100%)}
@@ -4617,10 +4619,10 @@ import ITEMS from './items.json';
   :global(.nautical-tabs button){flex:0 0 auto;padding:.55rem .65rem;border:1px solid transparent!important;border-radius:5px 5px 0 0;background:transparent!important;color:#a9c9c5!important;font-size:.68rem;font-weight:700;white-space:nowrap}
   :global(.nautical-tabs button.active){border-color:#318c8b!important;background:#123a3e!important;color:#8ce4d9!important}
   :global(.weapon-attacks-section .weapon-mastery-summary){padding:.45rem .6rem;margin-bottom:.65rem;border:1px solid #553137;border-radius:6px;background:#171013;color:#e7d6d6}
-  :global(.weapon-attack-list){display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.65rem}
-  :global(.weapon-attack-card){padding:.7rem;border:1px solid #65333a;border-radius:7px;background:#151012}
+  :global(.weapon-attack-list){display:flex;flex-direction:column;gap:.5rem}
+  :global(.weapon-attack-card){display:block;width:100%;padding:.65rem .75rem;border:1px solid #65333a;border-radius:7px;background:#151012}
   :global(.weapon-attack-card h4){margin:0 0 .55rem;color:#f0c6c8;font:700 .95rem Georgia,serif}
-  :global(.weapon-attack-values){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+  :global(.weapon-attack-values){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem}
   :global(.weapon-attack-values>div){display:flex;flex-direction:column;gap:.18rem;min-width:0}
   :global(.weapon-attack-values span){font-size:.62rem;color:#bda8aa;text-transform:uppercase;letter-spacing:.04em}
   :global(.weapon-attack-values strong){font-size:.9rem;color:#f5eded}
@@ -4653,6 +4655,12 @@ import ITEMS from './items.json';
     :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
   }
   @media(max-width:580px){
+    :global(.nautical-quick-stats){grid-template-columns:repeat(9,minmax(0,1fr));gap:.16rem;padding:.35rem .25rem}
+    :global(.nautical-quick-stats>div){padding:.25rem .12rem}
+    :global(.nautical-quick-stats>div>span){font-size:.39rem;letter-spacing:0}
+    :global(.nautical-quick-stats>div>strong){font-size:.62rem}
+    :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
+    :global(.weapon-attack-values){grid-template-columns:repeat(2,minmax(0,1fr))}
     :global(.nautical-quick-stats){grid-template-columns:repeat(2,minmax(0,1fr))}
     :global(.nautical-quick-stats .attribute-plaque-row){grid-column:1/-1}
     :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
