@@ -2040,7 +2040,10 @@ import ITEMS from './items.json';
     ['Hit or Miss:','Impacte o falle:'],['Hit:','Impacto:'],['Miss:','Fallo:'],['Failure or Success:','Tanto si falla como si tiene éxito:'],['Failure:','Fallo:'],['Success:','Éxito:'],['Half damage','la mitad del daño'],
     ['Legendary Resistance','Resistencia legendaria'],['Magic Resistance','Resistencia mágica'],['Magic Weapons','Armas mágicas'],['Spellcasting','Lanzamiento de conjuros'],
     ['At Will','A voluntad'],['1/Day','1/día'],['2/Day','2/día'],['3/Day','3/día'],['Recharge','Recarga'],
-    ['telepathically','telepáticamente'],['telepathy','telepatía'],['magically','mágicamente'],['magical','mágico'],['nonmagical','no mágico'],['target','objetivo'],['creatures','criaturas'],['creature','criatura'],['takes','recibe'],['regains','recupera'],['feet','pies'],['foot','pie'],['reach','alcance'],['range','alcance'],['fly','volar'],['climb','trepar'],['swim','nadar'],['burrow','excavar'],['hover','vuela estacionario'],['can’t','no puede'],['must succeed','debe superar'],['must make','debe realizar'],['is immune to','es inmune a'],['has advantage on','tiene ventaja en'],['has disadvantage on','tiene desventaja en'],['at the end of','al final de'],['at the start of','al inicio de'],['as an action','como acción'],['as a bonus action','como acción adicional'],['as a reaction','como reacción']
+    ['telepathically','telepáticamente'],['telepathy','telepatía'],['magically','mágicamente'],['magical','mágico'],['nonmagical','no mágico'],['target','objetivo'],['creatures','criaturas'],['creature','criatura'],['takes','recibe'],['regains','recupera'],['feet','pies'],['foot','pie'],['reach','alcance'],['range','alcance'],['fly','volar'],['climb','trepar'],['swim','nadar'],['burrow','excavar'],['hover','vuela estacionario'],['can’t','no puede'],['must succeed','debe superar'],['must make','debe realizar'],['is immune to','es inmune a'],['has advantage on','tiene ventaja en'],['has disadvantage on','tiene desventaja en'],['at the end of','al final de'],['at the start of','al inicio de'],['as an action','como acción'],['as a bonus action','como acción adicional'],['as a reaction','como reacción'],
+    ['damage','daño'],['attack','ataque'],['attacks','ataques'],['roll','tirada'],['rolls','tiradas'],['save','salvación'],['bonus','bonificador'],['action','acción'],['actions','acciones'],['turn','turno'],['turns','turnos'],['round','asalto'],['rounds','asaltos'],['day','día'],['days','días'],['hour','hora'],['hours','horas'],['minute','minuto'],['minutes','minutos'],['second','segundo'],['seconds','segundos'],['level','nivel'],['spell','conjuro'],['spells','conjuros'],['slot','espacio'],['slots','espacios'],['weapon','arma'],['weapons','armas'],['melee','cuerpo a cuerpo'],['ranged','a distancia'],['magical','mágico'],['nonmagical','no mágico'],
+    ['The','El'],['the','el'],['A','Una'],['An','Un'],['a','un'],['an','un'],['itself','a sí mismo'],['it','lo'],['its','su'],['they','ellos'],['them','los'],['their','su'],['you','tú'],['your','tu'],['you can','puedes'],['can','puede'],['must','debe'],['is','es'],['are','son'],['be','ser'],['been','sido'],['being','siendo'],['has','tiene'],['have','tienen'],['had','tenía'],['does','hace'],['do','hacer'],['did','hizo'],['make','realizar'],['makes','realiza'],['made','realizó'],['deals','inflige'],['deal','infligir'],['casts','lanza'],['cast','lanzar'],['moves','se mueve'],['move','moverse'],['becomes','se convierte'],['become','convertirse'],['gains','obtiene'],['gain','obtener'],['loses','pierde'],['lose','perder'],['regains','recupera'],['regain','recuperar'],['takes','recibe'],['take','recibir'],['causes','causa'],['cause','causar'],['ends','termina'],['end','final'],['begins','comienza'],['begin','comenzar'],
+    ['while','mientras'],['when','cuando'],['whenever','siempre que'],['if','si'],['unless','a menos que'],['until','hasta que'],['after','después de'],['before','antes de'],['during','durante'],['once','una vez'],['each','cada'],['every','cada'],['all','todos'],['any','cualquier'],['another','otro'],['other','otro'],['both','ambos'],['either','cualquiera'],['neither','ninguno'],['one','uno'],['two','dos'],['three','tres'],['four','cuatro'],['five','cinco'],['six','seis'],['first','primero'],['next','siguiente'],['same','mismo'],['different','diferente'],['more','más'],['less','menos'],['within','a una distancia de'],['outside','fuera'],['inside','dentro'],['above','por encima'],['below','por debajo'],['through','a través de'],['toward','hacia'],['away','lejos'],['from','de'],['with','con'],['without','sin'],['by','por'],['of','de'],['on','en'],['in','en'],['to','a'],['and','y'],['or','o'],['but','pero'],['for','para'],['as','como'],['at','a'],['into','dentro de'],['over','sobre'],['under','debajo de'],['against','contra'],['around','alrededor de'],['per','por'],['per turn','por turno'],['per day','por día'],['per round','por asalto'],['creature','criatura'],['creatures','criaturas'],['target','objetivo'],['targets','objetivos'],['enemy','enemigo'],['enemies','enemigos'],['ally','aliado'],['allies','aliados'],['hostile','hostil'],['friendly','amistoso'],['living','vivo'],['dead','muerto'],['body','cuerpo'],['body part','parte del cuerpo'],['surface','superficie'],['area','área'],['space','espacio'],['object','objeto'],['objects','objetos'],['ground','suelo'],['water','agua'],['air','aire'],['light','luz'],['darkness','oscuridad'],['fire','fuego'],['cold','frío'],['heat','calor'],['magical','mágico'],['nonmagical','no mágico']
   ];
   function translateMonsterText(input: string): string {
     let output = String(input ?? '');
@@ -3948,15 +3951,15 @@ import ITEMS from './items.json';
         </section>
       {:else}
         <section class="panel monsters-panel">
-          <div class="section-heading"><h2>Monster Manual · 2024</h2><span class="count">{filteredMonsters.length} / {MONSTERS.length} criaturas</span></div>
-          <p class="muted">Los 504 bloques de estadísticas del manual en inglés. Se conservan nombres, términos, reglas y valores originales.</p>
+          <div class="section-heading"><h2>Manual de Monstruos · 2024</h2><span class="count">{filteredMonsters.length} / {MONSTERS.length} criaturas</span></div>
+          <p class="muted">Consulta las criaturas por nombre o valor de desafío. Los perfiles conservan sus datos y se presentan por apartados.</p>
           <label class="monster-filter">Buscar monstruo
-            <input type="search" bind:value={monsterSearch} placeholder="Nombre en inglés..." />
+            <input type="search" bind:value={monsterSearch} placeholder="Nombre del monstruo..." />
           </label>
           <label class="monster-filter">Filtrar por CR
             <select bind:value={monsterCrFilter}>
               {#each MONSTER_CR_FILTERS as cr}
-                <option value={cr}>{cr === 'Todos' ? 'Todos los CR' : 'CR ' + cr}</option>
+                <option value={cr}>{cr === 'Todos' ? 'Todos los VD' : 'VD ' + cr}</option>
               {/each}
             </select>
           </label>
@@ -3965,7 +3968,7 @@ import ITEMS from './items.json';
               <details class="monster-card">
                 <summary>
                   <span class="monster-name">{monster.name}</span>
-                  <span class="monster-subtitle">{monster.group || 'Monster Manual'} · página {monster.pdfPage ?? '—'}</span>
+                  <span class="monster-subtitle">{monster.group || 'Manual de Monstruos'} · página {monster.pdfPage ?? '—'}</span>
                   <span class="monster-cr">CR {monster.cr.split(' ')[0] || '—'}</span>
                 </summary>
                 <div class="monster-statblock">
