@@ -5,45 +5,52 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Forja de Aventureros · Organizador de ficha</title>
 <style>
-:root{color-scheme:light;--paper:#b5bec3;--paper2:#b5bec3;--ink:#0f1e26;--muted:#1b2a33;--line:#b5bec3;--red:#3fb8b8;--gold:#5fe6e0;--white:#ffffff}
-*{box-sizing:border-box}body{margin:0;background:#0f1e26;color:var(--ink);font:15px/1.45 system-ui,sans-serif}
-header{background:#0b171d;color:var(--paper);padding:1.1rem max(1rem,calc((100vw - 1100px)/2));border-bottom:3px solid var(--gold)}
-header small{color:#b5bec3;letter-spacing:.12em;font-weight:700;font-size:.68rem}h1{font:700 1.45rem Georgia,serif;margin:.2rem 0}header p{margin:.2rem 0 0;color:#b5bec3;font-size:.82rem}
-main{max-width:1100px;margin:1.2rem auto;padding:0 1rem 3rem}.toolbar{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
-button,.file-label{border:1px solid var(--line);border-radius:5px;padding:.58rem .8rem;background:var(--paper2);color:var(--ink);font:650 .78rem system-ui;cursor:pointer}
-button.primary{background:var(--red);border-color:var(--red);color:white}button:disabled{opacity:.35;cursor:not-allowed}
-.file-label input{display:none}.status{margin-left:auto;color:#b5bec3;font-size:.78rem}
-.intro,.empty{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:1.1rem;margin-bottom:1rem}.intro h2,.empty h2{font:700 1.1rem Georgia,serif;margin:0 0 .4rem}.intro p,.empty p{margin:.25rem 0;color:var(--muted);font-size:.85rem}
-.drop{border:1px dashed #1b2a33;border-radius:6px;padding:1rem;text-align:center;margin-top:.8rem;background:rgba(95,230,224,.35);font-size:.82rem;color:var(--muted)}
-.sheet{display:none}.sheet-head{background:var(--paper);border-radius:8px;padding:1rem 1.2rem;margin-bottom:.8rem;border-top:4px solid var(--gold)}.sheet-head h2{font:700 1.55rem Georgia,serif;margin:0}.sheet-meta{color:var(--muted);font-size:.8rem;margin-top:.25rem}
-.section{background:var(--paper);border:1px solid var(--line);border-radius:7px;margin:.7rem 0;overflow:hidden}.section-head{display:flex;align-items:center;gap:.5rem;background:var(--paper2);padding:.65rem .8rem;border-bottom:1px solid var(--line)}.section-head h3{font:700 .9rem system-ui;margin:0;flex:1;text-transform:uppercase;letter-spacing:.04em;color:#3fb8b8}.section-body{padding:.65rem .8rem}
-.node{border-bottom:1px solid rgba(63,184,184,.2);padding:.48rem 0}.node:last-child{border-bottom:0}.node-head{display:flex;align-items:center;gap:.35rem}.key{font-size:.78rem;font-weight:700;color:#3fb8b8;min-width:130px;overflow-wrap:anywhere}.value{flex:1;min-width:0}
-input,textarea{width:100%;border:1px solid #b5bec3;border-radius:4px;background:var(--white);padding:.42rem .5rem;color:var(--ink);font: .82rem/1.4 system-ui,sans-serif}textarea{min-height:3rem;resize:vertical}
-.item{border:1px solid #b5bec3;border-radius:5px;padding:.55rem .65rem;margin:.45rem 0;background:rgba(95,230,224,.38)}.item-title{display:flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;color:var(--red);margin-bottom:.3rem}.item-title span{flex:1}.move{padding:.22rem .42rem;font-size:.68rem;min-width:28px}
-.object-children{padding-left:.6rem;border-left:2px solid #b5bec3;margin:.25rem 0 .2rem .2rem}
-.hint{font-size:.72rem;color:var(--muted);margin:.4rem 0}.raw{margin-top:1rem}.raw summary{cursor:pointer;color:#b5bec3;font-size:.8rem}.raw textarea{min-height:220px;margin-top:.5rem;font-family:ui-monospace,monospace;font-size:.72rem}
-@media(max-width:600px){.status{width:100%;margin-left:0}.key{min-width:95px}.node-head{align-items:flex-start}.toolbar button,.file-label{flex:1;text-align:center}}
 
-/* Tema náutico del organizador de fichas */
-:root{color-scheme:dark;--paper:#3fb8b8;--paper2:#3fb8b8;--ink:#ffffff;--muted:#b5bec3;--line:#3fb8b8;--red:#b5bec3;--gold:#5fe6e0;--white:#3fb8b8}
+:root{color-scheme:dark;--bg:#0b171d;--panel:#13262e;--panel2:#1b2a33;--ink:#fff;--muted:#b5bec3;--soft:#8e9aa1;--line:#3a4a52;--line-strong:#3a6870;--aqua:#5fe6e0;--aqua-mid:#3fb8b8}
 *{box-sizing:border-box}
-body{background:#3fb8b8!important;color:#ffffff!important}
-header{background:#3fb8b8!important;color:#ffffff!important;border-bottom:3px solid #5fe6e0!important}
-header small,header p{color:#b5bec3!important}
-main{color:#ffffff!important}
-button,.file-label{background:#3fb8b8!important;color:#b5bec3!important;border-color:#3fb8b8!important}
-button.primary{background:#b5bec3!important;color:#3fb8b8!important;border-color:#b5bec3!important}
-.intro,.empty,.sheet-head,.section,.item{background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
-.intro p,.empty p,.sheet-meta,.hint{color:#b5bec3!important}
-.section-head{background:#3fb8b8!important;border-color:#3fb8b8!important}
-.section-head h3,.item-title{color:#b5bec3!important}
-.node{border-color:#3fb8b8!important}
-.key{color:#b5bec3!important}
-input,textarea{background:#3fb8b8!important;color:#ffffff!important;border-color:#3fb8b8!important}
-.object-children{border-color:#5fe6e0!important}
-.drop{background:#3fb8b8!important;color:#b5bec3!important;border-color:#5fe6e0!important}
-.raw summary{color:#b5bec3!important}
-.status{color:#b5bec3!important}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#0b171d 100%);color:var(--ink);font:15px/1.45 system-ui,sans-serif}
+header{background:#0f1e26;color:var(--ink);padding:1.1rem max(1rem,calc((100vw - 1100px)/2));border-bottom:2px solid var(--aqua-mid)}
+header small{color:var(--muted);letter-spacing:.12em;font-weight:700;font-size:.68rem}
+h1{font:700 1.45rem Georgia,serif;margin:.2rem 0;color:var(--ink)}
+header p{margin:.2rem 0 0;color:var(--muted);font-size:.82rem}
+main{max-width:1100px;margin:1.2rem auto;padding:0 1rem 3rem;color:var(--ink)}
+.toolbar{display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+button,.file-label{border:1px solid var(--line);border-radius:5px;padding:.58rem .8rem;background:var(--panel2);color:var(--muted);font:650 .78rem system-ui;cursor:pointer}
+button:hover,.file-label:hover{border-color:var(--aqua);color:var(--ink)}
+button.primary{background:var(--aqua);border-color:var(--aqua);color:#0f1e26}
+button:disabled{opacity:.35;cursor:not-allowed}
+.file-label input{display:none}
+.status{margin-left:auto;color:var(--muted);font-size:.78rem}
+.intro,.empty{background:var(--panel);border:1px solid var(--line-strong);border-radius:8px;padding:1.1rem;margin-bottom:1rem;color:var(--ink)}
+.intro h2,.empty h2{font:700 1.1rem Georgia,serif;margin:0 0 .4rem;color:var(--ink)}
+.intro p,.empty p{margin:.25rem 0;color:var(--muted);font-size:.85rem}
+.drop{border:1px dashed var(--aqua-mid);border-radius:6px;padding:1rem;text-align:center;margin-top:.8rem;background:var(--panel2);font-size:.82rem;color:var(--muted)}
+.sheet{display:none}
+.sheet-head{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:1rem 1.2rem;margin-bottom:.8rem;border-top:3px solid var(--aqua)}
+.sheet-head h2{font:700 1.55rem Georgia,serif;margin:0;color:var(--ink)}
+.sheet-meta{color:var(--muted);font-size:.8rem;margin-top:.25rem}
+.section{background:var(--panel);border:1px solid var(--line);border-radius:7px;margin:.7rem 0;overflow:hidden}
+.section-head{display:flex;align-items:center;gap:.5rem;background:var(--panel2);padding:.65rem .8rem;border-bottom:1px solid var(--line)}
+.section-head h3{font:700 .9rem system-ui;margin:0;flex:1;text-transform:uppercase;letter-spacing:.04em;color:var(--aqua)}
+.section-body{padding:.65rem .8rem}
+.node{border-bottom:1px solid rgba(63,184,184,.2);padding:.48rem 0}
+.node:last-child{border-bottom:0}
+.node-head{display:flex;align-items:center;gap:.35rem}
+.key{font-size:.78rem;font-weight:700;color:var(--aqua);min-width:130px;overflow-wrap:anywhere}
+.value{flex:1;min-width:0;color:var(--ink)}
+input,textarea{width:100%;border:1px solid var(--line);border-radius:4px;background:var(--bg);padding:.42rem .5rem;color:var(--ink);font:.82rem/1.4 system-ui,sans-serif}
+input:focus,textarea:focus{outline:1px solid var(--aqua);border-color:var(--aqua)}
+textarea{min-height:3rem;resize:vertical}
+.item{border:1px solid var(--line);border-radius:5px;padding:.55rem .65rem;margin:.45rem 0;background:var(--panel2);color:var(--ink)}
+.item-title{display:flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;color:var(--aqua);margin-bottom:.3rem}
+.item-title span{flex:1}
+.move{padding:.22rem .42rem;font-size:.68rem;min-width:28px}
+.object-children{padding-left:.6rem;border-left:2px solid var(--aqua-mid);margin:.25rem 0 .2rem .2rem}
+.hint{font-size:.72rem;color:var(--muted);margin:.4rem 0}
+.raw{margin-top:1rem}
+.raw summary{cursor:pointer;color:var(--muted);font-size:.8rem}
+.raw textarea{min-height:220px;margin-top:.5rem;font-family:ui-monospace,monospace;font-size:.72rem}
+@media(max-width:600px){.status{width:100%;margin-left:0}.key{min-width:95px}.node-head{align-items:flex-start}.toolbar button,.file-label{flex:1;text-align:center}}
 
 </style>
 </head>
