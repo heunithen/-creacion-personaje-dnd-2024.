@@ -1101,6 +1101,7 @@
   let builderPreview: RawSheet | null = null;
   let builderPreviewTab = 'Datos';
   let playerCreating = false;
+  let builderSaving = false;
   const createInitialBuilderData = (): BuilderData => ({
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
     alignment: 'Neutral', method: 'standard',
@@ -1923,23 +1924,30 @@
     builderPreviewTab = 'Datos';
     builderStep = 6;
     keepBuilderAtTop();
-    await saveBuilderCharacter();
   }
   async function saveBuilderCharacter() {
-    if (!builderPreview) return;
-    sheet = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
-    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-    builderPreview = null;
-    playerCreating = false;
-    activeTab = 'Datos';
-    if (obrReady && obrRole === 'PLAYER') {
-      syncPending = true;
-      await flushAutoSync();
-      notice = syncStatus === 'Ficha sincronizada con la sala.'
-        ? 'Personaje creado y publicado en la sala.'
-        : 'Personaje creado y guardado localmente. No se pudo publicar en la sala.';
-    } else {
-      notice = 'Personaje creado y guardado en este navegador.';
+    if (!builderPreview || builderSaving) return;
+    builderSaving = true;
+    try {
+      const characterToSave = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
+      localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave));
+      sheet = characterToSave;
+      builderPreview = null;
+      playerCreating = false;
+      activeTab = 'Datos';
+      if (obrReady && obrRole === 'PLAYER') {
+        syncPending = true;
+        await flushAutoSync();
+        notice = syncStatus === 'Ficha sincronizada con la sala.'
+          ? 'Personaje guardado en tu ficha y sincronizado con la sala.'
+          : 'Personaje guardado en tu ficha y en este navegador. No se pudo sincronizar con la sala.';
+      } else {
+        notice = 'Personaje guardado en tu ficha y en este navegador.';
+      }
+    } catch (error) {
+      notice = 'No se pudo guardar el personaje: ' + (error instanceof Error ? error.message : String(error));
+    } finally {
+      builderSaving = false;
     }
   }
   function startBuilder() { resetBuilder(); playerCreating = true; }
@@ -3751,7 +3759,7 @@ import ITEMS from './items.json';
             </div>
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
-              <button class="primary" on:click={saveBuilderCharacter}>Guardar personaje en mi ficha</button>
+              <button type="button" class="primary" disabled={builderSaving} on:click={saveBuilderCharacter}>{builderSaving ? 'Guardando…' : 'Guardar personaje en mi ficha'}</button>
               <button class="secondary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
               <button class="secondary" on:click={startBuilder}>Crear otro personaje</button>
             </div>
