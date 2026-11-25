@@ -5488,4 +5488,120 @@ import ITEMS from './items.json';
   @media(min-width:700px){.github-character-row{grid-template-columns:minmax(0,1fr) auto;align-items:center}}
 
 
+
+  /* Tema náutico final: prevalece sobre estilos heredados y específicos antiguos */
+  :global(:root){
+    color-scheme:dark;
+    --paper:#0f1e26;--paper-deep:#1b2a33;--ink:#ffffff;--ink-soft:#b5bec3;
+    --rule:#3a4a52;--red:#5fe6e0;--gold:#5fe6e0;
+    --ocean:#0f1e26;--slate:#1b2a33;--aqua:#5fe6e0;--aqua-mid:#3fb8b8;
+    --text-main:#ffffff;--text-secondary:#b5bec3;--text-muted:#8e9aa1;
+  }
+  :global(body),:global(.app-shell),:global(.main){background:#0b171d!important;color:#fff!important}
+  :global(body){background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 45%,#09151b 100%)!important}
+  :global(.topbar){background:#1e1e1e!important;border-bottom:1px solid #3a4a52!important;color:#fff!important}
+  :global(.brand),:global(.brand strong),:global(.brand small){color:#fff!important}
+  :global(.brand-mark),:global(.eyebrow),:global(.free-tag),:global(.count){color:#5fe6e0!important}
+  :global(.intro),:global(.connection),:global(.hint),:global(.muted),:global(.brand small){color:#b5bec3!important}
+  :global(.panel),:global(.builder-panel),:global(.import-character-panel),:global(.character-card),:global(.monster-card),:global(.trait-editor),:global(.import-box),:global(.rolls-panel),:global(.roll-history),:global(.ddb-content-panel){
+    background:#0f1e26!important;border:1px solid #3fb8b8!important;color:#fff!important;box-shadow:0 8px 24px #0005!important
+  }
+  :global(.section-heading h2),:global(.panel h2),:global(.builder-panel h3),:global(.builder-panel h4),:global(.character-card h3),:global(.monster-card h3),:global(.trait-view strong),:global(.roll-entry-top strong){color:#fff!important}
+  :global(label),:global(.builder-panel>label),:global(.builder-panel label),:global(.items-search),:global(.items-filters label),:global(.spell-search),:global(.spell-filters label),:global(.monster-filter){color:#b5bec3!important}
+  :global(input),:global(textarea),:global(select),:global(.builder-panel input),:global(.builder-panel select),:global(.builder-panel textarea),:global(.items-search input),:global(.items-filters input),:global(.items-filters select),:global(.spell-search input),:global(.spell-filters select),:global(.monster-filter select),:global(.github-folder-create input),:global(.github-character-actions select){
+    background:#0b171d!important;color:#fff!important;border:1px solid #3a4a52!important
+  }
+  :global(input::placeholder),:global(textarea::placeholder){color:#8e9aa1!important}
+  :global(input:focus),:global(textarea:focus),:global(select:focus){border-color:#5fe6e0!important;outline:1px solid #5fe6e0!important}
+  :global(.primary),:global(.builder-panel button.primary),:global(.builder-actions .primary){background:#5fe6e0!important;border:1px solid #5fe6e0!important;color:#0f1e26!important}
+  :global(.primary:hover){background:#79f1eb!important}
+  :global(.secondary),:global(.builder-panel button.secondary),:global(.builder-actions .secondary),:global(.topbar nav button),:global(.player-tabs button),:global(.master-tabs button),:global(.sheet-tabs button),:global(.nautical-tabs button){
+    background:#1b2a33!important;border:1px solid #3a4a52!important;color:#b5bec3!important
+  }
+  :global(.topbar nav button.active),:global(.player-tabs button.active),:global(.master-tabs button.active),:global(.sheet-tabs button.active),:global(.nautical-tabs button.active){
+    background:#5fe6e0!important;border-color:#5fe6e0!important;color:#0f1e26!important
+  }
+  :global(.builder-info),:global(.builder-choice-wrapper),:global(.builder-choice-field),:global(.builder-name-block),:global(.builder-checkbox),:global(.builder-class-card),:global(.builder-skill-card),:global(.builder-option-card){
+    background:#13262e!important;border:1px solid #3a4a52!important;color:#fff!important;box-shadow:none!important
+  }
+  :global(.builder-info),:global(.builder-choice-wrapper),:global(.builder-choice-field),:global(.builder-name-block){border-left:3px solid #5fe6e0!important}
+  :global(.builder-info *),:global(.builder-checkbox *),:global(.builder-class-card *),:global(.builder-skill-card *),:global(.builder-option-card *){color:inherit}
+  :global(.builder-info small),:global(.builder-panel .muted),:global(.builder-panel .hint),:global(.builder-option-description),:global(.builder-skill-description){color:#b5bec3!important}
+  :global(.builder-class-card-heading),:global(.builder-choice-heading),:global(.builder-checkbox>span),:global(.builder-checkbox>span b){color:#fff!important}
+  :global(.builder-class-description){color:#d0dadd!important}
+  :global(.builder-class-meta){border-top:1px solid #2a3a43!important}
+  :global(.builder-class-meta>span){color:#8e9aa1!important}
+  :global(.builder-class-meta>strong){color:#fff!important}
+  :global(.builder-class-card:hover),:global(.builder-checkbox:hover){border-color:#5fe6e0!important;background:#1b3038!important}
+  :global(.builder-class-card.selected),:global(.builder-checkbox:has(input:checked)){border-color:#5fe6e0!important;border-left-color:#5fe6e0!important;background:#1d3b40!important;box-shadow:0 0 0 1px #5fe6e033!important}
+  :global(.builder-checkbox:has(input:checked)::after){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+  :global(.builder-checkbox input){accent-color:#5fe6e0!important}
+  :global(.builder-progress){background:#22333d!important}
+  :global(.builder-progress span){background:#5fe6e0!important}
+  :global(.builder-option-badge),:global(.builder-class-card-heading>span){background:#0f1e26!important;border:1px solid #3fb8b8!important;color:#5fe6e0!important}
+  :global(.character-sheet),:global(.nautical-sheet){
+    background:#0f1e26!important;border:1px solid #3fb8b8!important;color:#fff!important;box-shadow:0 16px 40px #0009!important
+  }
+  :global(.nautical-header),:global(.ddb-character-header){background:#1e1e1e!important;border-bottom:1px solid #3a4a52!important;color:#fff!important}
+  :global(.nautical-header .sheet-kicker),:global(.sheet-kicker){color:#b5bec3!important}
+  :global(.nautical-header .character-name),:global(.ddb-character-header .character-name),:global(.character-name){color:#fff!important}
+  :global(.sheet-banner-meta){color:#b5bec3!important}
+  :global(.sheet-banner-emblem),:global(.portrait-frame){border-color:#5fe6e0!important;color:#fff!important}
+  :global(.portrait-frame){box-shadow:0 0 0 3px #f28c28!important}
+  :global(.header-actions button){background:#1b2a33!important;border:1px solid #5fe6e0!important;color:#fff!important}
+  :global(.nautical-quick-stats){background:#0b171d!important;border-color:#3fb8b8!important}
+  :global(.nautical-quick-stats>div),:global(.sheet-quick-stats>div),:global(.attributes-section .sheet-stat){
+    background:#1b2a33!important;border:1px solid #3fb8b8!important;color:#fff!important
+  }
+  :global(.nautical-quick-stats>div>span),:global(.sheet-quick-stats>div>span),:global(.stat-label){color:#b5bec3!important}
+  :global(.nautical-quick-stats>div>strong),:global(.sheet-quick-stats>div>strong),:global(.stat-value),:global(.sheet-stat strong){color:#fff!important}
+  :global(.sheet-section),:global(.nautical-columns .sheet-section),:global(.ddb-content-panel){
+    background:#10232b!important;border:1px solid #3fb8b8!important;border-top:2px solid #5fe6e0!important;color:#fff!important
+  }
+  :global(.sheet-section-title),:global(.sheet-stat),:global(.sheet-tabs),:global(.master-tabs){border-color:#2a3a43!important}
+  :global(.sheet-section-title h3),:global(.section-name),:global(.nautical-columns .sheet-section-title h3){color:#5fe6e0!important}
+  :global(.nautical-columns .stat-label){color:#b5bec3!important}
+  :global(.nautical-columns .stat-value){color:#fff!important}
+  :global(.nautical-tabs button.active),:global(.sheet-tabs button.active){background:#1b3038!important;color:#fff!important;border-bottom-color:#5fe6e0!important}
+  :global(.nautical-tabs button),:global(.sheet-tabs button){color:#8e9aa1!important}
+  :global(.nautical-columns),:global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){background-color:#0f1e26!important;scrollbar-color:#5a6a72 #0b171d!important}
+  :global(.nautical-columns .sheet-section){background:#10232b!important}
+  :global(.sheet-stat),:global(.roll-entry),:global(.trait-view),:global(.traits-preview){border-color:#2a3a43!important}
+  :global(.sheet-stat strong),:global(.trait-view strong),:global(.roll-part-heading strong){color:#fff!important}
+  :global(.sheet-stat .stat-label),:global(.sheet-notes),:global(.monster-source),:global(.spell-source){color:#b5bec3!important}
+  :global(.items-table),:global(.chest-table){background:#0f1e26!important;color:#fff!important}
+  :global(.items-table th),:global(.chest-table th){background:#1b2a33!important;color:#fff!important}
+  :global(.items-table td),:global(.chest-table td){color:#b5bec3!important;border-bottom-color:#2a3a43!important}
+  :global(.items-table td:first-child),:global(.chest-table td:first-child){color:#fff!important}
+  :global(.spell-card),:global(.player-spell-card),:global(.player-feature-card),:global(.weapon-attack-card),:global(.github-character-row),:global(.github-folder-chip){
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#fff!important
+  }
+  :global(.spell-card *),:global(.player-spell-card *),:global(.player-feature-card *),:global(.weapon-attack-card *){color:inherit}
+  :global(.spell-meta),:global(.spell-level),:global(.monster-cr),:global(.roll-notation),:global(.roll-result),:global(.chest-result){
+    background:#0b171d!important;border:1px solid #3a4a52!important;color:#fff!important
+  }
+  :global(.spell-name),:global(.player-spell-name),:global(.player-feature-name),:global(.weapon-attack-card h4){color:#fff!important}
+  :global(.spell-source),:global(.player-spell-level),:global(.player-feature-source),:global(.weapon-attack-values span){color:#b5bec3!important}
+  :global(.player-feature-card>p),:global(.spell-card p),:global(.monster-card p){color:#d5dfe1!important}
+  :global(.player-feature-card),:global(.player-spell-card){border-left-color:#5fe6e0!important}
+  :global(.player-feat-section .player-feature-card){border-color:#3fb8b8!important;border-left-color:#5fe6e0!important;background:#13262e!important}
+  :global(.player-spell-checks input){accent-color:#5fe6e0!important}
+  :global(.trait-group h3),:global(.roll-result b),:global(.inline-roll),:global(.card-actions button),:global(.github-folder-chip){color:#5fe6e0!important}
+  :global(.inline-roll:hover){color:#8af4ed!important}
+  :global(.roll-notation),:global(.roll-result){background:#13262e!important;color:#fff!important;border-color:#3fb8b8!important}
+  :global(.chest-result){background:#13262e!important;color:#fff!important;border-color:#3fb8b8!important}
+  :global(.chest-result-number),:global(.chest-result>span:last-child){color:#b5bec3!important}
+  :global(.chest-table-wrap){border-color:#3fb8b8!important}
+  :global(.chest-selected){background:#1d3b40!important;color:#fff!important}
+  :global(.github-status){background:#13262e!important;border-left:3px solid #5fe6e0!important;color:#fff!important}
+  :global(.github-character-actions button){background:#1b2a33!important;border:1px solid #3a4a52!important;color:#fff!important}
+  :global(.github-character-actions .danger-text),:global(.danger-text),:global(.remove-roll){color:#e6a0a0!important}
+  :global(.toast){background:#1b2a33!important;border:1px solid #3fb8b8!important;color:#fff!important}
+  :global(.master-tabs button),:global(.sheet-tabs button){border-color:#3a4a52!important}
+  :global(.master-tabs button.active){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+  :global(.sheet-tabs button.active){background:#1b3038!important;color:#fff!important;border-bottom-color:#5fe6e0!important}
+  :global(.saving-throw-line.proficient strong),:global(.nautical-skills .sheet-stat.proficient .stat-value),:global(.nautical-skills .sheet-stat.proficient .skill-number){color:#5fe6e0!important}
+  :global(.nautical-empty){border-color:#3fb8b8!important;color:#b5bec3!important}
+  :global(footer){border-color:#3a4a52!important;color:#8e9aa1!important}
+
 </style>
