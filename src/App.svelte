@@ -5967,4 +5967,63 @@ import ITEMS from './items.json';
   :global(.sheet-tabs button){background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
   :global(.sheet-tabs button.active){background:#0f1e26!important;color:#fff!important;border-color:#5fe6e0!important}
 
+
+  /* Auditoría integral final: eliminar superficies cálidas heredadas en todos los módulos */
+  :global(.spell-meta),:global(.monster-combat-grid div),:global(.monster-attacks),
+  :global(.monster-info-item),:global(.monster-entry),:global(.custom-rolls),
+  :global(.custom-roll-card),:global(.roll-notation),:global(.roll-result),
+  :global(.sheet-section),:global(.combat-section),:global(.attributes-section),
+  :global(.attributes-section .sheet-stat),:global(.stat-value),
+  :global(.chest-result),:global(.chest-table-wrap),:global(.chest-table),
+  :global(.github-config-panel),:global(.github-character-row),:global(.github-folder-chip),
+  :global(.github-status),:global(.ddb-content-panel),:global(.weapon-mastery-summary),
+  :global(.weapon-attack-card),:global(.player-spell-card),
+  :global(.player-feat-section .player-feature-card),:global(.subclass-level-preview),
+  :global(.trait-editor),:global(.import-box),:global(.character-card),:global(.monster-card){
+    background:#13262e!important;color:#fff!important;border-color:#3a6870!important
+  }
+  :global(.combat-section),:global(.attributes-section){border-top-color:#5fe6e0!important}
+  :global(.sheet-section){border:1px solid #3a6870!important;border-top:2px solid #3fb8b8!important}
+  :global(.sheet-section-title),:global(.roll-entry),:global(.trait-view),
+  :global(.traits-preview),:global(.subheading),:global(.monster-attacks),
+  :global(.monster-source),:global(.spell-source){border-color:#2a3a43!important}
+  :global(.editable),:global(.editable:focus),:global(.stat-value),
+  :global(.roll-creator input),:global(.roll-creator select),
+  :global(.github-folder-create input),:global(.github-character-actions select){
+    background:#0b171d!important;color:#fff!important;border-color:#3a4a52!important
+  }
+  :global(.editable:hover){background:#1b2a33!important;border-color:#5fe6e0!important}
+  :global(.roll-creator button),:global(.roll-actions button),
+  :global(.sheet-tabs button),:global(.master-tabs button),
+  :global(.player-tabs button),:global(.ddb-section-nav button){
+    background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important
+  }
+  :global(.sheet-tabs button.active),:global(.master-tabs button.active),
+  :global(.player-tabs button.active),:global(.ddb-section-nav button.active){
+    background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important
+  }
+  :global(.roll-notation),:global(.roll-result){background:#1b2a33!important;color:#5fe6e0!important;border-color:#3fb8b8!important}
+  :global(.chest-result-number),:global(.chest-result>span:last-child),
+  :global(.spellcasting-summary-grid>div>span),:global(.weapon-attack-values span),
+  :global(.player-spell-checks label),:global(.monster-combat-grid small),
+  :global(.stat-label),:global(.key),:global(.hint),:global(.muted){
+    color:#b5bec3!important
+  }
+  :global(.chest-result strong),:global(.roll-entry-top strong),
+  :global(.trait-view strong),:global(.monster-card h3),:global(.character-card h3),
+  :global(.weapon-attack-card h4),:global(.player-feature-name){color:#fff!important}
+  :global(.gm-sheet-details summary),:global(.monster-source summary),
+  :global(.trait-group h3),:global(.roll-result b){color:#5fe6e0!important}
+  :global(.equipment-section),:global(.general-section),:global(.features-section),
+  :global(.attacks-section),:global(.skills-section),:global(.spells-section){
+    background:#13262e!important;color:#fff!important;border-color:#3a6870!important
+  }
+  :global(.player-spell-level),:global(.player-feature-source),
+  :global(.trait-level),:global(.free-tag),:global(.count){
+    color:#5fe6e0!important;border-color:#3fb8b8!important
+  }
+  :global(.toast){background:#1b2a33!important;color:#fff!important;border-color:#3fb8b8!important}
+  :global(.primary),:global(button.primary){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+  :global(.primary:hover),:global(button.primary:hover){background:#79f1eb!important}
+
 </style>
