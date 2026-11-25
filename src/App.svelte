@@ -4195,7 +4195,7 @@ import ITEMS from './items.json';
               
 
               
-              <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
+              
               <label>Especie<select value={builderSpeciesChosen ? builderData.species : ''} on:change={builderChooseSpecies}><option value="">Elige una especie</option>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               {#if builderSpeciesChosen}
               <div class="name-generator-panel">
