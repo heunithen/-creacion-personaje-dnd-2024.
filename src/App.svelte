@@ -3305,9 +3305,6 @@ import ITEMS from './items.json';
     const score = abilityScoreNumber(value);
     return score === null ? null : Math.floor((score - 10) / 2);
   }
-  function signedBonus(value: number): string {
-    return (value >= 0 ? '+' : '') + value;
-  }
   function savingThrowNumber(ability: string, sections: RawSection[] = sheet?.sections || []): number | null {
     const raw = savingThrowBonus(ability, sections);
     const match = raw.replace(/−/g,'-').match(/[+-]?\d+/);
@@ -4140,7 +4137,7 @@ import ITEMS from './items.json';
                   {@const abilityValue = displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}
                   {@const score = abilityScoreNumber(abilityValue)}
                   {@const modifier = abilityModifier(abilityValue)}
-                  {@const saveBonus = savingThrowNumber(String(stat.name || ''), sheet.sections || [])}
+                  {@const saveBonus = savingThrowNumber(String(stat.name || ''), sheet?.sections || [])}
                   <div class="attribute-plaque">
                     <span>{stat.name || ''}</span>
                     <strong class="ability-score">{score ?? '—'}</strong>
