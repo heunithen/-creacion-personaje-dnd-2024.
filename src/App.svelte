@@ -821,16 +821,14 @@
     applyVisualStyle();
   }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Almacenamiento', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Estilo'];
+  const masterTabs = ['Personajes', 'Personajes guardados', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Estilo'];
   let githubConfig: GithubConfig | null = null;
   let githubStore: GithubCharacterStorage | null = null;
   let githubTokenDraft = '';
   let githubOwnerDraft = 'heunithen';
   let githubRepoDraft = '-creacion-personaje-dnd-2024.';
   let githubBranchDraft = 'main';
-  let githubFolderDraft = '';
   let cloudRecords: GithubCharacterRecord[] = [];
-  let cloudFolders: string[] = ['sin-partida'];
   let cloudLoading = false;
   let cloudStatus = 'Almacenamiento GitHub sin configurar.';
 
@@ -2055,6 +2053,7 @@
         requestAnimationFrame(() => document.querySelector('.builder-step-error')?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
         return;
       }
+      builderData.player = playerName || builderData.player || '';
       const generated = buildLevelOneSheet();
       if (!generated || !Array.isArray(generated.sections) || !generated.sections.length) {
         throw new Error('La ficha se generó sin secciones. Revisa las elecciones y vuelve a intentarlo.');
@@ -3664,45 +3663,10 @@ import ITEMS from './items.json';
     cloudLoading = true;
     try {
       const index = await githubStore.readIndex();
-      cloudFolders = index.folders;
-      cloudRecords = index.characters.slice().sort((a,b) => a.name.localeCompare(b.name,'es')).map(record => ({ ...record, targetFolder: record.folder || 'sin-partida' }));
-      cloudStatus = `Repositorio conectado: ${cloudRecords.length} personaje(s) en ${cloudFolders.length} carpeta(s).`;
+      cloudRecords = index.characters.slice().sort((a,b) => a.name.localeCompare(b.name,'es'));
+      cloudStatus = `Repositorio conectado: ${cloudRecords.length} personaje(s) guardado(s).`;
     } catch (error) { cloudStatus = 'Error al consultar GitHub: ' + (error instanceof Error ? error.message : String(error)); }
     finally { cloudLoading = false; }
-  }
-
-  async function createGithubFolder() {
-    if (!githubStore) {
-      cloudStatus = 'No hay una conexión activa con GitHub. Guarda la conexión desde esta sala OBR.';
-      return;
-    }
-    if (!githubFolderDraft.trim()) {
-      cloudStatus = 'Escribe el nombre de la partida antes de crear la carpeta.';
-      return;
-    }
-    cloudLoading = true;
-    cloudStatus = 'Creando carpeta en GitHub…';
-    try {
-      const folder = await githubStore.createFolder(githubFolderDraft);
-      githubFolderDraft = '';
-      const index = await githubStore.readIndex();
-      cloudFolders = index.folders;
-      cloudRecords = index.characters.slice().sort((a,b) => a.name.localeCompare(b.name,'es')).map(record => ({ ...record, targetFolder: record.folder || 'sin-partida' }));
-      cloudStatus = 'Carpeta creada correctamente: ' + folder + '.';
-    } catch (error) {
-      cloudStatus = 'No se pudo crear la carpeta: ' + (error instanceof Error ? error.message : String(error));
-    } finally {
-      cloudLoading = false;
-    }
-  }
-
-  async function moveGithubCharacter(record: GithubCharacterRecord) {
-    if (!githubStore || !record.targetFolder) return;
-    try {
-      await githubStore.move(record, record.targetFolder);
-      await refreshGithubCharacters();
-      cloudStatus = record.name + ' movido a ' + record.targetFolder + '.';
-    } catch (error) { cloudStatus = 'No se pudo mover el personaje: ' + (error instanceof Error ? error.message : String(error)); }
   }
 
   async function deleteGithubCharacter(record: GithubCharacterRecord) {
@@ -3809,6 +3773,7 @@ import ITEMS from './items.json';
       try {
         obrRole = await OBR.player.getRole();
         playerName = await OBR.player.getName();
+        builderData.player = playerName;
         await loadGithubRoomConfig();
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
         if (!demoPreview) await restoreOwnSheet();
@@ -4066,10 +4031,10 @@ import ITEMS from './items.json';
             </section>
           {/if}
         </section>
-      {:else if masterTab === 'Almacenamiento'}
+      {:else if masterTab === 'Personajes guardados'}
         <section class="panel roster-panel">
-          <div class="section-heading"><h2>Almacenamiento de personajes</h2><span class="count">GitHub</span></div>
-          <p class="muted">Los jugadores guardan y actualizan sus hojas desde OBR. Desde aquí puedes crear carpetas de partidas, mover personajes y eliminar hojas.</p>
+          <div class="section-heading"><h2>Personajes guardados</h2><span class="count">GitHub</span></div>
+          <p class="muted">Las hojas se guardan automáticamente en el repositorio y permanecen disponibles aunque los jugadores se desconecten o borren la caché de su navegador.</p>
           <div class="builder-panel github-config-panel">
             <h3>Conexión compartida</h3>
             <p class="muted">Token personal de GitHub con permiso de lectura y escritura de contenidos únicamente para este repositorio. Se comparte en los metadatos de la sala OBR; todos los participantes de confianza podrán acceder a él.</p>
@@ -4080,11 +4045,6 @@ import ITEMS from './items.json';
             <div class="actions"><button class="primary" on:click={saveGithubRoomConfig}>Guardar conexión</button><button class="secondary" on:click={refreshGithubCharacters} disabled={!githubStore || cloudLoading}>Actualizar lista</button></div>
           </div>
           <div class="builder-panel">
-            <h3>Carpetas de partidas</h3>
-            <div class="github-folder-create"><input bind:value={githubFolderDraft} placeholder="Nombre de la partida" /><button class="primary" on:click={createGithubFolder} disabled={!githubStore || cloudLoading}>{cloudLoading ? 'Procesando…' : 'Crear carpeta'}</button></div>
-            <div class="github-folder-list">{#each cloudFolders as folder}<span class="github-folder-chip">{folder === 'sin-partida' ? 'Sin partida' : folder}</span>{/each}</div>
-          </div>
-          <div class="builder-panel">
             <div class="section-heading"><h3>Hojas guardadas</h3><span class="count">{cloudRecords.length}</span></div>
             {#if cloudLoading}<p class="muted">Consultando GitHub…</p>
             {:else if !cloudRecords.length}<p class="muted">No hay personajes guardados en el repositorio.</p>
@@ -4092,13 +4052,8 @@ import ITEMS from './items.json';
               <div class="github-character-list">
                 {#each cloudRecords as record (record.playerId)}
                   <article class="github-character-row">
-                    <div><strong>{record.name}</strong><small>{record.playerName} · {record.folder === 'sin-partida' ? 'Sin partida' : record.folder}</small></div>
+                    <div><strong>{record.name}</strong><small>Jugador: {record.playerName}</small></div>
                     <div class="github-character-actions">
-                      <select bind:value={record.targetFolder} aria-label={'Mover ' + record.name + ' a una carpeta'}>
-                        <option value="sin-partida">Sin partida</option>
-                        {#each cloudFolders.filter(folder => folder !== 'sin-partida') as folder}<option value={folder}>{folder}</option>{/each}
-                      </select>
-                      <button class="secondary" on:click={() => moveGithubCharacter(record)} disabled={record.targetFolder === record.folder}>Mover</button>
                       <button class="danger-text" on:click={() => deleteGithubCharacter(record)}>Eliminar</button>
                     </div>
                   </article>
@@ -4375,7 +4330,7 @@ import ITEMS from './items.json';
             {#if builderStep===0}
               <h3>01. Concepto del personaje</h3>
               <p class="muted">Primero identifica a tu aventurero. Estos datos no modifican sus capacidades.</p>
-              <label>Nombre del jugador<input bind:value={builderData.player} placeholder="Jugador" /></label>
+              <div class="builder-info"><strong>Jugador</strong><p>{playerName || 'Nombre disponible al abrir la Forja desde Owlbear Rodeo'}</p></div>
               <div class="builder-info"><strong>Imagen del personaje</strong><p>Podrás cargar un retrato más adelante o dejarlo para después.</p></div>
               <p class="hint">No necesitas completar todos los detalles narrativos ahora.</p>
             {:else if builderStep===1}
