@@ -3395,21 +3395,28 @@ import ITEMS from './items.json';
       drawSectionColumn(right, 530, 178, 180, 858);
 
       const dataUrl = canvas.toDataURL('image/png');
+      const sceneReady = await OBR.scene.isReady();
+      if (!sceneReady) throw new Error('No hay una escena abierta o todavía no está lista.');
       const viewport = await OBR.viewport.getPosition();
       const item = buildImage(
         { width, height, mime: 'image/png', url: dataUrl },
         { dpi: 150, offset: { x: 0, y: 0 } }
-      ).build() as any;
-      item.name = 'Ficha · ' + (target.name || 'Personaje');
-      item.layer = 'PROP';
-      item.position = { x: viewport.x - width/2, y: viewport.y - height/2 };
-      item.scale = { x: 1, y: 1 };
+      )
+        .name('Ficha · ' + (target.name || 'Personaje'))
+        .layer('PROP')
+        .position({ x: viewport.x - baseWidth / 2, y: viewport.y - baseHeight / 2 })
+        .scale({ x: 1, y: 1 })
+        .locked(false)
+        .build();
       await OBR.scene.items.addItems([item]);
       imageSheetOpen = false;
       notice = 'Ficha generada usando hojadepj1.webp y añadida a la escena como PROP.';
     } catch (error) {
       console.error('No se pudo crear la ficha PROP:', error);
-      notice = 'No se pudo añadir la ficha a la escena: ' + (error instanceof Error ? error.message : String(error));
+      const detail = error instanceof Error
+        ? error.message
+        : (typeof error === 'string' ? error : JSON.stringify(error));
+      notice = 'No se pudo añadir la ficha a la escena' + (detail ? ': ' + detail : '. Revisa la consola de Owlbear para ver el error completo.');
     } finally {
       imageSheetBusy = false;
     }
