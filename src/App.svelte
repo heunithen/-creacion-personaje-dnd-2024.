@@ -17,7 +17,7 @@
   let obrReady = false;
   let obrRole = '';
   let playerName = '';
-  let activeTab = 'Datos';
+  let activeTab = 'Resumen';
   let monsterCrFilter = 'Todos';
   let monsterSearch = '';
   let itemSearch = '';
@@ -32,7 +32,7 @@
   let spellLevelFilter = 'Todos';
   let spellClassFilter = 'Todas';
   let spellSchoolFilter = 'Todas';
-  const tabs = ['Datos', 'Competencias', 'Equipo', 'Combate', 'Conjuros', 'Tiradas', 'Reglas'];
+  const tabs = ['Resumen', 'Acciones', 'Rasgos', 'Conjuros', 'Inventario', 'Historia', 'Tiradas', 'Reglas'];
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
   let syncInProgress = false;
@@ -2286,6 +2286,155 @@ import ITEMS from './items.json';
     if (pair.values?.stats?.[index]) pair.values.stats[index].value = value;
     else stats[index].value = value;
   }
+
+  function sheetValueByNames(target: RawSheet, names: string[], sections: string[] = []) {
+    const wanted = names.map(normalizeLevelText);
+    for (const pair of sectionPairs(target.sections || [])) {
+      if (sections.length && !sections.some(section => normalizeLevelText(pair.heading.name) === normalizeLevelText(section))) continue;
+      for (let i = 0; i < (pair.heading.stats || []).length; i++) {
+        if (wanted.includes(normalizeLevelText(pair.heading.stats![i].name))) {
+          return displayValue(pair.values?.stats?.[i]?.value ?? pair.heading.stats![i].value);
+        }
+      }
+    }
+    return '';
+  }
+  function sheetClassName(target: RawSheet) {
+    return sheetValueByNames(target, ['Clase'], ['PERSONAJE','DATOS','IDENTIDAD']) || sheetValueByNames(target, ['Clase']);
+  }
+  function sheetLevel(target: RawSheet) {
+    return getCharacterNumber(target, 'PROGRESIÓN', 'Nivel de clase',
+      getCharacterNumber(target, 'PERSONAJE', 'Nivel',
+        getCharacterNumber(target, 'DATOS', 'Nivel', 1))) || 1;
+  }
+  function readJsonRecord(target: RawSheet, section: string, field: string): Record<string, any> {
+    try { const value = JSON.parse(getCharacterStat(target, section, field) || '{}'); return value && typeof value === 'object' ? value : {}; }
+    catch { return {}; }
+  }
+  function saveSheetMutation() {
+    if (!sheet) return;
+    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+    if (obrReady && obrRole === 'PLAYER') { syncPending = true; void flushAutoSync(); }
+  }
+  function featureSourceGroups(target: RawSheet) {
+    const className = sheetClassName(target);
+    const level = sheetLevel(target);
+    const classFeatures = ((CLASS_FEATURES as any).classes?.[className] || []);
+    const groups: { level: number; features: any[] }[] = [];
+    for (let n = 1; n <= 20; n++) {
+      const features = classFeatures.filter((feature: any) => Number(feature.level) === n);
+      if (features.length) groups.push({ level: n, features });
+    }
+    return { className, level, groups };
+  }
+  function featureKind(name: string) {
+    const n = normalizeLevelText(name);
+    if (/ataque adicional|maestria|competencia|mejora de caracteristica|subclase/.test(n)) return 'Progresión';
+    if (/furia|inspiracion|canalizar|uso|cargas|veces|recuper/.test(n)) return 'Recurso';
+    return 'Rasgo';
+  }
+  function spellClassKey(target: RawSheet) { return normalizeLevelText(sheetClassName(target)); }
+  function spellKnownNames(target: RawSheet) {
+    const fields = ['Trucos de clase','Trucos','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Conjuros de trasfondo','Conjuros de dote','Conjuros preparados de subclase','Conjuros de escuela','Conjuros de nivel 1'];
+    const text = fields.map(field => getCharacterStat(target, 'CONJUROS', field)).join(', ');
+    return new Set(text.replace(/Libro:\s*/gi,'').replace(/Preparados:\s*/gi,'').split(/[,;\n]+/)
+      .map((name: string) => normalizeLevelText(name.replace(/\s*\([^)]*\)\s*$/,'').trim()))
+      .filter(Boolean));
+  }
+  function spellMaxLevel(target: RawSheet) {
+    const className = sheetClassName(target);
+    const level = sheetLevel(target);
+    const row = ((LEVEL_PROGRESSION as any).classes?.[className]?.rows || []).find((item: any) => Number(item.level) === level);
+    if (!row?.resources) return 0;
+    let max = 0;
+    for (const [key, value] of Object.entries(row.resources)) {
+      const match = key.match(/Espacios nivel (\d+)/i);
+      if (match && value !== '—' && Number(value) > 0) max = Math.max(max, Number(match[1]));
+    }
+    return max;
+  }
+  function spellSlotMaximums(target: RawSheet) {
+    const className = sheetClassName(target);
+    const level = sheetLevel(target);
+    const row = ((LEVEL_PROGRESSION as any).classes?.[className]?.rows || []).find((item: any) => Number(item.level) === level);
+    const result: Record<string, number> = {};
+    for (const [key, value] of Object.entries(row?.resources || {})) {
+      const match = key.match(/Espacios nivel (\d+)/i);
+      if (match && value !== '—') result[match[1]] = Math.max(0, Number(value) || 0);
+    }
+    return result;
+  }
+  function spellStates(target: RawSheet) {
+    return readJsonRecord(target, 'GESTIÓN DE FICHA', 'Estados de conjuros');
+  }
+  function slotUsage(target: RawSheet) {
+    return readJsonRecord(target, 'GESTIÓN DE FICHA', 'Espacios gastados');
+  }
+  function spellIsKnown(target: RawSheet, spell: any) {
+    const saved = spellStates(target)[normalizeLevelText(spell.name)];
+    return saved?.known === true || spellKnownNames(target).has(normalizeLevelText(spell.name));
+  }
+  function spellIsPrepared(target: RawSheet, spell: any) {
+    const saved = spellStates(target)[normalizeLevelText(spell.name)];
+    if (typeof saved?.prepared === 'boolean') return saved.prepared;
+    const prepared = getCharacterStat(target, 'CONJUROS', 'Conjuros preparados de clase') + ', ' +
+      getCharacterStat(target, 'CONJUROS', 'Conjuros preparados de subclase') + ', ' +
+      getCharacterStat(target, 'CONJUROS', 'Conjuros de nivel 1');
+    return prepared.toLocaleLowerCase('es').includes(spell.name.toLocaleLowerCase('es'));
+  }
+  function toggleSpellState(spell: any, action: 'known' | 'prepared' | 'cast') {
+    if (!sheet) return;
+    const key = normalizeLevelText(spell.name);
+    const states = spellStates(sheet);
+    const current = { ...(states[key] || {}) };
+    if (action === 'known') current.known = !spellIsKnown(sheet, spell);
+    if (action === 'prepared') {
+      current.known = true;
+      current.prepared = !spellIsPrepared(sheet, spell);
+    }
+    if (action === 'cast') {
+      current.cast = !current.cast;
+      if (current.cast && Number(spell.level) > 0) {
+        const usage = slotUsage(sheet);
+        const levelKey = String(spell.level);
+        const maxima = spellSlotMaximums(sheet);
+        const used = Number(usage[levelKey] || 0);
+        if (used >= Number(maxima[levelKey] || 0)) {
+          notice = 'No quedan espacios de nivel ' + levelKey + '. Ajusta el nivel del espacio si lanzas el conjuro con otro nivel.';
+          current.cast = false;
+          return;
+        }
+        usage[levelKey] = used + 1;
+        setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Espacios gastados', JSON.stringify(usage));
+      }
+    }
+    states[key] = current;
+    setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Estados de conjuros', JSON.stringify(states));
+    saveSheetMutation();
+  }
+  function changeSlotUsage(level: string, delta: number) {
+    if (!sheet) return;
+    const usage = slotUsage(sheet);
+    const maximums = spellSlotMaximums(sheet);
+    usage[level] = Math.max(0, Math.min(Number(maximums[level] || 0), Number(usage[level] || 0) + delta));
+    setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Espacios gastados', JSON.stringify(usage));
+    saveSheetMutation();
+  }
+  function resetSpellUseStates() {
+    if (!sheet) return;
+    const states = spellStates(sheet);
+    Object.keys(states).forEach(key => { states[key] = { ...states[key], cast: false }; });
+    setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Estados de conjuros', JSON.stringify(states));
+    setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Espacios gastados', '{}');
+    saveSheetMutation();
+    notice = 'Usos de conjuros y espacios gastados reiniciados. Comprueba que el descanso permita recuperarlos.';
+  }
+  $: spellClassForSheet = sheet ? spellClassKey(sheet) : '';
+  $: sheetSpellCards = sheet ? SPELLS.filter((spell: any) => spell.classes.includes(spellClassForSheet)) : [];
+  $: sheetSpellSlots = sheet ? spellSlotMaximums(sheet) : {};
+  $: sheetSpellUsage = sheet ? slotUsage(sheet) : {};
+  $: sheetFeatureData = sheet ? featureSourceGroups(sheet) : { className: '', level: 1, groups: [] };
+
   function getClassFeaturesAtLevel(className: string, level: number): any[] {
     return ((CLASS_FEATURES as any).classes?.[className] || []).filter((feature:any)=>feature.level===level);
   }
@@ -3006,14 +3155,14 @@ import ITEMS from './items.json';
     const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (/\b19\b.*recurso|recurso/.test(n)) return 'Ocultar';
     if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
-    if (/detalle[s]? de especie/.test(n)) return 'Datos';
-    if (/historia|personalidad|apariencia|trasfondo/.test(n)) return 'Datos';
-    if (/atributo|ability/.test(n)) return 'Datos';
+    if (/detalle[s]? de especie/.test(n)) return 'Rasgos';
+    if (/historia|personalidad|apariencia|trasfondo/.test(n)) return 'Historia';
+    if (/atributo|ability|salvacion|habilidad|competencia|skill|saving throw|proficien|personaje|datos/.test(n)) return 'Resumen';
     if (/tirada|roll|dado/.test(n)) return 'Tiradas';
-    if (/equipo|inventario|objeto/.test(n)) return 'Equipo';
-    if (/salvacion|habilidad|competencia|skill|saving throw|proficien/.test(n)) return 'Competencias';
-    if (/combate|ataque|rasgo|dote|caracteristica de clase|racial|weapon|armor/.test(n)) return 'Combate';
-    return 'Datos';
+    if (/equipo|inventario|objeto/.test(n)) return 'Inventario';
+    if (/rasgo|dote|caracteristica de clase|racial|especie/.test(n)) return 'Rasgos';
+    if (/combate|ataque|arma|weapon|armor/.test(n)) return 'Acciones';
+    return 'Resumen';
   }
 
   function visiblePairs(sections: RawSection[] = [], tab = activeTab) {
@@ -3819,6 +3968,71 @@ import ITEMS from './items.json';
           <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha">
             {#each tabs as tab}<button class:active={activeTab === tab} role="tab" aria-selected={activeTab === tab} on:click={() => activeTab = tab}>{tab}</button>{/each}
           </nav>
+          {#if activeTab === 'Rasgos'}
+            <section class="progression-panel">
+              <div class="section-heading"><div><span class="sheet-kicker">PROGRESIÓN DE PERSONAJE</span><h2>Rasgos y capacidades</h2></div><span class="count">Nivel {sheetFeatureData.level} / 20</span></div>
+              <p class="muted">Los rasgos iluminados ya están desbloqueados. Los apagados pertenecen a niveles futuros.</p>
+              {#each sheetFeatureData.groups as group (group.level)}
+                <section class:progression-current={group.level === sheetFeatureData.level} class:progression-locked={group.level > sheetFeatureData.level} class="progression-level">
+                  <header><strong>Nivel {group.level}</strong><span>{group.level <= sheetFeatureData.level ? 'Desbloqueado' : 'Bloqueado'}</span></header>
+                  <div class="feature-card-grid">
+                    {#each group.features as feature (feature.name)}
+                      <details class:feature-locked={group.level > sheetFeatureData.level} class="progression-feature" open={group.level === sheetFeatureData.level && group.features.length === 1}>
+                        <summary><span class="feature-status">{group.level <= sheetFeatureData.level ? '◆' : '◇'}</span><span class="feature-title">{feature.name}</span><span class="feature-kind">{featureKind(feature.name)}</span></summary>
+                        <p>{feature.description}</p>
+                      </details>
+                    {/each}
+                  </div>
+                </section>
+              {/each}
+              {#each visiblePairs(sheet.sections || [], 'Rasgos') as pair}
+                <section class="sheet-section features-section"><div class="sheet-section-title"><h3>{pair.heading.name}</h3></div>
+                  {#each pair.heading.stats || [] as stat, i}
+                    {@const value = displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}
+                    {#if value && !/^[-—]+$/.test(value.trim())}
+                      <details class="progression-feature"><summary><span class="feature-title">{stat.name}</span><span class="feature-kind">Personaje</span></summary><p>{value}</p></details>
+                    {/if}
+                  {/each}
+                </section>
+              {/each}
+            </section>
+          {:else if activeTab === 'Conjuros'}
+            <section class="spellbook-panel">
+              <div class="section-heading"><div><span class="sheet-kicker">LIBRO DE CONJUROS</span><h2>Conjuros de {sheetClassName(sheet) || 'tu clase'}</h2></div><span class="count">{sheetSpellCards.length} conjuros</span></div>
+              <div class="spell-slot-tracker">
+                {#each Object.entries(sheetSpellSlots) as slot}
+                  <div class="spell-slot-counter"><strong>Nivel {slot[0]}</strong><span>{Math.max(0, Number(slot[1]) - Number(sheetSpellUsage[slot[0]] || 0))} / {slot[1]}</span><div class="slot-controls"><button type="button" aria-label="Gastar espacio" on:click={() => changeSlotUsage(String(slot[0]), 1)}>−</button><button type="button" aria-label="Recuperar espacio" on:click={() => changeSlotUsage(String(slot[0]), -1)}>+</button></div></div>
+                {/each}
+                {#if Object.keys(sheetSpellSlots).length === 0}<p class="muted">Esta clase no tiene espacios de conjuro registrados en su nivel actual.</p>{/if}
+              </div>
+              <div class="spell-filters">
+                <label>Buscar conjuro<input type="search" bind:value={spellSearch} placeholder="Nombre o descripción..." /></label>
+                <label>Nivel<select bind:value={spellLevelFilter}><option value="Todos">Todos</option>{#each [0,1,2,3,4,5,6,7,8,9] as level}<option value={String(level)}>{level === 0 ? 'Trucos' : 'Nivel '+level}</option>{/each}</select></label>
+                <label>Escuela<select bind:value={spellSchoolFilter}><option value="Todas">Todas las escuelas</option>{#each SPELL_SCHOOLS as school}<option value={school}>{school}</option>{/each}</select></label>
+                <label>Mostrar<select bind:value={spellClassFilter}><option value="Todas">Todos los estados</option><option value="Conocidos">Conocidos</option><option value="Preparados">Preparados</option><option value="Disponibles">Aún no conocidos</option></select></label>
+              </div>
+              <div class="spell-card-grid">
+                {#each sheetSpellCards.filter((spell: any) =>
+                  (spellLevelFilter === 'Todos' || String(spell.level) === spellLevelFilter) &&
+                  (spellSchoolFilter === 'Todas' || spell.school === spellSchoolFilter) &&
+                  (!spellSearch.trim() || (spell.name+' '+spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es'))) &&
+                  (spellClassFilter === 'Todas' || (spellClassFilter === 'Conocidos' && spellIsKnown(sheet,spell)) || (spellClassFilter === 'Preparados' && spellIsPrepared(sheet,spell)) || (spellClassFilter === 'Disponibles' && !spellIsKnown(sheet,spell)))
+                ) as spell (spell.name)}
+                  <article class:spell-known={spellIsKnown(sheet,spell)} class:spell-prepared={spellIsPrepared(sheet,spell)} class:spell-unavailable={Number(spell.level) > spellMaxLevel(sheet) && Number(spell.level) > 0} class:spell-cast={spellStates(sheet)[normalizeLevelText(spell.name)]?.cast} class="spell-card">
+                    <header><span class="spell-level">{spell.level === 0 ? 'TRUCO' : 'NIVEL '+spell.level}</span><span class="spell-school">{spell.school}</span></header>
+                    <h3>{spell.name}</h3>
+                    <p class="spell-meta">{spell.castingTime} · {spell.range} · {spell.duration}</p>
+                    <div class="spell-card-actions">
+                      <button type="button" disabled={Number(spell.level) > spellMaxLevel(sheet) && Number(spell.level) > 0} class:active={spellIsKnown(sheet,spell)} on:click={() => toggleSpellState(spell,'known')}>{spellIsKnown(sheet,spell) ? 'Conocido' : 'Conocer'}</button>
+                      <button type="button" disabled={!spellIsKnown(sheet,spell)} class:active={spellIsPrepared(sheet,spell)} on:click={() => toggleSpellState(spell,'prepared')}>{spellIsPrepared(sheet,spell) ? 'Preparado' : 'Preparar'}</button>
+                      <button type="button" disabled={!spellIsKnown(sheet,spell) || (Number(spell.level) > 0 && Number(sheetSpellUsage[String(spell.level)] || 0) >= Number(sheetSpellSlots[String(spell.level)] || 0))} class:active={spellStates(sheet)[normalizeLevelText(spell.name)]?.cast} on:click={() => toggleSpellState(spell,'cast')}>Lanzado</button>
+                    </div>
+                    <details class="spell-card-details"><summary>Ver descripción</summary><p>{spell.description}</p><small>Componentes: {spell.components} · Manual del Jugador 2024, pág. {spell.printedPage}</small></details>
+                  </article>
+                {/each}
+              </div>
+              <button class="secondary" type="button" on:click={resetSpellUseStates}>Reiniciar marcas de uso y espacios (verifica el descanso)</button>
+            </section>
           {#if activeTab === 'Tiradas'}
             <section class="custom-rolls">
               {#if customRolls.length}
@@ -3878,7 +4092,7 @@ import ITEMS from './items.json';
               </div>
             </section>
           {:else}
-          {#if activeTab === 'Datos'}
+          {#if activeTab === 'Resumen'}
             <section class="import-character-panel data-import-panel">
               <div class="import-row">
                 <button class="secondary" on:click={() => importOpen = !importOpen}>Importar otro JSON</button>
@@ -4218,5 +4432,42 @@ import ITEMS from './items.json';
   :global(.rule-description){margin:0;color:#e5dddd;white-space:pre-wrap;overflow-wrap:anywhere;font:500 .76rem/1.6 system-ui,sans-serif}
   :global(.rule-source){display:block;margin-top:.7rem;color:#a99b9d;font-size:.65rem}
   @media(max-width:480px){:global(.rule-card summary){grid-template-columns:minmax(0,1fr) auto}:global(.rule-page){grid-column:1/-1}}
+
+
+  .progression-panel,.spellbook-panel{display:grid;gap:1rem}
+  .progression-level{padding:.8rem;border:1px solid #54232a;border-radius:9px;background:#0d0b0b}
+  .progression-level>header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem;color:#f4e8e8;font-size:.8rem}
+  .progression-level>header span{color:#ff9ba4;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em}
+  .progression-current{border-color:#b52a36;box-shadow:inset 3px 0 #d52332}
+  .progression-locked{opacity:.64}
+  .feature-card-grid,.spell-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:.65rem}
+  .progression-feature{min-width:0;border:1px solid #55242b;border-radius:7px;background:linear-gradient(145deg,#171010,#090909);overflow:hidden}
+  .progression-feature summary{display:flex;align-items:center;gap:.55rem;padding:.7rem;cursor:pointer;list-style:none}
+  .progression-feature summary::-webkit-details-marker{display:none}
+  .feature-status{color:#ff6c78}.feature-title{min-width:0;flex:1;color:#fff;font-weight:750;font-size:.78rem}
+  .feature-kind{color:#d7a7a9;font-size:.62rem;text-transform:uppercase;white-space:nowrap}
+  .progression-feature p{margin:0;padding:.1rem .75rem .8rem;color:#c9bfc0;font-size:.74rem;line-height:1.6;white-space:pre-wrap}
+  .feature-locked{filter:saturate(.25);opacity:.42}
+  .spell-slot-tracker{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem}
+  .spell-slot-counter{display:grid;gap:.3rem;padding:.65rem;border:1px solid #76212a;border-radius:7px;background:#100b0c}
+  .spell-slot-counter strong{font-size:.68rem;color:#ffadb4}.spell-slot-counter>span{font-size:1.15rem;font-weight:800;color:#fff}
+  .slot-controls{display:flex;gap:.3rem}.slot-controls button{flex:1;padding:.25rem;border:1px solid #76212a;border-radius:4px;background:#1c0b0e;color:#fff}
+  .spell-filters{display:grid;grid-template-columns:2fr repeat(3,minmax(0,1fr));gap:.5rem}
+  .spell-filters label{margin:0;padding:.5rem;border:0;background:transparent}
+  .spell-card{display:flex;flex-direction:column;min-width:0;padding:.8rem;border:1px solid #54232a;border-radius:9px;background:linear-gradient(145deg,#171010,#090909);transition:opacity .15s,border-color .15s}
+  .spell-card header{display:flex;justify-content:space-between;gap:.4rem;color:#d0a6a8;font-size:.6rem;letter-spacing:.06em}
+  .spell-card h3{margin:.65rem 0 .25rem;color:#fff;font:700 1rem Georgia,serif}
+  .spell-meta{margin:.2rem 0 .7rem;color:#a99b9d;font-size:.66rem}
+  .spell-known{border-color:#8c3942}.spell-prepared{border:2px solid #c59a42;box-shadow:0 0 0 1px #c59a4233}
+  .spell-unavailable{opacity:.35;filter:grayscale(1)}.spell-cast{background:#090909;filter:grayscale(.7);opacity:.72}
+  .spell-card-actions{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:auto}
+  .spell-card-actions button{flex:1;min-width:75px;padding:.42rem .3rem;border:1px solid #633039;border-radius:5px;background:#100b0c;color:#d8c9ca;font-size:.64rem}
+  .spell-card-actions button.active{border-color:#c59a42;background:#33240c;color:#ffe0a1}
+  .spell-card-actions button:disabled{opacity:.35;cursor:not-allowed}
+  .spell-card-details{margin-top:.65rem;border-top:1px solid #3b2428;padding-top:.5rem}
+  .spell-card-details summary{cursor:pointer;color:#ffadb4;font-size:.68rem}
+  .spell-card-details p{white-space:pre-wrap;color:#ded4d5;font-size:.72rem;line-height:1.55}
+  .spell-card-details small{color:#a99b9d;font-size:.62rem}
+  @media(max-width:650px){.spell-filters{grid-template-columns:1fr 1fr}.spell-filters label:first-child{grid-column:1/-1}.feature-card-grid,.spell-card-grid{grid-template-columns:1fr}}
 
 </style>
