@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import OBR, { buildImage, buildImageUpload } from '@owlbear-rodeo/sdk';
+  import OBR from '@owlbear-rodeo/sdk';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
   const CHANNEL = 'com.heunithen.dnd2024-character-builder/character-sync';
@@ -38,10 +38,6 @@
   let syncInProgress = false;
   let syncPending = false;
   let fileInput: HTMLInputElement;
-  let imageSheetOpen = false;
-  let imageSheetTarget: RawSheet | null = null;
-  let imageSheetText = '';
-  let imageSheetBusy = false;
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
   const CHEST_LOOT = [
@@ -3250,193 +3246,6 @@ import ITEMS from './items.json';
   }
 
 
-  function buildCharacterImageText(target: RawSheet): string {
-    const lines: string[] = [];
-    for (const pair of sectionPairs(target.sections || [])) {
-      const sectionName = String(pair.heading.name || '').trim();
-      if (!sectionName || /gestión de ficha|valores|detalle de conjuros/i.test(sectionName)) continue;
-      const entries = (pair.heading.stats || []).map((stat, index) => {
-        const value = displayValue(pair.values?.stats?.[index]?.value ?? stat.value);
-        return value && !/^[-—]+$/.test(value.trim()) ? String(stat.name || 'Dato') + ': ' + value : '';
-      }).filter(Boolean);
-      if (entries.length) lines.push('## ' + sectionName, ...entries, '');
-    }
-    return lines.join('\n').trim();
-  }
-
-  function openCharacterImage(target: RawSheet) {
-    imageSheetTarget = target;
-    imageSheetText = buildCharacterImageText(target);
-    imageSheetOpen = true;
-  }
-
-  function drawWrappedCanvasText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number {
-    const words = String(text).split(/\s+/);
-    let line = '';
-    for (const word of words) {
-      const candidate = line ? line + ' ' + word : word;
-      if (ctx.measureText(candidate).width > maxWidth && line) {
-        ctx.fillText(line, x, y);
-        y += lineHeight;
-        line = word;
-      } else line = candidate;
-    }
-    if (line) { ctx.fillText(line, x, y); y += lineHeight; }
-    return y;
-  }
-
-  async function addCharacterImageProp() {
-    if (!imageSheetTarget || imageSheetBusy) return;
-    if (!obrReady || !OBR.isAvailable) {
-      notice = 'Abre la extensión dentro de una sala de Owlbear Rodeo para colocar la ficha como PROP.';
-      return;
-    }
-    imageSheetBusy = true;
-    try {
-      const template = new Image();
-      template.src = new URL('../hojadepj1.webp', import.meta.url).href;
-      await new Promise<void>((resolve, reject) => {
-        template.onload = () => resolve();
-        template.onerror = () => reject(new Error('No se pudo cargar hojadepj1.webp.'));
-      });
-      const baseWidth = template.naturalWidth || 730;
-      const baseHeight = template.naturalHeight || 874;
-      const renderScale = 2;
-      const width = baseWidth * renderScale;
-      const height = baseHeight * renderScale;
-      const canvas = document.createElement('canvas');
-      canvas.width = width; canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('No se pudo crear el lienzo de la ficha.');
-      ctx.scale(renderScale, renderScale);
-      ctx.drawImage(template, 0, 0, baseWidth, baseHeight);
-
-      const target = imageSheetTarget;
-      const value = (names: string[], sections: string[] = []) => sheetValueByNames(target, names, sections);
-      const text = (v: unknown) => String(v ?? '').trim();
-      const abilityNames = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
-      const abilityShort = ['STR','DEX','CON','INT','WIS','CHA'];
-      const abilityY = [195,285,375,465,555,645];
-      const abilitySections = ['ATRIBUTOS','CARACTERÍSTICAS','CARACTERISTICAS'];
-      ctx.fillStyle = '#222'; ctx.textAlign = 'center'; ctx.font = 'bold 12px Arial';
-      abilityNames.forEach((name, i) => {
-        const x = 55, y = abilityY[i];
-        const raw = value([name], abilitySections);
-        const match = raw.match(/-?\d+/);
-        const score = match ? Number(match[0]) : NaN;
-        const mod = Number.isFinite(score) ? (score >= 10 ? '+' : '') + Math.floor((score - 10) / 2) : raw;
-        ctx.fillText(abilityShort[i], x, y - 16);
-        ctx.font = 'bold 21px Arial'; ctx.fillText(mod || '—', x, y + 5);
-        ctx.font = '11px Arial'; ctx.fillText(raw || '—', x, y + 25);
-        ctx.font = 'bold 12px Arial';
-      });
-
-      ctx.textAlign = 'left'; ctx.fillStyle = '#111';
-      ctx.font = 'bold 28px Georgia';
-      ctx.fillText(text(target.name || 'PERSONAJE').toLocaleUpperCase('es').slice(0, 25), 388, 57, 300);
-      ctx.font = '12px Arial';
-      const className = sheetClassName(target) || 'Clase';
-      const level = sheetLevel(target);
-      ctx.fillText(className + ' ' + level, 219, 87, 210);
-      ctx.fillText(value(['Experiencia','Puntos de experiencia','XP']) || '0', 449, 87, 110);
-      ctx.fillText(value(['Jugador','Nombre del jugador']) || '', 584, 87, 130);
-      ctx.fillText(value(['Especie','Raza','Ascendencia']) || '', 219, 124, 210);
-      ctx.fillText(value(['Trasfondo','Antecedente']) || '', 449, 124, 110);
-      ctx.fillText(value(['Campaña','ID de jugador']) || '', 584, 124, 130);
-      ctx.font = 'bold 21px Arial';
-      ctx.fillText(value(['Bonificador de competencia','Bono de competencia','Competencia']) || '—', 126, 190, 105);
-      ctx.font = 'bold 19px Arial';
-      ctx.fillText(value(['Clase de armadura','CA','Armadura']) || '—', 326, 230, 48);
-      ctx.fillText(value(['Iniciativa']) || '—', 412, 230, 48);
-      ctx.fillText(value(['Velocidad','Movimiento']) || '—', 470, 230, 58);
-      ctx.font = 'bold 19px Arial';
-      ctx.fillText(value(['Puntos de golpe máximos','PG máximos','Puntos de golpe','PG']) || '—', 340, 305, 58);
-      ctx.font = 'bold 15px Arial';
-      ctx.fillText(value(['Dado de golpe','Dados de golpe']) || '—', 442, 305, 55);
-
-      const sections: {title:string;lines:string[]}[] = [];
-      let current: {title:string;lines:string[]}|null = null;
-      for (const raw of imageSheetText.split(/\r?\n/)) {
-        const line = raw.trim();
-        if (!line) continue;
-        if (line.startsWith('## ')) {
-          current = {title:line.slice(3).toLocaleUpperCase('es'),lines:[]};
-          sections.push(current);
-        } else {
-          if (!current) { current={title:'DATOS DEL PERSONAJE',lines:[]}; sections.push(current); }
-          current.lines.push(line);
-        }
-      }
-      const left: typeof sections = [], middle: typeof sections = [], right: typeof sections = [];
-      for (const section of sections) {
-        const h = section.title.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-        if (/salvacion|habilidad|competencia|idioma|proficien|pasiva/.test(h)) left.push(section);
-        else if (/arma|ataque|equipo|rasgo|dote|accion|caracteristica de clase/.test(h)) middle.push(section);
-        else right.push(section);
-      }
-      const drawSectionColumn = (items: typeof sections, x: number, yStart: number, w: number, bottom: number) => {
-        let y = yStart;
-        for (const section of items) {
-          if (y > bottom - 30) break;
-          ctx.fillStyle = '#888'; ctx.fillRect(x, y, w, 1);
-          y += 14;
-          ctx.fillStyle = '#333'; ctx.font = 'bold 9px Arial';
-          y = drawWrappedCanvasText(ctx, section.title, x, y, w, 11) + 3;
-          ctx.fillStyle = '#222'; ctx.font = '8px Arial';
-          for (const line of section.lines) {
-            y = drawWrappedCanvasText(ctx, line, x + 2, y, w - 4, 10);
-            if (y > bottom - 8) break;
-          }
-          y += 7;
-        }
-      };
-      drawSectionColumn(left, 50, 258, 190, 858);
-      drawSectionColumn(middle, 282, 365, 230, 858);
-      drawSectionColumn(right, 530, 178, 180, 858);
-
-      const sceneReady = await OBR.scene.isReady();
-      if (!sceneReady) throw new Error('No hay una escena abierta o todavía no está lista.');
-
-      // Owlbear necesita una URL de imagen alojada, no un data URL temporal del canvas.
-      const pngBlob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('No se pudo exportar el PNG de la ficha.')), 'image/png');
-      });
-      const safeName = (target.name || 'Personaje').replace(/[^a-zA-Z0-9_-]+/g, '-');
-      const pngFile = new File([pngBlob], 'Ficha-' + safeName + '.png', { type: 'image/png' });
-      await OBR.assets.uploadImages([
-        buildImageUpload(pngFile)
-          .name('Ficha · ' + (target.name || 'Personaje'))
-          .dpi(150)
-          .offset({ x: 0, y: 0 })
-          .build()
-      ], 'PROP');
-
-      const selectedImages = await OBR.assets.downloadImages(false, 'Ficha-' + safeName, 'PROP');
-      if (!selectedImages.length) {
-        throw new Error('La ficha PNG se exportó, pero no se seleccionó en el selector de recursos.');
-      }
-      const uploadedImage = selectedImages[0];
-      const viewport = await OBR.viewport.getPosition();
-      const item = buildImage(uploadedImage.image, uploadedImage.grid)
-        .name('Ficha · ' + (target.name || 'Personaje'))
-        .layer('PROP')
-        .position({ x: viewport.x - baseWidth / 2, y: viewport.y - baseHeight / 2 })
-        .scale({ x: 1, y: 1 })
-        .locked(false)
-        .build();
-      await OBR.scene.items.addItems([item]);
-      imageSheetOpen = false;
-      notice = 'Ficha PNG subida a tus recursos y añadida a la escena como PROP.';
-    } catch (error) {
-      console.error('No se pudo crear la ficha PROP:', error);
-      const detail = error instanceof Error
-        ? error.message
-        : (typeof error === 'string' ? error : JSON.stringify(error));
-      notice = 'No se pudo añadir la ficha a la escena' + (detail ? ': ' + detail : '. Revisa la consola de Owlbear para ver el error completo.');
-    } finally {
-      imageSheetBusy = false;
-    }
-  }
 
   async function exportSheet() {
     if (!sheet) return;
@@ -4150,15 +3959,6 @@ import ITEMS from './items.json';
                 {/if}
               </div>
             </article>
-            <section class="character-image-export">
-              <div class="section-heading"><h3>Ficha estática para Owlbear</h3><span class="count">PROP</span></div>
-              <p class="muted">Prepara una versión imprimible de la ficha. Puedes editar el texto antes de convertirlo en una imagen estática y colocarla en la escena.</p>
-              <button class="secondary" type="button" on:click={() => builderPreview && openCharacterImage(builderPreview)}>Preparar ficha como imagen</button>
-              {#if imageSheetOpen && imageSheetTarget === builderPreview}
-                <label>Texto de la ficha · editable<textarea class="character-image-text" bind:value={imageSheetText} rows="12"></textarea></label>
-                <div class="actions"><button class="secondary" type="button" on:click={() => imageSheetOpen = false}>Cancelar</button><button class="primary" type="button" disabled={imageSheetBusy} on:click={addCharacterImageProp}>{imageSheetBusy ? 'Generando…' : 'Generar imagen y añadir como PROP'}</button></div>
-              {/if}
-            </section>
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
               <button type="button" class="primary" disabled={builderSaving} on:click={saveBuilderCharacter}>{builderSaving ? 'Guardando…' : 'Guardar personaje en mi ficha'}</button>
@@ -4172,13 +3972,7 @@ import ITEMS from './items.json';
       {#if sheet && !playerCreating}
         <section class="panel player-character-actions">
           <button class="secondary" on:click={startBuilder}>Crear personaje nuevo</button>
-          <button class="secondary" on:click={() => sheet && openCharacterImage(sheet)}>Preparar ficha como imagen PROP</button>
-          {#if imageSheetOpen && imageSheetTarget === sheet}
-            <div class="character-image-export">
-              <label>Texto de la ficha · editable<textarea class="character-image-text" bind:value={imageSheetText} rows="12"></textarea></label>
-              <div class="actions"><button class="secondary" type="button" on:click={() => imageSheetOpen = false}>Cancelar</button><button class="primary" type="button" disabled={imageSheetBusy} on:click={addCharacterImageProp}>{imageSheetBusy ? 'Generando…' : 'Generar imagen y añadir como PROP'}</button></div>
-            </div>
-          {/if}
+
         </section>
       {/if}
       {#if sheet && !playerCreating}
