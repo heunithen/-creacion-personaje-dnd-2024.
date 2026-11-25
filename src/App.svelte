@@ -2024,6 +2024,66 @@ import ITEMS from './items.json';
     if (newRollParts.length > 1) newRollParts = newRollParts.filter(part => part.id !== id);
   }
   const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
+
+  const MONSTER_ES_TERMS: [string,string][] = [
+    ['BONUS ACTIONS','ACCIONES ADICIONALES'],['LEGENDARY ACTIONS','ACCIONES LEGENDARIAS'],['MYTHIC ACTIONS','ACCIONES MÍTICAS'],['REACTIONS','REACCIONES'],['ACTIONS','ACCIONES'],['TRAITS','ATRIBUTOS'],
+    ['ABILITY SCORES','CARACTERÍSTICAS'],['Multiattack','Ataque múltiple'],['Melee or Ranged Attack Roll','Tirada de ataque cuerpo a cuerpo o a distancia'],['Melee Attack Roll','Tirada de ataque cuerpo a cuerpo'],['Ranged Attack Roll','Tirada de ataque a distancia'],
+    ['Saving Throw','Tirada de salvación'],['Saving Throws','Tiradas de salvación'],['Hit Points','Puntos de golpe'],['Passive Perception','Percepción pasiva'],['Darkvision','Visión en la oscuridad'],['Blindsight','Vista ciega'],['Tremorsense','Sentido de vibraciones'],['Truesight','Visión verdadera'],
+    ['Armor Class','Clase de armadura'],['Initiative','Iniciativa'],['Speed','Velocidad'],['Skills','Habilidades'],['Senses','Sentidos'],['Languages','Idiomas'],['Resistances','Resistencias'],['Immunities','Inmunidades'],['Vulnerabilities','Vulnerabilidades'],['Condition Immunities','Inmunidades a estados'],['Gear','Equipo'],['Challenge','Valor de desafío'],['Proficiency Bonus','Bonificador por competencia'],
+    ['Strength','Fuerza'],['Dexterity','Destreza'],['Constitution','Constitución'],['Intelligence','Inteligencia'],['Wisdom','Sabiduría'],['Charisma','Carisma'],
+    ['Tiny','Diminuto'],['Small','Pequeño'],['Medium','Mediano'],['Large','Grande'],['Huge','Enorme'],['Gargantuan','Gargantuesco'],
+    ['Aberration','Aberración'],['Beast','Bestia'],['Celestial','Celestial'],['Construct','Autómata'],['Dragon','Dragón'],['Elemental','Elemental'],['Fey','Feérico'],['Fiend','Infernal'],['Giant','Gigante'],['Humanoid','Humanoide'],['Monstrosity','Monstruosidad'],['Ooze','Cieno'],['Plant','Planta'],['Undead','Muerto viviente'],
+    ['Lawful Good','Legal bueno'],['Neutral Good','Neutral bueno'],['Chaotic Good','Caótico bueno'],['Lawful Neutral','Legal neutral'],['Neutral Evil','Neutral malvado'],['Chaotic Evil','Caótico malvado'],['Lawful Evil','Legal malvado'],['Chaotic Neutral','Caótico neutral'],['Unaligned','Sin alineamiento'],
+    ['Bludgeoning damage','daño contundente'],['Piercing damage','daño perforante'],['Slashing damage','daño cortante'],['Acid damage','daño de ácido'],['Cold damage','daño de frío'],['Fire damage','daño de fuego'],['Force damage','daño de fuerza'],['Lightning damage','daño de relámpago'],['Necrotic damage','daño necrótico'],['Poison damage','daño de veneno'],['Psychic damage','daño psíquico'],['Radiant damage','daño radiante'],['Thunder damage','daño de trueno'],
+    ['Bludgeoning','Contundente'],['Piercing','Perforante'],['Slashing','Cortante'],['Acid','Ácido'],['Cold','Frío'],['Fire','Fuego'],['Force','Fuerza'],['Lightning','Relámpago'],['Necrotic','Necrótico'],['Poison','Veneno'],['Psychic','Psíquico'],['Radiant','Radiante'],['Thunder','Trueno'],
+    ['Grappled','Agarrado'],['Prone','Derribado'],['Charmed','Hechizado'],['Frightened','Asustado'],['Poisoned','Envenenado'],['Restrained','Apresado'],['Stunned','Aturdido'],['Paralyzed','Paralizado'],['Petrified','Petrificado'],['Blinded','Cegado'],['Deafened','Ensordecido'],['Incapacitated','Incapacitado'],['Invisible','Invisible'],
+    ['Hit or Miss:','Impacte o falle:'],['Hit:','Impacto:'],['Miss:','Fallo:'],['Failure or Success:','Tanto si falla como si tiene éxito:'],['Failure:','Fallo:'],['Success:','Éxito:'],['Half damage','la mitad del daño'],
+    ['Legendary Resistance','Resistencia legendaria'],['Magic Resistance','Resistencia mágica'],['Magic Weapons','Armas mágicas'],['Spellcasting','Lanzamiento de conjuros'],
+    ['At Will','A voluntad'],['1/Day','1/día'],['2/Day','2/día'],['3/Day','3/día'],['Recharge','Recarga'],
+    ['telepathically','telepáticamente'],['telepathy','telepatía'],['magically','mágicamente'],['magical','mágico'],['nonmagical','no mágico'],['target','objetivo'],['creatures','criaturas'],['creature','criatura'],['takes','recibe'],['regains','recupera'],['feet','pies'],['foot','pie'],['reach','alcance'],['range','alcance'],['fly','volar'],['climb','trepar'],['swim','nadar'],['burrow','excavar'],['hover','vuela estacionario'],['can’t','no puede'],['must succeed','debe superar'],['must make','debe realizar'],['is immune to','es inmune a'],['has advantage on','tiene ventaja en'],['has disadvantage on','tiene desventaja en'],['at the end of','al final de'],['at the start of','al inicio de'],['as an action','como acción'],['as a bonus action','como acción adicional'],['as a reaction','como reacción']
+  ];
+  function translateMonsterText(input: string): string {
+    let output = String(input ?? '');
+    for (const [english, spanish] of [...MONSTER_ES_TERMS].sort((a,b) => b[0].length-a[0].length)) {
+      const escaped = english.replace(/[|\\{}()[\]^$+*?.-]/g, '\\  const MONSTER_CR_FILTERS =');
+      output = output.replace(new RegExp('\\b' + escaped + '\\b','gi'), spanish);
+    }
+    return output;
+  }
+  function parseMonsterProfile(monster: any) {
+    const raw = String(monster.statBlock || '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    const sections: { title: string; entries: { name: string; description: string }[] }[] = [];
+    const info: { label: string; value: string }[] = [];
+    let current: { title: string; entries: { name: string; description: string }[] } | null = null;
+    const sectionNames: Record<string,string> = {'TRAITS':'Atributos','ACTIONS':'Acciones','BONUS ACTIONS':'Acciones adicionales','REACTIONS':'Reacciones','LEGENDARY ACTIONS':'Acciones legendarias','MYTHIC ACTIONS':'Acciones míticas','LAIR ACTIONS':'Acciones en guarida'};
+    const labelMap: [RegExp,string][] = [
+      [/^AC\s*/i,'Clase de armadura'],[/^HP\s*/i,'Puntos de golpe'],[/^Speed\s*/i,'Velocidad'],[/^Skills\s*/i,'Habilidades'],[/^Resistances\s*/i,'Resistencias'],[/^Immunities\s*/i,'Inmunidades'],[/^Condition Immunities\s*/i,'Inmunidades a estados'],[/^Vulnerabilities\s*/i,'Vulnerabilidades'],[/^Gear\s*/i,'Equipo'],[/^Senses\s*/i,'Sentidos'],[/^Languages\s*/i,'Idiomas'],[/^Initiative\s*/i,'Iniciativa']
+    ];
+    for (const line of raw) {
+      if (/^CONTEXTO COMPARTIDO:/i.test(line) || line.toUpperCase() === String(monster.name).toUpperCase()) continue;
+      const header = line.toUpperCase().replace(/[^A-Z ]/g,'').trim();
+      if (sectionNames[header]) { current = {title:sectionNames[header],entries:[]}; sections.push(current); continue; }
+      const ability = line.match(/^(STR|DEX|CON|INT|WIS|CHA)\s+(.*)$/i);
+      if (ability) {
+        const names: Record<string,string> = {STR:'Fuerza',DEX:'Destreza',CON:'Constitución',INT:'Inteligencia',WIS:'Sabiduría',CHA:'Carisma'};
+        info.push({label:names[ability[1].toUpperCase()],value:ability[2].replace(/Save/gi,'Salvación')}); continue;
+      }
+      let matched = false;
+      for (const [regex,label] of labelMap) {
+        const m = line.match(regex);
+        if (m) { info.push({label,value:translateMonsterText(line.slice(m[0].length))}); matched=true; break; }
+      }
+      if (matched) continue;
+      if (/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\b/.test(line)) { info.unshift({label:'Tipo y alineamiento',value:translateMonsterText(line)}); continue; }
+      if (/^CR\s/i.test(line)) { info.push({label:'Valor de desafío',value:translateMonsterText(line.replace(/^CR\s*/i,''))}); continue; }
+      if (current) {
+        const split = line.match(/^([^.!?]{2,90})\.\s+(.+)$/);
+        current.entries.push(split ? {name:translateMonsterText(split[1]),description:translateMonsterText(split[2])} : {name:'',description:translateMonsterText(line)});
+      } else info.push({label:'Otros datos',value:translateMonsterText(line)});
+    }
+    return {info,sections};
+  }
+
   const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
   $: filteredMonsters = MONSTERS.filter(monster => (monsterCrFilter === 'Todos' || monster.cr.startsWith(monsterCrFilter + ' ')) && monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()));
   const itemTypes = ['Todos', ...Array.from(new Set(ITEMS.map(item => item.type))).sort((a,b) => a.localeCompare(b,'es'))];
@@ -3909,8 +3969,24 @@ import ITEMS from './items.json';
                   <span class="monster-cr">CR {monster.cr.split(' ')[0] || '—'}</span>
                 </summary>
                 <div class="monster-statblock">
-                  <pre class="monster-original">{monster.statBlock}</pre>
-                  <small class="monster-source">Monster Manual 2024 · PDF p. {monster.pdfPage ?? '—'} · Printed p. {monster.printedPage ?? '—'}</small>
+                  {@const profile = parseMonsterProfile(monster)}
+                  <div class="monster-info-grid">
+                    {#each profile.info as item}
+                      <div class="monster-info-item"><small>{item.label}</small><strong>{item.value}</strong></div>
+                    {/each}
+                  </div>
+                  {#each profile.sections as section}
+                    <section class="monster-content-section">
+                      <h4>{section.title}</h4>
+                      {#each section.entries as entry}
+                        <article class="monster-entry">
+                          {#if entry.name}<strong>{entry.name}</strong>{/if}
+                          <p>{entry.description}</p>
+                        </article>
+                      {/each}
+                    </section>
+                  {/each}
+                  <small class="monster-source">Monster Manual 2024 · PDF p. {monster.pdfPage ?? '—'} · Página impresa {monster.printedPage ?? '—'}</small>
                 </div>
               </details>
             {/each}
@@ -4394,6 +4470,18 @@ import ITEMS from './items.json';
   .monster-attacks{margin-top:.65rem;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:rgba(255,255,255,.4)}
   .monster-role{padding:.5rem;border-left:3px solid var(--gold);background:rgba(177,138,69,.1)}
   .monster-source{display:block;margin-top:.55rem;color:var(--ink-soft);font-size:.62rem}
+
+  .monster-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:.1rem 0 .75rem}
+  .monster-info-item{display:grid;align-content:start;gap:.12rem;padding:.45rem .5rem;border:1px solid var(--rule);border-radius:4px;background:#e8dfce;min-width:0}
+  .monster-info-item small{font-size:.62rem;font-weight:800;letter-spacing:.035em;text-transform:uppercase;color:var(--ink-soft)}
+  .monster-info-item strong{font-size:.76rem;font-weight:650;overflow-wrap:anywhere;white-space:pre-wrap}
+  .monster-content-section{margin:.75rem 0 0;padding-top:.45rem;border-top:2px solid var(--red)}
+  .monster-content-section h4{margin:0 0 .4rem;font:700 .86rem Georgia,serif;text-transform:uppercase;letter-spacing:.04em;color:var(--red)}
+  .monster-entry{margin:.35rem 0;padding:.45rem .55rem;border-left:3px solid var(--gold);background:rgba(255,255,255,.42);border-radius:0 4px 4px 0}
+  .monster-entry strong{font-size:.78rem;color:var(--ink)}
+  .monster-entry p{margin:.12rem 0 0;line-height:1.48;white-space:pre-wrap;overflow-wrap:anywhere}
+  @media(max-width:560px){.monster-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.monster-card>summary{padding:.6rem}.monster-statblock{padding:.6rem}}
+
   .monster-attribution{margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--rule);color:var(--ink-soft);font:.65rem/1.45 system-ui,sans-serif}
   .character-sheet{background:var(--paper);color:var(--ink);border:1px solid #c8bda8;border-radius:10px;padding:clamp(.65rem,2vw,1.25rem);box-shadow:0 12px 32px rgba(0,0,0,.22);font-family:Georgia,'Times New Roman',serif}
   .character-sheet > .sheet-banner{display:block;min-height:0;height:auto;padding:0!important;margin:0 0 .5rem!important;border:0!important;outline:0!important;background:none!important;box-shadow:none!important;text-align:center}
