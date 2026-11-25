@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR, { buildImage } from '@owlbear-rodeo/sdk';
-  import characterSheetTemplateUrl from '../hojadepj1.webp?url';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
   const CHANNEL = 'com.heunithen.dnd2024-character-builder/character-sync';
@@ -3295,7 +3294,7 @@ import ITEMS from './items.json';
     imageSheetBusy = true;
     try {
       const template = new Image();
-      template.src = characterSheetTemplateUrl;
+      template.src = new URL('../hojadepj1.webp', import.meta.url).href;
       await new Promise<void>((resolve, reject) => {
         template.onload = () => resolve();
         template.onerror = () => reject(new Error('No se pudo cargar hojadepj1.webp.'));
