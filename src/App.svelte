@@ -3437,7 +3437,7 @@ import ITEMS from './items.json';
       {:else if masterTab === 'Objetos'}
         <section class="panel items-panel">
           <div class="section-heading"><h2>Catálogo de objetos · D&D 2024</h2><span class="count">{filteredItems.length} / {ITEMS.length}</span></div>
-          <p class="muted">Objetos no mágicos del Manual del jugador y objetos mágicos de la Guía del Dungeon Master. Los precios y pesos que los manuales no especifican se muestran como «—» y no se inventan.</p>
+          <p class="muted">Equipo, armas, herramientas, monturas y vehículos del Manual del jugador; objetos mágicos, armas de fuego, explosivos y equipo de asedio de la Guía del Dungeon Master. Los precios y pesos que los manuales no especifican se muestran como «—» y no se inventan.</p>
           <label class="items-search">Buscar por nombre
             <input type="search" bind:value={itemSearch} placeholder="Nombre del objeto..." />
           </label>
