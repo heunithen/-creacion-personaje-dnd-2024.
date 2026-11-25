@@ -3316,7 +3316,7 @@ import ITEMS from './items.json';
     if (/atribut|característic|ability|ability score/.test(n)) return 'attributes-section';
     if (/combate|ataque|armadura|punto de golpe|defensa/.test(n)) return 'combat-section';
     if (/habilidad|salvaci/.test(n)) return 'skills-section';
-    if (/rasgo|dote|característica de clase|especie|racial/.test(n)) return 'features-section';
+    if (/rasgo|dote|característica de clase|especie|racial|competenc|entrenamiento|proficien|herramienta/.test(n)) return 'features-section';
     if (/conjuro|magia|hechizo/.test(n)) return 'magic-section';
     if (/equipo|inventario|objeto/.test(n)) return 'equipment-section';
     if (/personalidad|historia|trasfondo|apariencia/.test(n)) return 'story-section';
