@@ -3294,7 +3294,7 @@ import ITEMS from './items.json';
     const strengthMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Fuerza',10)-10)/2);
     const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
     const profText = normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armas'));
-    return [...new Set(names.split(/[,;\n]+/).map(name=>name.trim()).filter(Boolean))].map(name=>{
+    return [...new Set(names.split(/[,;\n]+/).map(name=>name.trim()).filter(name=>Boolean(name && WEAPON_PROFILES[name])))].map(name=>{
       const profile = WEAPON_PROFILES[name];
       if (!profile) return {name, attackBonus:null as number|null, damage:'—', damageType:'No disponible', range:'—'};
       const abilityMod = profile.ability==='finesse' ? Math.max(strengthMod,dexterityMod) : profile.ability==='dexterity' ? dexterityMod : strengthMod;
