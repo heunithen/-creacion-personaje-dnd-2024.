@@ -808,7 +808,7 @@
   }
 
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Crear personaje'];
+  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas'];
   type BuilderData = {
     name: string; player: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
@@ -1099,12 +1099,18 @@
   let builderStep = 0;
   let builderRolledScores: number[] = [];
   let builderPreview: RawSheet | null = null;
-  let builderData: BuilderData = {
+  let playerCreating = false;
+  const createInitialBuilderData = (): BuilderData => ({
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
     alignment: 'Neutral', method: 'standard',
     abilities: { Fuerza: 15, Destreza: 14, Constitución: 13, Inteligencia: 12, Sabiduría: 10, Carisma: 8 },
     feat: 'Atacante salvaje', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', backgroundToolChoice: '', classEquipmentChoice: 'A', classSkillChoices: [], classToolsChoices: [], classSpecialChoice: '', classExpertise: [], weaponMasteries: [], selectedCantrips: [], selectedSpells: [], wizardSpellbook: [], speciesChoice: '', speciesMagicAbility: '', speciesSkill: '', speciesExtraFeat: 'Habilidoso', speciesSize: '', speciesBreathShape: 'Cono', backgroundFeatChoices: [], speciesFeatChoices: [], languages: [], rogueLanguage: '', backgroundMagicCantrips: [], backgroundMagicSpell: '', backgroundMagicAbility: 'Inteligencia', warlockTomeCantrips: [], warlockTomeRituals: [], speciesMagicCantrips: [], speciesMagicSpell: '', speciesFeatMagicAbility: 'Inteligencia', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
-  };
+  });
+  let builderData: BuilderData = createInitialBuilderData();
+  function resetBuilder() {
+    builderData = createInitialBuilderData();
+    builderStep = 0; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
+  }
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
   const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
@@ -1844,7 +1850,7 @@
     Object.entries(classResources).forEach(([key,value],i)=>put(progressionIndex,i+2,String(value)));
     const spellNames=[...b.selectedCantrips,...speciesCantrips,...(b.species==='Gnomo'&&b.speciesChoice==='Gnomo de los bosques'?['Hablar con los animales']:[]),...b.backgroundMagicCantrips,...(b.species==='Humano'?b.speciesMagicCantrips:[]),...b.warlockTomeCantrips,...b.selectedSpells,...b.wizardSpellbook,b.backgroundMagicSpell,...(b.species==='Humano'?[b.speciesMagicSpell]:[]),...(b.className==='Explorador'?['Marca del cazador']:[]),...(b.className==='Brujo'&&b.classSpecialChoice==='Pacto del grimorio'?b.warlockTomeRituals:[])].filter(Boolean);
     put(detailSpellsIndex,0,describeSpells(spellNames));
-    const result={id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente del GM. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
+    const result={id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente de creación del jugador. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
     if(b.className==='Paladín') setCharacterStat(result,'RASGOS Y DOTES','Reserva de Imposición de manos','5 PG');
     refreshDerivedCharacterSheet(result);
     return result;
@@ -1853,6 +1859,24 @@
     builderPreview = buildLevelOneSheet();
     builderStep = 6;
   }
+  async function saveBuilderCharacter() {
+    if (!builderPreview) return;
+    sheet = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
+    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+    builderPreview = null;
+    playerCreating = false;
+    activeTab = 'Datos';
+    if (obrReady && obrRole === 'PLAYER') {
+      syncPending = true;
+      await flushAutoSync();
+      notice = syncStatus === 'Ficha sincronizada con la sala.'
+        ? 'Personaje creado y publicado en la sala.'
+        : 'Personaje creado y guardado localmente. No se pudo publicar en la sala.';
+    } else {
+      notice = 'Personaje creado y guardado en este navegador.';
+    }
+  }
+  function startBuilder() { resetBuilder(); playerCreating = true; }
   function downloadBuilderSheet() {
     if (!builderPreview) return;
     const json = JSON.stringify(builderPreview,null,2);
@@ -2058,6 +2082,7 @@ import ITEMS from './items.json';
         throw new Error('Formato de ficha no válido');
       }
       sheet = imported;
+      playerCreating = false;
       localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
       importOpen = false;
       if (obrReady && obrRole === 'PLAYER') {
@@ -3245,7 +3270,174 @@ import ITEMS from './items.json';
           </section>
           {#if notice}<p class="muted" role="status">{notice}</p>{/if}
         </section>
-      {:else if masterTab === 'Crear personaje'}
+      {:else if masterTab === 'Cofres'}
+        <section class="panel chest-panel">
+          <div class="section-heading"><h2>Cofres</h2><span class="count">10d10 · 10–100</span></div>
+          <p class="muted">Tira 10 dados de diez caras y suma los resultados. El 55 es el centro: cuanto más se acerque la suma a 10 o 100, más valioso será el botín.</p>
+          <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 10d10</button></div>
+          {#if lastChestRoll}
+            <div class="chest-result">
+              <span class="chest-result-number">Resultado: {lastChestRoll.total}</span>
+              <strong>{lastChestRoll.name}</strong>
+              <span>{lastChestRoll.category} · {lastChestRoll.priceLabel}</span>
+            </div>
+          {/if}
+          <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>#</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
+            {#each CHEST_LOOT as item}
+              <tr class:chest-selected={lastChestRoll?.lootNumber === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td><td>{item.priceLabel}</td></tr>
+            {/each}
+          </tbody></table></div>
+        </section>
+      {:else if masterTab === 'Objetos'}
+        <section class="panel items-panel">
+          <div class="section-heading"><h2>Catálogo de objetos · D&D 2024</h2><span class="count">{filteredItems.length} / {ITEMS.length}</span></div>
+          <p class="muted">Equipo, armas, herramientas, monturas y vehículos del Manual del jugador; objetos mágicos, armas de fuego, explosivos y equipo de asedio de la Guía del Dungeon Master. Los precios y pesos que los manuales no especifican se muestran como «—» y no se inventan.</p>
+          <label class="items-search">Buscar por nombre
+            <input type="search" bind:value={itemSearch} placeholder="Nombre del objeto..." />
+          </label>
+          <div class="items-filters">
+            <label>Tipo
+              <select bind:value={itemTypeFilter}>
+                {#each itemTypes as type}<option value={type}>{type === 'Todos' ? 'Todos los tipos' : type}</option>{/each}
+              </select>
+            </label>
+            <fieldset><legend>Precio (po)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemPriceMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemPriceMax} placeholder="Sin máximo" /></label></fieldset>
+            <fieldset><legend>Peso (kg)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemWeightMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemWeightMax} placeholder="Sin máximo" /></label></fieldset>
+          </div>
+          <div class="items-table-wrap"><table class="items-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Peso</th><th>Manual</th></tr></thead><tbody>
+            {#each filteredItems as item (item.name + item.source)}
+              <tr><td>{item.name}</td><td>{item.type}</td><td>{item.price}</td><td>{item.weight}</td><td>{item.source}</td></tr>
+            {/each}
+          </tbody></table></div>
+          {#if filteredItems.length === 0}<p class="muted">No hay objetos que coincidan con esos filtros. Los objetos sin precio o peso indicado no aparecen al aplicar ese filtro.</p>{/if}
+        </section>
+      {:else if masterTab === 'Conjuros'}
+        <section class="panel spells-panel">
+          <div class="section-heading"><h2>Conjuros · Manual del Jugador 2024</h2><span class="count">{filteredSpells.length} / {SPELLS.length}</span></div>
+          <p class="muted">Catálogo de conjuros del manual. Cada ficha incluye nivel, escuela, clases, tiempo de lanzamiento, alcance, componentes, duración y descripción.</p>
+          <label class="spell-search">Buscar conjuro
+            <input type="search" bind:value={spellSearch} placeholder="Nombre o texto del conjuro..." />
+          </label>
+          <div class="spell-filters">
+            <label>Nivel
+              <select bind:value={spellLevelFilter}>
+                <option value="Todos">Todos los niveles</option>
+                <option value="0">Trucos · Nivel 0</option>
+                {#each [1,2,3,4,5,6,7,8,9] as level}
+                  <option value={String(level)}>Nivel {level}</option>
+                {/each}
+              </select>
+            </label>
+            <label>Clase
+              <select bind:value={spellClassFilter}>
+                <option value="Todas">Todas las clases</option>
+                {#each SPELL_CLASSES as className}
+                  <option value={className}>{className}</option>
+                {/each}
+              </select>
+            </label>
+            <label>Escuela
+              <select bind:value={spellSchoolFilter}>
+                <option value="Todas">Todas las escuelas</option>
+                {#each SPELL_SCHOOLS as school}
+                  <option value={school}>{school}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <div class="spell-list">
+            {#each filteredSpells as spell}
+              <details class="spell-card">
+                <summary>
+                  <span class="spell-name">{spell.name}</span>
+                  <span class="spell-level">{spell.level === 0 ? 'Truco' : 'Nivel ' + spell.level}</span>
+                  <span class="spell-subtitle">{spell.school} · {spell.classes.map(name => name.charAt(0).toLocaleUpperCase('es') + name.slice(1)).join(', ')}</span>
+                </summary>
+                <div class="spell-details">
+                  <div class="spell-meta">
+                    <p><strong>Tiempo de lanzamiento:</strong> {spell.castingTime || '—'}</p>
+                    <p><strong>Alcance:</strong> {spell.range || '—'}</p>
+                    <p><strong>Componentes:</strong> {spell.components || '—'}</p>
+                    <p><strong>Duración:</strong> {spell.duration || '—'}</p>
+                    {#if spell.special.length}<p><strong>Especial:</strong> {spell.special.join(', ')}</p>{/if}
+                  </div>
+                  <p class="spell-description">{spell.description || 'Descripción no disponible en el texto extraído del manual.'}</p>
+                  <small class="spell-source">Manual del Jugador 2024 · PDF p. {spell.pdfPage ?? '—'} · Impresa p. {spell.printedPage ?? '—'}</small>
+                </div>
+              </details>
+            {/each}
+            {#if filteredSpells.length === 0}<p class="muted">No hay conjuros que coincidan con esos filtros.</p>{/if}
+          </div>
+        </section>
+      {:else if masterTab === 'Reglas'}
+        <section class="panel rules-panel">
+          <div class="section-heading"><h2>Reglas · Manual del Jugador 2024</h2><span class="count">{filteredRules.length} / {RULES.length}</span></div>
+          <p class="muted">Glosario del Apéndice C. Busca términos, acciones, condiciones y definiciones reglamentarias extraídas del manual del proyecto.</p>
+          <label class="rules-search">Buscar regla
+            <input type="search" bind:value={rulesSearch} placeholder="Ej. agarrado, cobertura, concentración..." />
+          </label>
+          <label class="rules-category-filter">Tipo de regla
+            <select bind:value={rulesCategoryFilter}>
+              {#each RULE_CATEGORIES as category}<option value={category}>{category === 'Todas' ? 'Todas las categorías' : category}</option>{/each}
+            </select>
+          </label>
+          <div class="rules-list">
+            {#each filteredRules as rule (rule.name)}
+              <details class="rule-card">
+                <summary><span class="rule-name">{rule.name}</span><span class="rule-category">{rule.category}</span><span class="rule-page">PDF {rule.pdfPage}</span></summary>
+                <div class="rule-details"><pre class="rule-description">{rule.description}</pre><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
+              </details>
+            {/each}
+            {#if filteredRules.length === 0}<p class="muted">No hay reglas que coincidan con la búsqueda.</p>{/if}
+          </div>
+        </section>
+      {:else}
+        <section class="panel monsters-panel">
+          <div class="section-heading"><h2>Monster Manual · 2024</h2><span class="count">{filteredMonsters.length} / {MONSTERS.length} criaturas</span></div>
+          <p class="muted">Los 504 bloques de estadísticas del manual en inglés. Se conservan nombres, términos, reglas y valores originales.</p>
+          <label class="monster-filter">Buscar monstruo
+            <input type="search" bind:value={monsterSearch} placeholder="Nombre en inglés..." />
+          </label>
+          <label class="monster-filter">Filtrar por CR
+            <select bind:value={monsterCrFilter}>
+              {#each MONSTER_CR_FILTERS as cr}
+                <option value={cr}>{cr === 'Todos' ? 'Todos los CR' : 'CR ' + cr}</option>
+              {/each}
+            </select>
+          </label>
+          <div class="monster-list">
+            {#each filteredMonsters as monster}
+              <details class="monster-card">
+                <summary>
+                  <span class="monster-name">{monster.name}</span>
+                  <span class="monster-subtitle">{monster.group || 'Monster Manual'} · página {monster.pdfPage ?? '—'}</span>
+                  <span class="monster-cr">CR {monster.cr.split(' ')[0] || '—'}</span>
+                </summary>
+                <div class="monster-statblock">
+                  <pre class="monster-original">{monster.statBlock}</pre>
+                  <small class="monster-source">Monster Manual 2024 · PDF p. {monster.pdfPage ?? '—'} · Printed p. {monster.printedPage ?? '—'}</small>
+                </div>
+              </details>
+            {/each}
+          </div>
+        </section>
+      {/if}
+    {:else}
+      {#if !sheet || playerCreating}
+        <section class="panel import-character-panel">
+          <div class="section-heading"><h2>{sheet ? 'Crear otro personaje' : 'Crear personaje'}</h2><span class="count">Nivel 1</span></div>
+          <div class="import-row">
+            <button class="secondary" on:click={() => importOpen = !importOpen}>Importar ficha JSON</button>
+            {#if sheet}<button class="secondary" on:click={() => playerCreating = false}>Volver a mi ficha</button>{/if}
+          </div>
+          {#if importOpen}
+            <div class="import-box">
+              <label>Archivo JSON<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
+              <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
+            </div>
+          {/if}
+        </section>
+      
         <section class="panel builder-panel">
           <div class="section-heading"><h2>Crear personaje · Nivel 1</h2><span class="count">Paso {builderStep < 6 ? builderStep + 1 : 6} de 6</span></div>
           {#if !builderPreview || builderStep < 6}
@@ -3423,179 +3615,20 @@ import ITEMS from './items.json';
             </div>
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
-              <button class="primary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
-              <button class="secondary" on:click={() => { builderPreview = null; builderStep = 0; builderRolledScores = []; builderData = {name:'',player:'',className:'Guerrero',species:'Humano',background:'Soldado',alignment:'Neutral',method:'standard',abilities:{Fuerza:15,Destreza:14,Constitución:13,Inteligencia:12,Sabiduría:10,Carisma:8},feat:'Atacante salvaje',abilityIncreaseMode:'two',abilityIncrease2:'Fuerza',abilityIncrease1:'Destreza',abilityIncrease3:'Constitución',backgroundEquipment:'A',backgroundToolChoice:'',classEquipmentChoice:'A',classSkillChoices:[],classToolsChoices:[],classSpecialChoice:'',classExpertise:[],weaponMasteries:[],selectedCantrips:[],selectedSpells:[],wizardSpellbook:[],speciesChoice:'',speciesMagicAbility:'',speciesSkill:'',speciesExtraFeat:'Habilidoso',speciesSize:'',speciesBreathShape:'Cono',backgroundFeatChoices:[],speciesFeatChoices:[],backgroundMagicCantrips:[],backgroundMagicSpell:'',backgroundMagicAbility:'Inteligencia',speciesMagicCantrips:[],speciesMagicSpell:'',warlockTomeCantrips:[],warlockTomeRituals:[],speciesFeatMagicAbility:'Inteligencia',languages:[],rogueLanguage:'',skills:'',tools:'',equipment:'',traits:'',spells:'',notes:''}; }}>Crear otro personaje</button>
+              <button class="primary" on:click={saveBuilderCharacter}>Guardar personaje en mi ficha</button>
+              <button class="secondary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
+              <button class="secondary" on:click={startBuilder}>Crear otro personaje</button>
             </div>
           {/if}
         </section>
-      {:else if masterTab === 'Cofres'}
-        <section class="panel chest-panel">
-          <div class="section-heading"><h2>Cofres</h2><span class="count">10d10 · 10–100</span></div>
-          <p class="muted">Tira 10 dados de diez caras y suma los resultados. El 55 es el centro: cuanto más se acerque la suma a 10 o 100, más valioso será el botín.</p>
-          <div class="chest-roll-actions"><button class="primary" on:click={rollChestLoot}>Abrir cofre · Tirar 10d10</button></div>
-          {#if lastChestRoll}
-            <div class="chest-result">
-              <span class="chest-result-number">Resultado: {lastChestRoll.total}</span>
-              <strong>{lastChestRoll.name}</strong>
-              <span>{lastChestRoll.category} · {lastChestRoll.priceLabel}</span>
-            </div>
-          {/if}
-          <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>#</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
-            {#each CHEST_LOOT as item}
-              <tr class:chest-selected={lastChestRoll?.lootNumber === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td><td>{item.priceLabel}</td></tr>
-            {/each}
-          </tbody></table></div>
-        </section>
-      {:else if masterTab === 'Objetos'}
-        <section class="panel items-panel">
-          <div class="section-heading"><h2>Catálogo de objetos · D&D 2024</h2><span class="count">{filteredItems.length} / {ITEMS.length}</span></div>
-          <p class="muted">Equipo, armas, herramientas, monturas y vehículos del Manual del jugador; objetos mágicos, armas de fuego, explosivos y equipo de asedio de la Guía del Dungeon Master. Los precios y pesos que los manuales no especifican se muestran como «—» y no se inventan.</p>
-          <label class="items-search">Buscar por nombre
-            <input type="search" bind:value={itemSearch} placeholder="Nombre del objeto..." />
-          </label>
-          <div class="items-filters">
-            <label>Tipo
-              <select bind:value={itemTypeFilter}>
-                {#each itemTypes as type}<option value={type}>{type === 'Todos' ? 'Todos los tipos' : type}</option>{/each}
-              </select>
-            </label>
-            <fieldset><legend>Precio (po)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemPriceMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemPriceMax} placeholder="Sin máximo" /></label></fieldset>
-            <fieldset><legend>Peso (kg)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemWeightMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemWeightMax} placeholder="Sin máximo" /></label></fieldset>
-          </div>
-          <div class="items-table-wrap"><table class="items-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Peso</th><th>Manual</th></tr></thead><tbody>
-            {#each filteredItems as item (item.name + item.source)}
-              <tr><td>{item.name}</td><td>{item.type}</td><td>{item.price}</td><td>{item.weight}</td><td>{item.source}</td></tr>
-            {/each}
-          </tbody></table></div>
-          {#if filteredItems.length === 0}<p class="muted">No hay objetos que coincidan con esos filtros. Los objetos sin precio o peso indicado no aparecen al aplicar ese filtro.</p>{/if}
-        </section>
-      {:else if masterTab === 'Conjuros'}
-        <section class="panel spells-panel">
-          <div class="section-heading"><h2>Conjuros · Manual del Jugador 2024</h2><span class="count">{filteredSpells.length} / {SPELLS.length}</span></div>
-          <p class="muted">Catálogo de conjuros del manual. Cada ficha incluye nivel, escuela, clases, tiempo de lanzamiento, alcance, componentes, duración y descripción.</p>
-          <label class="spell-search">Buscar conjuro
-            <input type="search" bind:value={spellSearch} placeholder="Nombre o texto del conjuro..." />
-          </label>
-          <div class="spell-filters">
-            <label>Nivel
-              <select bind:value={spellLevelFilter}>
-                <option value="Todos">Todos los niveles</option>
-                <option value="0">Trucos · Nivel 0</option>
-                {#each [1,2,3,4,5,6,7,8,9] as level}
-                  <option value={String(level)}>Nivel {level}</option>
-                {/each}
-              </select>
-            </label>
-            <label>Clase
-              <select bind:value={spellClassFilter}>
-                <option value="Todas">Todas las clases</option>
-                {#each SPELL_CLASSES as className}
-                  <option value={className}>{className}</option>
-                {/each}
-              </select>
-            </label>
-            <label>Escuela
-              <select bind:value={spellSchoolFilter}>
-                <option value="Todas">Todas las escuelas</option>
-                {#each SPELL_SCHOOLS as school}
-                  <option value={school}>{school}</option>
-                {/each}
-              </select>
-            </label>
-          </div>
-          <div class="spell-list">
-            {#each filteredSpells as spell}
-              <details class="spell-card">
-                <summary>
-                  <span class="spell-name">{spell.name}</span>
-                  <span class="spell-level">{spell.level === 0 ? 'Truco' : 'Nivel ' + spell.level}</span>
-                  <span class="spell-subtitle">{spell.school} · {spell.classes.map(name => name.charAt(0).toLocaleUpperCase('es') + name.slice(1)).join(', ')}</span>
-                </summary>
-                <div class="spell-details">
-                  <div class="spell-meta">
-                    <p><strong>Tiempo de lanzamiento:</strong> {spell.castingTime || '—'}</p>
-                    <p><strong>Alcance:</strong> {spell.range || '—'}</p>
-                    <p><strong>Componentes:</strong> {spell.components || '—'}</p>
-                    <p><strong>Duración:</strong> {spell.duration || '—'}</p>
-                    {#if spell.special.length}<p><strong>Especial:</strong> {spell.special.join(', ')}</p>{/if}
-                  </div>
-                  <p class="spell-description">{spell.description || 'Descripción no disponible en el texto extraído del manual.'}</p>
-                  <small class="spell-source">Manual del Jugador 2024 · PDF p. {spell.pdfPage ?? '—'} · Impresa p. {spell.printedPage ?? '—'}</small>
-                </div>
-              </details>
-            {/each}
-            {#if filteredSpells.length === 0}<p class="muted">No hay conjuros que coincidan con esos filtros.</p>{/if}
-          </div>
-        </section>
-      {:else if masterTab === 'Reglas'}
-        <section class="panel rules-panel">
-          <div class="section-heading"><h2>Reglas · Manual del Jugador 2024</h2><span class="count">{filteredRules.length} / {RULES.length}</span></div>
-          <p class="muted">Glosario del Apéndice C. Busca términos, acciones, condiciones y definiciones reglamentarias extraídas del manual del proyecto.</p>
-          <label class="rules-search">Buscar regla
-            <input type="search" bind:value={rulesSearch} placeholder="Ej. agarrado, cobertura, concentración..." />
-          </label>
-          <label class="rules-category-filter">Tipo de regla
-            <select bind:value={rulesCategoryFilter}>
-              {#each RULE_CATEGORIES as category}<option value={category}>{category === 'Todas' ? 'Todas las categorías' : category}</option>{/each}
-            </select>
-          </label>
-          <div class="rules-list">
-            {#each filteredRules as rule (rule.name)}
-              <details class="rule-card">
-                <summary><span class="rule-name">{rule.name}</span><span class="rule-category">{rule.category}</span><span class="rule-page">PDF {rule.pdfPage}</span></summary>
-                <div class="rule-details"><pre class="rule-description">{rule.description}</pre><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
-              </details>
-            {/each}
-            {#if filteredRules.length === 0}<p class="muted">No hay reglas que coincidan con la búsqueda.</p>{/if}
-          </div>
-        </section>
-      {:else}
-        <section class="panel monsters-panel">
-          <div class="section-heading"><h2>Monster Manual · 2024</h2><span class="count">{filteredMonsters.length} / {MONSTERS.length} criaturas</span></div>
-          <p class="muted">Los 504 bloques de estadísticas del manual en inglés. Se conservan nombres, términos, reglas y valores originales.</p>
-          <label class="monster-filter">Buscar monstruo
-            <input type="search" bind:value={monsterSearch} placeholder="Nombre en inglés..." />
-          </label>
-          <label class="monster-filter">Filtrar por CR
-            <select bind:value={monsterCrFilter}>
-              {#each MONSTER_CR_FILTERS as cr}
-                <option value={cr}>{cr === 'Todos' ? 'Todos los CR' : 'CR ' + cr}</option>
-              {/each}
-            </select>
-          </label>
-          <div class="monster-list">
-            {#each filteredMonsters as monster}
-              <details class="monster-card">
-                <summary>
-                  <span class="monster-name">{monster.name}</span>
-                  <span class="monster-subtitle">{monster.group || 'Monster Manual'} · página {monster.pdfPage ?? '—'}</span>
-                  <span class="monster-cr">CR {monster.cr.split(' ')[0] || '—'}</span>
-                </summary>
-                <div class="monster-statblock">
-                  <pre class="monster-original">{monster.statBlock}</pre>
-                  <small class="monster-source">Monster Manual 2024 · PDF p. {monster.pdfPage ?? '—'} · Printed p. {monster.printedPage ?? '—'}</small>
-                </div>
-              </details>
-            {/each}
-          </div>
-        </section>
-      {/if}
-    {:else}
-      {#if !sheet}
-        <section class="panel import-character-panel">
-          <div class="import-row">
-            <button class="secondary" on:click={() => importOpen = !importOpen}>Importar ficha JSON</button>
-          </div>
-          {#if importOpen}
-            <div class="import-box">
-              <label>Archivo JSON<input bind:this={fileInput} type="file" accept=".json,application/json" on:change={importJson} /></label>
-              <div class="actions"><button class="secondary" on:click={() => importOpen = false}>Cerrar</button></div>
-            </div>
-          {/if}
-        </section>
-      {/if}
 
-      {#if sheet}
+      {/if}
+      {#if sheet && !playerCreating}
+        <section class="panel player-character-actions">
+          <button class="secondary" on:click={startBuilder}>Crear personaje nuevo</button>
+        </section>
+      {/if}
+      {#if sheet && !playerCreating}
         <article class="character-sheet">
           <header class="sheet-banner">
             <div class="sheet-banner-copy"><span class="sheet-kicker">FORJA DE AVENTUREROS · D&D 2024</span><h1 class="character-name">{sheet.name || 'Personaje'}</h1><span class="sheet-subtitle">Hoja de aventurero</span></div>
@@ -3704,14 +3737,12 @@ import ITEMS from './items.json';
           <button class="primary full" on:click={exportSheet}>Exportar personaje (JSON)</button>
           <button class="danger-text" on:click={deleteSheet}>Eliminar personaje</button>
         </section>
-      {:else}
-        <section class="panel empty-state"><p>No hay ninguna ficha cargada.</p></section>
       {/if}
     {/if}
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.40</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.41</span></footer>
 </div>
 
 <style>
