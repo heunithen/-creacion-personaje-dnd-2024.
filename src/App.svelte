@@ -3956,6 +3956,13 @@ import ITEMS from './items.json';
             <div class="sheet-banner-copy"><span class="sheet-kicker">FORJA DE AVENTUREROS · D&D 2024</span><h1 class="character-name">{sheet.name || 'Personaje'}</h1><span class="sheet-subtitle">Hoja de aventurero</span></div>
             <div class="sheet-banner-emblem" aria-hidden="true">✦</div>
           </header>
+          <section class="sheet-quick-stats" aria-label="Datos rápidos del personaje">
+            <div><span>Puntos de golpe</span><strong>{sheetValueByNames(sheet, ['Puntos de golpe actuales','PG actuales']) || '—'} / {sheetValueByNames(sheet, ['Puntos de golpe máximos','PG máximos']) || '—'}</strong></div>
+            <div><span>Clase de armadura</span><strong>{sheetValueByNames(sheet, ['Clase de armadura','CA']) || '—'}</strong></div>
+            <div><span>Iniciativa</span><strong>{sheetValueByNames(sheet, ['Iniciativa']) || '—'}</strong></div>
+            <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
+            <div><span>Competencia</span><strong>{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
+          </section>
           <nav class="sheet-tabs" role="tablist" aria-label="Pestañas de la ficha">
             {#each tabs as tab}<button class:active={activeTab === tab} role="tab" aria-selected={activeTab === tab} on:click={() => activeTab = tab}>{tab}</button>{/each}
           </nav>
@@ -4461,4 +4468,10 @@ import ITEMS from './items.json';
   .spell-card-details small{color:#a99b9d;font-size:.62rem}
   @media(max-width:650px){.spell-filters{grid-template-columns:1fr 1fr}.spell-filters label:first-child{grid-column:1/-1}.feature-card-grid,.spell-card-grid{grid-template-columns:1fr}}
 
+  .sheet-quick-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.45rem;padding:.65rem;margin:.7rem 0 1rem;border:1px solid #54232a;border-radius:8px;background:linear-gradient(120deg,#160b0d,#090909)}
+  .sheet-quick-stats>div{display:grid;gap:.25rem;min-width:0;padding:.35rem .45rem;border-right:1px solid #54232a}
+  .sheet-quick-stats>div:last-child{border-right:0}
+  .sheet-quick-stats span{color:#bdaeb0;font-size:.6rem;text-transform:uppercase;letter-spacing:.06em}
+  .sheet-quick-stats strong{color:#fff;font-size:.85rem;overflow-wrap:anywhere}
+  @media(max-width:650px){.sheet-quick-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sheet-quick-stats>div{border-right:0;border-bottom:1px solid #54232a}}
 </style>
