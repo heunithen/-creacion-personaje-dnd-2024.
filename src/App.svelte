@@ -2053,10 +2053,22 @@ import ITEMS from './items.json';
     const file = input.files?.[0];
     if (!file) return;
     file.text().then((contents) => {
-      sheet = JSON.parse(contents) as RawSheet;
+      const imported = JSON.parse(contents) as RawSheet;
+      if (!imported || typeof imported !== 'object' || !Array.isArray(imported.sections)) {
+        throw new Error('Formato de ficha no válido');
+      }
+      sheet = imported;
       localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
       importOpen = false;
-      notice = 'Ficha importada.';
+      if (obrReady && obrRole === 'PLAYER') {
+        syncPending = true;
+        await flushAutoSync();
+        notice = syncStatus === 'Ficha sincronizada con la sala.'
+          ? 'Ficha importada y compartida con el director.'
+          : 'Ficha importada localmente. No se pudo compartir con la sala; vuelve a intentarlo.';
+      } else {
+        notice = 'Ficha importada.';
+      }
       input.value = '';
     }).catch(() => {
       notice = 'No se pudo leer el archivo JSON.';
