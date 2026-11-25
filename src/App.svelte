@@ -2081,7 +2081,9 @@ import ITEMS from './items.json';
       if (/^CR\s/i.test(line)) { info.push({label:'Valor de desafío',value:translateMonsterText(line.replace(/^CR\s*/i,''))}); continue; }
       if (current) {
         const split = line.match(/^([^.!?]{2,90})\.\s+(.+)$/);
-        current.entries.push(split ? {name:translateMonsterText(split[1]),description:translateMonsterText(split[2])} : {name:'',description:translateMonsterText(line)});
+        if (split) current.entries.push({name:translateMonsterText(split[1]),description:translateMonsterText(split[2])});
+        else if (current.entries.length) current.entries[current.entries.length-1].description += ' ' + translateMonsterText(line);
+        else current.entries.push({name:'',description:translateMonsterText(line)});
       } else info.push({label:'Otros datos',value:translateMonsterText(line)});
     }
     return {info,sections};
@@ -3969,7 +3971,7 @@ import ITEMS from './items.json';
                 <summary>
                   <span class="monster-name">{monster.name}</span>
                   <span class="monster-subtitle">{monster.group || 'Manual de Monstruos'} · página {monster.pdfPage ?? '—'}</span>
-                  <span class="monster-cr">CR {monster.cr.split(' ')[0] || '—'}</span>
+                  <span class="monster-cr">VD {monster.cr.split(' ')[0] || '—'}</span>
                 </summary>
                 <div class="monster-statblock">
                   {#each [parseMonsterProfile(monster)] as profile}
