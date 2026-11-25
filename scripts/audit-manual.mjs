@@ -300,10 +300,13 @@ try {
   report('builder-creation-validation-and-preview',
     app.includes('function builderStepCanAdvance()') &&
     app.includes('function builderCanFinish()') &&
-    app.includes('disabled={!builderCanFinish()}') &&
+    !app.includes('disabled={!builderCanFinish()}') &&
     app.includes('function finishBuilder()') &&
-    app.includes('builderStep = 6'),
-    'La creación valida los seis pasos, bloquea la generación incompleta y permite revisar la ficha antes de exportarla.');
+    app.includes('Hay elecciones obligatorias incompletas') &&
+    app.includes('builderStep = 6') &&
+    app.includes('builderPreviewTab') &&
+    app.includes('visiblePairs(builderPreview.sections || [], builderPreviewTab)'),
+    'La creación valida los seis pasos, explica las elecciones incompletas y muestra la ficha final organizada en pestañas.');
 
   report('builder-equipment-options-explicit',
     app.includes('<b>A — Equipo inicial:</b>') &&
