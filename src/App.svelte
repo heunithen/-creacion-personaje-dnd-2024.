@@ -10,7 +10,7 @@
   type RawStat = { id?: number; name?: string; value?: unknown; [key: string]: unknown };
   type RawSection = { id?: number; name?: string; stats?: RawStat[]; [key: string]: unknown };
   type RawSheet = { id?: number; name?: string; notes?: string; sections?: RawSection[]; [key: string]: unknown };
-  type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet };
+  type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet; saved?: boolean };
 
   let sheet: RawSheet | null = null;
   let roomSheets: RoomEntry[] = [];
@@ -3615,11 +3615,15 @@ import ITEMS from './items.json';
   }
 
   function readPlayers(players: any[]) {
-    roomSheets = players.flatMap((p: any) => {
+    const liveEntries: RoomEntry[] = players.flatMap((p: any) => {
       const payload = p.metadata?.[KEY];
       if (!payload || payload.deleted || !payload.character) return [];
       return [{ playerId: p.id, playerName: p.name || payload.playerName || 'Jugador', sheet: repairGenericStatLabels(payload.character as RawSheet) as RawSheet }];
     });
+    const merged = new Map<string, RoomEntry>();
+    roomSheets.filter(entry => entry.saved).forEach(entry => merged.set(entry.playerId, entry));
+    liveEntries.forEach(entry => merged.set(entry.playerId, entry));
+    roomSheets = Array.from(merged.values());
   }
 
   async function refreshPlayers() {
@@ -3664,6 +3668,20 @@ import ITEMS from './items.json';
     try {
       const index = await githubStore.readIndex();
       cloudRecords = index.characters.slice().sort((a,b) => a.name.localeCompare(b.name,'es'));
+      const savedEntries = (await Promise.all(cloudRecords.map(async record => {
+        const payload = await githubStore!.load(record);
+        if (!payload?.character) return null;
+        return {
+          playerId: record.playerId,
+          playerName: record.playerName || payload.playerName || 'Jugador',
+          sheet: repairGenericStatLabels(payload.character as RawSheet) as RawSheet,
+          saved: true
+        } as RoomEntry;
+      }))).filter((entry): entry is RoomEntry => !!entry);
+      const merged = new Map<string, RoomEntry>();
+      savedEntries.forEach(entry => merged.set(entry.playerId, entry));
+      roomSheets.filter(entry => !entry.saved).forEach(entry => merged.set(entry.playerId, entry));
+      roomSheets = Array.from(merged.values());
       cloudStatus = `Repositorio conectado: ${cloudRecords.length} personaje(s) guardado(s).`;
     } catch (error) { cloudStatus = 'Error al consultar GitHub: ' + (error instanceof Error ? error.message : String(error)); }
     finally { cloudLoading = false; }
@@ -3844,7 +3862,7 @@ import ITEMS from './items.json';
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName}</p></div>
                 <details class="gm-sheet-details">
                   <summary>Ver ficha</summary>
-                  <div class="actions level-up-action"><button class="primary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button></div>
+                  {#if entry.saved}<p class="muted">Ficha recuperada desde GitHub · Jugador desconectado o sin ficha publicada en esta sala.</p>{:else}<div class="actions level-up-action"><button class="primary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button></div>{/if}
                   <div class="character-sheet gm-character-sheet">
                     <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2></div>
                     <div class="sheet-grid">
