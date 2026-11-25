@@ -4656,7 +4656,7 @@ import ITEMS from './items.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.52</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.53</span></footer>
 </div>
 
 <style>
