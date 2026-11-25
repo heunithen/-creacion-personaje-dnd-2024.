@@ -4780,13 +4780,6 @@ import ITEMS from './items.json';
                         </div>
                       {:else}<p class="muted nautical-empty">No hay dotes registradas.</p>{/if}
                     </section>
-                    {#each playerSheetPairs(playerSheetTab, sheet.sections || []).filter(pair=>!['RASGOS Y DOTES','DETALLES DE ESPECIE','PROGRESIÓN'].includes(String(pair.heading.name||'').toLocaleUpperCase())) as pair}
-                      <section class="sheet-section {sectionClass(pair.heading.name)}">
-                        <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
-                        <div class="stats-list">
-                          {#each pair.heading.stats || [] as stat, i}
-                            <div class="sheet-stat"><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value">{displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)}</div></div>
-                          {/each}
                         </div>
                       </section>
                     {/each}
