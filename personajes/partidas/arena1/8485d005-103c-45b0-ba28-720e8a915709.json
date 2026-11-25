@@ -1,0 +1,1544 @@
+{
+  "playerId": "8485d005-103c-45b0-ba28-720e8a915709",
+  "playerName": "Skeleton",
+  "character": {
+    "id": 1795639687850,
+    "name": "Ilyana",
+    "notes": "Personaje de nivel 1 creado desde el asistente de creación del jugador. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.",
+    "sections": [
+      {
+        "id": 1,
+        "name": "PERSONAJE",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Nombre",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Clase",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Subclase",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Nivel",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Especie",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "Trasfondo",
+            "value": ""
+          },
+          {
+            "id": 7,
+            "name": "Alineamiento",
+            "value": ""
+          },
+          {
+            "id": 8,
+            "name": "Experiencia",
+            "value": ""
+          },
+          {
+            "id": 9,
+            "name": "Jugador",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "Ilyana"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "Clérigo"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "No disponible (se elige en nivel 3)"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "1"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "Aasimar"
+          },
+          {
+            "id": 6,
+            "name": "✎",
+            "value": "Animador"
+          },
+          {
+            "id": 7,
+            "name": "✎",
+            "value": "Neutral bueno"
+          },
+          {
+            "id": 8,
+            "name": "✎",
+            "value": "0 PX"
+          },
+          {
+            "id": 9,
+            "name": "✎",
+            "value": "—"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "ATRIBUTOS",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Fuerza",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Destreza",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Constitución",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Inteligencia",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Sabiduría",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "Carisma",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "17 (+3)"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "15 (+2)"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "13 (+1)"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "12 (+1)"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "10 (+0)"
+          },
+          {
+            "id": 6,
+            "name": "✎",
+            "value": "8 (-1)"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "COMBATE",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Puntos de golpe actuales",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Puntos de golpe máximos",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Dados de golpe",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Clase de armadura",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Iniciativa",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "Velocidad",
+            "value": ""
+          },
+          {
+            "id": 7,
+            "name": "Bonificador por competencia",
+            "value": ""
+          },
+          {
+            "id": 8,
+            "name": "Salvaciones",
+            "value": ""
+          },
+          {
+            "id": 9,
+            "name": "Fórmula de clase de armadura",
+            "value": ""
+          },
+          {
+            "id": 10,
+            "name": "Percepción pasiva",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "9 PG"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "9 PG"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "1d8"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "17"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "+2"
+          },
+          {
+            "id": 6,
+            "name": "✎",
+            "value": "9 m"
+          },
+          {
+            "id": 7,
+            "name": "✎",
+            "value": "+2"
+          },
+          {
+            "id": 8,
+            "name": "✎",
+            "value": "Sabiduría y Carisma"
+          },
+          {
+            "id": 9,
+            "name": "✎",
+            "value": "13 + DES (máx. +2) + escudo (camisa de malla)"
+          },
+          {
+            "id": 10,
+            "name": "✎",
+            "value": 10
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "SALVACIONES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Fuerza",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Destreza",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Constitución",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Inteligencia",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Sabiduría",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "Carisma",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "+3"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "+2"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "+1"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "+1"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "+2 · Competente"
+          },
+          {
+            "id": 6,
+            "name": "✎",
+            "value": "+1 · Competente"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "HABILIDADES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Acrobacias",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Atletismo",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Conocimiento arcano",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Engaño",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Historia",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "Interpretación",
+            "value": ""
+          },
+          {
+            "id": 7,
+            "name": "Intimidación",
+            "value": ""
+          },
+          {
+            "id": 8,
+            "name": "Investigación",
+            "value": ""
+          },
+          {
+            "id": 9,
+            "name": "Juego de manos",
+            "value": ""
+          },
+          {
+            "id": 10,
+            "name": "Medicina",
+            "value": ""
+          },
+          {
+            "id": 11,
+            "name": "Naturaleza",
+            "value": ""
+          },
+          {
+            "id": 12,
+            "name": "Perspicacia",
+            "value": ""
+          },
+          {
+            "id": 13,
+            "name": "Persuasión",
+            "value": ""
+          },
+          {
+            "id": 14,
+            "name": "Percepción",
+            "value": ""
+          },
+          {
+            "id": 15,
+            "name": "Religión",
+            "value": ""
+          },
+          {
+            "id": 16,
+            "name": "Sigilo",
+            "value": ""
+          },
+          {
+            "id": 17,
+            "name": "Supervivencia",
+            "value": ""
+          },
+          {
+            "id": 18,
+            "name": "Trato con animales",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "+4 · Competente"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "+3"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "+1"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "-1"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "+3 · Competente"
+          },
+          {
+            "id": 6,
+            "name": "✎",
+            "value": "+1 · Competente"
+          },
+          {
+            "id": 7,
+            "name": "✎",
+            "value": "-1"
+          },
+          {
+            "id": 8,
+            "name": "✎",
+            "value": "+1"
+          },
+          {
+            "id": 9,
+            "name": "✎",
+            "value": "+2"
+          },
+          {
+            "id": 10,
+            "name": "✎",
+            "value": "+2 · Competente"
+          },
+          {
+            "id": 11,
+            "name": "✎",
+            "value": "+1"
+          },
+          {
+            "id": 12,
+            "name": "✎",
+            "value": "+0"
+          },
+          {
+            "id": 13,
+            "name": "✎",
+            "value": "-1"
+          },
+          {
+            "id": 14,
+            "name": "✎",
+            "value": "+0"
+          },
+          {
+            "id": 15,
+            "name": "✎",
+            "value": "+1"
+          },
+          {
+            "id": 16,
+            "name": "✎",
+            "value": "+2"
+          },
+          {
+            "id": 17,
+            "name": "✎",
+            "value": "+0"
+          },
+          {
+            "id": 18,
+            "name": "✎",
+            "value": "+0"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "COMPETENCIAS",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Habilidades",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Herramientas",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Armaduras",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Armas",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Idiomas",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "Acrobacias; Interpretación; Medicina; Historia"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "Un instrumento musical; Cuerno; Laúd; Lira; Gaita"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "Armaduras ligeras y medias; escudos (Protector obtiene armaduras pesadas)"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "Armas sencillas"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "Común; Goblin; Gnomo"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "RASGOS Y DOTES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Rasgos de clase",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Rasgos de especie",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Dote de origen",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Otros rasgos",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Formas salvajes conocidas",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "Opciones de metamagia",
+            "value": ""
+          },
+          {
+            "id": 7,
+            "name": "Invocaciones sobrenaturales",
+            "value": ""
+          },
+          {
+            "id": 8,
+            "name": "Detalles de invocaciones",
+            "value": ""
+          },
+          {
+            "id": 9,
+            "name": "Maniobras de maestro del combate",
+            "value": ""
+          },
+          {
+            "id": 10,
+            "name": "Estilos de combate",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "LANZAMIENTO DE CONJUROS, ORDEN DIVINA\n\nOrden divina: Taumaturgo\nOrden divina · Taumaturgo: conoces un truco adicional de la lista de clérigo y sumas tu modificador de Sabiduría (mínimo +1) a las pruebas de Inteligencia (Conocimiento arcano y Religión).\n\nTipo de criatura: Humanoide. Manos curativas: acción de magia, cura tantos d4 como tu bonificador por competencia; recuperas el uso tras un descanso largo. Portador de luz: conoces Luz y usas Carisma. Resistencia celestial: resistencia al daño necrótico y radiante. Visión en la oscuridad 18 m. Revelación celestial desde nivel 3.\n\nTamaño: Mediano"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "Tipo de criatura: Humanoide. Manos curativas: acción de magia, cura tantos d4 como tu bonificador por competencia; recuperas el uso tras un descanso largo. Portador de luz: conoces Luz y usas Carisma. Resistencia celestial: resistencia al daño necrótico y radiante. Visión en la oscuridad 18 m. Revelación celestial desde nivel 3."
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "Músico; Opciones de dote: Laúd, Lira, Gaita"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "—"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 7,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 8,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 9,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 10,
+            "name": "✎",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "CONJUROS",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Aptitud mágica",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "CD de salvación",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Ataque de conjuro",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Trucos",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Conjuros de nivel 1",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "Espacios de conjuro",
+            "value": ""
+          },
+          {
+            "id": 7,
+            "name": "Trucos máximos",
+            "value": ""
+          },
+          {
+            "id": 8,
+            "name": "Conjuros preparados máximos",
+            "value": ""
+          },
+          {
+            "id": 9,
+            "name": "Espacios por nivel",
+            "value": ""
+          },
+          {
+            "id": 10,
+            "name": "Trucos de clase",
+            "value": ""
+          },
+          {
+            "id": 11,
+            "name": "Conjuros preparados de clase",
+            "value": ""
+          },
+          {
+            "id": 12,
+            "name": "Libro de conjuros",
+            "value": ""
+          },
+          {
+            "id": 13,
+            "name": "Conjuros de especie",
+            "value": ""
+          },
+          {
+            "id": 14,
+            "name": "Aptitud mágica de especie",
+            "value": ""
+          },
+          {
+            "id": 15,
+            "name": "CD de especie",
+            "value": ""
+          },
+          {
+            "id": 16,
+            "name": "Ataque de conjuro de especie",
+            "value": ""
+          },
+          {
+            "id": 17,
+            "name": "Conjuros de trasfondo",
+            "value": ""
+          },
+          {
+            "id": 18,
+            "name": "Aptitud mágica de trasfondo",
+            "value": ""
+          },
+          {
+            "id": 19,
+            "name": "CD de trasfondo",
+            "value": ""
+          },
+          {
+            "id": 20,
+            "name": "Ataque de conjuro de trasfondo",
+            "value": ""
+          },
+          {
+            "id": 21,
+            "name": "Conjuros de dote",
+            "value": ""
+          },
+          {
+            "id": 22,
+            "name": "Aptitud mágica de dote",
+            "value": ""
+          },
+          {
+            "id": 23,
+            "name": "CD de dote",
+            "value": ""
+          },
+          {
+            "id": 24,
+            "name": "Ataque de conjuro de dote",
+            "value": ""
+          },
+          {
+            "id": 25,
+            "name": "Trucos de subclase",
+            "value": ""
+          },
+          {
+            "id": 26,
+            "name": "Conjuros preparados de subclase",
+            "value": ""
+          },
+          {
+            "id": 27,
+            "name": "Aptitud mágica de subclase",
+            "value": ""
+          },
+          {
+            "id": 28,
+            "name": "CD de subclase",
+            "value": ""
+          },
+          {
+            "id": 29,
+            "name": "Ataque de conjuro de subclase",
+            "value": ""
+          },
+          {
+            "id": 30,
+            "name": "Trucos de estilo de combate",
+            "value": ""
+          },
+          {
+            "id": 31,
+            "name": "Aptitud mágica de estilo de combate",
+            "value": ""
+          },
+          {
+            "id": 32,
+            "name": "CD de estilo de combate",
+            "value": ""
+          },
+          {
+            "id": 33,
+            "name": "Ataque de conjuro de estilo de combate",
+            "value": ""
+          },
+          {
+            "id": 34,
+            "name": "Lista de conjuros de estilo de combate",
+            "value": ""
+          },
+          {
+            "id": 35,
+            "name": "Arcanum místico",
+            "value": ""
+          },
+          {
+            "id": 36,
+            "name": "Conjuros de escuela",
+            "value": ""
+          },
+          {
+            "id": 37,
+            "name": "Opción de Furia elemental",
+            "value": ""
+          },
+          {
+            "id": 38,
+            "name": "Opción de Golpes benditos",
+            "value": ""
+          },
+          {
+            "id": 39,
+            "name": "Maestría sobre conjuros nivel 1",
+            "value": ""
+          },
+          {
+            "id": 40,
+            "name": "Maestría sobre conjuros nivel 2",
+            "value": ""
+          },
+          {
+            "id": 41,
+            "name": "Conjuros característicos",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "Sabiduría"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": 10
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "+2"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "Guía, Llama sagrada, Palabra de resplandor, Luz, Luz"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "Crear o destruir agua, Bendición, Detectar magia, Detectar venenos y enfermedades"
+          },
+          {
+            "id": 6,
+            "name": "✎",
+            "value": "Espacios nivel 1: 2"
+          },
+          {
+            "id": 7,
+            "name": "✎",
+            "value": "3"
+          },
+          {
+            "id": 8,
+            "name": "✎",
+            "value": "4"
+          },
+          {
+            "id": 9,
+            "name": "✎",
+            "value": "Espacios nivel 1: 2"
+          },
+          {
+            "id": 10,
+            "name": "✎",
+            "value": "Guía, Llama sagrada, Palabra de resplandor, Luz"
+          },
+          {
+            "id": 11,
+            "name": "✎",
+            "value": "Crear o destruir agua, Bendición, Detectar magia, Detectar venenos y enfermedades"
+          },
+          {
+            "id": 12,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 13,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 14,
+            "name": "✎",
+            "value": "Carisma"
+          },
+          {
+            "id": 15,
+            "name": "✎",
+            "value": 9
+          },
+          {
+            "id": 16,
+            "name": "✎",
+            "value": "+1"
+          },
+          {
+            "id": 17,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 18,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 19,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 20,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 21,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 22,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 23,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 24,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 25,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 26,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 27,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 28,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 29,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 30,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 31,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 32,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 33,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 34,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 35,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 36,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 37,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 38,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 39,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 40,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 41,
+            "name": "✎",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "EQUIPO",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Equipo inicial",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Monedas",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "Camisa de malla, escudo, maza, paquete de sacerdote, símbolo sagrado y 7 po. Un instrumento musical, 2 disfraces, espejo, perfume, ropas de viaje y 11 po."
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "18 po (monedas iniciales de ambos paquetes)"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "HISTORIA",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Apariencia",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Rasgos de personalidad",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Ideal",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Vínculo",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Defecto",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "Historia",
+            "value": ""
+          },
+          {
+            "id": 7,
+            "name": "Notas",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 6,
+            "name": "✎",
+            "value": ""
+          },
+          {
+            "id": 7,
+            "name": "✎",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "PROGRESIÓN",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Nivel de clase",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Rasgos de clase obtenidos",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "1"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "LANZAMIENTO DE CONJUROS, ORDEN DIVINA"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "DETALLES DEL TRASFONDO",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Aumentos de característica permitidos",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Habilidades",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Herramienta",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Dote de origen",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Equipo del trasfondo",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "Fuerza / Destreza / Carisma"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "Acrobacias, Interpretación"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "Un instrumento musical a elección · Cuerno"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "Músico"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "Un instrumento musical, 2 disfraces, espejo, perfume, ropas de viaje y 11 po."
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "INVENTARIO",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Equipo de clase",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Equipo de trasfondo",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Equipo adicional",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "• Camisa de malla\n• escudo\n• maza\n• paquete de sacerdote\n• símbolo sagrado y ."
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "• Un instrumento musical\n• 2 disfraces\n• espejo\n• perfume\n• ropas de viaje y"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "—"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "ATAQUES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Armas incluidas en el equipo",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Maestrías con armas",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Competencia con armas",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Perfiles de ataque",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "Maza"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "—"
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "Bonificador por competencia: +2"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "Maza: ataque +5 · 1d6+3 contundente · —"
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "DETALLE DE CONJUROS",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Conjuros y descripciones",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "Guía · Truco · adivinación\nTiempo: Acción · Alcance: Toque\nComponentes: V, S · Duración: Concentración, hasta 1 minuto\nTocas a una criatura voluntaria y eliges una habilidad.\nHasta que el conjuro termine, la criatura añade 1d4 a una\nprueba de característica con la habilidad elegida.\n\nLlama sagrada · Truco · evocación\nTiempo: Acción · Alcance: 18 m\nComponentes: V, S · Duración: Instantáneo\nUn fulgor de llamas desciende sobre una criatura que\npuedas ver dentro del alcance. El objetivo deberá superar\nuna tirada de salvación de Destreza o sufrirá 1d8 de daño\nradiante. No podrá beneficiarse de la cobertura media\no tres cuartos en esta tirada.\nMejora de truco. El daño aumenta en 1d8 cuando\nalcanzas los niveles 5 (2d8), 11 (3d8) y 17 (4d8).\n\nPalabra de resplandor · Truco · evocación\nTiempo: Acción · Alcance: Lanzador\nComponentes: V, M (un símbolo con forma de rayo) · Duración: Instantáneo\nUn fulgor ardiente surge de ti en una emanación de 1,5 m.\nTodas las criaturas de tu elección que puedas ver en ella\ndeberán superar una tirada de salvación de Constitución\no sufrirán 1d6 de daño radiante.\nMejora de truco. El daño aumenta en 1d6 cuando\nalcanzas los niveles 5 (2d6), 11 (3d6) y 17 (4d6).\n\nLuz · Truco · evocación\nTiempo: Acción · Alcance: Toque\nComponentes: V, M (una luciérnaga o musgo fosforescente) · Duración: 1 hora\nTocas un objeto Grande o más pequeño que nadie lleve\no vista. Hasta que el conjuro termine, el objeto emitirá luz\nbrillante en un radio de 6 m y luz tenue otros 6 m más allá.\nLa luz puede tener el color que desees.\nTapar completamente el objeto con un material opaco\nbloquea la luz. El conjuro termina si lo vuelves a lanzar.\n\nCrear o destruir agua · Nivel 1 · Transmutación\nTiempo: Acción · Alcance: 9 m\nComponentes: V, S, M (una mezcla de agua y arena) · Duración: Instantáneo\nProduces uno de estos efectos:\nCrear agua. Creas hasta 40 l de agua limpia dentro del\nalcance en un recipiente abierto. Como alternativa, el\nagua cae en forma de lluvia en un cubo de 9 m de lado\ndentro del alcance y apaga las llamas abiertas de la zona.\nDestruir agua. Destruyes hasta 40 l de agua dentro del\nalcance en un recipiente abierto. Como alternativa,\npuedes destruir niebla en un cubo de 9 m de lado dentro\ndel alcance.\nCon un espacio de conjuro de nivel superior. Creas\no destruyes 40 l más de agua o el tamaño del cubo aumenta\nen 1,5 m por cada nivel por encima de 1 que tenga el\nespacio.\n\nBendición · Nivel 1 · Encantamiento\nTiempo: Acción · Alcance: 9 m\nComponentes: V, S, M (un símbolo sagrado que valga al menos 5 po) · Duración: Concentración, hasta 1 minuto\nBendices hasta tres criaturas dentro del alcance. Siempre\nque un objetivo haga una tirada de ataque o de salvación\nantes de que termine el conjuro, sumará 1d4 al resultado\nde dicha tirada.\nCon un espacio de conjuro de nivel superior. Puedes hacer\nobjetivo a una criatura adicional por cada nivel por encima\nde 1 que tenga el espacio.\n\nDetectar magia · Nivel 1 · Adivinación\nTiempo: Acción o ritual · Alcance: Lanzador\nComponentes: V, S · Duración: Concentración, hasta 10 minutos\nHasta que el conjuro termine, podrás percibir la presencia\nde efectos mágicos a 9 m o menos de ti. Si percibes alguno,\npuedes usar una acción de magia para ver una débil aura\nalrededor de cualquier objeto o criatura visible dentro de\nla zona que esté afectada por la magia y, si el efecto lo creó\nun conjuro, distingues a qué escuela mágica pertenece.\nEl conjuro no puede atravesar 30 cm de piedra, tierra\no madera, 2,5 cm de metal o una lámina fina de plomo.\n\nDetectar venenos y enfermedades · Nivel 1 · Adivinación\nTiempo: Acción o ritual · Alcance: Lanzador\nComponentes: V, S, M (una hoja de tejo) · Duración: Concentración, hasta 10 minutos\nHasta que el conjuro termine, percibes la ubicación de\nvenenos, criaturas venenosas y enfermedades mágicas\na 9 m o menos de ti, e identificas el tipo de veneno,\ncriatura o enfermedad en cada caso.\nEl conjuro no puede atravesar 30 cm de piedra, tierra\no madera, 2,5 cm de metal o una lámina fina de plomo."
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "name": "DETALLES DE ESPECIE",
+        "stats": [
+          {
+            "id": 1,
+            "name": "Elección de especie",
+            "value": ""
+          },
+          {
+            "id": 2,
+            "name": "Rasgos de especie",
+            "value": ""
+          },
+          {
+            "id": 3,
+            "name": "Competencia adicional",
+            "value": ""
+          },
+          {
+            "id": 4,
+            "name": "Elecciones mágicas",
+            "value": ""
+          },
+          {
+            "id": 5,
+            "name": "Tamaño",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "VALORES",
+        "stats": [
+          {
+            "id": 1,
+            "name": "✎",
+            "value": "Aasimar"
+          },
+          {
+            "id": 2,
+            "name": "✎",
+            "value": "Tipo de criatura: Humanoide. Manos curativas: acción de magia, cura tantos d4 como tu bonificador por competencia; recuperas el uso tras un descanso largo. Portador de luz: conoces Luz y usas Carisma. Resistencia celestial: resistencia al daño necrótico y radiante. Visión en la oscuridad 18 m. Revelación celestial desde nivel 3."
+          },
+          {
+            "id": 3,
+            "name": "✎",
+            "value": "—"
+          },
+          {
+            "id": 4,
+            "name": "✎",
+            "value": "Inteligencia"
+          },
+          {
+            "id": 5,
+            "name": "✎",
+            "value": "Mediano"
+          }
+        ]
+      }
+    ]
+  },
+  "updatedAt": "2026-11-25T20:48:16.611Z"
+}
