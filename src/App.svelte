@@ -1974,7 +1974,7 @@
         throw new Error('La ficha se generó sin secciones. Revisa las elecciones y vuelve a intentarlo.');
       }
       builderPreview = generated;
-      builderStep = 6;
+      builderStep = 12;
       keepBuilderAtTop();
     } catch (error) {
       console.error('Error al generar la ficha:', error);
@@ -4099,7 +4099,7 @@ import ITEMS from './items.json';
         </section>
       
         <section class="panel builder-panel">
-          <div class="section-heading"><h2>Creación de personaje · Nivel 1</h2><span class="count">Etapa {builderStep+1} de 12</span></div>
+          <div class="section-heading"><h2>Creación de personaje · Nivel 1</h2><span class="count">{builderPreview ? 'Completado' : 'Etapa '+(builderStep+1)+' de 12'}</span></div>
           {#if !builderPreview || builderStep < 12}
             <div class="builder-progress"><span style="width:{((builderStep+1)/12)*100}%"></span></div>
             {#if builderStep===0}
