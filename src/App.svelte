@@ -1876,9 +1876,9 @@
     put(5,16,[...b.backgroundMagicCantrips,b.backgroundMagicSpell].filter(Boolean).join(', ')); put(5,17,builderMagicInitiateClass(b.feat)?b.backgroundMagicAbility:'');
     put(5,20,b.species==='Humano'?[...b.speciesMagicCantrips,b.speciesMagicSpell].filter(Boolean).join(', '):''); put(5,21,b.species==='Humano'&&builderMagicInitiateClass(b.speciesExtraFeat)?b.speciesFeatMagicAbility:'');
     const backgroundEquipmentText=b.backgroundEquipment==='B'?'50 po':BUILDER_BACKGROUND_DATA[b.background].equipmentA;
-    put(6,0,[classEquipment, classEquipmentDetail, b.backgroundEquipment === 'B' ? 'Trasfondo: 50 po en lugar del paquete A.' : BUILDER_BACKGROUND_DATA[b.background].equipmentA, b.equipment].filter(Boolean).join(' '));
+    put(8,0,[classEquipment, classEquipmentDetail, b.backgroundEquipment === 'B' ? 'Trasfondo: 50 po en lugar del paquete A.' : BUILDER_BACKGROUND_DATA[b.background].equipmentA, b.equipment].filter(Boolean).join(' '));
     const goldTotal=[classEquipment,backgroundEquipmentText].join(' ').match(/\d+\s*po/gi)?.reduce((sum:number,coin:string)=>sum+Number(coin.match(/\d+/)?.[0]||0),0) || 0;
-    put(6,1,goldTotal+' po (monedas iniciales de ambos paquetes)');
+    put(8,1,goldTotal+' po (monedas iniciales de ambos paquetes)');
     put(7,0,''); put(7,1,''); put(7,2,''); put(7,3,''); put(7,4,''); put(7,5,''); put(7,6,b.notes || '');
     const backgroundData=BUILDER_BACKGROUND_DATA[b.background];
     const detailIndex=(name:string)=>pairs.findIndex(pair=>normalizeLevelText(pair.heading.name)===normalizeLevelText(name));
