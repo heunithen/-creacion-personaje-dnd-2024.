@@ -2081,7 +2081,7 @@ import ITEMS from './items.json';
       notice = 'Las tiradas solo pueden enviarse desde Owlbear Rodeo.';
       return;
     }
-    if (!/^(?:\d+d(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\d+)?(?:[+-]\d+)?)$/i.test(notation)) {
+    if (!/^[+-]?(?:\d+)?d(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\d+)?(?:[+-]\d+)?$/i.test(notation)) {
       notice = 'La notación de dados no es válida: ' + notation;
       return;
     }
