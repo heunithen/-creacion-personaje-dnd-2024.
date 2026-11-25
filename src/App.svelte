@@ -1099,7 +1099,7 @@
   let builderStep = 0;
   let builderRolledScores: number[] = [];
   let builderPreview: RawSheet | null = null;
-  let builderPreviewTab = 'Datos';
+  let builderPreviewTab = 'Resumen';
   let playerCreating = false;
   let builderSaving = false;
   const createInitialBuilderData = (): BuilderData => ({
@@ -1935,7 +1935,7 @@
         throw new Error('La ficha se generó sin secciones. Revisa las elecciones y vuelve a intentarlo.');
       }
       builderPreview = generated;
-      builderPreviewTab = 'Datos';
+      builderPreviewTab = 'Resumen';
       builderStep = 6;
       keepBuilderAtTop();
     } catch (error) {
