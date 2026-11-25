@@ -4513,7 +4513,7 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats .attribute-plaque .saving-throw-line.proficient strong){color:#55d58a}
   :global(.nautical-quick-stats .hp-plaque){flex:2 1 10rem}
   :global(.nautical-import){padding:.8rem 1rem;background:#0b252b;border-bottom:1px solid #247b7e}
-  :global(.nautical-columns){display:grid;grid-template-columns:minmax(175px,.82fr) minmax(190px,.95fr) minmax(360px,2fr);gap:.65rem;padding:.7rem;align-items:start;background:radial-gradient(ellipse at 75% 0%,#17434a 0,#0a252b 50%,#071b20 100%)}
+  :global(.nautical-columns){display:grid;grid-template-columns:minmax(190px,.82fr) minmax(0,2fr);gap:.65rem;padding:.7rem;align-items:start;background:radial-gradient(ellipse at 75% 0%,#17434a 0,#0a252b 50%,#071b20 100%)}
   :global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){min-width:0;max-height:calc(100vh - 14rem);overflow:auto;scrollbar-color:#267d7d #092127;scrollbar-width:thin}
   :global(.nautical-side),:global(.nautical-skills){display:flex;flex-direction:column;gap:.6rem}
   :global(.nautical-columns .sheet-section){padding:.75rem!important;border:1px solid #286d70!important;border-top:2px solid #40aaa4!important;border-radius:8px!important;background:#0b252beF!important;color:#e8f7f4!important}
