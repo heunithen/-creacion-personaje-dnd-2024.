@@ -2055,13 +2055,20 @@ import ITEMS from './items.json';
 
   function rollableParts(value: string): { text: string; rollable: boolean; notation: string }[] {
     const parts: { text: string; rollable: boolean; notation: string }[] = [];
-    const pattern = /[+-]?\d+d\d+(?:(?:kh|kl)\d+)?(?:\s*[+-]\s*\d+)?|[+-]\d+/gi;
+    // Detecta dados (incluido d20 sin cantidad) y modificadores aislados como +1/-2.
+    // El modificador aislado se interpreta como una prueba d20 con ese bonificador.
+    const pattern = /(?<![\w])(?:[+-]?\s*\d+\s*)?d\s*(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\s*\d+)?(?:\s*[+-]\s*\d+)?|[+\-−]\s*\d+/gi;
     let last = 0;
     let match: RegExpExecArray | null;
     while ((match = pattern.exec(value)) !== null) {
       if (match.index > last) parts.push({ text: value.slice(last, match.index), rollable: false, notation: '' });
-      const token = match[0].replace(/\s+/g, '');
-      const notation = /^[+-]\d+$/.test(token) ? '1d20' + token : token.replace(/^\+/, '');
+      const token = match[0].replace(/\s+/g, '').replace(/−/g, '-');
+      let notation = token;
+      if (/^[+\-]\d+$/.test(token)) notation = '1d20' + token;
+      else {
+        notation = notation.replace(/^\+/, '');
+        if (/^d/i.test(notation)) notation = '1' + notation;
+      }
       parts.push({ text: match[0], rollable: true, notation });
       last = match.index + match[0].length;
     }
@@ -3901,7 +3908,7 @@ import ITEMS from './items.json';
   </main>
 
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
-  <footer><span>FORJA DE AVENTUREROS · v1.0.51</span></footer>
+  <footer><span>FORJA DE AVENTUREROS · v1.0.52</span></footer>
 </div>
 
 <style>
