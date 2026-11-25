@@ -4809,8 +4809,7 @@ import ITEMS from './items.json';
                   {/each}
                   </div>
                   </section>
-                {/if}
-                {#if playerSheetTab === 'Conjuros'}
+                {:else if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
                     <div class="sheet-section-title"><h3>Lanzamiento de conjuros</h3></div>
                     <div class="spellcasting-summary-grid">
