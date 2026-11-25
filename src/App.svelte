@@ -1550,13 +1550,16 @@
     }
     return builderCanFinish();
   }
+  function keepBuilderAtTop() {
+    requestAnimationFrame(() => document.querySelector('.builder-panel')?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+  }
   function builderNext() {
     if(builderStep<5) {
       if(!builderStepCanAdvance()) { builderStepError=['Escribe el nombre del personaje.','Elige el alineamiento y completa las elecciones obligatorias de la especie.','Completa la dote, herramienta y aumentos del trasfondo.','Completa las competencias, rasgos, conjuros y equipo de la clase.','Revisa las seis puntuaciones según el método elegido.'][builderStep]||'Completa las elecciones obligatorias.'; return; }
-      builderStepError=''; builderStep+=1;
+      builderStepError=''; builderStep+=1; keepBuilderAtTop();
     }
   }
-  function builderBack() { if(builderStep>0){builderStep-=1;builderStepError='';} }
+  function builderBack() { if(builderStep>0){builderStep-=1;builderStepError='';keepBuilderAtTop();} }
   const WEAPON_PROFILES: Record<string,{damage:string;damageType:string;category:'simple'|'martial';ability:'strength'|'dexterity'|'finesse';properties:string}> = {
     'Garrote':{damage:'1d4',damageType:'contundente',category:'simple',ability:'strength',properties:'Ligera'},
     'Daga':{damage:'1d4',damageType:'perforante',category:'simple',ability:'finesse',properties:'Sutil, ligera, arrojadiza (6/18 m)'},
@@ -1860,6 +1863,7 @@
   function finishBuilder() {
     builderPreview = buildLevelOneSheet();
     builderStep = 6;
+    keepBuilderAtTop();
   }
   async function saveBuilderCharacter() {
     if (!builderPreview) return;
@@ -3451,7 +3455,7 @@ import ITEMS from './items.json';
               <p class="builder-player-name"><strong>Jugador:</strong> {playerName || builderData.player || 'Jugador'}</p>
             {:else if builderStep === 1}
 
-              <h3>2. Especie</h3><p class="muted">Elige la especie y el alineamiento de tu personaje. Después podrás completar sus rasgos.</p>
+              <h3>2. Especie</h3><p class="muted">Ahora elige tu especie. También seleccionarás aquí el alineamiento de tu personaje.</p>
               <label>Alineamiento<select bind:value={builderData.alignment}><option>Legal bueno</option><option>Neutral bueno</option><option>Caótico bueno</option><option>Legal neutral</option><option>Neutral</option><option>Caótico neutral</option><option>Legal malvado</option><option>Neutral malvado</option><option>Caótico malvado</option></select></label>
               <label>Especie<select bind:value={builderData.species} on:change={() => { builderData.speciesChoice = ''; builderData.speciesSkill = ''; builderData.speciesMagicAbility = ''; builderData.speciesSize = ''; builderData.speciesBreathShape = 'Cono'; builderData.speciesFeatChoices = []; builderData.speciesMagicCantrips = []; builderData.speciesMagicSpell = ''; }}>{#each BUILDER_SPECIES as item}<option>{item}</option>{/each}</select></label>
               <div class="name-generator-panel">
