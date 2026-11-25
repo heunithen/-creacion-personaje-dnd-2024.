@@ -5604,4 +5604,49 @@ import ITEMS from './items.json';
   :global(.nautical-empty){border-color:#3fb8b8!important;color:#b5bec3!important}
   :global(footer){border-color:#3a4a52!important;color:#8e9aa1!important}
 
+
+  /* Corrección final de contraste en herramientas del director */
+  :global(.gm-layout .master-tabs button){background:#1b2a33!important;color:#b5bec3!important;border:1px solid #3a4a52!important}
+  :global(.gm-layout .master-tabs button.active){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+  :global(.gm-layout .level-up-panel),:global(.gm-layout .subclass-level-preview),:global(.gm-layout .github-config-panel),:global(.gm-layout .github-character-row),:global(.gm-layout .builder-panel),:global(.gm-layout .custom-rolls),:global(.gm-layout .custom-roll-card),:global(.gm-layout .new-roll-part){background:#0f1e26!important;color:#fff!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .level-up-panel label),:global(.gm-layout .builder-panel label),:global(.gm-layout .items-search),:global(.gm-layout .items-filters label),:global(.gm-layout .spell-search),:global(.gm-layout .spell-filters label),:global(.gm-layout .monster-filter),:global(.gm-layout .roll-creator label){color:#b5bec3!important}
+  :global(.gm-layout input),:global(.gm-layout textarea),:global(.gm-layout select){background:#0b171d!important;color:#fff!important;border:1px solid #3a4a52!important}
+  :global(.gm-layout input::placeholder),:global(.gm-layout textarea::placeholder){color:#8e9aa1!important}
+  :global(.gm-layout input:focus),:global(.gm-layout textarea:focus),:global(.gm-layout select:focus){border-color:#5fe6e0!important;outline:1px solid #5fe6e0!important}
+  :global(.gm-layout .builder-info),:global(.gm-layout .builder-choice-wrapper),:global(.gm-layout .builder-choice-field),:global(.gm-layout .builder-choice-heading),:global(.gm-layout .github-status),:global(.gm-layout .github-folder-chip){background:#13262e!important;color:#fff!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .builder-info),:global(.gm-layout .github-status){border-left:3px solid #5fe6e0!important}
+  :global(.gm-layout .builder-info strong),:global(.gm-layout .builder-choice-wrapper strong),:global(.gm-layout .builder-choice-heading strong),:global(.gm-layout .subclass-level-preview strong),:global(.gm-layout .subclass-level-preview b){color:#fff!important}
+  :global(.gm-layout .builder-info p),:global(.gm-layout .builder-info small),:global(.gm-layout .subclass-level-preview p){color:#b5bec3!important}
+  :global(.gm-layout .builder-checkbox){background:#13262e!important;color:#fff!important;border-color:#3a4a52!important}
+  :global(.gm-layout .builder-checkbox>span),:global(.gm-layout .builder-checkbox>span b){color:#fff!important}
+  :global(.gm-layout .builder-checkbox::after){background:#0f1e26!important;color:#b5bec3!important;border-color:#3a4a52!important}
+  :global(.gm-layout .builder-checkbox:has(input:checked)){background:#1d3b40!important;border-color:#5fe6e0!important}
+  :global(.gm-layout .builder-checkbox:has(input:checked)::after){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+  :global(.gm-layout .builder-progress){background:#22333d!important}
+  :global(.gm-layout .builder-progress span){background:#5fe6e0!important}
+  :global(.gm-layout .gm-character-sheet .sheet-section),:global(.gm-layout .gm-character-sheet .combat-section),:global(.gm-layout .gm-character-sheet .attributes-section),:global(.gm-layout .gm-character-sheet .skills-section),:global(.gm-layout .gm-character-sheet .features-section),:global(.gm-layout .gm-character-sheet .magic-section),:global(.gm-layout .gm-character-sheet .equipment-section),:global(.gm-layout .gm-character-sheet .story-section),:global(.gm-layout .gm-character-sheet .general-section){background:#10232b!important;color:#fff!important;border:1px solid #3fb8b8!important;border-top:2px solid #5fe6e0!important}
+  :global(.gm-layout .gm-character-sheet .sheet-section-title h3),:global(.gm-layout .gm-character-sheet .section-name){color:#5fe6e0!important}
+  :global(.gm-layout .gm-character-sheet .sheet-stat){background:transparent!important;border-color:#2a3a43!important}
+  :global(.gm-layout .gm-character-sheet .sheet-stat span),:global(.gm-layout .gm-character-sheet .stat-label){color:#b5bec3!important}
+  :global(.gm-layout .gm-character-sheet .sheet-stat strong),:global(.gm-layout .gm-character-sheet .stat-value),:global(.gm-layout .gm-character-sheet .features-section .sheet-stat strong){background:#13262e!important;color:#fff!important}
+  :global(.gm-layout .items-filters fieldset),:global(.gm-layout .items-filters legend){background:#13262e!important;color:#b5bec3!important;border-color:#3a4a52!important}
+  :global(.gm-layout .items-table),:global(.gm-layout .chest-table){background:#0f1e26!important;color:#fff!important}
+  :global(.gm-layout .items-table th),:global(.gm-layout .chest-table th){background:#1b2a33!important;color:#fff!important;border-color:#2a3a43!important}
+  :global(.gm-layout .items-table td),:global(.gm-layout .chest-table td){background:#0f1e26!important;color:#b5bec3!important;border-color:#2a3a43!important}
+  :global(.gm-layout .items-table td:first-child),:global(.gm-layout .chest-table td:first-child){color:#fff!important}
+  :global(.gm-layout .chest-result),:global(.gm-layout .monster-combat-grid div),:global(.gm-layout .monster-info-item),:global(.gm-layout .spell-meta),:global(.gm-layout .monster-attacks),:global(.gm-layout .monster-role),:global(.gm-layout .monster-entry){background:#13262e!important;color:#fff!important;border-color:#3a4a52!important}
+  :global(.gm-layout .monster-heading){border-bottom-color:#5fe6e0!important}
+  :global(.gm-layout .monster-heading h3),:global(.gm-layout .monster-content-section h4){color:#5fe6e0!important}
+  :global(.gm-layout .monster-entry strong),:global(.gm-layout .monster-original),:global(.gm-layout .monster-name),:global(.gm-layout .spell-name){color:#fff!important}
+  :global(.gm-layout .monster-statblock),:global(.gm-layout .spell-details){background:#0f1e26!important;color:#fff!important;border-color:#2a3a43!important}
+  :global(.gm-layout .monster-cr),:global(.gm-layout .spell-level){background:#0b171d!important;color:#5fe6e0!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .monster-source),:global(.gm-layout .monster-attribution),:global(.gm-layout .spell-source),:global(.gm-layout .spell-subtitle),:global(.gm-layout .monster-subtitle){color:#8e9aa1!important}
+  :global(.gm-layout .roll-notation),:global(.gm-layout .roll-result){background:#13262e!important;color:#fff!important;border-color:#3fb8b8!important}
+  :global(.gm-layout .roll-result b){color:#5fe6e0!important}
+  :global(.gm-layout .roll-actions button),:global(.gm-layout .roll-creator button),:global(.gm-layout .add-roll-part),:global(.gm-layout .github-character-actions button){background:#1b2a33!important;color:#fff!important;border:1px solid #3a4a52!important}
+  :global(.gm-layout button.primary){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+  :global(.gm-layout button.secondary){background:#1b2a33!important;color:#fff!important;border-color:#3a4a52!important}
+  :global(.gm-layout .danger-text),:global(.gm-layout .remove-roll){color:#e6a0a0!important}
+  :global(.gm-layout .gm-sheet-details summary){color:#5fe6e0!important}
+
 </style>
