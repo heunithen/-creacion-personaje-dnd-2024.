@@ -3345,7 +3345,8 @@ import ITEMS from './items.json';
   function savingThrowIsProficient(ability: string, sections: RawSection[] = sheet?.sections || []) {
     return /competente/i.test(savingThrowRaw(ability, sections));
   }
-  function skillIsProficient(skill: string, target: RawSheet = sheet) {
+  function skillIsProficient(skill: string, target: RawSheet | null = sheet) {
+    if (!target) return false;
     const raw = getCharacterStat(target, 'COMPETENCIAS', 'Habilidades');
     const choices = splitChoiceList(raw.split(/;\\s*Pericia:/i)[0]);
     return choices.some(choice => normalizeLevelText(choice) === normalizeLevelText(skill));
