@@ -2,8 +2,8 @@
   "playerId": "8485d005-103c-45b0-ba28-720e8a915709",
   "playerName": "Skeleton",
   "character": {
-    "id": 1795638245899,
-    "name": "Aelar",
+    "id": 1795639687850,
+    "name": "Ilyana",
     "notes": "Personaje de nivel 1 creado desde el asistente de creación del jugador. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.",
     "sections": [
       {
@@ -64,12 +64,12 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "Aelar"
+            "value": "Ilyana"
           },
           {
             "id": 2,
             "name": "✎",
-            "value": "Pícaro"
+            "value": "Clérigo"
           },
           {
             "id": 3,
@@ -84,7 +84,7 @@
           {
             "id": 5,
             "name": "✎",
-            "value": "Elfo"
+            "value": "Aasimar"
           },
           {
             "id": 6,
@@ -94,7 +94,7 @@
           {
             "id": 7,
             "name": "✎",
-            "value": "Caótico bueno"
+            "value": "Neutral bueno"
           },
           {
             "id": 8,
@@ -258,7 +258,7 @@
           {
             "id": 4,
             "name": "✎",
-            "value": "13"
+            "value": "17"
           },
           {
             "id": 5,
@@ -278,12 +278,12 @@
           {
             "id": 8,
             "name": "✎",
-            "value": "Destreza e Inteligencia"
+            "value": "Sabiduría y Carisma"
           },
           {
             "id": 9,
             "name": "✎",
-            "value": "11 + DES (armadura de cuero)"
+            "value": "13 + DES (máx. +2) + escudo (camisa de malla)"
           },
           {
             "id": 10,
@@ -340,7 +340,7 @@
           {
             "id": 2,
             "name": "✎",
-            "value": "+4 · Competente"
+            "value": "+2"
           },
           {
             "id": 3,
@@ -350,17 +350,17 @@
           {
             "id": 4,
             "name": "✎",
-            "value": "+3 · Competente"
+            "value": "+1"
           },
           {
             "id": 5,
             "name": "✎",
-            "value": "+0"
+            "value": "+2 · Competente"
           },
           {
             "id": 6,
             "name": "✎",
-            "value": "-1"
+            "value": "+1 · Competente"
           }
         ]
       },
@@ -472,7 +472,7 @@
           {
             "id": 2,
             "name": "✎",
-            "value": "+7 · Pericia"
+            "value": "+3"
           },
           {
             "id": 3,
@@ -482,12 +482,12 @@
           {
             "id": 4,
             "name": "✎",
-            "value": "+1 · Competente"
+            "value": "-1"
           },
           {
             "id": 5,
             "name": "✎",
-            "value": "+1"
+            "value": "+3 · Competente"
           },
           {
             "id": 6,
@@ -497,12 +497,12 @@
           {
             "id": 7,
             "name": "✎",
-            "value": "+3 · Pericia"
+            "value": "-1"
           },
           {
             "id": 8,
             "name": "✎",
-            "value": "+3 · Competente"
+            "value": "+1"
           },
           {
             "id": 9,
@@ -512,7 +512,7 @@
           {
             "id": 10,
             "name": "✎",
-            "value": "+0"
+            "value": "+2 · Competente"
           },
           {
             "id": 11,
@@ -522,7 +522,7 @@
           {
             "id": 12,
             "name": "✎",
-            "value": "+2 · Competente"
+            "value": "+0"
           },
           {
             "id": 13,
@@ -594,27 +594,27 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "Acrobacias; Interpretación; Atletismo; Engaño; Intimidación; Investigación; Perspicacia; Pericia: Intimidación, Atletismo"
+            "value": "Acrobacias; Interpretación; Medicina; Historia"
           },
           {
             "id": 2,
             "name": "✎",
-            "value": "Un instrumento musical; Cuerno; Herramientas de ladrón.; Gaita; Flauta de pan; Dulcémele"
+            "value": "Un instrumento musical; Cuerno; Laúd; Lira; Gaita"
           },
           {
             "id": 3,
             "name": "✎",
-            "value": "Armaduras ligeras"
+            "value": "Armaduras ligeras y medias; escudos (Protector obtiene armaduras pesadas)"
           },
           {
             "id": 4,
             "name": "✎",
-            "value": "Armas sencillas; armas marciales con propiedad ligera o sutil"
+            "value": "Armas sencillas"
           },
           {
             "id": 5,
             "name": "✎",
-            "value": "Común; Dracónico; Enano; Jerga de ladrones; Abisal"
+            "value": "Común; Goblin; Gnomo"
           }
         ]
       },
@@ -681,17 +681,17 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "ATAQUE FURTIVO, JERGA DE LADRONES, MAESTRÍA CON ARMAS, PERICIA\n\nMaestrías con armas: Arco corto, Ballesta ligera\n\nTipo de criatura: Humanoide. Linaje feérico: ventaja en salvaciones para evitar o terminar Hechizado. Sentidos agudos: competencia en Percepción, Perspicacia o Supervivencia. Trance: descanso largo en 4 horas de meditación consciente; no necesitas dormir y la magia no puede dormirte. Visión en la oscuridad 18 m. Linaje élfico elegido: truco y conjuros de niveles 3 y 5.\n\nElección de especie: Alto elfo; Linaje élfico · Alto elfo: conoces Prestidigitación; tras un descanso largo puedes sustituirlo por otro truco de la lista de mago. En nivel 3 aprendes Detectar magia y en nivel 5 Paso brumoso. Siempre preparados; puedes lanzar cada uno una vez sin espacio por descanso largo o usando un espacio apropiado. Aptitud mágica: Sabiduría.; Aptitud mágica de linaje: Sabiduría"
+            "value": "LANZAMIENTO DE CONJUROS, ORDEN DIVINA\n\nOrden divina: Taumaturgo\nOrden divina · Taumaturgo: conoces un truco adicional de la lista de clérigo y sumas tu modificador de Sabiduría (mínimo +1) a las pruebas de Inteligencia (Conocimiento arcano y Religión).\n\nTipo de criatura: Humanoide. Manos curativas: acción de magia, cura tantos d4 como tu bonificador por competencia; recuperas el uso tras un descanso largo. Portador de luz: conoces Luz y usas Carisma. Resistencia celestial: resistencia al daño necrótico y radiante. Visión en la oscuridad 18 m. Revelación celestial desde nivel 3.\n\nTamaño: Mediano"
           },
           {
             "id": 2,
             "name": "✎",
-            "value": "Tipo de criatura: Humanoide. Linaje feérico: ventaja en salvaciones para evitar o terminar Hechizado. Sentidos agudos: competencia en Percepción, Perspicacia o Supervivencia. Trance: descanso largo en 4 horas de meditación consciente; no necesitas dormir y la magia no puede dormirte. Visión en la oscuridad 18 m. Linaje élfico elegido: truco y conjuros de niveles 3 y 5.\n\nLinaje élfico · Alto elfo: conoces Prestidigitación; tras un descanso largo puedes sustituirlo por otro truco de la lista de mago. En nivel 3 aprendes Detectar magia y en nivel 5 Paso brumoso. Siempre preparados; puedes lanzar cada uno una vez sin espacio por descanso largo o usando un espacio apropiado. Aptitud mágica: Sabiduría."
+            "value": "Tipo de criatura: Humanoide. Manos curativas: acción de magia, cura tantos d4 como tu bonificador por competencia; recuperas el uso tras un descanso largo. Portador de luz: conoces Luz y usas Carisma. Resistencia celestial: resistencia al daño necrótico y radiante. Visión en la oscuridad 18 m. Revelación celestial desde nivel 3."
           },
           {
             "id": 3,
             "name": "✎",
-            "value": "Músico; Opciones de dote: Gaita, Flauta de pan, Dulcémele"
+            "value": "Músico; Opciones de dote: Laúd, Lira, Gaita"
           },
           {
             "id": 4,
@@ -948,57 +948,57 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "No tiene lanzamiento de conjuros a nivel 1"
+            "value": "Sabiduría"
           },
           {
             "id": 2,
             "name": "✎",
-            "value": "—"
+            "value": 10
           },
           {
             "id": 3,
             "name": "✎",
-            "value": "—"
+            "value": "+2"
           },
           {
             "id": 4,
             "name": "✎",
-            "value": "Prestidigitación"
+            "value": "Guía, Llama sagrada, Palabra de resplandor, Luz, Luz"
           },
           {
             "id": 5,
             "name": "✎",
-            "value": "No tiene conjuros de clase a nivel 1"
+            "value": "Crear o destruir agua, Bendición, Detectar magia, Detectar venenos y enfermedades"
           },
           {
             "id": 6,
             "name": "✎",
-            "value": "—"
+            "value": "Espacios nivel 1: 2"
           },
           {
             "id": 7,
             "name": "✎",
-            "value": "—"
+            "value": "3"
           },
           {
             "id": 8,
             "name": "✎",
-            "value": "—"
+            "value": "4"
           },
           {
             "id": 9,
             "name": "✎",
-            "value": "—"
+            "value": "Espacios nivel 1: 2"
           },
           {
             "id": 10,
             "name": "✎",
-            "value": ""
+            "value": "Guía, Llama sagrada, Palabra de resplandor, Luz"
           },
           {
             "id": 11,
             "name": "✎",
-            "value": ""
+            "value": "Crear o destruir agua, Bendición, Detectar magia, Detectar venenos y enfermedades"
           },
           {
             "id": 12,
@@ -1013,17 +1013,17 @@
           {
             "id": 14,
             "name": "✎",
-            "value": "Sabiduría"
+            "value": "Carisma"
           },
           {
             "id": 15,
             "name": "✎",
-            "value": 10
+            "value": 9
           },
           {
             "id": 16,
             "name": "✎",
-            "value": "+2"
+            "value": "+1"
           },
           {
             "id": 17,
@@ -1175,12 +1175,12 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "Armadura de cuero, 2 dagas, espada corta, arco corto, 20 flechas, aljaba, herramientas de ladrón, paquete de ladrón y 8 po. Un instrumento musical, 2 disfraces, espejo, perfume, ropas de viaje y 11 po."
+            "value": "Camisa de malla, escudo, maza, paquete de sacerdote, símbolo sagrado y 7 po. Un instrumento musical, 2 disfraces, espejo, perfume, ropas de viaje y 11 po."
           },
           {
             "id": 2,
             "name": "✎",
-            "value": "19 po (monedas iniciales de ambos paquetes)"
+            "value": "18 po (monedas iniciales de ambos paquetes)"
           }
         ]
       },
@@ -1294,7 +1294,7 @@
           {
             "id": 2,
             "name": "✎",
-            "value": "ATAQUE FURTIVO, JERGA DE LADRONES, MAESTRÍA CON ARMAS, PERICIA"
+            "value": "LANZAMIENTO DE CONJUROS, ORDEN DIVINA"
           }
         ]
       },
@@ -1388,7 +1388,7 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "• Armadura de cuero\n• 2 dagas\n• espada corta\n• arco corto\n• 20 flechas\n• aljaba\n• herramientas de ladrón\n• paquete de ladrón y ."
+            "value": "• Camisa de malla\n• escudo\n• maza\n• paquete de sacerdote\n• símbolo sagrado y ."
           },
           {
             "id": 2,
@@ -1435,12 +1435,12 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "Arco corto, Daga, Espada corta"
+            "value": "Maza"
           },
           {
             "id": 2,
             "name": "✎",
-            "value": "Arco corto, Ballesta ligera"
+            "value": "—"
           },
           {
             "id": 3,
@@ -1450,7 +1450,7 @@
           {
             "id": 4,
             "name": "✎",
-            "value": "Arco corto: ataque +4 · 1d6+2 perforante · Munición (24/96 m), a dos manos · Maestría elegida\nDaga: ataque +5 · 1d4+3 perforante · Sutil, ligera, arrojadiza (6/18 m)\nEspada corta: ataque +5 · 1d6+3 perforante · Sutil, ligera"
+            "value": "Maza: ataque +5 · 1d6+3 contundente · —"
           }
         ]
       },
@@ -1472,7 +1472,7 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "Prestidigitación · Truco · transmutación\nTiempo: Acción · Alcance: 3 m\nComponentes: V, S · Duración: Hasta 1 hora\nCreas un efecto mágico dentro del alcance, elegido de\nentre las opciones a continuación. Si lanzas este conjuro\nvarias veces, puedes mantener activos a la vez hasta tres\nde sus efectos no instantáneos.\n\nEfecto sensorial. Creas un efecto sensorial instantáneo\ne inofensivo, como una lluvia de chispas, una ligera ráfaga\nde viento, tenues notas musicales o un olor extraño.\nJugar con fuego. Enciendes o apagas al instante una vela,\nuna antorcha o una hoguera pequeña.\nLimpiar o ensuciar. Limpias o ensucias al instante un\nobjeto de hasta 0,03 m³.\nSensación menor. Enfrías, calientas o das sabor a un\nmaterial inerte de hasta 0,03 m³ durante 1 hora.\nMarca mágica. Haces que aparezca una mancha de color,\nuna pequeña marca o un símbolo en un objeto o superficie\ndurante 1 hora.\nCreación menor. Creas un abalorio no mágico o una\nimagen ilusoria que te cabe en la mano y dura hasta el\nfinal de tu siguiente turno. El abalorio no inflige daño\ny no tiene valor monetario.\n\nNo tiene conjuros de clase a nivel 1\nDatos descriptivos no disponibles en el catálogo de conjuros."
+            "value": "Guía · Truco · adivinación\nTiempo: Acción · Alcance: Toque\nComponentes: V, S · Duración: Concentración, hasta 1 minuto\nTocas a una criatura voluntaria y eliges una habilidad.\nHasta que el conjuro termine, la criatura añade 1d4 a una\nprueba de característica con la habilidad elegida.\n\nLlama sagrada · Truco · evocación\nTiempo: Acción · Alcance: 18 m\nComponentes: V, S · Duración: Instantáneo\nUn fulgor de llamas desciende sobre una criatura que\npuedas ver dentro del alcance. El objetivo deberá superar\nuna tirada de salvación de Destreza o sufrirá 1d8 de daño\nradiante. No podrá beneficiarse de la cobertura media\no tres cuartos en esta tirada.\nMejora de truco. El daño aumenta en 1d8 cuando\nalcanzas los niveles 5 (2d8), 11 (3d8) y 17 (4d8).\n\nPalabra de resplandor · Truco · evocación\nTiempo: Acción · Alcance: Lanzador\nComponentes: V, M (un símbolo con forma de rayo) · Duración: Instantáneo\nUn fulgor ardiente surge de ti en una emanación de 1,5 m.\nTodas las criaturas de tu elección que puedas ver en ella\ndeberán superar una tirada de salvación de Constitución\no sufrirán 1d6 de daño radiante.\nMejora de truco. El daño aumenta en 1d6 cuando\nalcanzas los niveles 5 (2d6), 11 (3d6) y 17 (4d6).\n\nLuz · Truco · evocación\nTiempo: Acción · Alcance: Toque\nComponentes: V, M (una luciérnaga o musgo fosforescente) · Duración: 1 hora\nTocas un objeto Grande o más pequeño que nadie lleve\no vista. Hasta que el conjuro termine, el objeto emitirá luz\nbrillante en un radio de 6 m y luz tenue otros 6 m más allá.\nLa luz puede tener el color que desees.\nTapar completamente el objeto con un material opaco\nbloquea la luz. El conjuro termina si lo vuelves a lanzar.\n\nCrear o destruir agua · Nivel 1 · Transmutación\nTiempo: Acción · Alcance: 9 m\nComponentes: V, S, M (una mezcla de agua y arena) · Duración: Instantáneo\nProduces uno de estos efectos:\nCrear agua. Creas hasta 40 l de agua limpia dentro del\nalcance en un recipiente abierto. Como alternativa, el\nagua cae en forma de lluvia en un cubo de 9 m de lado\ndentro del alcance y apaga las llamas abiertas de la zona.\nDestruir agua. Destruyes hasta 40 l de agua dentro del\nalcance en un recipiente abierto. Como alternativa,\npuedes destruir niebla en un cubo de 9 m de lado dentro\ndel alcance.\nCon un espacio de conjuro de nivel superior. Creas\no destruyes 40 l más de agua o el tamaño del cubo aumenta\nen 1,5 m por cada nivel por encima de 1 que tenga el\nespacio.\n\nBendición · Nivel 1 · Encantamiento\nTiempo: Acción · Alcance: 9 m\nComponentes: V, S, M (un símbolo sagrado que valga al menos 5 po) · Duración: Concentración, hasta 1 minuto\nBendices hasta tres criaturas dentro del alcance. Siempre\nque un objetivo haga una tirada de ataque o de salvación\nantes de que termine el conjuro, sumará 1d4 al resultado\nde dicha tirada.\nCon un espacio de conjuro de nivel superior. Puedes hacer\nobjetivo a una criatura adicional por cada nivel por encima\nde 1 que tenga el espacio.\n\nDetectar magia · Nivel 1 · Adivinación\nTiempo: Acción o ritual · Alcance: Lanzador\nComponentes: V, S · Duración: Concentración, hasta 10 minutos\nHasta que el conjuro termine, podrás percibir la presencia\nde efectos mágicos a 9 m o menos de ti. Si percibes alguno,\npuedes usar una acción de magia para ver una débil aura\nalrededor de cualquier objeto o criatura visible dentro de\nla zona que esté afectada por la magia y, si el efecto lo creó\nun conjuro, distingues a qué escuela mágica pertenece.\nEl conjuro no puede atravesar 30 cm de piedra, tierra\no madera, 2,5 cm de metal o una lámina fina de plomo.\n\nDetectar venenos y enfermedades · Nivel 1 · Adivinación\nTiempo: Acción o ritual · Alcance: Lanzador\nComponentes: V, S, M (una hoja de tejo) · Duración: Concentración, hasta 10 minutos\nHasta que el conjuro termine, percibes la ubicación de\nvenenos, criaturas venenosas y enfermedades mágicas\na 9 m o menos de ti, e identificas el tipo de veneno,\ncriatura o enfermedad en cada caso.\nEl conjuro no puede atravesar 30 cm de piedra, tierra\no madera, 2,5 cm de metal o una lámina fina de plomo."
           }
         ]
       },
@@ -1514,22 +1514,22 @@
           {
             "id": 1,
             "name": "✎",
-            "value": "Elfo · Alto elfo"
+            "value": "Aasimar"
           },
           {
             "id": 2,
             "name": "✎",
-            "value": "Tipo de criatura: Humanoide. Linaje feérico: ventaja en salvaciones para evitar o terminar Hechizado. Sentidos agudos: competencia en Percepción, Perspicacia o Supervivencia. Trance: descanso largo en 4 horas de meditación consciente; no necesitas dormir y la magia no puede dormirte. Visión en la oscuridad 18 m. Linaje élfico elegido: truco y conjuros de niveles 3 y 5.\n\nLinaje élfico · Alto elfo: conoces Prestidigitación; tras un descanso largo puedes sustituirlo por otro truco de la lista de mago. En nivel 3 aprendes Detectar magia y en nivel 5 Paso brumoso. Siempre preparados; puedes lanzar cada uno una vez sin espacio por descanso largo o usando un espacio apropiado. Aptitud mágica: Sabiduría."
+            "value": "Tipo de criatura: Humanoide. Manos curativas: acción de magia, cura tantos d4 como tu bonificador por competencia; recuperas el uso tras un descanso largo. Portador de luz: conoces Luz y usas Carisma. Resistencia celestial: resistencia al daño necrótico y radiante. Visión en la oscuridad 18 m. Revelación celestial desde nivel 3."
           },
           {
             "id": 3,
             "name": "✎",
-            "value": "Perspicacia"
+            "value": "—"
           },
           {
             "id": 4,
             "name": "✎",
-            "value": "Sabiduría · Inteligencia"
+            "value": "Inteligencia"
           },
           {
             "id": 5,
@@ -1537,30 +1537,8 @@
             "value": "Mediano"
           }
         ]
-      },
-      {
-        "id": 1795638877917,
-        "name": "GESTIÓN DE FICHA",
-        "stats": [
-          {
-            "id": 1,
-            "name": "Estados de conjuros",
-            "value": ""
-          }
-        ]
-      },
-      {
-        "id": 1795638877918,
-        "name": "VALORES",
-        "stats": [
-          {
-            "id": 1,
-            "name": "✎",
-            "value": "{\"prestidigitacion\":{\"known\":true,\"prepared\":true}}"
-          }
-        ]
       }
     ]
   },
-  "updatedAt": "2026-11-25T20:34:38.529Z"
+  "updatedAt": "2026-11-25T20:48:16.611Z"
 }
