@@ -3275,13 +3275,37 @@ import ITEMS from './items.json';
       const heading = String(pair.heading.name || '');
       if (normalizeLevelText(heading) === 'combate') return false;
       const category = sectionTab(heading);
-      if (tab === 'Acciones') return category === 'Acciones' || category === 'Velocidad y defensas';
+      if (tab === 'Acciones') {
+        if (normalizeLevelText(heading) === 'ataques') return false;
+        return category === 'Acciones' || category === 'Velocidad y defensas';
+      }
       if (tab === 'Conjuros') return category === 'Conjuros';
       if (tab === 'Inventario') return category === 'Inventario';
       if (tab === 'Rasgos y competencias') return category === 'Rasgos y competencias' || category === 'Rasgos y características' || category === 'Extras';
       if (tab === 'Descripción') return category === 'Trasfondo';
       if (tab === 'Notas') return category === 'Notas';
       return false;
+    });
+  }
+
+  function playerWeaponAttacks(target: RawSheet) {
+    const names = getCharacterStat(target,'ATAQUES','Armas incluidas en el equipo');
+    const proficiency = getCharacterNumber(target,'COMBATE','Bonificador por competencia',2);
+    const strengthMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Fuerza',10)-10)/2);
+    const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
+    const profText = normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armas'));
+    return [...new Set(names.split(/[,;\\n]+/).map(name=>name.trim()).filter(Boolean))].map(name=>{
+      const profile = WEAPON_PROFILES[name];
+      if (!profile) return {name, attackBonus:null as number|null, damage:'—', damageType:'No disponible', range:'—'};
+      const abilityMod = profile.ability==='finesse' ? Math.max(strengthMod,dexterityMod) : profile.ability==='dexterity' ? dexterityMod : strengthMod;
+      const normalizedName = normalizeLevelText(name);
+      const proficient = (profile.category==='simple' && profText.includes('sencillas')) ||
+        (profile.category==='martial' && profText.includes('marciales')) ||
+        profText.includes(normalizedName) || classWeaponSpecialProficiency(profText,profile,name);
+      const damageBonus = abilityMod===0 ? '' : (abilityMod>0?'+':'')+abilityMod;
+      const rangeMatch = profile.properties.match(/(?:Munición|Arrojadiza) \\(([^)]+)\\)/i);
+      const range = rangeMatch ? rangeMatch[1] : /alcance/i.test(profile.properties) ? '3 m' : '1,5 m';
+      return {name, attackBonus:abilityMod+(proficient?proficiency:0) as number|null, damage:profile.damage+damageBonus, damageType:profile.damageType, range};
     });
   }
 
@@ -4197,6 +4221,28 @@ import ITEMS from './items.json';
                 {/each}
               </nav>
               <div class="nautical-tab-content">
+                {#if playerSheetTab === 'Acciones'}
+                  <section class="sheet-section weapon-attacks-section">
+                    <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
+                    <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
+                    <div class="weapon-attack-list">
+                      {#each playerWeaponAttacks(sheet) as weapon}
+                        <article class="weapon-attack-card">
+                          <h4>{weapon.name}</h4>
+                          <div class="weapon-attack-values">
+                            <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(weapon.attackBonus as number), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
+                            <div><span>Daño</span><strong>{weapon.damage}</strong></div>
+                            <div><span>Alcance</span><strong>{weapon.range}</strong></div>
+                            <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
+                          </div>
+                          {#if weapon.attackBonus !== null}
+                            <button type="button" class="inline-roll weapon-damage-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{'Tirar daño ' + weapon.damage}</button>
+                          {/if}
+                        </article>
+                      {/each}
+                    </div>
+                  </section>
+                {/if}
                 {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
                   <section class="sheet-section {sectionClass(pair.heading.name)}">
                     <div class="sheet-section-title"><h3>{pair.heading.name || ''}</h3></div>
@@ -4562,6 +4608,15 @@ import ITEMS from './items.json';
   :global(.nautical-tabs){display:flex;gap:.2rem;overflow-x:auto;padding:.1rem .1rem .55rem;margin-bottom:.55rem;border-bottom:1px solid #26777a;scrollbar-width:thin}
   :global(.nautical-tabs button){flex:0 0 auto;padding:.55rem .65rem;border:1px solid transparent!important;border-radius:5px 5px 0 0;background:transparent!important;color:#a9c9c5!important;font-size:.68rem;font-weight:700;white-space:nowrap}
   :global(.nautical-tabs button.active){border-color:#318c8b!important;background:#123a3e!important;color:#8ce4d9!important}
+  :global(.weapon-attacks-section .weapon-mastery-summary){padding:.45rem .6rem;margin-bottom:.65rem;border:1px solid #553137;border-radius:6px;background:#171013;color:#e7d6d6}
+  :global(.weapon-attack-list){display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.65rem}
+  :global(.weapon-attack-card){padding:.7rem;border:1px solid #65333a;border-radius:7px;background:#151012}
+  :global(.weapon-attack-card h4){margin:0 0 .55rem;color:#f0c6c8;font:700 .95rem Georgia,serif}
+  :global(.weapon-attack-values){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+  :global(.weapon-attack-values>div){display:flex;flex-direction:column;gap:.18rem;min-width:0}
+  :global(.weapon-attack-values span){font-size:.62rem;color:#bda8aa;text-transform:uppercase;letter-spacing:.04em}
+  :global(.weapon-attack-values strong){font-size:.9rem;color:#f5eded}
+  :global(.weapon-damage-roll){margin-top:.55rem}
   :global(.nautical-tab-content){display:flex;flex-direction:column;gap:.6rem}
   :global(.skill-column-labels){display:flex;justify-content:space-between;padding:.2rem .15rem;color:#5fb9b3;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em}
   :global(.nautical-empty){padding:1rem;text-align:center;border:1px dashed #286d70;border-radius:7px}
