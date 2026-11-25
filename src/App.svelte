@@ -2080,9 +2080,9 @@
       if (obrReady && obrRole === 'PLAYER') {
         syncPending = true;
         await flushAutoSync();
-        notice = syncStatus === 'Ficha sincronizada con la sala.'
-          ? 'Personaje guardado en tu ficha y sincronizado con la sala.'
-          : 'Personaje guardado en tu ficha y en este navegador. No se pudo sincronizar con la sala.';
+        notice = syncStatus === 'Ficha sincronizada con Owlbear y guardada en GitHub.'
+          ? 'Personaje guardado permanentemente y sincronizado con Owlbear.'
+          : syncStatus;
       } else {
         notice = 'Personaje guardado en tu ficha y en este navegador.';
       }
@@ -2415,9 +2415,9 @@ import ITEMS from './items.json';
         }, { destination: 'ALL' });
         await saveCharacterToGithub(snapshot, id, name);
       }
-      syncStatus = 'Ficha sincronizada con la sala.';
+      syncStatus = 'Ficha sincronizada con Owlbear y guardada en GitHub.';
     } catch {
-      syncStatus = 'No se pudo sincronizar. Los cambios siguen guardados en este navegador.';
+      syncStatus = 'No se pudo completar el guardado permanente. Revisa la conexión de Owlbear y GitHub.';
     } finally {
       syncInProgress = false;
       if (syncPending) void flushAutoSync();
@@ -3679,11 +3679,14 @@ import ITEMS from './items.json';
   }
 
   async function saveCharacterToGithub(snapshot: RawSheet, playerId: string, playerName: string) {
-    if (!githubStore) return;
+    if (!githubStore) throw new Error('GitHub no está configurado en esta sala. El director debe guardar la conexión.');
     try {
       await githubStore.save(snapshot, playerId, playerName);
       cloudStatus = 'Personaje guardado en GitHub: ' + (snapshot.name || playerName) + '.';
-    } catch (error) { cloudStatus = 'No se pudo guardar en GitHub: ' + (error instanceof Error ? error.message : String(error)); }
+    } catch (error) {
+      cloudStatus = 'No se pudo guardar en GitHub: ' + (error instanceof Error ? error.message : String(error));
+      throw error;
+    }
   }
 
   async function saveOwnCharacterToGithub(snapshot: RawSheet) {
