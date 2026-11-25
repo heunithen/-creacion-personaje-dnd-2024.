@@ -1101,6 +1101,7 @@
   let builderPreview: RawSheet | null = null;
 
   let playerCreating = false;
+  let demoPreview = false;
   let builderSaving = false;
   const createInitialBuilderData = (): BuilderData => ({
     name: '', player: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
@@ -1968,7 +1969,32 @@
       builderSaving = false;
     }
   }
-  function startBuilder() { resetBuilder(); playerCreating = true; }
+  function startBuilder() { demoPreview = false; sheet = null; resetBuilder(); playerCreating = true; }
+  function openDemoPreview() {
+    const sample = createInitialBuilderData();
+    sample.name = 'Aldric Valdemar';
+    sample.player = 'Vista de ejemplo';
+    sample.className = 'Guerrero';
+    sample.species = 'Humano';
+    sample.background = 'Soldado';
+    sample.alignment = 'Legal bueno';
+    sample.classSkillChoices = ['Atletismo', 'Percepción'];
+    sample.weaponMasteries = ['Espada larga', 'Jabalina'];
+    sample.languages = ['Enano', 'Élfico'];
+    sample.equipment = '';
+    builderData = sample;
+    sheet = buildLevelOneSheet();
+    demoPreview = true;
+    playerCreating = false;
+    playerSheetTab = 'Acciones';
+    importOpen = false;
+    notice = '';
+  }
+  function closeDemoPreview() {
+    demoPreview = false;
+    sheet = null;
+    playerCreating = false;
+  }
   function downloadBuilderSheet() {
     if (!builderPreview) return;
     const json = JSON.stringify(builderPreview,null,2);
@@ -3358,8 +3384,10 @@ import ITEMS from './items.json';
 
   onMount(() => {
     try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('preview') === '1') openDemoPreview();
       const stored = localStorage.getItem('forja-raw-character');
-      if (stored) sheet = JSON.parse(stored) as RawSheet;
+      if (!demoPreview && stored) sheet = JSON.parse(stored) as RawSheet;
       const storedRolls = localStorage.getItem('forja-custom-rolls');
       if (storedRolls) {
         const saved = JSON.parse(storedRolls) as any[];
@@ -3379,7 +3407,7 @@ import ITEMS from './items.json';
         obrRole = await OBR.player.getRole();
         playerName = await OBR.player.getName();
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
-        await restoreOwnSheet();
+        if (!demoPreview) await restoreOwnSheet();
         await refreshPlayers();
         OBR.party.onChange((players: any[]) => readPlayers(players));
         OBR.broadcast.onMessage(`${DICE_PLUS_SOURCE}/roll-error`, (event: any) => {
@@ -3830,6 +3858,7 @@ import ITEMS from './items.json';
         <section class="panel import-character-panel">
           <div class="section-heading"><h2>{sheet ? 'Crear otro personaje' : 'Crear personaje'}</h2><span class="count">Nivel 1</span></div>
           <div class="import-row">
+            <button class="secondary" on:click={openDemoPreview}>Ver hoja de ejemplo</button>
             <button class="secondary" on:click={() => importOpen = !importOpen}>Importar ficha JSON</button>
             {#if sheet}<button class="secondary" on:click={() => playerCreating = false}>Volver a mi ficha</button>{/if}
           </div>
@@ -4042,8 +4071,13 @@ import ITEMS from './items.json';
       {/if}
       {#if sheet && !playerCreating}
         <section class="panel player-character-actions">
-          <button class="secondary" on:click={startBuilder}>Crear personaje nuevo</button>
-
+          {#if demoPreview}
+            <p class="muted"><strong>Vista de ejemplo.</strong> Este personaje es ficticio y no se guarda ni modifica tu ficha.</p>
+            <button class="secondary" on:click={closeDemoPreview}>Volver al inicio</button>
+            <button class="primary" on:click={startBuilder}>Crear mi personaje</button>
+          {:else}
+            <button class="secondary" on:click={startBuilder}>Crear personaje nuevo</button>
+          {/if}
         </section>
       {/if}
       {#if sheet && !playerCreating}
@@ -4061,8 +4095,12 @@ import ITEMS from './items.json';
               </div>
             </div>
             <div class="header-actions">
-              <button type="button" on:click={() => importOpen = !importOpen}>Gestionar</button>
-              <button type="button" on:click={exportSheet}>Exportar</button>
+              {#if demoPreview}
+                <button type="button" on:click={closeDemoPreview}>Salir de vista previa</button>
+              {:else}
+                <button type="button" on:click={() => importOpen = !importOpen}>Gestionar</button>
+                <button type="button" on:click={exportSheet}>Exportar</button>
+              {/if}
             </div>
           </header>
 
