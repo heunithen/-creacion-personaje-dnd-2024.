@@ -3464,8 +3464,8 @@ import ITEMS from './items.json';
 
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Habilidades','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
-  let playerSheetTab = 'Conjuros';
-  const playerSheetTabs = ['Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
+  let playerSheetTab = 'Acciones';
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Rasgos y competencias', 'Descripción', 'Notas'];
 
   function playerFeatureGroups(target: RawSheet) {
     const className = sheetClassName(target);
@@ -4752,7 +4752,13 @@ import ITEMS from './items.json';
               {/each}
             </section>
 
-            <section class="nautical-actions"><div class="nautical-tabs action-heading"><span>Acciones</span></div>
+            <section class="nautical-content">
+              <nav class="nautical-tabs" aria-label="Secciones de la ficha">
+                {#each playerSheetTabs as tab}
+                  <button type="button" class:active={playerSheetTab === tab} on:click={() => playerSheetTab = tab}>{tab}</button>
+                {/each}
+              </nav>
+                {#if playerSheetTab === 'Acciones'}
                   <section class="sheet-section weapon-attacks-section">
                     <div class="sheet-section-title"><h3>Maestría con armas</h3></div>
                     <div class="weapon-mastery-summary">{sheetValueByNames(sheet, ['Maestrías con armas'], ['ATAQUES']) || 'Sin maestrías registradas'}</div>
@@ -4770,14 +4776,7 @@ import ITEMS from './items.json';
                       {/each}
                     </div>
                   </section>
-            </section>
-
-            <section class="nautical-content">
-              <nav class="nautical-tabs" aria-label="Secciones de la ficha">
-                {#each playerSheetTabs as tab}
-                  <button type="button" class:active={playerSheetTab === tab} on:click={() => playerSheetTab = tab}>{tab}</button>
-                {/each}
-              </nav>
+                {/if}
               <div class="nautical-tab-content">
                 {#if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
@@ -5229,14 +5228,7 @@ import ITEMS from './items.json';
   :global(.rules-panel .rule-description){white-space:pre-wrap}
   /* La hoja mantiene dos columnas superiores: habilidades y acciones.
      El contenido con pestañas ocupa todo el ancho en una fila inferior. */
-  :global(.nautical-columns){container-type:inline-size;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;gap:var(--gm-panel-gap)!important;align-items:start}
-  :global(.nautical-skills),:global(.nautical-actions),:global(.nautical-content){min-width:0;max-height:none!important;height:auto!important;overflow:visible!important}
-  :global(.nautical-actions){display:flex;flex-direction:column;gap:.5rem}
-  :global(.nautical-actions .weapon-attacks-section){margin:0}
-  :global(.nautical-actions .action-heading){margin:0;padding:.65rem;border:1px solid #3a6870;border-radius:7px;background:#13262e}
-  :global(.nautical-actions .action-heading span){color:#b5bec3;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
-  :global(.nautical-content){grid-column:1/-1}
-  @container (max-width:580px){:global(.nautical-columns){grid-template-columns:minmax(0,1fr)!important}:global(.nautical-content){grid-column:1}:global(.style-control-grid),:global(.style-control-grid fieldset){grid-template-columns:1fr}}
+  /* Se conserva la distribución original de la ficha: habilidades a un lado y contenido por pestañas al otro. */
   /* Hoja de personaje: interfaz náutica en tres columnas */
   :global(.nautical-sheet){display:block!important;padding:0!important;overflow:hidden;background:#13262e!important;border:1px solid #3fb8b8!important;border-radius:12px!important;box-shadow:0 16px 40px #0b171d99!important;color:#ffffff!important}
   :global(.nautical-header){display:flex!important;align-items:center;gap:1rem;padding:1rem 1.2rem!important;margin:0!important;border:0!important;border-bottom:1px solid #3fb8b8!important;border-radius:0!important;background:linear-gradient(115deg,#13262e,#13262e 65%,#13262e)!important}
