@@ -1596,7 +1596,13 @@
   }
   function builderNext() {
     if(builderStep<5) {
-      if(!builderStepCanAdvance()) { builderStepError=['','Genera el nombre del personaje y completa las elecciones obligatorias de la especie.','Completa la dote, herramienta y aumentos del trasfondo.','Completa las competencias, rasgos, conjuros y equipo de la clase.','Revisa las seis puntuaciones según el método elegido.'][builderStep]||'Completa las elecciones obligatorias.'; return; }
+      if(!builderStepCanAdvance()) {
+        const stepFields=builderMissingFields().filter(field=>field.includes('(paso '+(builderStep+1)+')'));
+        builderStepError=stepFields.length
+          ? 'Falta completar lo siguiente para avanzar:\\n• '+stepFields.join('\\n• ')
+          : 'Hay una elección obligatoria incompleta en este paso. Revisa los campos visibles y vuelve a intentarlo.';
+        return;
+      }
       builderStepError=''; builderStep+=1; keepBuilderAtTop();
     }
   }
