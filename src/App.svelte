@@ -3716,6 +3716,7 @@ import ITEMS from './items.json';
     if (payload?.character) {
       sheet = repairGenericStatLabels(payload.character as RawSheet) as RawSheet;
       localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+      await saveOwnCharacterToGithub(sheet);
     }
   }
 
