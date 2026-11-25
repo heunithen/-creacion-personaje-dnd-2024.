@@ -4780,10 +4780,7 @@ import ITEMS from './items.json';
                         </div>
                       {:else}<p class="muted nautical-empty">No hay dotes registradas.</p>{/if}
                     </section>
-                        </div>
-                      </section>
-                    {/each}
-  
+
             </section>
 
             <section class="nautical-content">
