@@ -46,3 +46,48 @@ input::placeholder,textarea::placeholder{color:#8c8586}
 .roll-result b,.trait-group h3{color:#ff7a84}
 .toast{background:#1b090c;border:1px solid #a72a37;color:#fff}
 footer{border-top:1px solid #76212a;color:#93898a}
+
+
+/* Identidad visual unificada: fantasía náutica */
+:root{
+  color-scheme:dark;
+  --ocean-0:#0b171d;
+  --ocean-1:#0f1e26;
+  --ocean-2:#13262e;
+  --slate-1:#1b2a33;
+  --slate-2:#22333d;
+  --aqua:#5fe6e0;
+  --aqua-mid:#3fb8b8;
+  --text-main:#ffffff;
+  --text-secondary:#b5bec3;
+  --text-muted:#8e9aa1;
+  --line:#3a4a52;
+  --line-soft:#2a3a43;
+  --warm:#f28c28;
+}
+html,body{background:var(--ocean-0);color:var(--text-main)}
+body{background:radial-gradient(ellipse at 50% 0%,#18343a 0,var(--ocean-1) 42%,#09151b 100%)}
+button,input,select,textarea{color:var(--text-main)}
+::selection{background:var(--aqua);color:var(--ocean-1)}
+.app-shell{color:var(--text-main)}
+.topbar{border-color:var(--line)}
+.brand,.brand strong{color:var(--text-main)}
+.brand-mark,.eyebrow,.free-tag,.count{color:var(--aqua)}
+.brand small,.intro,.connection,.hint,.muted{color:var(--text-secondary)}
+.topbar nav button,.secondary,.player-tabs button{background:var(--slate-1);border:1px solid var(--aqua-mid);color:var(--text-main)}
+.topbar nav button.active,.player-tabs button.active{background:var(--aqua);border-color:var(--aqua);color:var(--ocean-1)}
+.panel,.character-card,.monster-card,.trait-editor,.import-box{background:var(--ocean-1);border:1px solid var(--aqua-mid);color:var(--text-main)}
+.section-heading h2,.panel h2,.saved h2,.character-card h3,.monster-card h3{color:var(--text-main)}
+label{color:var(--text-secondary)}
+input,textarea,select{background:var(--ocean-0);border:1px solid var(--line);color:var(--text-main)}
+input:focus,textarea:focus,select:focus{border-color:var(--aqua);outline:1px solid var(--aqua)}
+input::placeholder,textarea::placeholder{color:var(--text-muted)}
+.primary{background:var(--aqua);border:1px solid var(--aqua);color:var(--ocean-1)}
+.primary:hover{background:#79f1eb}
+.character-card p,.monster-card p,.roll-entry-top span,.roll-entry p{color:var(--text-secondary)}
+.card-symbol,.card-actions button,.danger-text{color:var(--aqua)}
+.danger-text{color:#e6a0a0}
+.roll-entry,.trait-view,.traits-preview,.subheading{border-color:var(--line-soft)}
+.roll-result b,.trait-group h3{color:var(--aqua)}
+.toast{background:var(--slate-1);border:1px solid var(--aqua-mid);color:var(--text-main)}
+footer{border-color:var(--line);color:var(--text-muted)}
