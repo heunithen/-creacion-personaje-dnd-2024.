@@ -4650,7 +4650,7 @@ import ITEMS from './items.json';
     :global(.nautical-content){grid-column:1/-1}
   }
   @media(max-width:760px){
-    :global(.nautical-quick-stats){grid-template-columns:repeat(4,minmax(0,1fr))}
+    :global(.nautical-quick-stats){grid-template-columns:repeat(9,minmax(0,1fr))}
     :global(.nautical-quick-stats .attribute-plaque-row){grid-column:1/-1}
     :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
   }
@@ -4661,7 +4661,7 @@ import ITEMS from './items.json';
     :global(.nautical-quick-stats>div>strong){font-size:.62rem}
     :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
     :global(.weapon-attack-values){grid-template-columns:repeat(2,minmax(0,1fr))}
-    :global(.nautical-quick-stats){grid-template-columns:repeat(2,minmax(0,1fr))}
+    :global(.nautical-quick-stats){grid-template-columns:repeat(9,minmax(0,1fr))}
     :global(.nautical-quick-stats .attribute-plaque-row){grid-column:1/-1}
     :global(.nautical-quick-stats>.hp-plaque){grid-column:span 2}
     :global(.nautical-header){flex-wrap:wrap}
