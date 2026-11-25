@@ -4500,9 +4500,11 @@ import ITEMS from './items.json';
                 <button type="button" class="secondary" on:click={builderRollScores}>Volver a tirar las seis puntuaciones</button>
                 <p class="hint">Resultados obtenidos: {builderRolledScores.length ? builderRolledScores.join(', ') : 'Pulsa el botón para tirar.'} Distribúyelos entre las características.</p>
               {/if}
-              {#each BUILDER_ABILITY_NAMES as ability}
-                <label>{ability}<input type="number" min={builderData.method === 'pointBuy' ? 8 : builderData.method === 'free' ? 1 : 3} max={builderData.method === 'pointBuy' ? 15 : builderData.method === 'free' ? 20 : 18} step="1" bind:value={builderData.abilities[ability]} /><small class="muted">Modificador: {builderModifier(Number(builderData.abilities[ability]) || 10) >= 0 ? '+' : ''}{builderModifier(Number(builderData.abilities[ability]) || 10)}</small></label>
-              {/each}
+              <div class="builder-ability-grid">
+                {#each BUILDER_ABILITY_NAMES as ability}
+                  <label class="builder-ability-card">{ability}<input type="number" min={builderData.method === 'pointBuy' ? 8 : builderData.method === 'free' ? 1 : 3} max={builderData.method === 'pointBuy' ? 15 : builderData.method === 'free' ? 20 : 18} step="1" bind:value={builderData.abilities[ability]} /><small class="muted">Modificador: {builderModifier(Number(builderData.abilities[ability]) || 10) >= 0 ? '+' : ''}{builderModifier(Number(builderData.abilities[ability]) || 10)}</small></label>
+                {/each}
+              </div>
               {#if builderData.method === 'pointBuy'}
                 <p class="hint">Puntos utilizados: <strong>{builderPointCost()} / 27</strong>. Cada puntuación debe estar entre 8 y 15.</p>
               {:else if builderData.method === 'standard'}
@@ -6687,5 +6689,146 @@ import ITEMS from './items.json';
     .builder-step-track small{font-size:.59rem!important}
     :global(.builder-panel .builder-class-grid){grid-template-columns:1fr!important}
     .builder-actions{position:static!important}
+  }
+
+
+  /* Características y elecciones: segunda pasada de refinamiento. */
+  .builder-ability-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:10px!important;
+    margin:.3rem 0!important;
+  }
+  :global(.builder-panel .builder-ability-card){
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 76px!important;
+    align-items:center!important;
+    gap:8px 10px!important;
+    min-width:0!important;
+    padding:12px!important;
+    border:1px solid #3a6870!important;
+    border-radius:9px!important;
+    background:linear-gradient(145deg,#13262e,#0b171d)!important;
+    color:#fff!important;
+    font-size:.76rem!important;
+    font-weight:800!important;
+    letter-spacing:.035em!important;
+    text-transform:uppercase!important;
+  }
+  :global(.builder-panel .builder-ability-card input[type=number]){
+    grid-column:2!important;
+    grid-row:1/3!important;
+    width:100%!important;
+    min-height:58px!important;
+    padding:6px!important;
+    border:1px solid #3a6870!important;
+    border-radius:7px!important;
+    background:#0b171d!important;
+    color:#5fe6e0!important;
+    font:800 1.45rem/1 system-ui,sans-serif!important;
+    text-align:center!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  :global(.builder-panel .builder-ability-card small){
+    grid-column:1!important;
+    color:#b5bec3!important;
+    font-size:.68rem!important;
+    font-weight:600!important;
+    text-transform:none!important;
+  }
+  :global(.builder-panel .builder-ability-card small::first-letter){color:#5fe6e0}
+  :global(.builder-panel .builder-ability-card:focus-within){
+    border-color:#5fe6e0!important;
+    box-shadow:0 0 0 3px #5fe6e01c!important;
+  }
+  :global(.builder-panel .builder-choice-wrapper>strong){
+    display:block!important;
+    margin-bottom:9px!important;
+    color:#fff!important;
+    font-size:.82rem!important;
+    line-height:1.45!important;
+  }
+  :global(.builder-panel .builder-choice-field){
+    padding:10px!important;
+    border-color:#22333d!important;
+    background:#0b171d!important;
+  }
+  :global(.builder-panel .builder-checkbox){
+    position:relative!important;
+    min-height:52px!important;
+    padding:12px 13px!important;
+    border:1px solid #3a4a52!important;
+    border-radius:8px!important;
+    background:#13262e!important;
+    color:#fff!important;
+    box-shadow:inset 0 1px #ffffff08!important;
+  }
+  :global(.builder-panel .builder-checkbox>input[type=checkbox]),
+  :global(.builder-panel .builder-checkbox>input[type=radio]){
+    accent-color:#5fe6e0!important;
+    margin-top:2px!important;
+  }
+  :global(.builder-panel .builder-checkbox>span){
+    padding-right:0!important;
+    color:#fff!important;
+    font-size:.77rem!important;
+    font-weight:700!important;
+    line-height:1.45!important;
+  }
+  :global(.builder-panel .builder-checkbox:has(input:checked)){
+    border-color:#5fe6e0!important;
+    background:linear-gradient(145deg,#18343a,#13262e)!important;
+    box-shadow:inset 0 0 0 1px #5fe6e022,0 0 12px #5fe6e010!important;
+  }
+  :global(.builder-panel .builder-checkbox:has(input:checked)::after){
+    top:8px!important;
+    right:9px!important;
+    border:1px solid #3a6870!important;
+    background:#0b171d!important;
+    color:#5fe6e0!important;
+    font-size:.58rem!important;
+    letter-spacing:.04em!important;
+  }
+  :global(.builder-panel .builder-checkbox:has(.builder-option-description)){
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:6px!important;
+    padding:13px!important;
+  }
+  :global(.builder-panel .builder-checkbox:has(.builder-option-description)>span){
+    padding-right:4.4rem!important;
+    font-size:.83rem!important;
+  }
+  :global(.builder-panel .builder-checkbox .builder-option-description),
+  :global(.builder-panel .builder-checkbox .builder-skill-description){
+    color:#b5bec3!important;
+    font-size:.7rem!important;
+    line-height:1.5!important;
+  }
+  :global(.builder-panel .builder-info){
+    display:grid!important;
+    gap:5px!important;
+  }
+  :global(.builder-panel .builder-info>p){
+    margin:0!important;
+  }
+  :global(.builder-panel .builder-name-block){
+    padding:15px!important;
+    border:1px solid #3a6870!important;
+    border-radius:10px!important;
+    background:#0f1e26!important;
+    box-shadow:0 5px 16px #0002!important;
+  }
+  :global(.builder-panel .builder-name-block>label){
+    color:#fff!important;
+    font-size:.8rem!important;
+  }
+  @media(max-width:760px){
+    .builder-ability-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  }
+  @media(max-width:420px){
+    .builder-ability-grid{gap:7px!important}
+    :global(.builder-panel .builder-ability-card){grid-template-columns:minmax(0,1fr) 62px!important;padding:9px!important}
+    :global(.builder-panel .builder-ability-card input[type=number]){min-height:50px!important;font-size:1.2rem!important}
   }
 </style>
