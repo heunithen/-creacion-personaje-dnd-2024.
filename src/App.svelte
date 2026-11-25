@@ -3294,7 +3294,7 @@ import ITEMS from './items.json';
     const strengthMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Fuerza',10)-10)/2);
     const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
     const profText = normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armas'));
-    return [...new Set(names.split(/[,;\\n]+/).map(name=>name.trim()).filter(Boolean))].map(name=>{
+    return [...new Set(names.split(/[,;\n]+/).map(name=>name.trim()).filter(Boolean))].map(name=>{
       const profile = WEAPON_PROFILES[name];
       if (!profile) return {name, attackBonus:null as number|null, damage:'—', damageType:'No disponible', range:'—'};
       const abilityMod = profile.ability==='finesse' ? Math.max(strengthMod,dexterityMod) : profile.ability==='dexterity' ? dexterityMod : strengthMod;
@@ -3303,7 +3303,7 @@ import ITEMS from './items.json';
         (profile.category==='martial' && profText.includes('marciales')) ||
         profText.includes(normalizedName) || classWeaponSpecialProficiency(profText,profile,name);
       const damageBonus = abilityMod===0 ? '' : (abilityMod>0?'+':'')+abilityMod;
-      const rangeMatch = profile.properties.match(/(?:Munición|Arrojadiza) \\(([^)]+)\\)/i);
+      const rangeMatch = profile.properties.match(/(?:Munición|Arrojadiza)\s*\(([^)]+)\)/i);
       const range = rangeMatch ? rangeMatch[1] : /alcance/i.test(profile.properties) ? '3 m' : '1,5 m';
       return {name, attackBonus:abilityMod+(proficient?proficiency:0) as number|null, damage:profile.damage+damageBonus, damageType:profile.damageType, range};
     });
