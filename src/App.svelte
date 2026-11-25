@@ -4493,7 +4493,30 @@ import ITEMS from './items.json';
   :global(.skill-column-labels){display:flex;justify-content:space-between;padding:.2rem .15rem;color:#5fb9b3;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em}
   :global(.nautical-empty){padding:1rem;text-align:center;border:1px dashed #286d70;border-radius:7px}
   :global(.nautical-sheet .inline-roll){color:#75dcd2}
-  @media(max-width:900px){:global(.nautical-columns){grid-template-columns:minmax(150px,.8fr) minmax(170px,1fr)}:global(.nautical-content){grid-column:1/-1;max-height:none}:global(.nautical-side),:global(.nautical-skills){max-height:32rem}}
-  @media(max-width:580px){:global(.nautical-header){flex-wrap:wrap}:global(.header-actions){width:100%;padding-left:5.5rem}:global(.nautical-columns){grid-template-columns:1fr}:global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){grid-column:1;max-height:none}:global(.nautical-quick-stats .attribute-plaque){flex:1 1 26%}}
+  /* La ficha ocupa todo el espacio que Owlbear entrega a la extensión.
+     El documento completo es el único contenedor con desplazamiento vertical. */
+  :global(html),:global(body),:global(#app){width:100%;min-height:100%;height:auto;overflow-x:hidden!important;overflow-y:visible!important}
+  :global(body){margin:0}
+  :global(.app-shell){width:100%!important;max-width:none!important;margin:0!important;padding:0 .45rem!important}
+  :global(.main){width:100%!important;max-width:none!important;margin:0!important;padding:.55rem 0 1rem!important}
+  :global(.nautical-sheet){width:100%;max-width:none;overflow:visible!important}
+  :global(.nautical-columns){width:100%;align-items:start}
+  :global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){
+    min-width:0;max-height:none!important;height:auto!important;overflow:visible!important;
+  }
+  :global(.nautical-side),:global(.nautical-skills){display:flex;flex-direction:column;gap:.6rem}
+  :global(.nautical-tab-content){height:auto;max-height:none;overflow:visible!important}
+  :global(.nautical-header .character-name){color:#fff!important}
+  @media(max-width:900px){
+    :global(.nautical-columns){grid-template-columns:minmax(150px,.8fr) minmax(170px,1fr)}
+    :global(.nautical-content){grid-column:1/-1}
+  }
+  @media(max-width:580px){
+    :global(.nautical-header){flex-wrap:wrap}
+    :global(.header-actions){width:100%;padding-left:5.5rem}
+    :global(.nautical-columns){grid-template-columns:1fr}
+    :global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){grid-column:1}
+    :global(.nautical-quick-stats .attribute-plaque){flex:1 1 26%}
+  }
 
 </style>
