@@ -3,5 +3,14 @@
     "sin-partida",
     "arena1"
   ],
-  "characters": []
+  "characters": [
+    {
+      "playerId": "8485d005-103c-45b0-ba28-720e8a915709",
+      "playerName": "Skeleton",
+      "name": "Aelar",
+      "path": "personajes/sin-partida/8485d005-103c-45b0-ba28-720e8a915709.json",
+      "folder": "sin-partida",
+      "updatedAt": "2026-11-25T20:24:23.612Z"
+    }
+  ]
 }
