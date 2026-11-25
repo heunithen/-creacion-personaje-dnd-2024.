@@ -288,7 +288,7 @@ try {
 
   const barbarianAspectChoice = choiceFile.choices.find((choice) => choice.id === 'barbarian.wildHeart.aspect');
   const wildHeartSubclass = Object.keys(subclasses.classes?.['Bárbaro'] ?? {}).find((name) => norm(name) === norm('SENDA DEL CORAZÓN SALVAJE'));
-  const levelTextNorm = (value) => String(value ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim();
+  const levelTextNorm = (value) => String(value ?? '').normalize('NFD').split('').filter((character) => character.charCodeAt(0) < 768 || character.charCodeAt(0) > 879).join('').toLowerCase().trim();
   report('barbarian-wild-heart-aspect-level-six',
     Boolean(barbarianAspectChoice && wildHeartSubclass &&
       levelTextNorm(barbarianAspectChoice.subclass) === levelTextNorm(wildHeartSubclass) &&
