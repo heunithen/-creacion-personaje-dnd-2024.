@@ -3271,7 +3271,7 @@ import ITEMS from './items.json';
   }
 
   function drawWrappedCanvasText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number): number {
-    const words = String(text).split(/\\s+/);
+    const words = String(text).split(/\s+/);
     let line = '';
     for (const word of words) {
       const candidate = line ? line + ' ' + word : word;
