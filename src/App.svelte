@@ -6092,4 +6092,42 @@ import ITEMS from './items.json';
 :global(.monster-content-section){border-top-color:#3fb8b8!important}
 :global(.monster-content-section h4){color:#5fe6e0!important}
 :global(.empty-state){color:#b5bec3!important}
+
+
+/* Componentes náuticos específicos: superficies y estados */
+:global(.nautical-sheet){background:#0f1e26!important;border-color:#3a6870!important;color:#ffffff!important}
+:global(.nautical-header){background:linear-gradient(115deg,#13262e,#0f1e26 70%,#1b2a33)!important;border-color:#3a4a52!important}
+:global(.portrait-frame){background:radial-gradient(circle,#1b2a33,#0b171d 70%)!important;border-color:#5fe6e0!important;box-shadow:0 0 0 3px #3a4a52!important;color:#5fe6e0!important}
+:global(.header-actions button){background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
+:global(.nautical-quick-stats){background:#13262e!important;border-color:#3a4a52!important}
+:global(.nautical-quick-stats>div),:global(.nautical-quick-stats>.quick-stats-row>div){background:#1b2a33!important;border-color:#3a4a52!important}
+:global(.nautical-quick-stats .attribute-plaque){background:#1b2a33!important;border-color:#3fb8b8!important}
+:global(.nautical-quick-stats .ability-bonus-empty),:global(.nautical-quick-stats .saving-throw-line span){color:#b5bec3!important}
+:global(.nautical-quick-stats .saving-throw-line){border-color:#3a4a52!important}
+:global(.nautical-import){background:#13262e!important;border-color:#3a4a52!important}
+:global(.nautical-columns){background:#0b171d!important}
+:global(.nautical-side),:global(.nautical-skills),:global(.nautical-content){scrollbar-color:#3a4a52 #0b171d!important}
+:global(.nautical-columns .sheet-section){background:#13262e!important;border-color:#3a6870!important}
+:global(.nautical-columns .sheet-section-title){border-color:#3a4a52!important}
+:global(.nautical-tabs){border-color:#3a4a52!important}
+:global(.nautical-tabs button){background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
+:global(.nautical-tabs button.active){background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+:global(.weapon-attacks-section .weapon-mastery-summary),:global(.spellcasting-summary-grid>div),
+:global(.player-spell-card),:global(.player-feature-card),:global(.player-feat-section .player-feature-card){
+ background:#1b2a33!important;color:#ffffff!important;border-color:#3a4a52!important
+}
+:global(.weapon-attack-card){background:#1b2a33!important;border-color:#3a4a52!important}
+:global(.weapon-attack-values span),:global(.nautical-quick-stats .ability-bonus-empty),
+:global(.nautical-quick-stats .saving-throw-line span){color:#b5bec3!important}
+:global(.builder-class-card){background:#13262e!important;border-color:#3a6870!important;color:#ffffff!important}
+:global(.builder-class-card:hover){background:#1b2a33!important;border-color:#5fe6e0!important}
+:global(.builder-class-card.selected){background:#1b2a33!important;border:2px solid #5fe6e0!important}
+:global(.builder-class-card-heading),:global(.builder-class-meta>strong){color:#ffffff!important}
+:global(.builder-class-meta>span),:global(.builder-option-description),:global(.builder-skill-description){color:#b5bec3!important}
+:global(.builder-class-meta){border-color:#3a4a52!important}
+:global(.builder-checkbox){background:#13262e!important;color:#ffffff!important;border-color:#3a4a52!important}
+:global(.builder-checkbox>span),:global(.builder-checkbox>span b){color:#ffffff!important}
+:global(.builder-checkbox:has(input:checked)){background:#1b2a33!important;border-color:#5fe6e0!important}
+:global(.eyebrow span),:global(.monster-stats),:global(.dice-status),:global(.roll-result span){color:#b5bec3!important}
+:global(.roll-entry p),:global(.trait-view p),:global(.monster-card p),:global(.character-card p){color:#b5bec3!important}
 </style>
