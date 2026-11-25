@@ -6295,4 +6295,30 @@ import ITEMS from './items.json';
   :global(.builder-panel .builder-checkbox:has(input:checked)){border-color:#5fe6e0!important;background:#1b2a33!important}
   @media(max-width:460px){:global(.builder-panel .builder-class-grid){grid-template-columns:1fr!important}}
 
+  /* Corrección directa: las opciones de clase, especie y trasfondo son tarjetas radio, no campos */
+  :global(.builder-class-grid){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:stretch!important}
+  :global(label.builder-class-card){
+    box-sizing:border-box!important;display:flex!important;position:relative!important;flex-direction:column!important;
+    gap:9px!important;min-width:0!important;min-height:150px!important;padding:14px!important;
+    border:1px solid #3a6870!important;border-top:3px solid #3a6870!important;border-radius:10px!important;
+    background:#13262e!important;color:#fff!important;cursor:pointer!important;
+    box-shadow:0 3px 10px #0004!important
+  }
+  :global(label.builder-class-card:hover){background:#1b2a33!important;border-color:#5fe6e0!important}
+  :global(label.builder-class-card.selected){background:#1b2a33!important;border:2px solid #5fe6e0!important;box-shadow:0 0 0 2px #5fe6e022!important}
+  :global(label.builder-class-card > input[type="radio"]){
+    appearance:none!important;-webkit-appearance:none!important;
+    position:absolute!important;opacity:0!important;width:1px!important;height:1px!important;
+    margin:0!important;padding:0!important;pointer-events:none!important
+  }
+  :global(label.builder-class-card .builder-class-card-heading){display:flex!important;justify-content:space-between!important;align-items:center!important;gap:8px!important;color:#fff!important}
+  :global(label.builder-class-card .builder-class-card-heading strong){font-size:1.08em!important;color:#fff!important}
+  :global(label.builder-class-card .builder-class-card-heading span){color:#5fe6e0!important}
+  :global(label.builder-class-card .builder-class-description){display:block!important;color:#b5bec3!important;line-height:1.45!important}
+  :global(label.builder-class-card .builder-class-meta){display:flex!important;justify-content:space-between!important;gap:8px!important;padding-top:7px!important;border-top:1px solid #3a4a52!important}
+  :global(label.builder-class-card .builder-class-meta span){color:#8e9aa1!important}
+  :global(label.builder-class-card .builder-class-meta strong){color:#fff!important;text-align:right!important}
+  :global(.builder-checkbox-grid){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  @media(max-width:520px){:global(.builder-class-grid),:global(.builder-checkbox-grid){grid-template-columns:1fr!important}}
+
 </style>
