@@ -1515,7 +1515,7 @@
   }
   function builderStepCanAdvance():boolean {
     const cls=BUILDER_CLASS_DATA[builderData.className], backgroundFeat=BUILDER_BACKGROUND_DATA[builderData.background].feat, speciesFeat=builderData.speciesExtraFeat;
-    if(builderStep===0) return Boolean(builderData.name.trim());
+    if(builderStep===0) return true;
     if(builderStep===1) {
       const alignmentOk=Boolean(builderData.alignment);
       const choiceOk=BUILDER_SPECIES_CHOICES[builderData.species].length===0 || BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice);
@@ -1523,7 +1523,7 @@
       const magicOk=!['Elfo','Gnomo','Tiefling'].includes(builderData.species) || ['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
       const sizeOk=!['Aasimar','Humano','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesSize);
       const featOk=builderData.species!=='Humano' || (builderOriginFeatChoicesOk(speciesFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell) && builderData.speciesFeatChoices.every(choice=>builderFeatChoiceOptions(speciesFeat).includes(choice)));
-      return alignmentOk&&choiceOk&&skillOk&&magicOk&&sizeOk&&featOk;
+      return Boolean(builderData.name.trim())&&alignmentOk&&choiceOk&&skillOk&&magicOk&&sizeOk&&featOk;
     }
     if(builderStep===2) {
       const options=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[], toolOk=!options.length||options.includes(builderData.backgroundToolChoice);
@@ -1555,7 +1555,7 @@
   }
   function builderNext() {
     if(builderStep<5) {
-      if(!builderStepCanAdvance()) { builderStepError=['Escribe el nombre del personaje.','Elige el alineamiento y completa las elecciones obligatorias de la especie.','Completa la dote, herramienta y aumentos del trasfondo.','Completa las competencias, rasgos, conjuros y equipo de la clase.','Revisa las seis puntuaciones según el método elegido.'][builderStep]||'Completa las elecciones obligatorias.'; return; }
+      if(!builderStepCanAdvance()) { builderStepError=['','Genera el nombre del personaje y completa las elecciones obligatorias de la especie.','Completa la dote, herramienta y aumentos del trasfondo.','Completa las competencias, rasgos, conjuros y equipo de la clase.','Revisa las seis puntuaciones según el método elegido.'][builderStep]||'Completa las elecciones obligatorias.'; return; }
       builderStepError=''; builderStep+=1; keepBuilderAtTop();
     }
   }
@@ -3449,10 +3449,8 @@ import ITEMS from './items.json';
           {#if !builderPreview || builderStep < 6}
             <div class="builder-progress"><span style="width:{(Math.min(builderStep + 1, 6) / 6) * 100}%"></span></div>
             {#if builderStep === 0}
-              <h3>1. Nombre del personaje</h3>
-              <p class="muted">Te guiaremos paso a paso por la creación de tu personaje. Primero, escribe el nombre que tendrá tu aventurero.</p>
-              <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Nombre del personaje" /></label>
-              <p class="builder-player-name"><strong>Jugador:</strong> {playerName || builderData.player || 'Jugador'}</p>
+              <h3>1. Comencemos</h3>
+              <p class="muted">Te guiaremos paso a paso por la creación de tu personaje. En el siguiente paso elegirás su especie y generarás su nombre.</p>
             {:else if builderStep === 1}
 
               <h3>2. Especie</h3><p class="muted">Ahora elige tu especie. También seleccionarás aquí el alineamiento de tu personaje.</p>
@@ -3465,7 +3463,7 @@ import ITEMS from './items.json';
                   <label>Sexo<select bind:value={nameGender}><option value="Hombre">Hombre</option><option value="Mujer">Mujer</option><option value="Otro">Otro</option></select></label>
                 </div>
                 <button class="secondary name-generator-button" type="button" on:click={generateCharacterName}>⚄ Generar nombre</button>
-                {#if lastGeneratedName}<p class="generated-name-note">Nombre generado: <strong>{lastGeneratedName}</strong></p>{/if}
+                {#if lastGeneratedName}<p class="generated-name-note">Nombre del personaje: <strong>{lastGeneratedName}</strong></p>{:else}<p class="hint">Genera un nombre para tu personaje antes de continuar.</p>{/if}
                 <p class="hint">Nombres originales inspirados en cada especie; no son una lista oficial del manual.</p>
               </div>
               {#if BUILDER_SPECIES_CHOICES[builderData.species].length > 0}
