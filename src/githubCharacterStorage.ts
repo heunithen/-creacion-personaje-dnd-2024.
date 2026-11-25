@@ -97,7 +97,7 @@ export class GithubCharacterStorage {
     if (!folder || folder === 'sin-partida') throw new Error('Escribe un nombre válido para la partida.');
     const index = await this.readIndex();
     if (!index.folders.includes(folder)) index.folders.push(folder);
-    await this.writeFile(`${ROOT}/partidas/${folder}/.gitkeep`, '', 'Crear carpeta de partida ' + folder);
+    await this.writeFile(`${ROOT}/partidas/${folder}/.gitkeep`, ' ', 'Crear carpeta de partida ' + folder);
     await this.writeIndex(index);
     return folder;
   }
