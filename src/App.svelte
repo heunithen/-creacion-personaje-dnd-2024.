@@ -827,7 +827,7 @@
     applyVisualStyle();
   }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
+  const masterTabs = ['Personajes', 'Combate', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
 
   function openMasterTab(tab: string) {
     // Cada entrada a un catálogo comienza sin búsquedas ni filtros anteriores.
@@ -2198,7 +2198,7 @@ import ITEMS from './items.json';
   function addCombatant(monster:any) {
     const maxHp=monsterMaxHp(monster);
     combatants=[...combatants,{id:String(Date.now())+Math.random().toString(36).slice(2),monster,name:monster.name,ac:monsterNumber(monster,'Armor Class'),hp:maxHp,maxHp,tempHp:0,initiative:0,damageInput:0,compact:true,dead:false,acMod:0}];
-    masterTab='Tiradas';
+    masterTab='Combate';
     notice=monster.name+' añadido al combate.';
   }
   function duplicateCombatant(id:string) {
@@ -2260,19 +2260,7 @@ import ITEMS from './items.json';
       return {...entry,attackNotation:attack?'1d20'+attack[1]:'',damageNotation:/^\d*d(?:4|6|8|10|12|20)(?:[+-]\d+)?$/i.test(damageNotation)?damageNotation:'',dc:dc?.[1]||''};
     })).filter(x=>x.attackNotation||x.damageNotation||x.dc);
   }
-  let customRolls: CustomRoll[] = [];
   let lastRollId = '';
-  let newRollName = '';
-  let newRollParts: RollPart[] = [createRollPart()];
-  function createRollPart(): RollPart {
-    return { id: String(Date.now()) + Math.random().toString(36).slice(2), name: 'Ataque', die: 20, bonus: 0 };
-  }
-  function addRollPart() {
-    newRollParts = [...newRollParts, { ...createRollPart(), name: 'Daño', die: 4 }];
-  }
-  function removeRollPart(id: string) {
-    if (newRollParts.length > 1) newRollParts = newRollParts.filter(part => part.id !== id);
-  }
   const DICE_PLUS_SOURCE = 'com.heunithen.dnd2024-character-builder';
 
   const MONSTER_ES_TERMS: [string,string][] = [
@@ -2411,20 +2399,6 @@ import ITEMS from './items.json';
     (!rulesSearch.trim() || (rule.name + ' ' + rule.description + ' ' + rule.category).toLocaleLowerCase('es').includes(rulesSearch.trim().toLocaleLowerCase('es')))
   ) : [];
 
-  function persistCustomRolls() {
-    localStorage.setItem('forja-custom-rolls', JSON.stringify(customRolls));
-  }
-
-  function addCustomRoll() {
-    const name = newRollName.trim();
-    if (!name) { notice = 'Escribe un nombre para la tirada.'; return; }
-    if (!newRollParts.length || newRollParts.some(part => !part.name.trim())) { notice = 'Cada tirada necesita un nombre.'; return; }
-    customRolls = [{ id: String(Date.now()) + Math.random().toString(36).slice(2), name, parts: newRollParts.map(part => ({ ...part, name: part.name.trim(), bonus: Number(part.bonus) || 0 })) }, ...customRolls];
-    newRollName = '';
-    newRollParts = [createRollPart()];
-    persistCustomRolls();
-  }
-
   function rollableParts(value: string): { text: string; rollable: boolean; notation: string }[] {
     const parts: { text: string; rollable: boolean; notation: string }[] = [];
     // Detecta dados (incluido d20 sin cantidad) y modificadores aislados como +1/-2.
@@ -2532,11 +2506,6 @@ import ITEMS from './items.json';
     } catch {
       notice = 'No se pudo enviar la tirada a Dice+.';
     }
-  }
-
-  function removeCustomRoll(id: string) {
-    customRolls = customRolls.filter(roll => roll.id !== id);
-    persistCustomRolls();
   }
 
   function editField(target: Record<string, unknown>, key: string, event: Event) {
@@ -3959,16 +3928,7 @@ import ITEMS from './items.json';
       if (params.get('preview') === '1') openDemoPreview();
       const stored = localStorage.getItem('forja-raw-character');
       if (!demoPreview && stored) sheet = JSON.parse(stored) as RawSheet;
-      const storedRolls = localStorage.getItem('forja-custom-rolls');
-      if (storedRolls) {
-        const saved = JSON.parse(storedRolls) as any[];
-        customRolls = saved.map(item => ({
-          id: item.id || String(Date.now()) + Math.random().toString(36).slice(2),
-          name: item.name || 'Tirada',
-          parts: Array.isArray(item.parts) ? item.parts : [{ id: String(Date.now()) + Math.random().toString(36).slice(2), name: item.name || 'Tirada', die: Number(item.die) || 20, bonus: Number(item.bonus) || 0 }]
-        }));
-        persistCustomRolls();
-      }
+      localStorage.removeItem('forja-custom-rolls');
     } catch {
       localStorage.removeItem('forja-raw-character');
     }
@@ -4227,7 +4187,7 @@ import ITEMS from './items.json';
             </section>
           {/if}
         </section>
-      {:else if masterTab === 'Tiradas'}
+      {:else if masterTab === 'Combate'}
         <section class="panel combat-panel">
           <div class="section-heading"><h2>Combate</h2><span class="count">{combatants.length} criaturas</span></div>
           <div class="combat-toolbar">
@@ -4274,45 +4234,7 @@ import ITEMS from './items.json';
             </div>
           {:else}<p class="muted">Añade criaturas desde la pestaña Monstruos para preparar el combate.</p>{/if}
         </section>
-        <section class="panel gm-rolls-panel">
-          <div class="section-heading"><h2>Crear tiradas</h2><span class="count">Dice+</span></div>
-          <section class="custom-rolls">
-            {#if customRolls.length}
-              <div class="custom-roll-list">
-                {#each customRolls as group (group.id)}
-                  <article class="custom-roll-card">
-                    <div class="custom-roll-info"><strong>{group.name}</strong><button class="remove-roll" type="button" aria-label="Eliminar grupo" on:click={() => removeCustomRoll(group.id)}>×</button></div>
-                    {#each group.parts as part (part.id)}
-                      <div class="roll-part">
-                        <div class="roll-part-heading"><strong>{part.name}</strong><span class="roll-notation">1d{part.die}{part.bonus === 0 ? '' : (part.bonus > 0 ? '+' : '') + part.bonus}</span></div>
-                        <div class="roll-actions">
-                          <button type="button" on:click={() => performCustomRoll(group, part, 'normal')}>Tirar</button>
-                          <button type="button" on:click={() => performCustomRoll(group, part, 'advantage')}>Ventaja</button>
-                          <button type="button" on:click={() => performCustomRoll(group, part, 'disadvantage')}>Desventaja</button>
-                        </div>
-                      </div>
-                    {/each}
-                  </article>
-                {/each}
-              </div>
-            {:else}<p class="muted">Todavía no hay tiradas guardadas.</p>{/if}
-            <h3>Crear tirada</h3>
-            <form class="roll-creator roll-group-creator" on:submit|preventDefault={addCustomRoll}>
-              <label>Nombre del grupo<input bind:value={newRollName} placeholder="Ej. Ataque con dagas" /></label>
-              {#each newRollParts as part, i (part.id)}
-                <div class="new-roll-part">
-                  <div class="new-roll-part-title"><strong>Tirada {i + 1}</strong>{#if newRollParts.length > 1}<button type="button" class="remove-roll" on:click={() => removeRollPart(part.id)}>×</button>{/if}</div>
-                  <label>Nombre<input bind:value={part.name} placeholder="Ej. Ataque o Daño" /></label>
-                  <label>Dado<select bind:value={part.die}>{#each [4,6,8,10,12,20,100] as die}<option value={die}>d{die}</option>{/each}</select></label>
-                  <label>Bonificador<input type="number" bind:value={part.bonus} /></label>
-                </div>
-              {/each}
-              <button type="button" class="add-roll-part" on:click={addRollPart}>+ Añadir otra tirada</button>
-              <button class="primary" type="submit">Crear grupo</button>
-            </form>
-          </section>
-          {#if notice}<p class="muted" role="status">{notice}</p>{/if}
-        </section>
+        {#if notice}<p class="muted" role="status">{notice}</p>{/if}
       {:else if masterTab === 'Cofres'}
         <section class="panel chest-panel">
           <div class="section-heading"><h2>Cofres</h2><span class="count">10d10 · 10–100</span></div>
