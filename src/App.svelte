@@ -2360,6 +2360,11 @@ import ITEMS from './items.json';
     const original=combatants.find(x=>x.id===id); if(!original)return;
     combatants=[...combatants,{...original,id:String(Date.now())+Math.random().toString(36).slice(2),name:original.name+' 2',hp:original.maxHp,tempHp:0,damageInput:0,dead:false}];
   }
+  function removeCombatant(id:string) {
+    combatants=combatants.filter(x=>x.id!==id);
+    initiativeOrder=initiativeOrder.filter(x=>x.id!=='monster:'+id);
+    if(activeInitiativeIndex>=initiativeOrder.length) activeInitiativeIndex=Math.max(0,initiativeOrder.length-1);
+  }
   function playerInitiative(entry:RoomEntry):number {
     const raw=getCharacterStat(entry.sheet,'COMBATE','Initiative') || getCharacterStat(entry.sheet,'COMBATE','Iniciativa') || '0';
     const match=String(raw).replace(/−/g,'-').match(/[+-]?\d+/);
@@ -5030,6 +5035,7 @@ import ITEMS from './items.json';
                     <input aria-label="Nombre de criatura" class="combatant-name" value={c.name} on:change={(e)=>setCombatantField(c.id,'name',e)}/>
                     <div class="combatant-tools">
                       <button title="Duplicar" on:click={()=>duplicateCombatant(c.id)}>⧉</button>
+                      <button title="Eliminar" aria-label="Eliminar monstruo" class="combatant-delete" on:click={()=>removeCombatant(c.id)}>×</button>
                     </div>
                   </header>
                   <label class="combatant-participating"><input type="checkbox" checked={c.participating!==false} on:change={(e)=>toggleCombatantParticipation(c.id,e)}/> Participando</label>
