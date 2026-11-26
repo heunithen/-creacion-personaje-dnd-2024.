@@ -3534,7 +3534,101 @@ import ITEMS from './items.json';
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Skills','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Descripción', 'Notas'];
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Botones', 'Inventario', 'Descripción', 'Notas'];
+  type QuickButton = { name: string; attack: string; damage: string; mode: 'normal'|'advantage'|'disadvantage' };
+  type QuickRollResult = { id:number; name:string; attack:string; damage:string; mode:string; critical:boolean; fumble:boolean; };
+  let editingQuickButton = -1;
+  let quickRollHistory: QuickRollResult[] = [];
+  const emptyQuickButton = (): QuickButton => ({ name:'Vacío', attack:'1d20', damage:'', mode:'normal' });
+  function getQuickButtons(target: RawSheet): QuickButton[] {
+    const current = Array.isArray((target as any).quickButtons) ? (target as any).quickButtons : [];
+    const normalized = Array.from({length:10},(_,i) => ({...emptyQuickButton(), ...(current[i] || {})}));
+    (target as any).quickButtons = normalized;
+    return normalized;
+  }
+  function updateQuickButton(index:number, key:keyof QuickButton, event:Event) {
+    if (!sheet) return;
+    const buttons = getQuickButtons(sheet);
+    buttons[index] = {...buttons[index], [key]:(event.currentTarget as HTMLInputElement).value};
+    (sheet as any).quickButtons = [...buttons];
+    sheet = {...sheet};
+    scheduleAutoSync();
+  }
+  function cycleQuickMode(index:number) {
+    if (!sheet) return;
+    const buttons = getQuickButtons(sheet);
+    if (!/d20/i.test(buttons[index].attack)) return;
+    const modes:QuickButton['mode'] = buttons[index].mode === 'normal' ? 'advantage' : buttons[index].mode === 'advantage' ? 'disadvantage' : 'normal';
+    buttons[index] = {...buttons[index],mode:modes};
+    (sheet as any).quickButtons = [...buttons];
+    sheet = {...sheet};
+    scheduleAutoSync();
+  }
+  function rollFormula(formula:string, doubleDice=false): {detail:string; total:number} {
+    const source = formula.replace(/\\s+/g,'').replace(/−/g,'-');
+    if (!source || !/^(?:[+-]?(?:\\d+)?d(?:4|6|8|10|12|20|100)|[+-]?\\d+)(?:(?:[+-])(?:(?:\\d+)?d(?:4|6|8|10|12|20|100)|\\d+))*$/i.test(source)) throw new Error('Fórmula no válida');
+    const terms = source.match(/[+-]?(?:\\d+)?d(?:4|6|8|10|12|20|100)|[+-]?\\d+/gi) || [];
+    let total=0;
+    const details:string[]=[];
+    for (const term of terms) {
+      const sign = term.startsWith('-') ? -1 : 1;
+      const clean = term.replace(/^[+-]/,'');
+      const die = clean.match(/^(\\d*)d(4|6|8|10|12|20|100)$/i);
+      if (die) {
+        const count = Math.max(1,Number(die[1] || 1)) * (doubleDice ? 2 : 1);
+        const sides = Number(die[2]);
+        const rolls = Array.from({length:count},()=>Math.floor(Math.random()*sides)+1);
+        const subtotal = rolls.reduce((a,b)=>a+b,0)*sign;
+        total += subtotal;
+        details.push((sign<0?'-':'')+'('+rolls.join('+')+')');
+      } else {
+        const value=Number(clean)*sign;
+        total+=value;
+        details.push((value>0?'+':'')+value);
+      }
+    }
+    return {detail:details.join(' '),total};
+  }
+  function rollQuickButton(index:number) {
+    if (!sheet) return;
+    const button=getQuickButtons(sheet)[index];
+    try {
+      const attackFormula=button.attack.trim();
+      const hasD20=/\\d*d20/i.test(attackFormula);
+      let attackDetail='';
+      let attackTotal=0;
+      let natural:number|null=null;
+      if (hasD20) {
+        const match=attackFormula.match(/(\\d*)d20/i);
+        const count=Math.max(1,Number(match?.[1] || 1));
+        if (count !== 1) throw new Error('La tirada de ataque debe contener un solo d20.');
+        const first=Math.floor(Math.random()*20)+1;
+        const second=button.mode==='normal'?null:Math.floor(Math.random()*20)+1;
+        natural=second===null?first:button.mode==='advantage'?Math.max(first,second):Math.min(first,second);
+        const chosen=natural;
+        const bonusFormula=attackFormula.replace(/(\\d*)d20/i,'').replace(/^\+/,'');
+        const bonus=bonusFormula ? rollFormula(bonusFormula) : {detail:'',total:0};
+        attackTotal=chosen+bonus.total;
+        attackDetail=(second===null?'['+first+']':'['+first+', '+second+']')+' → '+chosen+(bonus.total?(bonus.total>0?' + ':' - ')+Math.abs(bonus.total):'')+' = '+attackTotal;
+      } else {
+        if (button.mode!=='normal') throw new Error('Ventaja y desventaja requieren un d20 en el ataque.');
+        const result=rollFormula(attackFormula);
+        attackTotal=result.total;
+        attackDetail=result.detail+' = '+result.total;
+      }
+      const critical=natural===20;
+      const fumble=natural===1;
+      let damageDetail='';
+      if (button.damage.trim()) {
+        const damage=rollFormula(button.damage.trim(),critical);
+        damageDetail=damage.detail+' = '+damage.total;
+      }
+      quickRollHistory=[{id:Date.now(),name:button.name || 'Tirada',attack:attackDetail,damage:damageDetail,mode:button.mode,critical,fumble},...quickRollHistory].slice(0,20);
+    } catch (error) {
+      notice=error instanceof Error?error.message:'No se pudo realizar la tirada.';
+    }
+  }
+
 
   function playerFeatureGroups(target: RawSheet) {
     const className = sheetClassName(target);
@@ -4924,6 +5018,43 @@ import ITEMS from './items.json';
                   </article>
                   {/each}
                   </div>
+                  </section>
+
+                {:else if playerSheetTab === 'Botones'}
+                  <section class="sheet-section quick-buttons-section">
+                    <div class="sheet-section-title"><h3>Botonera de tiradas</h3></div>
+                    <div class="quick-buttons-grid">
+                      {#each getQuickButtons(sheet) as quickButton, i}
+                        <div class="quick-button-cell">
+                          <button type="button" class="quick-roll-button" disabled={!quickButton.attack.trim()} on:click={() => rollQuickButton(i)}>{quickButton.name || 'Botón '+(i+1)}</button>
+                          <small>{quickButton.attack}{#if quickButton.damage} · {quickButton.damage}{/if}</small>
+                          <div class="quick-button-controls">
+                            <button type="button" class:mode-active={quickButton.mode==='advantage'} class:mode-disadvantage={quickButton.mode==='disadvantage'} disabled={!/d20/i.test(quickButton.attack)} title="Cambiar modo: normal, ventaja, desventaja" on:click={() => cycleQuickMode(i)}>{quickButton.mode==='advantage'?'▲ Ventaja':quickButton.mode==='disadvantage'?'▼ Desventaja':'● Normal'}</button>
+                            <button type="button" title="Configurar botón" on:click={() => editingQuickButton=editingQuickButton===i?-1:i}>⚙</button>
+                          </div>
+                          {#if editingQuickButton===i}
+                            <div class="quick-button-editor">
+                              <label>Nombre<input value={quickButton.name} on:input={(e)=>updateQuickButton(i,'name',e)} /></label>
+                              <label>Ataque<input value={quickButton.attack} placeholder="1d20+3" on:input={(e)=>updateQuickButton(i,'attack',e)} /></label>
+                              <label>Daño (opcional)<input value={quickButton.damage} placeholder="1d6+2" on:input={(e)=>updateQuickButton(i,'damage',e)} /></label>
+                              <small>El modo ventaja/desventaja solo funciona si el ataque contiene d20.</small>
+                            </div>
+                          {/if}
+                        </div>
+                      {/each}
+                    </div>
+                    {#if quickRollHistory.length}
+                      <div class="quick-roll-results">
+                        <h4>Resultados</h4>
+                        {#each quickRollHistory as result (result.id)}
+                          <article class="quick-roll-result">
+                            <strong>{result.name}</strong>
+                            <p><b>Ataque</b> {#if result.critical}<em class="quick-critical">¡Crítico!</em>{:else if result.fumble}<em class="quick-fumble">¡Pifia!</em>{/if} {#if result.mode==='advantage'}<span class="quick-mode-label">Ventaja</span>{:else if result.mode==='disadvantage'}<span class="quick-mode-label">Desventaja</span>{/if}<br />{result.attack}</p>
+                            {#if result.damage}<p><b>Daño</b> {#if result.critical}<span class="quick-critical">Dados dobles</span> {/if}{result.damage}</p>{/if}
+                          </article>
+                        {/each}
+                      </div>
+                    {/if}
                   </section>
                 {:else if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
@@ -7258,6 +7389,29 @@ import ITEMS from './items.json';
   }
 
 
+
+  .quick-buttons-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .quick-button-cell{min-width:0;padding:9px;border:1px solid #3a6870;border-radius:8px;background:#0f1e26;display:grid;gap:5px}
+  .quick-roll-button{min-height:42px;padding:8px;border:1px solid #3fb8b8;border-radius:6px;background:#18343a;color:#fff;font-weight:800;overflow-wrap:anywhere}
+  .quick-button-cell>small{color:#b5bec3;font-size:11px;overflow-wrap:anywhere}
+  .quick-button-controls{display:flex;gap:5px}
+  .quick-button-controls button{flex:1;min-width:0;padding:5px;border:1px solid #3a6870;border-radius:5px;background:#13262e;color:#fff;font-size:11px}
+  .quick-button-controls button:disabled{opacity:.35}
+  .quick-button-controls .mode-active{border-color:#e6b83f;color:#ffe08a}
+  .quick-button-controls .mode-disadvantage{border-color:#d66b6b;color:#ffaaaa}
+  .quick-button-editor{display:grid;gap:6px;padding-top:7px;border-top:1px solid #31525a}
+  .quick-button-editor label{display:grid;gap:3px;color:#b5bec3;font-size:11px}
+  .quick-button-editor input{box-sizing:border-box;width:100%;min-width:0;padding:6px;border:1px solid #3a6870;border-radius:5px;background:#0b171d;color:#fff}
+  .quick-button-editor small{color:#b5bec3;font-size:10px}
+  .quick-roll-results{display:grid;gap:7px;margin-top:15px}
+  .quick-roll-results h4{margin:0;color:#5fe6e0}
+  .quick-roll-result{padding:9px;border:1px solid #3a6870;border-radius:7px;background:#0f1e26}
+  .quick-roll-result strong{color:#fff}
+  .quick-roll-result p{margin:6px 0 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+  .quick-critical{color:#ffd166;font-style:normal;font-weight:900}
+  .quick-fumble{color:#ff8585;font-style:normal;font-weight:900}
+  .quick-mode-label{padding:2px 5px;border-radius:4px;background:#243b45;color:#9fe9e5;font-size:10px;font-weight:800}
+  @media(max-width:420px){.quick-buttons-grid{grid-template-columns:1fr}}
   .catalog-item-card{border:1px solid var(--gm-border);background:var(--gm-card);border-radius:10px;padding:12px;margin:8px 0}
   .catalog-item-card header,.catalog-item-card footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .catalog-item-card h3{margin:0;font-size:15px;color:var(--gm-text)}
