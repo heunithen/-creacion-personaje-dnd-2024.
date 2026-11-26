@@ -2226,6 +2226,12 @@ import ITEMS from './items.json';
     initiativeOverlayState=getInitiativeOverlayState();
     if(obrReady)void OBR.broadcast.sendMessage(INITIATIVE_OVERLAY_CHANNEL,{type:'update',state:initiativeOverlayState},{destination:'ALL'});
   }
+  // Mantener el panel flotante sincronizado cada vez que cambia el turno, la ronda o el orden.
+  $: if(obrReady && initiativeOverlayVisible && !isInitiativeOverlay) {
+    const liveState={round:initiativeRound,activeIndex:activeInitiativeIndex,participants:initiativeOrder.map(p=>({...p}))};
+    initiativeOverlayState=liveState;
+    void OBR.broadcast.sendMessage(INITIATIVE_OVERLAY_CHANNEL,{type:'update',state:liveState},{destination:'ALL'});
+  }
   async function refreshInitiativeOverlay():Promise<void> {
     if(!initiativeOverlayVisible)return;
     publishInitiativeOverlayState();
@@ -2244,7 +2250,7 @@ import ITEMS from './items.json';
         width:250,
         height:Math.min(620,180+initiativeOrder.length*34),
         anchorReference:'POSITION',
-        anchorPosition:{left:Math.max(12,width-76),top:Math.max(12,height-16)},
+        anchorPosition:{left:Math.max(12,width-360),top:Math.max(12,height-16)},
         anchorOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
         transformOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
         disableClickAway:true,
