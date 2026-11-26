@@ -55,6 +55,13 @@
   let autoSyncTimer: ReturnType<typeof setTimeout>;
   let syncInProgress = false;
   let syncPending = false;
+  const SUPABASE_URL = 'https://akbvedwkpjokphzridla.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_BOiPUrLlhogEadY_phsFMw_s6JrIzcP';
+  let supabaseRoomId = '';
+  let supabasePlayerId = '';
+  let supabasePlayerName = '';
+  let supabaseSaveTimer: ReturnType<typeof setTimeout> | undefined;
+  let supabaseSaving = false;
   let fileInput: HTMLInputElement;
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
@@ -2238,6 +2245,7 @@
       const characterToSave = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
       localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave));
       sheet = characterToSave;
+      await saveCharacterToSupabase(characterToSave);
       builderPreview = null;
       playerCreating = false;
       activeTab = 'Datos';
@@ -2772,15 +2780,24 @@ import ITEMS from './items.json';
   function scheduleAutoSync() {
     if (!sheet) return;
     localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-    return; // El guardado local ya se realizó; no sincronizar fichas de jugador.
+    syncPending = true;
+    if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
+    supabaseSaveTimer = setTimeout(() => { void flushAutoSync(); }, 450);
   }
 
   async function flushAutoSync() {
-    // Las fichas de jugador son privadas y locales: nunca se envían a Owlbear ni a GitHub.
     if (!sheet) return;
     localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-    syncPending = false;
-    syncStatus = 'Ficha guardada localmente en este dispositivo.';
+    if (supabaseSaving) return;
+    supabaseSaving = true;
+    try {
+      await saveCharacterToSupabase(JSON.parse(JSON.stringify(sheet)) as RawSheet);
+      syncPending = false;
+    } catch (error) {
+      syncStatus = 'Error al guardar en Supabase: ' + (error instanceof Error ? error.message : String(error));
+    } finally {
+      supabaseSaving = false;
+    }
   }
 
   function editSheetField(key: string, event: Event) {
@@ -2804,6 +2821,7 @@ import ITEMS from './items.json';
       sheet = imported;
       playerCreating = false;
       localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+      await saveCharacterToSupabase(sheet);
       importOpen = false;
       notice = 'Ficha importada y guardada localmente en este dispositivo.';
       input.value = '';
@@ -3061,10 +3079,70 @@ import ITEMS from './items.json';
     try { const value = JSON.parse(getCharacterStat(target, section, field) || '{}'); return value && typeof value === 'object' ? value : {}; }
     catch { return {}; }
   }
+  async function saveCharacterToSupabase(snapshot: RawSheet, playerId = supabasePlayerId, playerNameValue = supabasePlayerName) {
+    if (!supabaseRoomId || !playerId || demoPreview) return;
+    const response = await fetch(SUPABASE_URL + '/rest/v1/characters?on_conflict=room_id,player_id', {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=representation'
+      },
+      body: JSON.stringify({
+        room_id: supabaseRoomId,
+        player_id: playerId,
+        player_name: playerNameValue || 'Jugador',
+        character_name: snapshot.name || 'Personaje',
+        sheet: snapshot,
+        deleted_at: null
+      })
+    });
+    if (!response.ok) throw new Error('Supabase (' + response.status + '): ' + await response.text());
+    syncStatus = 'Ficha guardada en Supabase.';
+    try {
+      await OBR.broadcast.sendMessage(CHANNEL, {
+        type: 'character-updated',
+        playerId,
+        playerName: playerNameValue || 'Jugador',
+        character: snapshot
+      }, { destination: 'ALL' });
+    } catch {}
+  }
+
+  async function loadOwnCharacterFromSupabase(): Promise<RawSheet | null> {
+    if (!supabaseRoomId || !supabasePlayerId) return null;
+    const query = '?select=sheet&room_id=eq.' + encodeURIComponent(supabaseRoomId) +
+      '&player_id=eq.' + encodeURIComponent(supabasePlayerId) + '&deleted_at=is.null&limit=1';
+    const response = await fetch(SUPABASE_URL + '/rest/v1/characters' + query, {
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!response.ok) throw new Error('No se pudo recuperar la ficha de Supabase (' + response.status + ').');
+    const rows = await response.json();
+    const stored = rows?.[0]?.sheet;
+    return stored && Array.isArray(stored.sections) ? repairGenericStatLabels(stored as RawSheet) as RawSheet : null;
+  }
+
+  async function loadSupabaseRoomCharacters() {
+    if (!supabaseRoomId) return;
+    const response = await fetch(SUPABASE_URL + '/rest/v1/characters?select=player_id,player_name,sheet,deleted_at&room_id=eq.' + encodeURIComponent(supabaseRoomId) + '&deleted_at=is.null&order=updated_at.desc', {
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!response.ok) throw new Error('No se pudieron cargar las fichas de la sala desde Supabase.');
+    const rows = await response.json();
+    liveRoomSheets = rows.filter((row:any)=>row.sheet && Array.isArray(row.sheet.sections)).map((row:any)=>({
+      playerId: row.player_id, playerName: row.player_name || 'Jugador',
+      sheet: repairGenericStatLabels(row.sheet as RawSheet) as RawSheet, live: false
+    }));
+    refreshRoomSheetList();
+  }
+
   function saveSheetMutation() {
     if (!sheet) return;
     localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-    // Solo almacenamiento local del jugador.
+    void saveCharacterToSupabase(sheet).catch(error => {
+      syncStatus = 'Error al guardar en Supabase: ' + (error instanceof Error ? error.message : String(error));
+    });
   }
   function captureProgressionSections():RawSection[] {
     return JSON.parse(JSON.stringify(sheet?.sections || []));
@@ -4934,7 +5012,18 @@ import ITEMS from './items.json';
 
   async function restoreOwnSheet() {
     if (obrRole !== 'PLAYER') return;
-    // La ficha del jugador se restaura exclusivamente desde el almacenamiento local.
+    try {
+      const cloudSheet = await loadOwnCharacterFromSupabase();
+      if (cloudSheet) {
+        sheet = cloudSheet;
+        localStorage.setItem('forja-raw-character', JSON.stringify(cloudSheet));
+        syncStatus = 'Ficha recuperada desde Supabase.';
+        return;
+      }
+    } catch (error) {
+      syncStatus = 'No se pudo consultar Supabase; se intentará recuperar la copia local.';
+      console.error(error);
+    }
     if (!sheet) {
       try {
         const saved = localStorage.getItem('forja-raw-character');
@@ -4942,10 +5031,9 @@ import ITEMS from './items.json';
           const parsed = JSON.parse(saved) as RawSheet;
           if (parsed && Array.isArray(parsed.sections)) sheet = repairGenericStatLabels(parsed) as RawSheet;
         }
-      } catch {
-        localStorage.removeItem('forja-raw-character');
-      }
+      } catch { localStorage.removeItem('forja-raw-character'); }
     }
+    if (sheet) await saveCharacterToSupabase(sheet).catch(error => console.error('No se pudo migrar la ficha local a Supabase', error));
   }
 
 
@@ -4971,11 +5059,18 @@ import ITEMS from './items.json';
 
   async function deleteSheet() {
     if (!window.confirm('¿Eliminar este personaje? La ficha se borrará permanentemente de este dispositivo y no se podrá recuperar. Exporta una copia antes si deseas conservarla.')) return;
+    if (supabaseRoomId && supabasePlayerId) {
+      const response = await fetch(SUPABASE_URL + '/rest/v1/characters?room_id=eq.' + encodeURIComponent(supabaseRoomId) + '&player_id=eq.' + encodeURIComponent(supabasePlayerId), {
+        method: 'PATCH',
+        headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ deleted_at: new Date().toISOString() })
+      });
+      if (!response.ok) { notice = 'No se pudo eliminar la ficha de Supabase.'; return; }
+    }
     sheet = null;
     localStorage.removeItem('forja-raw-character');
     importOpen = false;
-    // El borrado también es exclusivamente local; no deja marcadores en la sala.
-    notice = 'Ficha eliminada permanentemente.';
+    notice = 'Ficha eliminada de la sala y de este dispositivo.';
   }
 
   onMount(() => {
@@ -5014,10 +5109,14 @@ import ITEMS from './items.json';
       try {
         obrRole = await OBR.player.getRole();
         playerName = await OBR.player.getName();
+        supabasePlayerId = await OBR.player.getId();
+        supabasePlayerName = playerName;
+        supabaseRoomId = await OBR.room.getId();
         builderData.player = playerName;
         if (obrRole === 'GM') { loadMasterCopies(); await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
         if (!demoPreview) await restoreOwnSheet();
+        if (obrRole === 'GM') await loadSupabaseRoomCharacters().catch(error => console.error(error));
         await refreshPlayers();
         OBR.party.onChange((players: any[]) => readPlayers(players));
         OBR.broadcast.onMessage(INITIATIVE_NOTICE_CHANNEL, (event: any) => {
