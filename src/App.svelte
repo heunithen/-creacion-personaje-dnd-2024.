@@ -3,6 +3,7 @@
   import OBR from '@owlbear-rodeo/sdk';
   import { buildLabel } from '@owlbear-rodeo/sdk';
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
+  import { ELF_BONUS_SKILLS, getAllowedWeaponMasteries, getStandardArrayAssignments, isOriginFeatDistinct, isSpeciesSkillAllowed, isValidAbilityIncreases, isValidUniqueSelection } from './builderRules.mjs';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
   const CHANNEL = 'com.heunithen.dnd2024-character-builder/character-sync';
@@ -1384,6 +1385,12 @@
     if(!value) return;
     builderBackgroundChosen=true;
     builderData.background=value;
+    if (builderData.species === 'Humano' && builderData.speciesExtraFeat === BUILDER_BACKGROUND_DATA[value].feat) {
+      builderData.speciesExtraFeat = BUILDER_FEATS.find(feat => feat !== BUILDER_BACKGROUND_DATA[value].feat) || '';
+      builderData.speciesFeatChoices = [];
+      builderData.speciesMagicCantrips = [];
+      builderData.speciesMagicSpell = '';
+    }
     builderData.classSkillChoices=[];
     builderData.classToolsChoices=[];
     builderData.classExpertise=[];
@@ -1417,9 +1424,14 @@
     return (SPELLS as any[]).find(spell=>normalizeLevelText(spell.name)===normalizeLevelText(name)) || null;
   }
   function builderSelectClass(className:string) {
-    if (builderData.className === className) { builderClassChosen = true; return; }
+    if (builderData.className === className) {
+      if (builderData.method === 'standard') builderApplyStandardArray();
+      builderClassChosen = true;
+      return;
+    }
     builderClassChosen = true;
     builderData.className = className;
+    if (builderData.method === 'standard') builderApplyStandardArray();
     builderData.classSkillChoices = [];
     builderData.classToolsChoices = [];
     builderData.classSpecialChoice = BUILDER_CLASS_DATA[className].specialOptions.length === 1 ? BUILDER_CLASS_DATA[className].specialOptions[0] : '';
@@ -1851,8 +1863,7 @@
   function builderPointCost() { return Object.values(builderData.abilities).reduce((sum,value)=>sum+(BUILDER_POINT_COST[Number(value)] ?? 99),0); }
   $: builderCurrentPointCost = builderData.method === 'pointBuy' ? BUILDER_ABILITY_NAMES.reduce((sum,name)=>sum+(BUILDER_POINT_COST[Number(builderData.abilities[name])] ?? 99),0) : 0;
   function builderApplyStandardArray() {
-    const priority=BUILDER_STANDARD_PRIORITY[builderData.className]||BUILDER_STANDARD_PRIORITY['Guerrero'];
-    builderData.abilities=Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,BUILDER_STANDARD[priority.indexOf(name)]]));
+    builderData.abilities=getStandardArrayAssignments(builderData.className,BUILDER_STANDARD_PRIORITY,BUILDER_STANDARD);
   }
   function builderSetStandardAbility(ability:string,value:number) {
     const current=Number(builderData.abilities[ability]);
@@ -1980,9 +1991,10 @@
       add(speciesChoices.length>0&&!speciesChoices.includes(builderData.speciesChoice),'Linaje o variante de especie.');
       add(['Aasimar','Humano','Tiefling'].includes(builderData.species)&&!['Pequeño','Mediano'].includes(builderData.speciesSize),'Tamaño de la especie.');
       add(['Elfo','Gnomo','Tiefling'].includes(builderData.species)&&!['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility),'Aptitud mágica de linaje.');
-      add(['Elfo','Humano'].includes(builderData.species)&&(!BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill)||background.skills.includes(builderData.speciesSkill)||featSkills.includes(builderData.speciesSkill)),'Habilidad adicional de especie: debe ser válida y no repetir una competencia del trasfondo o de una dote.');
+      add(['Elfo','Humano'].includes(builderData.species)&&(!isSpeciesSkillAllowed(builderData.species,builderData.speciesSkill,BUILDER_SKILL_OPTIONS)||background.skills.includes(builderData.speciesSkill)||featSkills.includes(builderData.speciesSkill)),'Habilidad adicional de especie: debe pertenecer a las opciones de la especie y no repetir una competencia del trasfondo o de una dote.');
       if(builderData.species==='Humano') {
         const options=builderFeatChoiceOptions(builderData.speciesExtraFeat);
+        add(!isOriginFeatDistinct(builderData.species,backgroundFeat,builderData.speciesExtraFeat,BUILDER_FEATS),'La dote adicional humana debe ser válida y distinta de la dote del trasfondo.');
         add(!builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell),'Elecciones de la dote de origen adicional humana.');
         add(!builderData.speciesFeatChoices.every(choice=>options.includes(choice)&&!background.skills.includes(choice)&&choice!==builderData.speciesSkill&&!builderData.backgroundFeatChoices.includes(choice)),'La dote adicional humana contiene una elección incompatible o repetida.');
       }
@@ -1997,26 +2009,25 @@
 
     if(step===5) {
       const allowed=background.abilities;
-      const valid=builderData.abilityIncreaseMode==='two'
-        ? allowed.includes(builderData.abilityIncrease2)&&allowed.includes(builderData.abilityIncrease1)&&builderData.abilityIncrease1!==builderData.abilityIncrease2
-        : builderData.abilityIncreaseMode==='three'&&allowed.includes(builderData.abilityIncrease1)&&allowed.includes(builderData.abilityIncrease2)&&allowed.includes(builderData.abilityIncrease3)&&new Set([builderData.abilityIncrease1,builderData.abilityIncrease2,builderData.abilityIncrease3]).size===3;
-      add(!valid,'Distribución de aumentos de característica del trasfondo.');
-      const adjusted=builderRawAdjustedAbilities();
-      add(!adjusted||BUILDER_ABILITY_NAMES.some(name=>!Number.isFinite(Number(adjusted[name]))||Number(adjusted[name])>20),'Los aumentos del trasfondo no pueden superar 20 en ninguna característica.');
+      const choices=builderData.abilityIncreaseMode==='two'
+        ? [builderData.abilityIncrease2,builderData.abilityIncrease1]
+        : [builderData.abilityIncrease1,builderData.abilityIncrease2,builderData.abilityIncrease3];
+      const valid=isValidAbilityIncreases({mode:builderData.abilityIncreaseMode,choices,allowed,baseAbilities:builderData.abilities,abilityNames:BUILDER_ABILITY_NAMES,max:20});
+      add(!valid,'Distribución de aumentos de característica: revisa las opciones permitidas, evita repetir y no superes 20.');
     }
 
     if(step===6) {
       const selected=builderData.classSkillChoices.filter(Boolean);
-      const validSkills=selected.length===BUILDER_CLASS_SKILLS[builderData.className].count&&new Set(selected).size===selected.length&&selected.every(skill=>BUILDER_CLASS_SKILLS[builderData.className].options.includes(skill)&&!background.skills.includes(skill)&&skill!==builderData.speciesSkill&&!featSkills.includes(skill));
+      const validSkills=isValidUniqueSelection(selected,BUILDER_CLASS_SKILLS[builderData.className].options,BUILDER_CLASS_SKILLS[builderData.className].count,[...background.skills,builderData.speciesSkill,...featSkills]);
       add(!validSkills,'Competencias de habilidad de clase: revisa la cantidad, las opciones y que no se repitan competencias.');
-      add(cls.weaponCount>0&&(builderData.weaponMasteries.length!==cls.weaponCount||new Set(builderData.weaponMasteries).size!==builderData.weaponMasteries.length||!builderData.weaponMasteries.every(name=>BUILDER_WEAPON_MASTERY_OPTIONS.includes(name))),'Maestrías con armas: revisa la cantidad y elimina opciones repetidas o inválidas.');
+      add(cls.weaponCount>0&&!isValidUniqueSelection(builderData.weaponMasteries,getAllowedWeaponMasteries(builderData.className,BUILDER_WEAPON_MASTERY_OPTIONS),cls.weaponCount),'Maestrías con armas: revisa la cantidad y elige únicamente armas permitidas para tu clase, sin repetir.');
       const allSkillChoices=[...background.skills,...selected,builderData.speciesSkill,...featSkills].filter(Boolean);
       add(new Set(allSkillChoices).size!==allSkillChoices.length,'Competencias de habilidad: hay una habilidad repetida entre el trasfondo, la especie, la clase o las dotes.');
       const expectedTools=builderData.className==='Bardo'?3:builderData.className==='Monje'?1:0;
       const validTools=builderData.className==='Bardo'?BUILDER_MUSICAL_INSTRUMENTS:builderData.className==='Monje'?[...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS]:[];
       const featTools=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_FEAT_TOOL_OPTIONS.includes(choice));
       const allToolChoices=[builderData.backgroundToolChoice,...featTools,...builderData.classToolsChoices].filter(Boolean);
-      add(builderData.classToolsChoices.length!==expectedTools||new Set(builderData.classToolsChoices).size!==expectedTools||!builderData.classToolsChoices.every(tool=>validTools.includes(tool)&&tool!==builderData.backgroundToolChoice&&!featTools.includes(tool))||new Set(allToolChoices).size!==allToolChoices.length,'Competencias con herramientas de clase: revisa la cantidad y evita repetir herramientas del trasfondo o de las dotes.');
+      add(!isValidUniqueSelection(builderData.classToolsChoices,validTools,expectedTools,[builderData.backgroundToolChoice,...featTools])||new Set(allToolChoices).size!==allToolChoices.length,'Competencias con herramientas de clase: revisa la cantidad y evita repetir herramientas del trasfondo o de las dotes.');
       add(cls.specialOptions.length>0&&!cls.specialOptions.includes(builderData.classSpecialChoice),(cls.specialLabel||'Elección especial de clase')+'.');
       const eligibleExpertise=[...background.skills,...selected,builderData.speciesSkill,...featSkills].filter(Boolean);
       add(builderData.className==='Pícaro'&&(builderData.classExpertise.length!==2||new Set(builderData.classExpertise).size!==2||!builderData.classExpertise.every(skill=>eligibleExpertise.includes(skill))),'Pericias de Pícaro: elige dos habilidades en las que ya tengas competencia.');
@@ -2327,7 +2338,7 @@
       values: { id: 2, name:'VALORES', stats: values.map((_,i)=>({id:i+1,name:'✎',value:''})) }
     });
     const pairs = [
-      general('PERSONAJE',['Nombre','Clase','Subclase','Nivel','Especie','Trasfondo','Alineamiento','Experiencia','Jugador']),
+      general('PERSONAJE',['Nombre','Clase','Subclase','Nivel','Especie','Trasfondo','Alineamiento','Experiencia','Jugador','Edad','Altura']),
       general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
       general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Armor Class','Initiative','Speed','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('SALVACIONES',BUILDER_ABILITY_NAMES),
@@ -2354,7 +2365,7 @@
       if (index >= valueStats.length) throw new Error('La sección de valores «' + target.heading.name + '» no coincide con sus etiquetas.');
       valueStats[index].value = value;
     };
-    put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—');
+    put(0,0,b.name || 'Personaje sin nombre'); put(0,1,b.className); put(0,2,'No disponible (se elige en nivel 3)'); put(0,3,'1'); put(0,4,b.species); put(0,5,b.background); put(0,6,b.alignment); put(0,7,'0 PX'); put(0,8,b.player || '—'); put(0,9,b.age || '—'); put(0,10,b.height || '—');
     BUILDER_ABILITY_NAMES.forEach((a,i)=>put(1,i,String(finalAbilities[a])+' ('+mod(Number(finalAbilities[a]))+')'));
     put(2,0,String(Math.max(1,hp))+' PG'); put(2,1,String(Math.max(1,hp))+' PG'); put(2,2,'1d'+(BUILDER_HIT_DIE[b.className] || 8)); put(2,3,String(builderStartingAC())); put(2,8,builderStartingACFormula()); put(2,4,(builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0) >= 0 ? '+' : '') + (builderModifier(Number(finalAbilities.Destreza)) + ([b.feat,b.species === 'Humano' ? b.speciesExtraFeat : ''].includes('Alerta') ? 2 : 0))); put(2,5,(b.species === 'Goliat' || (b.species === 'Elfo' && b.speciesChoice === 'Elfo de los bosques') ? '10,5 m' : '9 m')); put(2,6,proficiency); put(2,7,BUILDER_SAVES[b.className] || '—');
     const allFeatChoices = [...b.backgroundFeatChoices, ...(b.species === 'Humano' ? b.speciesFeatChoices : [])];
@@ -2371,7 +2382,7 @@
     put(8,0,[classEquipment, classEquipmentDetail, b.backgroundEquipment === 'B' ? 'Trasfondo: 50 po en lugar del paquete A.' : BUILDER_BACKGROUND_DATA[b.background].equipmentA, b.equipment].filter(Boolean).join(' '));
     const goldTotal=[classEquipment,backgroundEquipmentText].join(' ').match(/\d+\s*po/gi)?.reduce((sum:number,coin:string)=>sum+Number(coin.match(/\d+/)?.[0]||0),0) || 0;
     put(8,1,goldTotal+' po (monedas iniciales de ambos paquetes)');
-    put(9,0,''); put(9,1,''); put(9,2,''); put(9,3,''); put(9,4,''); put(9,5,''); put(9,6,b.notes || '');
+    put(9,0,b.appearance || '—'); put(9,1,b.personality || '—'); put(9,2,b.ideals || '—'); put(9,3,b.bonds || '—'); put(9,4,b.flaws || '—'); put(9,5,''); put(9,6,b.notes || '—');
     const backgroundData=BUILDER_BACKGROUND_DATA[b.background];
     const detailIndex=(name:string)=>pairs.findIndex(pair=>normalizeLevelText(pair.heading.name)===normalizeLevelText(name));
     const backgroundIndex=detailIndex('DETALLES DEL TRASFONDO');
@@ -5877,7 +5888,7 @@ import ITEMS from './items.json';
                 <label>Aptitud mágica de linaje<select bind:value={builderData.speciesMagicAbility}><option value="">Elige la característica</option><option>Inteligencia</option><option>Sabiduría</option><option>Carisma</option></select></label>
               {/if}
                {#if builderData.species === 'Elfo'}
-                <label>Competencia adicional del elfo<select bind:value={builderData.speciesSkill}><option value="">Elige una habilidad</option><option>Percepción</option><option>Perspicacia</option><option>Supervivencia</option></select></label>
+                <label>Competencia adicional del elfo<select bind:value={builderData.speciesSkill}><option value="">Elige una habilidad</option>{#each ELF_BONUS_SKILLS as skill}<option>{skill}</option>{/each}</select></label>
               {/if}
               {#if builderData.species === 'Humano'}
                 <label>Habilidad adicional humana<select bind:value={builderData.speciesSkill}><option value="">Elige una habilidad</option>{#each ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'] as skill}<option>{skill}</option>{/each}</select></label>
@@ -5959,7 +5970,7 @@ import ITEMS from './items.json';
                 <div class="builder-choice-wrapper"><strong>Pericia: elige 2 habilidades en las que ya seas competente</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Pericias</strong><span>{builderData.classExpertise.length}/{2}</span></div><div class="builder-checkbox-grid">{#each [...BUILDER_BACKGROUND_DATA[builderData.background].skills,...builderData.classSkillChoices.filter(Boolean),builderData.speciesSkill,...builderData.backgroundFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice)),...builderData.speciesFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice))].filter(Boolean) as skill}<label class="builder-checkbox"><input type="checkbox" checked={builderData.classExpertise.includes(skill)} on:change={(event) => builderToggleChoice('classExpertise',skill,2,event)} disabled={!builderData.classExpertise.includes(skill) && builderData.classExpertise.length >= (2)} /><span>{skill}</span><small class="builder-skill-description">{builderSkillDescription(skill)}</small></label>{/each}</div></div></div>
               {/if}
               {#if BUILDER_CLASS_DATA[builderData.className].weaponCount > 0}
-                <div class="builder-choice-wrapper"><strong>Maestrías con armas ({BUILDER_CLASS_DATA[builderData.className].weaponCount})</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Maestrías con armas</strong><span>{builderData.weaponMasteries.length}/{BUILDER_CLASS_DATA[builderData.className].weaponCount}</span></div><div class="builder-checkbox-grid">{#each BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon => builderData.className !== 'Bárbaro' || !['Arco corto','Ballesta ligera','Dardo','Honda','Arco largo','Ballesta de mano','Ballesta pesada','Cerbatana','Mosquete','Pistola'].includes(weapon)).filter(weapon => builderData.className !== 'Pícaro' || ['Bastón','Daga','Garrote','Garrote grande','Hacha de mano','Hoz','Jabalina','Lanza','Martillo ligero','Maza','Arco corto','Ballesta ligera','Dardo','Honda','Cimitarra','Espada corta','Estoque','Látigo','Ballesta de mano'].includes(weapon)) as weapon}<label class="builder-checkbox"><input type="checkbox" checked={builderData.weaponMasteries.includes(weapon)} on:change={(event) => builderToggleChoice('weaponMasteries',weapon,BUILDER_CLASS_DATA[builderData.className].weaponCount,event)} disabled={!builderData.weaponMasteries.includes(weapon) && builderData.weaponMasteries.length >= (BUILDER_CLASS_DATA[builderData.className].weaponCount)} /><span>{weapon}</span></label>{/each}</div></div></div>
+                <div class="builder-choice-wrapper"><strong>Maestrías con armas ({BUILDER_CLASS_DATA[builderData.className].weaponCount})</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Maestrías con armas</strong><span>{builderData.weaponMasteries.length}/{BUILDER_CLASS_DATA[builderData.className].weaponCount}</span></div><div class="builder-checkbox-grid">{#each getAllowedWeaponMasteries(builderData.className,BUILDER_WEAPON_MASTERY_OPTIONS) as weapon}<label class="builder-checkbox"><input type="checkbox" checked={builderData.weaponMasteries.includes(weapon)} on:change={(event) => builderToggleChoice('weaponMasteries',weapon,BUILDER_CLASS_DATA[builderData.className].weaponCount,event)} disabled={!builderData.weaponMasteries.includes(weapon) && builderData.weaponMasteries.length >= (BUILDER_CLASS_DATA[builderData.className].weaponCount)} /><span>{weapon}</span></label>{/each}</div></div></div>
                 <small class="muted">Selecciona los tipos de arma indicados por tu clase. Las opciones se guardan en la ficha.</small>
               {/if}
               {#if builderData.className === 'Bardo'}
