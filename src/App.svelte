@@ -1223,7 +1223,28 @@
     builderData.player = playerName || '';
     builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
-  const BUILDER_PORTRAITS: string[] = [];
+  const BUILDER_PORTRAITS: string[] = ["/images/character-creation/portraits/po_Dusty_F_H.tga","/images/character-creation/portraits/po_Irieni_H.tga","/images/character-creation/portraits/po_annis_h.tga","/images/character-creation/portraits/po_dabuus_H.tga","/images/character-creation/portraits/po_dw_m_501_h.tga","/images/character-creation/portraits/po_dw_m_502_h.tga","/images/character-creation/portraits/po_dw_m_504_h.tga","/images/character-creation/portraits/po_el_f_504_h.tga","/images/character-creation/portraits/po_el_f_506_h.tga","/images/character-creation/portraits/po_el_f_507_h.tga","/images/character-creation/portraits/po_el_f_509_h.tga","/images/character-creation/portraits/po_el_f_515_h.tga","/images/character-creation/portraits/po_el_f_517_h.tga","/images/character-creation/portraits/po_el_f_518_h.tga","/images/character-creation/portraits/po_el_f_519_h.tga","/images/character-creation/portraits/po_el_m_504_h.tga","/images/character-creation/portraits/po_el_m_505_h.tga","/images/character-creation/portraits/po_el_m_506_h.tga","/images/character-creation/portraits/po_fell_h.tga","/images/character-creation/portraits/po_glamis_h.tga","/images/character-creation/portraits/po_gn_m_502_h.tga","/images/character-creation/portraits/po_grnhag_h.tga","/images/character-creation/portraits/po_ha_f_502_h.tga","/images/character-creation/portraits/po_ha_f_503_h.tga","/images/character-creation/portraits/po_ha_m_503_h.tga","/images/character-creation/portraits/po_hu_f_503_h.tga","/images/character-creation/portraits/po_hu_f_505_h.tga","/images/character-creation/portraits/po_hu_f_508_h.tga","/images/character-creation/portraits/po_hu_f_510_h.tga","/images/character-creation/portraits/po_hu_f_511_h.tga","/images/character-creation/portraits/po_hu_f_513_h.tga","/images/character-creation/portraits/po_hu_f_515_h.tga","/images/character-creation/portraits/po_hu_f_516_h.tga","/images/character-creation/portraits/po_hu_f_517_h.tga","/images/character-creation/portraits/po_hu_f_518_h.tga","/images/character-creation/portraits/po_hu_f_522_h.tga","/images/character-creation/portraits/po_hu_f_526_h.tga","/images/character-creation/portraits/po_hu_f_529_H.tga","/images/character-creation/portraits/po_hu_m_501_h.tga","/images/character-creation/portraits/po_hu_m_502_h.tga","/images/character-creation/portraits/po_hu_m_503_h.tga","/images/character-creation/portraits/po_hu_m_505_h.tga","/images/character-creation/portraits/po_hu_m_506_h.tga","/images/character-creation/portraits/po_hu_m_507_h.tga","/images/character-creation/portraits/po_hu_m_509_h.tga","/images/character-creation/portraits/po_hu_m_510_h.tga","/images/character-creation/portraits/po_hu_m_511_h.tga","/images/character-creation/portraits/po_hu_m_512_h.tga","/images/character-creation/portraits/po_hu_m_515_h.tga","/images/character-creation/portraits/po_hu_m_517_h.tga","/images/character-creation/portraits/po_hu_m_518_h.tga","/images/character-creation/portraits/po_hu_m_519_h.tga","/images/character-creation/portraits/po_hu_m_520_h.tga","/images/character-creation/portraits/po_hu_m_521_h.tga","/images/character-creation/portraits/po_hu_m_523_h.tga","/images/character-creation/portraits/po_hu_m_524_h.tga","/images/character-creation/portraits/po_hu_m_525_h.tga","/images/character-creation/portraits/po_hu_m_526_h.tga","/images/character-creation/portraits/po_hu_m_528_h.tga","/images/character-creation/portraits/po_hu_m_529_h.tga","/images/character-creation/portraits/po_hu_m_530_h.tga","/images/character-creation/portraits/po_hu_m_532_H.tga","/images/character-creation/portraits/po_or_m_502_h.tga","/images/character-creation/portraits/po_or_m_503_h.tga","/images/character-creation/portraits/po_or_m_504_h.tga","/images/character-creation/portraits/po_or_m_506_H.tga","/images/character-creation/portraits/po_orcwar_h.tga","/images/character-creation/portraits/po_sormen_h.tga","/images/character-creation/portraits/po_undead503_h.tga","/images/character-creation/portraits/po_undead504_h.tga"];
+  let portraitPickerOpen = false;
+  let portraitLoading = false;
+  let portraitPickerError = '';
+  let portraitFileInput: HTMLInputElement;
+  async function decodeTgaPortrait(url:string):Promise<string> {
+    const response=await fetch(url);
+    if(!response.ok) throw new Error('No se pudo cargar el retrato.');
+    const bytes=new Uint8Array(await response.arrayBuffer());
+    const view=new DataView(bytes.buffer);
+    const idLength=bytes[0], imageType=bytes[2], width=view.getUint16(12,true), height=view.getUint16(14,true), depth=bytes[16];
+    if(![2,10].includes(imageType)||![24,32].includes(depth)||!width||!height) throw new Error('Formato TGA no compatible.');
+    const pixels=new Uint8ClampedArray(width*height*4); let offset=18+idLength, pixel=0;
+    const writePixel=(b:number,g:number,r:number,a:number)=>{const x=pixel%width,y=Math.floor(pixel/width),top=(bytes[17]&0x20)!==0,px=(bytes[17]&0x10)!==0,dx=px?width-1-x:x,dy=top?y:height-1-y,index=(dy*width+dx)*4;pixels[index]=r;pixels[index+1]=g;pixels[index+2]=b;pixels[index+3]=a;pixel++;};
+    if(imageType===2){while(pixel<width*height&&offset+depth/8<=bytes.length){writePixel(bytes[offset],bytes[offset+1],bytes[offset+2],depth===32?bytes[offset+3]:255);offset+=depth/8;}}
+    else {while(pixel<width*height&&offset<bytes.length){const packet=bytes[offset++],count=(packet&127)+1;if(packet&128){const b=bytes[offset++],g=bytes[offset++],r=bytes[offset++],a=depth===32?bytes[offset++]:255;for(let n=0;n<count&&pixel<width*height;n++)writePixel(b,g,r,a);}else{for(let n=0;n<count&&pixel<width*height;n++){const b=bytes[offset++],g=bytes[offset++],r=bytes[offset++],a=depth===32?bytes[offset++]:255;writePixel(b,g,r,a);}}}}
+    if(pixel!==width*height) throw new Error('El archivo TGA está incompleto.');
+    const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');if(!ctx) throw new Error('No se pudo procesar la imagen.');ctx.putImageData(new ImageData(pixels,width,height),0,0);return canvas.toDataURL('image/webp',0.88);
+  }
+  async function chooseBundledPortrait(path:string){portraitLoading=true;portraitPickerError='';try{builderData={...builderData,portrait:await decodeTgaPortrait(path)};portraitPickerOpen=false;}catch(error){portraitPickerError=error instanceof Error?error.message:'No se pudo abrir el retrato.';}finally{portraitLoading=false;}}
+  async function chooseUploadedPortrait(event:Event){const file=(event.currentTarget as HTMLInputElement).files?.[0];if(!file)return;portraitPickerError='';if(!file.type.startsWith('image/')){portraitPickerError='Selecciona un archivo de imagen.';return;}try{const source=await new Promise<HTMLImageElement>((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(new Error('No se pudo leer la imagen.'));image.src=URL.createObjectURL(file);});const canvas=document.createElement('canvas');canvas.width=256;canvas.height=512;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('No se pudo procesar la imagen.');const scale=Math.max(256/source.width,512/source.height),w=source.width*scale,h=source.height*scale;ctx.drawImage(source,(256-w)/2,(512-h)/2,w,h);builderData={...builderData,portrait:canvas.toDataURL('image/webp',0.88)};URL.revokeObjectURL(source.src);portraitPickerOpen=false;}catch(error){portraitPickerError=error instanceof Error?error.message:'No se pudo cargar la imagen.';}finally{(event.currentTarget as HTMLInputElement).value='';}}
+
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_CLASS_GUIDANCE: Record<string,string> = {
     'Bárbaro':'Combatiente resistente que canaliza la furia para dominar el combate cuerpo a cuerpo.',
@@ -5437,21 +5458,20 @@ import ITEMS from './items.json';
               <h3>01. Concepto del personaje</h3>
               <p class="muted">Primero identifica a tu aventurero. Estos datos no modifican sus capacidades.</p>
               <div class="builder-info"><strong>Jugador</strong><p>{playerName || 'Nombre disponible al abrir la Forja desde Owlbear Rodeo'}</p></div>
-              <section class="builder-portrait-picker" aria-label="Elegir retrato del personaje">
-                <div class="builder-portrait-heading"><strong>Retrato del personaje</strong><button type="button" class:active={!builderData.portrait} on:click={() => builderData.portrait = ''}>Sin retrato</button></div>
-                {#if BUILDER_PORTRAITS.length}
-                  <div class="builder-portrait-grid">
-                    {#each BUILDER_PORTRAITS as portrait}
-                      <button type="button" class="builder-portrait-option" class:selected={builderData.portrait === portrait} aria-label="Elegir retrato" aria-pressed={builderData.portrait === portrait} on:click={() => builderData.portrait = portrait}>
-                        <img src={portrait} alt="Retrato disponible" loading="lazy" />
-                        {#if builderData.portrait === portrait}<span class="builder-portrait-check">✓</span>{/if}
-                      </button>
-                    {/each}
-                  </div>
-                {:else}
-                  <p class="muted">Todavía no hay retratos disponibles. Cuando agregues imágenes a <code>public/images/character-creation/portraits/</code>, aparecerán aquí.</p>
-                {/if}
+              <section class="builder-portrait-picker" aria-label="Retrato del personaje">
+                <div class="builder-portrait-heading"><strong>Retrato del personaje</strong><div class="builder-portrait-actions"><button type="button" on:click={() => portraitPickerOpen = true}>Elegir retrato</button><button type="button" class:active={!builderData.portrait} on:click={() => builderData = {...builderData,portrait:''}}>Sin retrato</button></div></div>
+                {#if builderData.portrait}<div class="builder-portrait-current"><img src={builderData.portrait} alt="Retrato seleccionado" /><span>Retrato seleccionado</span></div>{:else}<p class="muted">No has seleccionado un retrato.</p>{/if}
               </section>
+              {#if portraitPickerOpen}
+                <div class="portrait-modal-backdrop" role="presentation" on:click={(event)=>{if(event.target===event.currentTarget)portraitPickerOpen=false;}}>
+                  <section class="portrait-modal" role="dialog" aria-modal="true" aria-label="Elegir retrato">
+                    <header><div><h3>Elegir retrato</h3><p class="muted">Selecciona uno de los retratos de Neverwinter Nights o sube una imagen propia.</p></div><button type="button" class="secondary" on:click={()=>portraitPickerOpen=false}>Cerrar</button></header>
+                    <div class="portrait-upload-row"><button type="button" on:click={()=>portraitFileInput?.click()}>Subir imagen</button><span>Preferentemente 256 × 512 px. Se ajustará al formato vertical.</span><input bind:this={portraitFileInput} type="file" accept="image/*" hidden on:change={chooseUploadedPortrait} /></div>
+                    {#if portraitPickerError}<p class="portrait-picker-error">{portraitPickerError}</p>{/if}
+                    {#if portraitLoading}<p class="muted">Cargando retrato…</p>{:else}<div class="portrait-modal-grid">{#each BUILDER_PORTRAITS as portrait}<button type="button" class="portrait-modal-option" on:click={()=>chooseBundledPortrait(portrait)} aria-label="Seleccionar {portrait.split('/').pop()}"><span>{portrait.split('/').pop()?.replace(/\.[^.]+$/,'')}</span></button>{/each}</div>{/if}
+                  </section>
+                </div>
+              {/if}
               <p class="hint">No necesitas completar todos los detalles narrativos ahora.</p>
             {:else if builderStep===1}
               <h3>02. Elige tu clase</h3>
@@ -9012,4 +9032,8 @@ import ITEMS from './items.json';
   :global(.nautical-skills .sheet-stat.proficient .inline-roll){color:#ffd34e!important}
   :global(.nautical-skills .sheet-stat.expertise .skill-number),
   :global(.nautical-skills .sheet-stat.expertise .inline-roll){color:#b58cff!important}
+
+  .builder-portrait-actions{display:flex;gap:.5rem;align-items:center}.builder-portrait-current{display:flex;align-items:center;gap:12px;margin-top:12px}.builder-portrait-current img{width:64px;height:96px;object-fit:cover;border-radius:6px;border:1px solid var(--line,#555)}
+  .portrait-modal-backdrop{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:18px}.portrait-modal{width:min(900px,96vw);max-height:88vh;overflow:auto;background:var(--panel,#171b24);border:1px solid var(--line,#444);border-radius:12px;padding:20px;box-shadow:0 20px 70px #0009}.portrait-modal>header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.portrait-modal>header h3{margin:0 0 6px}.portrait-upload-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line,#444);font-size:.9rem}.portrait-modal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;padding-top:16px}.portrait-modal-option{min-width:0;aspect-ratio:1/2;overflow:hidden;padding:0;border:1px solid var(--line,#555);border-radius:6px;background:#222;display:flex;align-items:end;justify-content:center;position:relative}.portrait-modal-option:before{content:'Retrato';position:absolute;inset:0;display:grid;place-items:center;color:#aaa;font-size:.8rem}.portrait-modal-option span{position:relative;width:100%;padding:4px 2px;background:#000b;color:white;font-size:.62rem;overflow-wrap:anywhere}.portrait-modal-option:hover{border-color:var(--accent,#d5b36b)}.portrait-picker-error{color:#ff8b8b}
+  @media(max-width:600px){.portrait-modal-backdrop{padding:6px}.portrait-modal{padding:12px;max-height:94vh}.portrait-modal>header{align-items:center}.portrait-upload-row{align-items:flex-start;flex-direction:column}}
 </style>
