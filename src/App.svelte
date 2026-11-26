@@ -2242,7 +2242,7 @@
     if(armorFormula) {
       const dexMod=Math.floor((scores.Destreza-10)/2),conMod=Math.floor((scores.Constitución-10)/2),wisMod=Math.floor((scores.Sabiduría-10)/2),chaMod=Math.floor((scores.Carisma-10)/2);
       let ac:number|null=null;
-      const shopArmorMatch=armorFormula.match(/^SHOP_ARMOR:(\\d+):(-?\\d+):(\\d+)$/);
+      const shopArmorMatch=armorFormula.match(/^SHOP_ARMOR:(\d+):(-?\d+):(\d+)$/);
       if(shopArmorMatch) ac=Number(shopArmorMatch[1])+(Number(shopArmorMatch[2])<0?0:Math.min(Number(shopArmorMatch[2]),dexMod))+Number(shopArmorMatch[3]);
       else if(armorFormula.startsWith('10 + DES + CON')) ac=10+dexMod+conMod;
       else if(armorFormula.startsWith('10 + DES + CAR')) ac=10+dexMod+chaMod;
@@ -3480,7 +3480,7 @@ import ITEMS from './items.json';
   function getShopOwnedItems(target:RawSheet) {
     const totals = new Map<string,any>();
     for (const field of shopInventoryFields()) {
-      const lines = String(getCharacterStat(target,'INVENTARIO',field) || '').split(/\\n/);
+      const lines = String(getCharacterStat(target,'INVENTARIO',field) || '').split(/\n/);
       for (const line of lines) {
         const parsed = parseInventoryLine(line);
         if (!parsed) continue;
@@ -3498,20 +3498,20 @@ import ITEMS from './items.json';
   }
   function shopAddInventoryItem(item:any,quantity:number) {
     if (!sheet) return;
-    const lines = String(getCharacterStat(sheet,'INVENTARIO','Equipo adicional') || '').split(/\\n/).map(value=>value.trim()).filter(Boolean);
+    const lines = String(getCharacterStat(sheet,'INVENTARIO','Equipo adicional') || '').split(/\n/).map(value=>value.trim()).filter(Boolean);
     const key = normalizeLevelText(item.name);
     const index = lines.findIndex(line=>normalizeLevelText(parseInventoryLine(line)?.name)===key);
     if (index >= 0) {
       const parsed = parseInventoryLine(lines[index]);
       lines[index] = formatInventoryLine(item.name,(parsed?.quantity || 1)+quantity);
     } else lines.push(formatInventoryLine(item.name,quantity));
-    setCharacterStat(sheet,'INVENTARIO','Equipo adicional',lines.join('\\n'));
+    setCharacterStat(sheet,'INVENTARIO','Equipo adicional',lines.join('\n'));
   }
   function shopRemoveInventoryItem(name:string,quantity:number): boolean {
     if (!sheet || quantity < 1) return false;
     let remaining = quantity;
     for (const field of shopInventoryFields()) {
-      const lines = String(getCharacterStat(sheet,'INVENTARIO',field) || '').split(/\\n/).map(value=>value.trim()).filter(Boolean);
+      const lines = String(getCharacterStat(sheet,'INVENTARIO',field) || '').split(/\n/).map(value=>value.trim()).filter(Boolean);
       let changed = false;
       for (let i=lines.length-1;i>=0 && remaining>0;i--) {
         const parsed = parseInventoryLine(lines[i]);
@@ -3523,13 +3523,13 @@ import ITEMS from './items.json';
         remaining-=take;
         changed=true;
       }
-      if (changed) setCharacterStat(sheet,'INVENTARIO',field,lines.join('\\n'));
+      if (changed) setCharacterStat(sheet,'INVENTARIO',field,lines.join('\n'));
       if (remaining===0) break;
     }
     return remaining===0;
   }
   function shopWeaponBase(name:string): string {
-    return name.replace(/\\s*\\+\\d+$/,'').trim();
+    return name.replace(/\s*\+\d+$/,'').trim();
   }
   function shopUpdateWeaponList(item:any,remove=false) {
     if (!sheet || item.type!=='Arma') return;
@@ -3575,6 +3575,7 @@ import ITEMS from './items.json';
     if(!sheet || (item.type!=='Escudo' && typeof item.armorBase!=='number')) return;
     if(shopOwnedQuantity(item.name)<1) { shopNotice='Debes tener el objeto en el inventario para equiparlo.'; return; }
     const before=captureProgressionSections();
+    const wasEquipped=shopItemIsEquipped(item);
     if(item.type==='Escudo') {
       const current=getCharacterStat(sheet,'EQUIPO','Escudo equipado en tienda');
       setCharacterStat(sheet,'EQUIPO','Escudo equipado en tienda',normalizeLevelText(current)===normalizeLevelText(item.name)?'':item.name);
@@ -3585,7 +3586,7 @@ import ITEMS from './items.json';
     shopApplyArmorClass(sheet);
     sheet={...sheet};
     recordProgressionChange('Equipo: '+item.name,before);
-    shopNotice=(shopItemIsEquipped(item)?'Se actualizó el equipo.':'Se equipó '+item.name+'.');
+    shopNotice=wasEquipped?'Se desequipó '+item.name+'.':'Se equipó '+item.name+'.';
   }
   function shopItemIsEquipped(item:any): boolean {
     if(!sheet)return false;
@@ -3615,7 +3616,7 @@ import ITEMS from './items.json';
     const payout=Math.floor(price*quantity*0.8);
     const before=captureProgressionSections();
     if(!shopRemoveInventoryItem(item.name,quantity)){shopNotice='No se encontró el objeto en el inventario.';return;}
-    if(shopItemIsEquipped(item)) {
+    if(shopItemIsEquipped(item) && shopOwnedQuantity(item.name)===0) {
       setCharacterStat(sheet,'EQUIPO',item.type==='Escudo'?'Escudo equipado en tienda':'Armadura equipada en tienda','');
       shopApplyArmorClass(sheet);
     }
@@ -5232,7 +5233,7 @@ import ITEMS from './items.json';
     const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
     const profText = normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armas'));
     return [...new Set(names.split(/[,;\n]+/).map(name=>name.trim()).filter(name=>Boolean(name && WEAPON_PROFILES[name])))].map(name=>{
-      const profile = WEAPON_PROFILES[name] || WEAPON_PROFILES[name.replace(/\\s*\\+\\d+$/,'')];
+      const profile = WEAPON_PROFILES[name] || WEAPON_PROFILES[name.replace(/\s*\+\d+$/,'')];
       if (!profile) return {name, attackBonus:null as number|null, damage:'—', damageType:'No disponible', range:'—'};
       const abilityMod = profile.ability==='finesse' ? Math.max(strengthMod,dexterityMod) : profile.ability==='dexterity' ? dexterityMod : strengthMod;
       const normalizedName = normalizeLevelText(name);
@@ -6684,8 +6685,10 @@ import ITEMS from './items.json';
                           <article class="shop-item-card">
                             <div class="shop-item-title"><div><h4>{item.name}</h4><small>{item.type}</small></div>{#if item.rarity}<span class:shop-artifact={item.rarity==='Artefacto'} class="shop-rarity">{item.rarity}</span>{/if}</div>
                             <div class="shop-item-price"><strong>{shopPriceLabel(item)}</strong>{#if item.source}<small>{item.source}</small>{/if}</div>
-                            {#if item.priceCopper===null || shopCustomPrice(item.name)!==''}
-                              <label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(item.name)} on:input={(event)=>setShopCustomPrice(item.name,event)} placeholder="Establecer precio" /></label>
+                            {#if item.priceCopper===null}
+                              <label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(item.name)} on:input={(event)=>setShopCustomPrice(item.name,event)} placeholder="Necesario para comprar" /></label>
+                            {:else}
+                              <details class="shop-price-edit"><summary>Modificar precio</summary><label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(item.name)} on:input={(event)=>setShopCustomPrice(item.name,event)} placeholder="Opcional" /></label></details>
                             {/if}
                             <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max="999" value={shopQuantities[item.name]||1} on:input={(event)=>shopQuantities[item.name]=Math.max(1,Number((event.currentTarget as HTMLInputElement).value)||1)} /></label><button type="button" disabled={shopItemPriceCopper(item)===null} on:click={()=>shopBuyItem(item)}>Comprar</button></div>
                           </article>
@@ -6698,8 +6701,10 @@ import ITEMS from './items.json';
                         {#each shopOwnedItems.filter((entry:any)=>!shopSearch || normalizeLevelText(entry.name).includes(normalizeLevelText(shopSearch))) as owned (owned.name)}
                           <article class="shop-owned-card">
                             <div class="shop-owned-info"><h4>{owned.name}</h4><small>{owned.item.type} · Cantidad: {owned.quantity}</small><strong>Venta: {shopSalePriceLabel(owned.item)}</strong></div>
-                            {#if shopItemPriceCopper(owned.item)===null || shopCustomPrice(owned.name)!==''}
-                              <label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(owned.name)} on:input={(event)=>setShopCustomPrice(owned.name,event)} placeholder="Establecer precio" /></label>
+                            {#if owned.item.priceCopper===null}
+                              <label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(owned.name)} on:input={(event)=>setShopCustomPrice(owned.name,event)} placeholder="Necesario para vender" /></label>
+                            {:else}
+                              <details class="shop-price-edit"><summary>Modificar precio</summary><label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(owned.name)} on:input={(event)=>setShopCustomPrice(owned.name,event)} placeholder="Opcional" /></label></details>
                             {/if}
                             <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max={owned.quantity} value={Math.min(owned.quantity,shopQuantities[owned.name]||1)} on:input={(event)=>shopQuantities[owned.name]=Math.max(1,Math.min(owned.quantity,Number((event.currentTarget as HTMLInputElement).value)||1))} /></label><button type="button" disabled={shopItemPriceCopper(owned.item)===null} on:click={()=>shopSellItem(owned.item,owned.quantity)}>Vender</button></div>
                             {#if owned.item.type==='Escudo' || typeof owned.item.armorBase==='number'}<button type="button" class="shop-equip-button" on:click={()=>shopToggleEquip(owned.item)}>{shopEquipLabel(owned.item)}</button>{/if}

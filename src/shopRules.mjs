@@ -15,9 +15,9 @@ export function copperToCurrency(value) {
 }
 
 export function parsePriceToCopper(raw) {
-  const match = String(raw ?? '').trim().replace(/\\s+/g, ' ').match(/^([\\d.,]+)\\s*(ppt|po|pe|pp|pc)$/i);
+  const match = String(raw ?? '').trim().replace(/\s+/g, ' ').match(/^([\d.,]+)\s*(ppt|po|pe|pp|pc)$/i);
   if (!match) return null;
-  const amount = Number(match[1].replace(/\\./g, '').replace(',', '.'));
+  const amount = Number(match[1].replace(/\./g, '').replace(',', '.'));
   const unit = match[2].toLowerCase();
   const multiplier = { pc: 1, pp: 10, pe: 50, po: 100, ppt: 1000 }[unit];
   return Number.isFinite(amount) ? Math.round(amount * multiplier) : null;
@@ -31,9 +31,9 @@ export function magicItemPriceCopper(rarity, type = '') {
 }
 
 export function parseInventoryLine(line) {
-  const clean = String(line ?? '').trim().replace(/^[-•]+\\s*/, '');
+  const clean = String(line ?? '').trim().replace(/^[-•]+\s*/, '');
   if (!clean) return null;
-  const match = clean.match(/\\s*[×x]\\s*(\\d+)$/i);
+  const match = clean.match(/\s*[×x]\s*(\d+)$/i);
   const quantity = match ? Math.max(1, Number(match[1]) || 1) : 1;
   const name = (match ? clean.slice(0, match.index) : clean).trim();
   return name ? { name, quantity } : null;
