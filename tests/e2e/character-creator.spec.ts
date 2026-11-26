@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
-const nextButton = (page) => page.locator('.builder-actions button.primary');
+const nextButton = (page: Page) => page.locator('.builder-actions button.primary');
 
 test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a características', async ({ page }) => {
-  const pageErrors = [];
+  const pageErrors: string[] = [];
   page.on('pageerror', error => pageErrors.push(error.message));
 
   await page.goto('/');
@@ -20,7 +20,7 @@ test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a 
   await page.getByRole('button', { name: 'Clase anterior' }).click();
   await expect(classTitle).toHaveText(initialClass);
   await expect(page.locator('.builder-class-emblem')).toHaveJSProperty('complete', true);
-  await expect.poll(() => page.locator('.builder-class-emblem').evaluate(img => img.naturalWidth)).toBeGreaterThan(0);
+  await expect.poll(() => page.locator('.builder-class-emblem').evaluate(img => (img as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
 
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '03. Elige tu trasfondo' })).toBeVisible();
@@ -35,7 +35,8 @@ test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a 
 
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '03.1. Elecciones del trasfondo' })).toBeVisible();
-  await expect(page.locator('.builder-progress span')).toHaveAttribute('style', progressBeforeSetup);
+  expect(progressBeforeSetup).not.toBeNull();
+  await expect(page.locator('.builder-progress span')).toHaveAttribute('style', progressBeforeSetup ?? '');
 
   const backgroundTool = page.getByLabel('Competencia con herramienta del trasfondo');
   if (await backgroundTool.count()) {
@@ -88,7 +89,7 @@ test('la interfaz inicial cabe en una pantalla móvil y conserva visible el sele
   const flyer = page.locator('.builder-class-flyer');
   await expect(flyer).toBeVisible();
   const bounds = await flyer.boundingBox();
-  expect(bounds).not.toBeNull();
+  if (!bounds) throw new Error('El flyer de clase no tiene dimensiones visibles.');
   expect(bounds.x).toBeGreaterThanOrEqual(0);
   expect(bounds.x + bounds.width).toBeLessThanOrEqual(376);
 
