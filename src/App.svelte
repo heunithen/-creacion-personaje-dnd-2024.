@@ -2304,6 +2304,7 @@
       localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave));
       builderPreview = null;
       sheet = characterToSave;
+      void saveCharacterToSupabase(characterToSave).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); });
       playerCreating = false;
       demoPreview = false;
       activeTab = 'Datos';
@@ -2866,11 +2867,17 @@ import ITEMS from './items.json';
   async function flushAutoSync() {
     if (!sheet) return;
     localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-    if (supabaseSaving) return;
+    if (supabaseSaving) {
+      if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
+      supabaseSaveTimer = setTimeout(() => { void flushAutoSync(); }, 500);
+      return;
+    }
     supabaseSaving = true;
     try {
-      await saveCharacterToSupabase(JSON.parse(JSON.stringify(sheet)) as RawSheet);
-      syncPending = false;
+      const snapshot = JSON.parse(JSON.stringify(sheet)) as RawSheet;
+      await saveCharacterToSupabase(snapshot);
+      syncPending = JSON.stringify(sheet) !== JSON.stringify(snapshot);
+      if (syncPending) supabaseSaveTimer = setTimeout(() => { void flushAutoSync(); }, 350);
     } catch (error) {
       syncStatus = 'Error al guardar en Supabase: ' + (error instanceof Error ? error.message : String(error));
     } finally {
@@ -4516,9 +4523,11 @@ import ITEMS from './items.json';
       sheet = updated;
       localStorage.setItem('forja-raw-character', JSON.stringify(updated));
       syncPending = false;
-      syncStatus = 'Ficha guardada localmente en este dispositivo.';
+      void saveCharacterToSupabase(updated).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); });
+      syncStatus = 'Ficha guardada en Supabase.';
     } else {
       const playerId=levelUpEntry.playerId;
+      void saveCharacterToSupabase(updated, playerId, levelUpEntry.playerName).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); });
       receiveLiveCharacter({ ...levelUpEntry, sheet: updated });
       void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
     }
@@ -5196,8 +5205,8 @@ import ITEMS from './items.json';
         if (obrRole === 'GM') { loadMasterCopies(); await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
         if (!demoPreview) await restoreOwnSheet();
-        if (obrRole === 'GM') await loadSupabaseRoomCharacters().catch(error => console.error(error));
         await refreshPlayers();
+        if (obrRole === 'GM') await loadSupabaseRoomCharacters().catch(error => console.error(error));
         OBR.party.onChange((players: any[]) => readPlayers(players));
         OBR.broadcast.onMessage(INITIATIVE_NOTICE_CHANNEL, (event: any) => {
           const message=String(event.data?.message||'').trim();
