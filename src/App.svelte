@@ -1241,11 +1241,26 @@
   }
   const BUILDER_PORTRAITS: string[] = ["https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Dusty_F_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Irieni_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_annis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dabuus_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_fell_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_glamis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_gn_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_grnhag_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_508_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_513_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_516_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_522_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_529_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_512_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_520_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_521_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_523_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_524_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_525_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_528_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_529_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_530_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_532_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_506_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_orcwar_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_sormen_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead504_h.webp"];
   let portraitPickerOpen = false;
+  let sheetPortraitPickerOpen = false;
   let portraitLoading = false;
   let portraitPickerError = '';
   let portraitFileInput: HTMLInputElement;
   let communityPortraits: string[] = [];
-  function chooseBundledPortrait(path:string){builderData={...builderData,portrait:path};portraitPickerOpen=false;}
+  function applySheetPortrait(path:string) {
+    if (!sheet) return;
+    sheet = {...sheet, portrait:path};
+    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+    scheduleAutoSync();
+  }
+  function chooseBundledPortrait(path:string){
+    if (sheetPortraitPickerOpen) {
+      applySheetPortrait(path);
+      sheetPortraitPickerOpen=false;
+    } else {
+      builderData={...builderData,portrait:path};
+      portraitPickerOpen=false;
+    }
+  }
 
   async function loadCommunityPortraits() {
     const response = await fetch(SUPABASE_URL + '/rest/v1/community_portraits?select=object_path&order=created_at.desc', {
@@ -1319,9 +1334,14 @@
       });
       if(!registered.ok)throw new Error('No se pudo registrar el retrato: '+await registered.text());
       const portraitUrl=SUPABASE_URL+'/storage/v1/object/public/community-portraits/'+filename;
-      builderData={...builderData,portrait:portraitUrl};
+      if (sheetPortraitPickerOpen) {
+        applySheetPortrait(portraitUrl);
+        sheetPortraitPickerOpen=false;
+      } else {
+        builderData={...builderData,portrait:portraitUrl};
+        portraitPickerOpen=false;
+      }
       await loadCommunityPortraits();
-      portraitPickerOpen=false;
     } catch(error) {
       portraitPickerError=error instanceof Error?error.message:'No se pudo cargar la imagen.';
     } finally { input.value=''; }
@@ -4784,7 +4804,7 @@ import ITEMS from './items.json';
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Skills','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Reglas', 'Botones', 'Inventario', 'Iniciativa', 'Subir nivel'];
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Reglas', 'Botones', 'Inventario', 'Iniciativa', 'Subir nivel', 'Tiendita'];
   type QuickButton = { name: string; attack: string; damage: string; mode: 'normal'|'advantage'|'disadvantage' };
   type QuickRollResult = { id:number; name:string; attack:string; damage:string; attackResult:string; damageResult:string; mode:string; critical:boolean; fumble:boolean; };
   let editingQuickButton = -1;
@@ -6136,7 +6156,7 @@ import ITEMS from './items.json';
       {#if sheet && !playerCreating}
         <article class="character-sheet nautical-sheet">
           <header class="sheet-banner ddb-character-header nautical-header">
-            <div class="portrait-frame">{#if sheet.portrait}<img src={String(sheet.portrait)} alt="Retrato de {sheet.name || 'personaje'}" />{:else}<span>✦</span>{/if}</div>
+            <div class="portrait-frame">{#if sheet.portrait}<img src={String(sheet.portrait)} alt="Retrato de {sheet.name || 'personaje'}" />{:else}<button type="button" class="sheet-portrait-choose" on:click={()=>{sheetPortraitPickerOpen=true;portraitPickerError='';}} aria-label="Elegir imagen del personaje" title="Elegir imagen del personaje">＋</button>{/if}</div>
             <div class="sheet-banner-copy">
               <span class="sheet-kicker">D&D · 2024</span>
               <h1 class="character-name">{sheet.name || 'Personaje'}</h1>
@@ -6420,6 +6440,8 @@ import ITEMS from './items.json';
             {/if}
           </div>
         </section>
+                {:else if playerSheetTab === 'Tiendita'}
+                  <section class="sheet-section player-shop-section"><div class="sheet-section-title"><h3>Tiendita</h3></div></section>
                 {:else if playerSheetTab === 'Subir nivel'}
                   {@const progression = getPlayerClassProgression(sheet)}
                   <section class="sheet-section class-progression-panel">
@@ -6569,7 +6591,21 @@ import ITEMS from './items.json';
               </div>
             </section>
           </div>
+          <section class="sheet-section player-portrait-footer" aria-label="Retrato del personaje">
+            {#if sheet.portrait}<div class="builder-portrait-frame"><img src={String(sheet.portrait)} alt="Retrato de {sheet.name || 'personaje'}" /></div>{:else}<p class="muted">Este personaje no tiene retrato.</p>{/if}
+          </section>
         </article>
+
+        {#if sheetPortraitPickerOpen}
+          <div class="portrait-modal-backdrop" role="presentation" on:click={(event)=>{if(event.target===event.currentTarget)sheetPortraitPickerOpen=false;}}>
+            <section class="portrait-modal" role="dialog" aria-modal="true" aria-label="Elegir imagen del personaje">
+              <header><div><h3>Elegir imagen del personaje</h3><p class="muted">Selecciona un retrato o sube una imagen propia.</p></div><button type="button" class="secondary" on:click={()=>sheetPortraitPickerOpen=false}>Cerrar</button></header>
+              <div class="portrait-upload-row"><button type="button" on:click={()=>portraitFileInput?.click()}>Subir imagen</button><span>Preferentemente 256 × 512 px. Se ajustará al formato vertical.</span><input bind:this={portraitFileInput} type="file" accept="image/*" hidden on:change={chooseUploadedPortrait} /></div>
+              {#if portraitPickerError}<p class="portrait-picker-error">{portraitPickerError}</p>{/if}
+              {#if portraitLoading}<p class="muted">Cargando retrato…</p>{:else}<div class="portrait-modal-grid">{#each [...communityPortraits, ...BUILDER_PORTRAITS] as portrait}<button type="button" class="portrait-modal-option" on:click={()=>chooseBundledPortrait(portrait)} aria-label="Seleccionar {portrait.split('/').pop()}"><img src={portrait} alt="Retrato disponible" /></button>{/each}</div>{/if}
+            </section>
+          </div>
+        {/if}
 
         <section class="panel save-panel">
           <button class="primary full" on:click={exportSheet}>Exportar personaje (JSON)</button>
@@ -7172,6 +7208,9 @@ import ITEMS from './items.json';
   :global(.nautical-sheet){display:block!important;padding:0!important;overflow:hidden;background:#13262e!important;border:1px solid #3fb8b8!important;border-radius:12px!important;box-shadow:0 16px 40px #0b171d99!important;color:#ffffff!important}
   :global(.nautical-header){display:flex!important;align-items:center;gap:1rem;padding:1rem 1.2rem!important;margin:0!important;border:0!important;border-bottom:1px solid #3fb8b8!important;border-radius:0!important;background:linear-gradient(115deg,#13262e,#13262e 65%,#13262e)!important}
   :global(.portrait-frame){display:grid;place-items:center;flex:0 0 4.5rem;width:4.5rem;height:4.5rem;border:3px solid #3fb8b8;border-radius:50%;background:radial-gradient(circle,#13262e,#13262e 70%);color:#b5bec3;font-size:1.8rem;box-shadow:0 0 0 3px #3fb8b8}
+  :global(.sheet-portrait-choose){display:grid;place-items:center;width:100%;height:100%;padding:0;border:0;background:transparent;color:inherit;font-size:2rem;cursor:pointer}
+  :global(.player-portrait-footer){display:flex;justify-content:center;margin-top:18px}
+  :global(.player-portrait-footer .builder-portrait-frame){margin:0 auto}
   :global(.nautical-header .sheet-banner-copy){flex:1;min-width:0}
   :global(.nautical-header .sheet-kicker){color:#b5bec3}
   :global(.nautical-header .character-name){color:#ffffff!important;margin:.2rem 0!important}
