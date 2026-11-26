@@ -850,6 +850,9 @@
   let progressionRewardType = '';
   let progressionRewardQuantity = 1;
   let progressionCurrencyAmount = 1;
+  let progressionEditSection = 'PERSONAJE';
+  let progressionEditField = 'Nombre';
+  let progressionEditValue = '';
   let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
   function rollChestLoot() {
     const dice = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10) + 1);
@@ -3090,6 +3093,18 @@ import ITEMS from './items.json';
     if(!found) return 0;
     const amount=found.match(/[0-9][0-9.,]*/)?.[0]||'0';
     return Math.max(0,Number(amount.replace(/\./g,'').replace(',','.'))||0);
+  }
+  $: progressionEditSections = sheet ? sectionPairs(sheet.sections||[]).map(pair=>String(pair.heading.name||'')).filter(Boolean) : [];
+  $: progressionEditFields = sheet ? (sectionPairs(sheet.sections||[]).find(pair=>normalizeLevelText(pair.heading.name)===normalizeLevelText(progressionEditSection))?.heading.stats||[]).map(stat=>String(stat.name||'')).filter(Boolean) : [];
+  $: progressionEditValue = sheet ? getCharacterStat(sheet,progressionEditSection,progressionEditField) : '';
+  function saveProgressionEdit() {
+    if(!sheet||!progressionEditSection||!progressionEditField) return;
+    const before=captureProgressionSections();
+    setCharacterStat(sheet,progressionEditSection,progressionEditField,progressionEditValue);
+    if(progressionEditSection==='ATRIBUTOS' || (progressionEditSection==='COMBATE' && progressionEditField==='Bonificador por competencia')) refreshDerivedCharacterSheet(sheet);
+    sheet={...sheet};
+    recordProgressionChange(progressionEditSection+' · '+progressionEditField,before);
+    notice='Se actualizó '+progressionEditField+'.';
   }
   function adjustProgressionCurrency(key:string,delta:number) {
     if(!sheet) return;
@@ -6168,6 +6183,16 @@ import ITEMS from './items.json';
                       <p class="muted">No se encontró una tabla de progresión para esta clase.</p>
                     {/if}
                   </section>
+                  <section class="sheet-section progression-manual-panel progression-edit-panel">
+                    <div class="sheet-section-title"><h3>Editar cualquier dato</h3></div>
+                    <p class="muted">Selecciona una sección y un campo de tu ficha para modificar su valor directamente.</p>
+                    <div class="progression-edit-grid">
+                      <label>Sección<select bind:value={progressionEditSection} on:change={()=>progressionEditField=progressionEditFields[0]||''}>{#each progressionEditSections as section}<option value={section}>{section}</option>{/each}</select></label>
+                      <label>Campo<select bind:value={progressionEditField}>{#each progressionEditFields as field}<option value={field}>{field}</option>{/each}</select></label>
+                      <label class="progression-edit-value">Valor<input type="text" bind:value={progressionEditValue}/></label>
+                      <button type="button" class="progression-undo-button" on:click={saveProgressionEdit} disabled={!progressionEditSection||!progressionEditField}>Guardar cambio</button>
+                    </div>
+                  </section>
                   <section class="sheet-section progression-manual-panel">
                     <div class="sheet-section-title"><h3>Progresión</h3></div>
                     <p class="muted">Ajusta manualmente los valores al avanzar de nivel. Los valores derivados se calculan según las características.</p>
@@ -6528,6 +6553,11 @@ import ITEMS from './items.json';
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
   .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.progression-manual-select-row{display:flex;align-items:end;gap:.55rem;margin:.55rem 0}.progression-manual-select-row label{display:grid;gap:.25rem;flex:1;min-width:0;color:var(--ink-soft);font-size:.78rem}.progression-manual-select-row select{width:100%;min-width:0;padding:.42rem .5rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--ink);font:inherit}.progression-manual-select-row>button{padding:.45rem .7rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font:inherit;cursor:pointer}.progression-manual-select-row>button:disabled{opacity:.4;cursor:not-allowed}.progression-manual-chips{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.65rem 0;padding-top:.5rem;border-top:1px solid var(--rule)}.progression-manual-chips>strong{width:100%;font-size:.78rem;color:var(--ink-soft)}.progression-manual-chips>span{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .4rem;border:1px solid var(--rule);border-radius:4px;font-size:.75rem}.progression-manual-chips button{border:0;background:transparent;color:var(--gold);font-size:1rem;line-height:1;cursor:pointer}.progression-manual-list{display:grid;gap:0}.progression-manual-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.48rem .1rem;border-bottom:1px solid var(--rule);font:.82rem system-ui,sans-serif}.progression-manual-row>span{color:var(--ink-soft)}.progression-manual-row>div{display:flex;align-items:center;gap:.55rem}.progression-manual-row strong{min-width:3.4rem;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}.progression-manual-row button{width:1.8rem;height:1.8rem;padding:0;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font-size:1rem;font-weight:700;cursor:pointer}.progression-manual-row button:hover{border-color:var(--gold);background:rgba(95,230,224,.12)}
+  .progression-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+  .progression-edit-grid label{display:grid;gap:4px;color:var(--ink-soft);font-size:11px}
+  .progression-edit-grid input,.progression-edit-grid select{min-width:0;box-sizing:border-box;width:100%;padding:7px;border:1px solid var(--rule);border-radius:5px;background:var(--paper-deep);color:var(--ink)}
+  .progression-edit-value{grid-column:1/-1}
+  .progression-edit-grid button{justify-self:start}
   .progression-quantity{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;color:var(--ink-soft);font-size:12px}
   .progression-quantity input,.progression-reward-toolbar input,.progression-reward-toolbar select{min-width:0;box-sizing:border-box;padding:7px;border:1px solid var(--rule);border-radius:5px;background:var(--paper-deep);color:var(--ink)}
   .progression-quantity input{width:100px}
