@@ -2241,7 +2241,7 @@ import ITEMS from './items.json';
   }
   function combatInitiative(id:string) {
     const c=combatants.find(x=>x.id===id); if(!c)return;
-    const bonus=monsterNumber(c.monster,'Initiative');
+    const bonus=Number(c.initiative)||0;
     sendCombatRoll('1d20'+(bonus>=0?'+':'')+bonus,c.name+' · Iniciativa',true);
   }
   async function sendCombatRoll(notation:string,label:string,initiative=false) {
@@ -4193,7 +4193,7 @@ import ITEMS from './items.json';
                   <div class="combat-hp-track"><span style="width:{Math.max(0,Math.min(100,c.hp/c.maxHp*100))}%" class:hp-yellow={c.hp/c.maxHp<=.5&&c.hp/c.maxHp>.25} class:hp-red={c.hp/c.maxHp<=.25}></span></div>
                   <div class="combat-temp"><span>✦ PG temporales</span><button on:click={()=>updateCombatant(c.id,{tempHp:Math.max(0,c.tempHp-1)})}>−</button><strong>{c.tempHp}</strong><button on:click={()=>setCombatTempHp(c.id,c.tempHp+1)}>+</button></div>
                   <div class="combat-damage-tools"><input type="number" min="0" value={c.damageInput} aria-label="Daño o curación" on:input={(e)=>setCombatantField(c.id,'damageInput',e)}/><button class="damage-button" on:click={()=>applyCombatDamage(c.id,'damage')}>Daño</button><button class="heal-button" on:click={()=>applyCombatDamage(c.id,'heal')}>Curar</button></div>
-                  <div class="combat-initiative"><label>Iniciativa <input type="number" value={c.initiative} on:change={(e)=>setCombatantField(c.id,'initiative',e)}/></label><button on:click={()=>combatInitiative(c.id)}>🎲 Tirar iniciativa</button></div>
+                  <div class="combat-initiative"><label>Iniciativa <input type="number" step="1" value={c.initiative} on:change={(e)=>setCombatantField(c.id,'initiative',e)}/></label><button on:click={()=>combatInitiative(c.id)}>🎲 Tirar iniciativa</button></div>
                   <button class="combat-expand" on:click={()=>updateCombatant(c.id,{compact:!c.compact})}>{c.compact?'Mostrar acciones y tiradas':'Ocultar acciones y tiradas'}</button>
                   {#if !c.compact}
                     <div class="combat-actions">
@@ -7309,7 +7309,7 @@ import ITEMS from './items.json';
   .combatant-card .combat-damage-tools{grid-template-columns:minmax(0,1fr) auto auto;gap:3px}
   .combatant-card .combat-damage-tools button{padding:5px 5px;font-size:10px}
   .combatant-card .combat-initiative{gap:4px;font-size:11px}
-  .combatant-card .combat-initiative input{width:38px}
+  .combatant-card .combat-initiative input{width:58px;min-height:30px;font-size:13px;text-align:center}
   .combatant-card .combat-action-row{font-size:11px;overflow-wrap:anywhere}
   .combatant-card .combat-action-row button{padding:5px;font-size:10px}
   .combatant-card.combat-dead{opacity:.58;filter:grayscale(.65)}
@@ -7329,7 +7329,7 @@ import ITEMS from './items.json';
   .combat-damage-tools button,.combat-initiative button,.combat-expand,.combat-actions button{border:1px solid #3fb8b8;border-radius:5px;background:#13262e;color:#fff;padding:6px 9px;font-size:12px}
   .combat-damage-tools .damage-button{border-color:#c95c5c}.combat-damage-tools .heal-button{border-color:#36b978}
   .combat-initiative{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:4px 0 9px;font-size:12px}
-  .combat-initiative input{width:52px}
+  .combat-initiative input{width:64px;min-height:32px;font-size:14px;text-align:center}
   .combat-expand{width:100%;margin:4px 0}
   .combat-actions{display:grid;gap:7px;margin-top:8px}
   .combat-action-row{display:grid;gap:5px;padding:7px 0;border-top:1px solid #31525a;font-size:12px}
