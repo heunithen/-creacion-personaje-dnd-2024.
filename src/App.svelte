@@ -2201,6 +2201,7 @@ import ITEMS from './items.json';
   let activeInitiativeIndex = 0;
   let initiativeRound = 1;
   const INITIATIVE_STATE_CHANNEL = 'com.heunithen.forja/initiative-state';
+  const INITIATIVE_STATE_REQUEST_CHANNEL = 'com.heunithen.forja/initiative-state-request';
   let sharedInitiativeOrder: InitiativeParticipant[] = [];
   let sharedActiveInitiativeIndex = 0;
   let sharedInitiativeRound = 1;
@@ -4370,6 +4371,17 @@ import ITEMS from './items.json';
           sharedActiveInitiativeIndex=Math.max(0,Math.min(Number(state.activeIndex)||0,Math.max(0,sharedInitiativeOrder.length-1)));
           sharedInitiativeRound=Math.max(1,Number(state.round)||1);
         });
+        OBR.broadcast.onMessage(INITIATIVE_STATE_REQUEST_CHANNEL, () => {
+          if(obrRole!=='GM') return;
+          void OBR.broadcast.sendMessage(INITIATIVE_STATE_CHANNEL, {
+            order:initiativeOrder.map(participant=>({...participant})),
+            activeIndex:activeInitiativeIndex,
+            round:initiativeRound
+          }, {destination:'REMOTE'}).catch(error=>console.error('No se pudo enviar el tracker actual',error));
+        });
+        if(obrRole!=='GM') {
+          void OBR.broadcast.sendMessage(INITIATIVE_STATE_REQUEST_CHANNEL, {request:true}, {destination:'ALL'});
+        }
         OBR.broadcast.onMessage(`${DICE_PLUS_SOURCE}/roll-error`, (event: any) => {
           const failure = event.data;
           if (!failure?.rollId || failure.rollId === lastRollId) {
