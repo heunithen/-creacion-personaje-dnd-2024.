@@ -785,7 +785,6 @@
   let levelUpWizardMastery2 = '';
   let levelUpWizardSignatureSpells = '';
   let levelUpSubclassSkill = '';
-  let levelUpSubclassSkills = '';
   let levelUpCollegeKnowledgeSkill1 = '';
   let levelUpCollegeKnowledgeSkill2 = '';
   let levelUpCollegeKnowledgeSkill3 = '';
@@ -3300,7 +3299,7 @@ import ITEMS from './items.json';
     levelUpWizardMastery1=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 1') || '';
     levelUpWizardMastery2=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 2') || '';
     levelUpWizardSignatureSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros característicos') || '';
-    levelUpSubclassSkill=''; levelUpSubclassSkills=''; levelUpSubclassTool='';
+    levelUpSubclassSkill=''; levelUpSubclassTool='';
     levelUpCollegeKnowledgeSkill1=''; levelUpCollegeKnowledgeSkill2=''; levelUpCollegeKnowledgeSkill3='';
     const bardDiscoveryList=splitChoiceList(getCharacterStat(entry.sheet,'CONJUROS','Conjuros de descubrimientos mágicos'));
     levelUpBardDiscovery1=bardDiscoveryList[0]||''; levelUpBardDiscovery2=bardDiscoveryList[1]||''; levelUpManeuvers=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Maniobras de maestro del combate') || '';
