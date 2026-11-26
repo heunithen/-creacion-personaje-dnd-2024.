@@ -314,14 +314,16 @@ try {
   report('builder-tool-proficiency-duplicates',
     app.includes('const featTools=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_FEAT_TOOL_OPTIONS.includes(choice))') &&
     app.includes('const allToolChoices=[builderData.backgroundToolChoice,...featTools,...builderData.classToolsChoices].filter(Boolean)') &&
-    app.includes('!featTools.includes(tool)'),
+    app.includes('isValidUniqueSelection(builderData.classToolsChoices,validTools,expectedTools,[builderData.backgroundToolChoice,...featTools])') &&
+    app.includes('new Set(allToolChoices).size!==allToolChoices.length'),
     'La validación rechaza herramientas repetidas entre trasfondo, dotes y clase.');
 
   report('builder-ability-increase-cap',
     app.includes('function builderRawAdjustedAbilities()') &&
-    app.includes('const adjusted=builderRawAdjustedAbilities()') &&
-    app.includes('Number(adjusted[name])>20'),
-    'El límite de 20 se comprueba con los aumentos sin recortar, antes de aplicar el límite visual de la ficha.');
+    app.includes('isValidAbilityIncreases({mode:builderData.abilityIncreaseMode,choices,allowed,baseAbilities:builderData.abilities,abilityNames:BUILDER_ABILITY_NAMES,max:20})') &&
+    app.includes('adjusted[choices[0]] = Number(adjusted[choices[0]]) + 2') &&
+    app.includes('adjusted[choices[1]] = Number(adjusted[choices[1]]) + 1'),
+    'El motor de reglas comprueba los aumentos reales antes de limitar los valores mostrados a 20.');
 
   report('builder-creation-validation-and-preview',
     app.includes('function builderStepCanAdvance()') &&
