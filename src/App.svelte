@@ -4414,7 +4414,7 @@ import ITEMS from './items.json';
           {#if combatants.length}
             <div class="combat-grid">
               {#each combatants.filter(c=>showAllCombatants||c.participating!==false) as c (c.id)}
-                <article class:combat-dead={c.hp===0} class="combatant-card">
+                <article class:combat-dead={c.hp===0} class:combatant-active={initiativeOrder[activeInitiativeIndex]?.id==='monster:'+c.id} class="combatant-card">
                   <header class="combatant-header">
                     <input aria-label="Nombre de criatura" class="combatant-name" value={c.name} on:change={(e)=>setCombatantField(c.id,'name',e)}/>
                     <div class="combatant-tools">
@@ -8022,6 +8022,7 @@ import ITEMS from './items.json';
   .combat-sort input{width:auto}
   .combat-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px;align-items:start;width:100%;min-width:0}
   .combatant-card{position:relative;min-width:0;width:100%;box-sizing:border-box;padding:8px;border:1px solid #3fb8b8;border-radius:9px;background:#0b171d;color:#fff;overflow-wrap:anywhere}
+  .combatant-card.combatant-active{border:2px solid #e6b83f;box-shadow:0 0 0 2px rgba(230,184,63,.22),0 0 14px rgba(230,184,63,.32)}
   .combatant-card .combatant-name{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
   .combatant-card .combatant-vitals{gap:4px;font-size:11px}
   .combatant-card .combat-ac input,.combatant-card .combat-hp input{width:38px;padding:4px 2px}
