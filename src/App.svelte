@@ -3938,9 +3938,9 @@ import ITEMS from './items.json';
       if(levelUpClassCantrips.trim()) {
         const oldClassTricks=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos de clase') || (className==='Bardo'?getCharacterStat(updated,'CONJUROS','Trucos'):''));
         const combinedTricks=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos'));
-        const otherTricks=combinedTricks.filter(name=>!oldClassTricks.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+        const otherTricks=[...combinedTricks.filter(name=>!oldClassTricks.some(old=>normalizeLevelText(old)===normalizeLevelText(name))),...splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos de subclase'))];
         setCharacterStat(updated,'CONJUROS','Trucos de clase',classCantripNames.join(', '));
-        setCharacterStat(updated,'CONJUROS','Trucos',[...classCantripNames,...otherTricks].join(', '));
+        setCharacterStat(updated,'CONJUROS','Trucos',[...new Map([...classCantripNames,...otherTricks].map(name=>[normalizeLevelText(name),name])).values()].join(', '));
       }
       if(levelUpClassSpells.trim()) {
         const oldClassSpells=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros preparados de clase') || (className==='Mago'?(String(getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1')).match(/Preparados:\s*([^.]*)/i)||[])[1]||'':className==='Bardo'?getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1'):''));
