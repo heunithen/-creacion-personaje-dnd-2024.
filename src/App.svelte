@@ -2374,10 +2374,34 @@ import ITEMS from './items.json';
     (!spellSearch.trim() || (spell.name + ' ' + spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es')))
   ).sort((a,b) => a.name.localeCompare(b.name,'en',{sensitivity:'base'})) : [];
   const RULE_CATEGORIES = ['General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro', 'Abreviatura'];
-  $: filteredRules = (rulesCategoryFilter || rulesSearch.trim()) ? RULES.filter(rule =>
-    (!rulesCategoryFilter || rule.category === rulesCategoryFilter) &&
-    (!rulesSearch.trim() || (rule.name + ' ' + rule.description + ' ' + rule.category).toLocaleLowerCase('es').includes(rulesSearch.trim().toLocaleLowerCase('es')))
-  ) : [];
+  let openRuleName = '';
+  const normalizeRuleText = (value: string) => String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase('es').trim();
+  const ruleNameCase = (value: string) => value ? value.charAt(0).toLocaleUpperCase('es') + value.slice(1).toLocaleLowerCase('es') : '';
+  const escapeRuleHtml = (value: string) => value.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char] || char));
+  function highlightedRuleName(value: string) {
+    const query = rulesSearch.trim(), original = ruleNameCase(value), normalized = normalizeRuleText(value);
+    if (query.length < 2) return escapeRuleHtml(original);
+    const index = normalized.indexOf(normalizeRuleText(query));
+    return index < 0 ? escapeRuleHtml(original) : escapeRuleHtml(original.slice(0,index)) + '<mark>' + escapeRuleHtml(original.slice(index,index+query.length)) + '</mark>' + escapeRuleHtml(original.slice(index+query.length));
+  }
+  function ruleRelatedNames(rule: any): string[] {
+    const matches = [...String(rule.description || '').matchAll(/[“"«]([^”"»]+)[”"»]/g)].map(match => match[1].trim());
+    return [...new Set(matches)].filter(name => RULES.some((candidate:any) => normalizeRuleText(candidate.name) === normalizeRuleText(name) && normalizeRuleText(candidate.name) !== normalizeRuleText(rule.name))).slice(0,8);
+  }
+  function ruleTextParagraphs(value: string): string[] {
+    return String(value || '').replace(/\\r/g,'').split(/\\n\\s*\\n+/).map(block => block.replace(/\\n/g,' ').replace(/\\s+/g,' ').trim()).filter(Boolean);
+  }
+  function jumpToRule(name: string) {
+    rulesSearch = ''; rulesCategoryFilter = ''; openRuleName = name;
+    setTimeout(() => document.getElementById('rule-' + encodeURIComponent(name))?.scrollIntoView({behavior:'smooth',block:'center'}), 80);
+  }
+  $: normalizedRuleQuery = normalizeRuleText(rulesSearch);
+  $: filteredRules = RULES.filter((rule:any) => (!rulesCategoryFilter || rule.category === rulesCategoryFilter) && (normalizedRuleQuery.length < 2 || normalizeRuleText(rule.name + ' ' + rule.description + ' ' + rule.category).includes(normalizedRuleQuery))).sort((a:any,b:any) => {
+    if (normalizedRuleQuery.length >= 2) { const aa = normalizeRuleText(a.name).startsWith(normalizedRuleQuery) ? 0 : 1; const bb = normalizeRuleText(b.name).startsWith(normalizedRuleQuery) ? 0 : 1; if (aa !== bb) return aa - bb; }
+    return a.name.localeCompare(b.name,'es',{sensitivity:'base'});
+  });
+  $: ruleLetters = [...new Set(filteredRules.map((rule:any) => rule.name.charAt(0).toLocaleUpperCase('es')))].sort((a,b)=>a.localeCompare(b,'es'));
+  $: groupedRules = ruleLetters.map(letter => ({letter, rules: filteredRules.filter((rule:any) => rule.name.charAt(0).toLocaleUpperCase('es') === letter)}));
 
   function rollableParts(value: string): { text: string; rollable: boolean; notation: string }[] {
     const parts: { text: string; rollable: boolean; notation: string }[] = [];
@@ -4576,21 +4600,33 @@ import ITEMS from './items.json';
         <section class="panel rules-panel">
           <div class="section-heading"><h2>Reglas · Manual del Jugador 2024</h2><span class="count">{filteredRules.length} / {RULES.length}</span></div>
           <p class="muted">Glosario del Apéndice C. Busca términos, acciones, condiciones y definiciones reglamentarias extraídas del manual del proyecto.</p>
-          <label class="rules-search">Buscar regla
-            <input type="search" bind:value={rulesSearch} placeholder="Ej. agarrado, cobertura, concentración..." />
-          </label>
-          <label class="rules-category-filter">Tipo de regla
-            <select bind:value={rulesCategoryFilter}>
-              <option value="">Ninguna</option>{#each RULE_CATEGORIES as category}<option value={category}>{category}</option>{/each}
-            </select>
-          </label>
+          <div class="rules-toolbar">
+            <label class="rules-search">Buscar regla
+              <div class="rules-search-input"><input type="search" bind:value={rulesSearch} placeholder="Escribe al menos dos letras..." /><button type="button" on:click={() => rulesSearch = ''} disabled={!rulesSearch}>Limpiar</button></div>
+            </label>
+            <label class="rules-category-filter">Tipo de regla
+              <select bind:value={rulesCategoryFilter}><option value="">Todos los tipos</option>{#each RULE_CATEGORIES as category}<option value={category}>{category}</option>{/each}</select>
+            </label>
+            <div class="rules-toolbar-actions"><span>{filteredRules.length} resultados</span><button type="button" on:click={() => openRuleName = openRuleName === '*' ? '' : '*'}>{openRuleName === '*' ? 'Cerrar todas' : 'Abrir todas'}</button></div>
+          </div>
+          <div class="rules-navigation"><span>Ir a:</span>{#each ruleLetters as letter}<a href={'#rules-letter-' + letter}>{letter}</a>{/each}</div>
           <div class="rules-list">
-            {#if filteredRules.length === 0}<p class="muted">Selecciona una categoría o escribe una búsqueda para mostrar reglas.</p>{:else}
-            {#each filteredRules as rule (rule.name)}
-              <details class="rule-card">
-                <summary><span class="rule-name">{rule.name}</span><span class="rule-category">{rule.category}</span><span class="rule-page">PDF {rule.pdfPage}</span></summary>
-                <div class="rule-details"><div class="rule-description">{#each rule.description.split(/\n+/).map(line => line.trim()).filter(Boolean) as line}<p>{line}</p>{/each}</div><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
-              </details>
+            {#if filteredRules.length === 0}<p class="muted">No hay reglas que coincidan con los filtros.</p>{:else}
+            {#each groupedRules as group (group.letter)}
+              <h3 class="rules-letter" id={'rules-letter-' + group.letter}>{group.letter}</h3>
+              {#each group.rules as rule (rule.name)}
+                {#if rule.category === 'Abreviatura'}
+                  <div class="rule-abbreviation"><strong>{ruleNameCase(rule.name)}</strong><span class="rule-category category-abreviatura">{rule.category}</span><span class="rule-abbreviation-meaning">→ {ruleTextParagraphs(rule.description).join(' ')}</span><span class="rule-page">p. {rule.pdfPage}</span></div>
+                {:else}
+                  <details class="rule-card" id={'rule-' + encodeURIComponent(rule.name)} open={openRuleName === '*' || openRuleName === rule.name} on:toggle={(event) => { if ((event.currentTarget as HTMLDetailsElement).open && openRuleName !== '*') openRuleName = rule.name; }}>
+                    <summary><span class="rule-name">{@html highlightedRuleName(rule.name)}</span><span class={'rule-category category-' + normalizeRuleText(rule.category).replace(/\\s+/g,'-')}>{rule.category}</span><span class="rule-page">p. {rule.pdfPage}</span></summary>
+                    <div class="rule-details"><div class="rule-description">{#each ruleTextParagraphs(rule.description) as paragraph}<p>{paragraph}</p>{/each}</div>
+                      {#if ruleRelatedNames(rule).length}<div class="rule-related"><strong>Ver también:</strong>{#each ruleRelatedNames(rule) as related,index}<button type="button" on:click={() => jumpToRule(related)}>{related}</button>{index < ruleRelatedNames(rule).length - 1 ? ' · ' : ''}{/each}</div>{/if}
+                      <small class="rule-source">PDF p. {rule.pdfPage}</small>
+                    </div>
+                  </details>
+                {/if}
+              {/each}
             {/each}
             {/if}
           </div>
@@ -7632,10 +7668,33 @@ import ITEMS from './items.json';
   .catalog-item-description{margin:10px 0;color:var(--gm-text);line-height:1.55}
   .catalog-item-card footer{border-top:1px solid var(--gm-border);padding-top:8px;font-size:12px;color:var(--gm-muted)}
   .catalog-item-card footer small{flex-basis:100%;color:var(--gm-muted)}
-  .rule-description{white-space:normal;line-height:1.6}
-  .rule-description p{margin:0 0 8px}
-  .rule-description p:last-child{margin-bottom:0}
-  .rule-details{padding:12px 14px}
+  .rules-toolbar{position:sticky;top:0;z-index:12;display:grid;grid-template-columns:minmax(180px,1fr) minmax(150px,.45fr) auto;gap:10px;align-items:end;padding:12px 0;background:var(--gm-panel,#0b171d);border-bottom:1px solid var(--gm-border)}
+  .rules-search,.rules-category-filter{display:grid;gap:5px;font-size:12px;color:var(--gm-muted)}
+  .rules-search-input{display:flex;gap:6px}.rules-search-input input{flex:1;min-width:0}
+  .rules-search-input button,.rules-toolbar-actions button{border:1px solid var(--gm-border);border-radius:6px;background:var(--gm-card);color:var(--gm-text);padding:7px 10px}
+  .rules-search-input button:disabled{opacity:.4}
+  .rules-toolbar-actions{display:flex;gap:8px;align-items:center;white-space:nowrap;font-size:12px;color:var(--gm-muted)}
+  .rules-navigation{position:sticky;top:76px;z-index:10;display:flex;gap:7px;flex-wrap:wrap;padding:8px 0;background:var(--gm-panel,#0b171d);font-size:12px}
+  .rules-navigation a{color:var(--gm-accent);font-weight:800;text-decoration:none}
+  .rules-letter{margin:16px 0 4px;padding:4px 8px;border-bottom:1px solid var(--gm-border);color:var(--gm-accent);font-size:14px}
+  .rule-card{border-bottom:1px solid var(--gm-border);background:transparent!important}
+  .rule-card:hover{background:rgba(255,255,255,.035)!important}.rule-card[open]{background:rgba(75,180,180,.07)!important}
+  .rule-card summary{display:flex;align-items:center;gap:12px;min-height:42px;padding:7px 9px;cursor:pointer;list-style:none}
+  .rule-card summary::-webkit-details-marker{display:none}.rule-name{flex:1;min-width:0;font-size:14px;font-weight:800;text-transform:none}
+  .rule-name mark{background:#f2d36c;color:#1b2022;border-radius:2px}
+  .rule-category{flex:0 0 auto;padding:3px 8px;border:1px solid currentColor;border-radius:20px;font-size:10px;font-weight:800;line-height:1.2}
+  .category-general{color:#8fc5ff}.category-estado{color:#ff9a9a}.category-accion{color:#f2c66d}.category-peligro{color:#ff806e}.category-area-de-efecto{color:#c2a0ff}.category-actitud{color:#85d6b0}.category-abreviatura{color:#b9c2cc}
+  .rule-page{flex:0 0 auto;color:var(--gm-muted);font-size:11px;white-space:nowrap}
+  .rule-details{margin:0 10px 10px 18px;padding:10px 14px 12px;border-left:2px solid var(--gm-accent);background:rgba(0,0,0,.12)}
+  .rule-description{max-width:70ch;white-space:normal;line-height:1.5;color:var(--gm-text)}
+  .rule-description p{margin:0 0 10px}.rule-description p:last-child{margin-bottom:0}
+  .rule-related{max-width:70ch;margin-top:12px;padding-top:8px;border-top:1px solid var(--gm-border);font-size:12px;color:var(--gm-muted)}
+  .rule-related button{padding:0;border:0;background:none;color:var(--gm-accent);text-decoration:underline;cursor:pointer}
+  .rule-source{display:block;margin-top:12px;color:var(--gm-muted);font-size:10px}
+  .rule-abbreviation{display:flex;align-items:center;gap:10px;padding:8px 9px;border-bottom:1px solid var(--gm-border);font-size:13px}
+  .rule-abbreviation>strong{font-weight:900}.rule-abbreviation-meaning{flex:1;color:var(--gm-text)}
+  @media(max-width:650px){.rules-toolbar{grid-template-columns:1fr 1fr}.rules-search{grid-column:1/-1}.rules-toolbar-actions{justify-content:space-between;grid-column:1/-1}.rules-navigation{top:120px}.rule-card summary{gap:7px}.rule-category{font-size:9px;padding:3px 6px}.rule-abbreviation{flex-wrap:wrap}.rule-abbreviation-meaning{flex-basis:100%;order:3}}
+
   .monster-statblock{background:#f8f5e9;color:#24231f;border:1px solid #c8b98e;border-radius:8px;padding:14px;font-family:Georgia,serif;line-height:1.45}
   .monster-block-heading{text-align:center;border-top:3px double #8d2525;border-bottom:3px double #8d2525;padding:8px 4px;margin-bottom:10px}
   .monster-block-heading h3{margin:0;color:#8d2525;font-size:20px;text-transform:uppercase;letter-spacing:.04em}
