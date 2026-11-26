@@ -846,6 +846,10 @@
   let progressionSubclassChoice = '';
   $: progressionSubclassChoice = sheet ? (getCharacterStat(sheet,'PERSONAJE','Subclase') || '') : '';
   let progressionBardDieChoice = '';
+  let progressionRewardSearch = '';
+  let progressionRewardType = '';
+  let progressionRewardQuantity = 1;
+  let progressionCurrencyAmount = 1;
   let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
   function rollChestLoot() {
     const dice = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10) + 1);
@@ -2581,6 +2585,10 @@ import ITEMS from './items.json';
     const amount = Number(match[1].replace(/\./g, '').replace(',', '.'));
     return Number.isFinite(amount) ? amount * (match[2].toLowerCase() === 'g' ? 0.001 : 1) : null;
   }
+  $: progressionRewardItems = ITEMS.filter(item =>
+    (!progressionRewardType || item.type === progressionRewardType) &&
+    (!progressionRewardSearch.trim() || (item.name+' '+item.type+' '+item.source).toLocaleLowerCase('es').includes(progressionRewardSearch.trim().toLocaleLowerCase('es')))
+  ).sort((a,b)=>a.name.localeCompare(b.name,'es',{sensitivity:'base'})).slice(0,24);
   $: filteredItems = (itemSearch.trim() || itemLetterFilter || itemTypeFilter || itemPriceMin !== '' || itemPriceMax !== '' || itemWeightMin !== '' || itemWeightMax !== '') ? ITEMS.filter(item => {
     const query = itemSearch.trim().toLocaleLowerCase('es');
     const price = itemPriceGold(item.price);
@@ -3047,8 +3055,76 @@ import ITEMS from './items.json';
     localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
     // Solo almacenamiento local del jugador.
   }
+  function captureProgressionSections():RawSection[] {
+    return JSON.parse(JSON.stringify(sheet?.sections || []));
+  }
+  function recordProgressionChange(label:string,beforeSections:RawSection[]) {
+    if(!sheet) return;
+    const history=Array.isArray((sheet as any).progressionChangeLog)?(sheet as any).progressionChangeLog:[];
+    history.push({id:Date.now()+Math.random(),label,at:new Date().toISOString(),beforeSections});
+    (sheet as any).progressionChangeLog=history.slice(-20);
+    sheet={...sheet};
+    saveSheetMutation();
+  }
+  function undoLastProgressionChange() {
+    if(!sheet) return;
+    const history=Array.isArray((sheet as any).progressionChangeLog)?[...(sheet as any).progressionChangeLog]:[];
+    const last=history.pop();
+    if(!last?.beforeSections) return;
+    sheet.sections=JSON.parse(JSON.stringify(last.beforeSections));
+    (sheet as any).progressionChangeLog=history;
+    sheet={...sheet};
+    saveSheetMutation();
+    notice='Se deshizo: '+last.label+'.';
+  }
+  function progressionChangeHistory():any[] {
+    return Array.isArray((sheet as any)?.progressionChangeLog)?(sheet as any).progressionChangeLog.slice().reverse():[];
+  }
+  const PROGRESSION_CURRENCIES=[{key:'PC',label:'Cobre'},{key:'PP',label:'Plata'},{key:'PE',label:'Electro'},{key:'PO',label:'Oro'},{key:'PPt',label:'Platino'}];
+  function progressionCurrencyValue(key:string):number {
+    const stored=getCharacterStat(sheet as RawSheet,'ECONOMÍA',key);
+    if(stored!=='') return Math.max(0,Number(stored)||0);
+    const legacy=getCharacterStat(sheet as RawSheet,'EQUIPO','Monedas');
+    const matches=String(legacy||'').match(/[0-9][0-9.,]*\\s*(?:PPt|PC|PP|PE|PO)/gi)||[];
+    const found=matches.find(value=>value.toUpperCase().replace(/\\s/g,'').endsWith(key.toUpperCase()));
+    if(!found) return 0;
+    const amount=found.match(/[0-9][0-9.,]*/)?.[0]||'0';
+    return Math.max(0,Number(amount.replace(/\\./g,'').replace(',','.'))||0);
+  }
+  function adjustProgressionCurrency(key:string,delta:number) {
+    if(!sheet) return;
+    const before=captureProgressionSections();
+    const next=Math.max(0,progressionCurrencyValue(key)+delta);
+    setCharacterStat(sheet,'ECONOMÍA',key,String(next));
+    sheet={...sheet};
+    recordProgressionChange('Monedas '+key+' · '+(delta>0?'+':'')+delta,before);
+  }
+  function addProgressionReward(item:any) {
+    if(!sheet) return;
+    const quantity=Math.max(1,Math.min(999,Number(progressionRewardQuantity)||1));
+    const before=captureProgressionSections();
+    const existing=String(getCharacterStat(sheet,'INVENTARIO','Equipo adicional')||'').split(/\\n/).map(value=>value.trim()).filter(Boolean);
+    const label=quantity===1?item.name:item.name+' ×'+quantity;
+    const existingIndex=existing.findIndex(value=>normalizeLevelText(value.replace(/\\s*[×x]\\d+$/i,''))===normalizeLevelText(item.name));
+    if(existingIndex>=0) {
+      const match=existing[existingIndex].match(/[×x](\\d+)$/i);
+      const total=(match?Number(match[1]):1)+quantity;
+      existing[existingIndex]=total===1?item.name:item.name+' ×'+total;
+    } else existing.push(label);
+    setCharacterStat(sheet,'INVENTARIO','Equipo adicional',existing.join('\\n'));
+    if(item.type==='Arma' && WEAPON_PROFILES[item.name]) {
+      const weapons=splitChoiceList(getCharacterStat(sheet,'ATAQUES','Armas incluidas en el equipo'));
+      if(!weapons.some(value=>normalizeLevelText(value)===normalizeLevelText(item.name))) weapons.push(item.name);
+      setCharacterStat(sheet,'ATAQUES','Armas incluidas en el equipo',weapons.join(', '));
+      refreshDerivedCharacterSheet(sheet);
+    }
+    sheet={...sheet};
+    recordProgressionChange('Recompensa: '+label,before);
+    progressionRewardQuantity=1;
+  }
   function adjustProgressionValue(sectionName:string, statName:string, delta:number, fallback:number=0, suffix='', allowNegative=false) {
     if (!sheet) return;
+    const before=captureProgressionSections();
     const raw=getCharacterStat(sheet,sectionName,statName);
     const match=String(raw).replace(/,/g,'.').match(/-?\d+(?:\.\d+)?/);
     const current=match ? Number(match[0]) : fallback;
@@ -3057,16 +3133,18 @@ import ITEMS from './items.json';
       : (allowNegative ? current+delta : Math.max(0,current+delta));
     setCharacterStat(sheet,sectionName,statName,suffix ? next+suffix : String(next));
     if(sectionName==='PERSONAJE' && statName==='Nivel') setCharacterStat(sheet,'PROGRESIÓN','Nivel de clase',next);
-    sheet={...sheet}; saveSheetMutation();
+    if(sectionName==='ATRIBUTOS' || (sectionName==='COMBATE' && statName==='Bonificador por competencia')) refreshDerivedCharacterSheet(sheet);
+    sheet={...sheet}; recordProgressionChange(statName+' · '+(delta>0?'+':'')+delta,before);
   }
   function adjustProgressionHitDice(delta:number) {
     if (!sheet) return;
+    const before=captureProgressionSections();
     const raw=getCharacterStat(sheet,'COMBATE','Dados de golpe') || '0d8';
     const match=String(raw).match(/(\d+)\s*d\s*(\d+)/i);
     const count=match ? Number(match[1]) : 0;
     const die=match ? Number(match[2]) : (LEVEL_HIT_DIE[getCharacterStat(sheet,'PERSONAJE','Clase')] || 8);
     setCharacterStat(sheet,'COMBATE','Dados de golpe',Math.max(0,count+delta)+'d'+die);
-    sheet={...sheet}; saveSheetMutation();
+    sheet={...sheet}; recordProgressionChange('Dados de golpe · '+(delta>0?'+':'')+delta,before);
   }
   function featureSourceGroups(target: RawSheet) {
     const className = sheetClassName(target);
@@ -3152,17 +3230,19 @@ import ITEMS from './items.json';
   }
   function setProgressionResourceText(key:string,value:string) {
     if(!sheet||!value) return;
+    const before=captureProgressionSections();
     const overrides=progressionManualResources(sheet);
     overrides[key]=value;
     setCharacterStat(sheet,'PROGRESIÓN','Recursos manuales',JSON.stringify(overrides));
-    sheet={...sheet}; saveSheetMutation();
+    sheet={...sheet}; recordProgressionChange(key+' · '+value,before);
   }
   function adjustProgressionResource(key:string,delta:number,base:any=0) {
     if(!sheet) return;
+    const before=captureProgressionSections();
     const overrides=progressionManualResources(sheet);
     overrides[key]=Math.max(0,progressionResourceValue(sheet,key,base)+delta);
     setCharacterStat(sheet,'PROGRESIÓN','Recursos manuales',JSON.stringify(overrides));
-    sheet={...sheet}; saveSheetMutation();
+    sheet={...sheet}; recordProgressionChange(key+' · '+(delta>0?'+':'')+delta,before);
   }
   function adjustProgressionSpellSlot(level:string,delta:number) {
     if(!sheet) return;
@@ -3174,25 +3254,28 @@ import ITEMS from './items.json';
   }
   function addManualProgressionChoice(section:string,field:string,value:string) {
     if(!sheet||!value) return;
+    const before=captureProgressionSections();
     const current=manualProgressionList(sheet,section,field);
     if(!current.some(item=>normalizeLevelText(item)===normalizeLevelText(value))) current.push(value);
     setCharacterStat(sheet,section,field,current.join('; '));
-    sheet={...sheet}; saveSheetMutation();
+    sheet={...sheet}; recordProgressionChange('Añadido: '+value,before);
   }
   function removeManualProgressionChoice(section:string,field:string,value:string) {
     if(!sheet) return;
+    const before=captureProgressionSections();
     const current=manualProgressionList(sheet,section,field).filter(item=>normalizeLevelText(item)!==normalizeLevelText(value));
     setCharacterStat(sheet,section,field,current.join('; '));
-    sheet={...sheet}; saveSheetMutation();
+    sheet={...sheet}; recordProgressionChange('Quitado: '+value,before);
   }
   function manualProgressionSubclassOptions(target:RawSheet|null):string[] {
     return target ? getSubclassOptions(sheetClassName(target)) : [];
   }
   function setManualProgressionSubclass(value:string) {
     if(!sheet||!value) return;
+    const before=captureProgressionSections();
     setCharacterStat(sheet,'PERSONAJE','Subclase',value);
     progressionSubclassChoice=value;
-    sheet={...sheet}; saveSheetMutation();
+    sheet={...sheet}; recordProgressionChange('Subclase: '+formatSubclassName(value),before);
   }
   function manualProgressionTraitOptions(target:RawSheet|null):string[] {
     if(!target) return [];
@@ -4300,7 +4383,7 @@ import ITEMS from './items.json';
     if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
     if (/uso[s]? limitado|limited use|recurso|recarga|cargas|charges/.test(n)) return 'Rasgos y características';
     if (/habilidad|skill|percepcion|investigacion|intuicion|acroba|sigilo|supervivencia/.test(n)) return 'Skills';
-    if (/inventario|equipo|objeto|inventory|equipment/.test(n)) return 'Inventario';
+    if (/inventario|equipo|objeto|inventory|equipment|economia|monedas|riqueza/.test(n)) return 'Inventario';
     if (/velocidad|speed|defensa|defenses|resistencia|inmunidad|vulnerabilidad|puntos de golpe|hit points|armadura|armor class|clase de armadura/.test(n)) return 'Velocidad y defensas';
     if (/rasgo|dote|caracteristica de clase|racial|especie|feature|trait/.test(n)) return 'Rasgos y características';
     if (/competencia|entrenamiento|proficien|idioma|herramienta|tool|weapon training|armor training/.test(n)) return 'Rasgos y competencias';
