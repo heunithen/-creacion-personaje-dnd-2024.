@@ -2083,6 +2083,11 @@
         throw new Error('La ficha se generó sin secciones. Revisa las elecciones y vuelve a intentarlo.');
       }
       builderPreview = generated;
+      // Use the same nautical sheet renderer as the example and saved characters.
+      sheet = generated;
+      playerCreating = false;
+      demoPreview = false;
+      activeTab = 'Datos';
       builderStep = 12;
       keepBuilderAtTop();
     } catch (error) {
@@ -3743,8 +3748,10 @@ import ITEMS from './items.json';
     if (obrRole !== 'PLAYER') return;
     const metadata: any = await OBR.player.getMetadata();
     const payload = metadata?.[KEY];
-    if (payload?.deleted) {
-      sheet = null;
+
+    // A local character can be newer than an old deletion marker (for example,
+    // when it was created while Owlbear was temporarily unavailable).
+    if (payload?.deleted && !sheet) {
       localStorage.removeItem('forja-raw-character');
       return;
     }
@@ -3752,6 +3759,33 @@ import ITEMS from './items.json';
       sheet = repairGenericStatLabels(payload.character as RawSheet) as RawSheet;
       localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
       await saveOwnCharacterToGithub(sheet);
+      return;
+    }
+    if (sheet) {
+      // Keep the browser copy and replace a stale/empty Owlbear metadata value.
+      syncPending = true;
+      await flushAutoSync();
+      return;
+    }
+
+    // Last recovery source: the player's own record in the configured GitHub store.
+    if (githubStore) {
+      try {
+        const id = await OBR.player.getId();
+        const index = await githubStore.readIndex();
+        const record = index.characters.find(item => item.playerId === id);
+        if (record) {
+          const saved = await githubStore.load(record);
+          if (saved?.character && Array.isArray(saved.character.sections)) {
+            sheet = repairGenericStatLabels(saved.character as RawSheet) as RawSheet;
+            localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+            syncPending = true;
+            await flushAutoSync();
+          }
+        }
+      } catch (error) {
+        cloudStatus = 'No se pudo recuperar la ficha desde GitHub: ' + (error instanceof Error ? error.message : String(error));
+      }
     }
   }
 
@@ -4704,6 +4738,10 @@ import ITEMS from './items.json';
             <p class="muted"><strong>Vista de ejemplo.</strong> Este personaje es ficticio y no se guarda ni modifica tu ficha.</p>
             <button class="secondary" on:click={closeDemoPreview}>Volver al inicio</button>
             <button class="primary" on:click={startBuilder}>Crear mi personaje</button>
+          {:else if builderPreview}
+            <button class="primary" type="button" disabled={builderSaving} on:click={saveBuilderCharacter}>{builderSaving ? 'Guardando…' : 'Guardar personaje'}</button>
+            <button class="secondary" type="button" on:click={() => { sheet = null; builderPreview = null; builderStep = 11; playerCreating = true; }}>Volver a editar</button>
+            <button class="secondary" type="button" on:click={startBuilder}>Descartar y crear otro</button>
           {:else}
             <button class="secondary" on:click={startBuilder}>Crear personaje nuevo</button>
           {/if}
