@@ -307,9 +307,11 @@ try {
     app.includes('Falta completar lo siguiente para avanzar:') &&
     app.includes('builderStep = 12') &&
     app.includes('Etapa ' ) && app.includes('de 12') &&
-    app.includes('builderPreviewTab') &&
-    app.includes('visiblePairs(builderPreview.sections || [], builderPreviewTab)'),
-    'La creación valida las doce etapas, explica las elecciones incompletas y muestra la ficha final organizada en pestañas.');
+    app.includes("localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave))") &&
+    app.includes('sheet = characterToSave') &&
+    app.includes('playerCreating = false') &&
+    app.includes('Guardar cambios y abrir ficha'),
+    'La creación valida las doce etapas y, desde el resumen, guarda localmente y abre directamente la ficha final.');
 
   report('builder-equipment-options-explicit',
     app.includes('<b>A — Equipo inicial:</b>') &&
