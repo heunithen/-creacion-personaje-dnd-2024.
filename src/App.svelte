@@ -3902,7 +3902,7 @@ import ITEMS from './items.json';
 <svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
 <div class="app-shell">
   <header class="topbar">
-    <a class="brand" href="#inicio"><span class="brand-mark">✦</span><span><strong>FORJA DE AVENTUREROS</strong><small>D&D · 2024</small></span></a>
+    <a class="brand" href="#inicio"><img class="brand-icon" src="/-creacion-personaje-dnd-2024./icono.webp" alt="" /><span><strong>FORJA DE AVENTUREROS</strong><small>D&D · 2024</small></span></a>
     {#if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{playerName || 'Jugador'}</span></nav>{/if}
   </header>
 
