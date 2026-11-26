@@ -2179,7 +2179,12 @@ import ITEMS from './items.json';
 
 
   type Combatant = { id:string; monster:any; name:string; ac:number; hp:number; maxHp:number; tempHp:number; initiative:number; damageInput:number; compact:boolean; dead:boolean; acMod:number };
+  const COMBATANTS_STORAGE_KEY = 'forja-combatants-v1';
   let combatants: Combatant[] = [];
+  let combatantsStorageReady = false;
+  $: if (combatantsStorageReady) {
+    try { localStorage.setItem(COMBATANTS_STORAGE_KEY, JSON.stringify(combatants)); } catch (error) { console.warn('No se pudo guardar el combate', error); }
+  }
   let combatRollMode: 'normal'|'advantage'|'disadvantage' = 'normal';
   let combatSort = true;
   function monsterNumber(monster:any,label:string): number {
@@ -3888,6 +3893,14 @@ import ITEMS from './items.json';
   }
 
   onMount(() => {
+    try {
+      const savedCombatants = localStorage.getItem(COMBATANTS_STORAGE_KEY);
+      if (savedCombatants) {
+        const parsedCombatants = JSON.parse(savedCombatants);
+        if (Array.isArray(parsedCombatants)) combatants = parsedCombatants;
+      }
+    } catch { localStorage.removeItem(COMBATANTS_STORAGE_KEY); }
+    combatantsStorageReady = true;
     try { const savedVisualStyle=localStorage.getItem('forja-visual-style'); if(savedVisualStyle) visualStyle={...visualStyle,...JSON.parse(savedVisualStyle)}; applyVisualStyle(); } catch { applyVisualStyle(); }
     try {
       const params = new URLSearchParams(window.location.search);
@@ -7288,7 +7301,9 @@ import ITEMS from './items.json';
   .combat-toolbar label,.combat-initiative label{display:flex;gap:8px;align-items:center;font-size:12px}
   .combat-toolbar select,.combatant-card input{min-width:0;background:#0b171d;color:#fff;border:1px solid #3fb8b8;border-radius:5px;padding:6px}
   .combat-sort input{width:auto}
-  .combat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:10px}
+  .combat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start}
+  @media(max-width:1050px){.combat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:650px){.combat-grid{grid-template-columns:minmax(0,1fr)}}
   .combatant-card{position:relative;min-width:0;padding:12px;border:1px solid #3fb8b8;border-radius:9px;background:#0b171d;color:#fff}
   .combatant-card.combat-dead{opacity:.58;filter:grayscale(.65)}
   .combatant-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
