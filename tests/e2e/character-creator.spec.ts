@@ -64,7 +64,7 @@ test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a 
     .locator('.builder-choice-wrapper')
     .filter({ hasText: 'Opciones de la dote adicional humana' })
     .locator('input[type="checkbox"]');
-  await expect(humanFeatChoices).toHaveCountGreaterThan(2);
+  expect(await humanFeatChoices.count()).toBeGreaterThan(2);
   await humanFeatChoices.nth(0).check();
   await humanFeatChoices.nth(1).check();
   await humanFeatChoices.nth(2).check();
