@@ -786,6 +786,11 @@
   let levelUpWizardSignatureSpells = '';
   let levelUpSubclassSkill = '';
   let levelUpSubclassSkills = '';
+  let levelUpCollegeKnowledgeSkill1 = '';
+  let levelUpCollegeKnowledgeSkill2 = '';
+  let levelUpCollegeKnowledgeSkill3 = '';
+  let levelUpBardDiscovery1 = '';
+  let levelUpBardDiscovery2 = '';
   let levelUpSubclassTool = '';
   let levelUpManeuvers = '';
   let levelUpWizardSchoolSpells = '';
@@ -2787,6 +2792,16 @@ import ITEMS from './items.json';
     };
     return options[key] || [];
   }
+  function getCollegeKnowledgeSkillOptions(target:RawSheet, selected:string[]=[]):string[] {
+    const existing=splitChoiceList(getCharacterStat(target,'COMPETENCIAS','Skills')).map(normalizeLevelText);
+    const chosen=selected.filter(Boolean).map(normalizeLevelText);
+    return BUILDER_SKILL_OPTIONS.filter(skill=>!existing.includes(normalizeLevelText(skill)) && !chosen.includes(normalizeLevelText(skill)));
+  }
+  function getBardMagicDiscoveryOptions(targetLevel:number):string[] {
+    const row=(LEVEL_PROGRESSION as any).classes?.Bardo?.rows?.find((item:any)=>Number(item.level)===targetLevel);
+    const maxLevel=row?highestSpellLevel(row.resources||{}):0;
+    return (SPELLS as any[]).filter(spell=>(spell.level===0 || (spell.level>0 && spell.level<=maxLevel)) && Array.isArray(spell.classes) && spell.classes.some((name:string)=>['clerigo','druida','mago'].includes(normalizeLevelText(name)))).map(spell=>spell.name).sort((a,b)=>a.localeCompare(b,'es'));
+  }
   function getBarbarianFeatSkillOptions(feat:string):string[] {
     const key=normalizeLevelText(feat);
     if(key==='mente aguda') return ['Conocimiento arcano','Historia','Investigación','Naturaleza','Religión'];
@@ -3285,7 +3300,10 @@ import ITEMS from './items.json';
     levelUpWizardMastery1=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 1') || '';
     levelUpWizardMastery2=getCharacterStat(entry.sheet,'CONJUROS','Maestría sobre conjuros nivel 2') || '';
     levelUpWizardSignatureSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros característicos') || '';
-    levelUpSubclassSkill=''; levelUpSubclassSkills=''; levelUpSubclassTool=''; levelUpManeuvers=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Maniobras de maestro del combate') || '';
+    levelUpSubclassSkill=''; levelUpSubclassSkills=''; levelUpSubclassTool='';
+    levelUpCollegeKnowledgeSkill1=''; levelUpCollegeKnowledgeSkill2=''; levelUpCollegeKnowledgeSkill3='';
+    const bardDiscoveryList=splitChoiceList(getCharacterStat(entry.sheet,'CONJUROS','Conjuros de descubrimientos mágicos'));
+    levelUpBardDiscovery1=bardDiscoveryList[0]||''; levelUpBardDiscovery2=bardDiscoveryList[1]||''; levelUpManeuvers=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Maniobras de maestro del combate') || '';
     levelUpWizardSchoolSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros de escuela') || '';
     levelUpWizardIllusionCantrip='';
     const savedSubclass=getCharacterStat(entry.sheet,'PERSONAJE','Subclase');
