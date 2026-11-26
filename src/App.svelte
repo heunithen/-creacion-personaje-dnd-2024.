@@ -782,6 +782,7 @@
   let levelUpMetamagic = '';
   let levelUpInvocations = '';
   let levelUpInvocationSlots: string[] = [];
+  let levelUpMysticArcanum = '';
   let levelUpMysticArcanum1 = '';
   let levelUpMysticArcanum2 = '';
   let levelUpMysticArcanum3 = '';
