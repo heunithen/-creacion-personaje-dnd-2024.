@@ -224,7 +224,8 @@ async function reachClassSkillsStep(page: Page, className: string) {
   await expect(page.getByRole('heading', { name: '07. Competencias' })).toBeVisible();
 }
 
-test('Mago: valida competencias, equipo, libro de conjuros, preparación, idiomas y revisión', async ({ page }) => {\n  test.setTimeout(120000);
+test('Mago: valida competencias, equipo, libro de conjuros, preparación, idiomas y revisión', async ({ page }) => {
+  test.setTimeout(120000);
   const pageErrors: string[] = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   await reachClassSkillsStep(page, 'Mago');
@@ -278,7 +279,8 @@ test('Mago: valida competencias, equipo, libro de conjuros, preparación, idioma
   await expect(pageErrors).toEqual([]);
 });
 
-test('Pícaro: exige cuatro habilidades, dos pericias, dos maestrías y un idioma adicional', async ({ page }) => {\n  test.setTimeout(120000);
+test('Pícaro: exige cuatro habilidades, dos pericias, dos maestrías y un idioma adicional', async ({ page }) => {
+  test.setTimeout(120000);
   await reachClassSkillsStep(page, 'Pícaro');
 
   const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 4 habilidades' }).locator('input[type="checkbox"]');
