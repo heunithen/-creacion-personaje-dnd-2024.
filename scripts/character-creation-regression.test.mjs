@@ -163,6 +163,18 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
   assert.equal(tested,1920);
 });
 
+test('la ficha del jugador incorpora Tiendita y retrato al inicio y al final', () => {
+  const tabsMatch = /const\s+playerSheetTabs\s*=\s*\[([^\]]+)\]/.exec(app);
+  assert.ok(tabsMatch, 'No se encontró la lista de pestañas de la ficha');
+  assert.match(tabsMatch[1], /'Tiendita'/);
+  assert.match(app, /playerSheetTab === 'Tiendita'/);
+  assert.match(app, /class="player-portrait-footer"/);
+  assert.match(app, /sheetPortraitPickerOpen=true/);
+  assert.match(app, /applySheetPortrait\(path:string\)/);
+  assert.match(app, /localStorage\.setItem\('forja-raw-character', JSON\.stringify\(sheet\)\)/);
+  assert.match(app, /class="sheet-portrait-choose"/);
+});
+
 test('el compendio de conjuros solo está disponible en la pantalla del director', () => {
   const tabsMatch = /const\s+playerSheetTabs\s*=\s*\[([^\]]+)\]/.exec(app);
   assert.ok(tabsMatch, 'No se encontró la lista de pestañas de la ficha');
