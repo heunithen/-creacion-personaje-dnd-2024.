@@ -3044,8 +3044,11 @@ import ITEMS from './items.json';
     const raw=getCharacterStat(sheet,sectionName,statName);
     const match=String(raw).replace(/,/g,'.').match(/-?\d+(?:\.\d+)?/);
     const current=match ? Number(match[0]) : fallback;
-    const next=allowNegative ? current+delta : Math.max(0,current+delta);
+    const next=sectionName==='PERSONAJE' && statName==='Nivel'
+      ? Math.min(20,Math.max(1,current+delta))
+      : (allowNegative ? current+delta : Math.max(0,current+delta));
     setCharacterStat(sheet,sectionName,statName,suffix ? next+suffix : String(next));
+    if(sectionName==='PERSONAJE' && statName==='Nivel') setCharacterStat(sheet,'PROGRESIÓN','Nivel de clase',next);
     sheet={...sheet}; saveSheetMutation();
   }
   function adjustProgressionHitDice(delta:number) {
