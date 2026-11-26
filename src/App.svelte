@@ -4613,7 +4613,7 @@ import ITEMS from './items.json';
                   <div class="builder-review-derived">
                     <div><span>Puntos de golpe</span><strong>{BUILDER_HIT_DIE[builderData.className] + builderModifier(builderAdjustedAbilities().Constitución)} <small>PG</small></strong></div>
                     <div><span>Clase de armadura</span><strong>{builderStartingAC()}</strong></div>
-             <div><span>Iniciativa</span>{#if skillBonusNumber(sheetValueByNames(sheet, ['Iniciativa'])) !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Iniciativa'])) ?? 0)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Iniciativa'])) ?? 0), 'Iniciativa')}>{signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Iniciativa'])) ?? 0)}</button>{:else}<strong>—</strong>{/if}</div>
+             <div><span>Iniciativa</span>{#if skillBonusNumber(sheetValueByNames(sheet!, ['Iniciativa'])) !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(skillBonusNumber(sheetValueByNames(sheet!, ['Iniciativa'])) ?? 0)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(skillBonusNumber(sheetValueByNames(sheet!, ['Iniciativa'])) ?? 0), 'Iniciativa')}>{signedBonus(skillBonusNumber(sheetValueByNames(sheet!, ['Iniciativa'])) ?? 0)}</button>{:else}<strong>—</strong>{/if}</div>
                     <div><span>Dado de golpe</span><strong>d{BUILDER_HIT_DIE[builderData.className]}</strong></div>
                   </div>
                 </section>
@@ -4834,7 +4834,7 @@ import ITEMS from './items.json';
                     <div class="spellcasting-summary-grid">
                       <div><span>Aptitud mágica</span><strong>{sheetValueByNames(sheet, ['Aptitud mágica']) || '—'}</strong></div>
                       <div><span>CD de salvación</span><strong>{sheetValueByNames(sheet, ['CD de salvación']) || '—'}</strong></div>
-                       <div><span>Ataque de conjuro</span>{#if skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro'])) !== null}<button type="button" class="inline-roll proficient" title="Tirar 1d20{signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro'])) ?? 0)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro'])) ?? 0), 'Ataque de conjuro')}>{signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro'])) ?? 0)}</button>{:else}<strong>—</strong>{/if}</div>
+                       <div><span>Ataque de conjuro</span>{#if skillBonusNumber(sheetValueByNames(sheet!, ['Ataque de conjuro'])) !== null}<button type="button" class="inline-roll proficient" title="Tirar 1d20{signedBonus(skillBonusNumber(sheetValueByNames(sheet!, ['Ataque de conjuro'])) ?? 0)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(skillBonusNumber(sheetValueByNames(sheet!, ['Ataque de conjuro'])) ?? 0), 'Ataque de conjuro')}>{signedBonus(skillBonusNumber(sheetValueByNames(sheet!, ['Ataque de conjuro'])) ?? 0)}</button>{:else}<strong>—</strong>{/if}</div>
                       <div class="spell-slot-summary"><span>Espacios de conjuros</span>
                         <strong>{#if Object.values(sheetSpellSlots).some(value => Number(value) > 0)}
                           {#each Object.entries(sheetSpellSlots).filter(([level,value]) => Number(value) > 0) as [level,maximum]}
