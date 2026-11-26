@@ -4379,6 +4379,7 @@ import ITEMS from './items.json';
                         {/each}
                       </section>
                     {/each}
+                  {/each}
                   <small class="monster-source">Manual de Monstruos 2024 · PDF p. {monster.pdfPage ?? '—'} · Página impresa {monster.printedPage ?? '—'}</small>
                 </div>
               </details>
