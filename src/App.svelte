@@ -843,6 +843,7 @@
   let progressionWeaponChoice = '';
   let progressionLanguageChoice = '';
   let progressionTraitChoice = '';
+  let progressionSubclassChoice = '';
   let progressionBardDieChoice = '';
   let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
   function rollChestLoot() {
@@ -3173,6 +3174,12 @@ import ITEMS from './items.json';
     const current=manualProgressionList(sheet,section,field).filter(item=>normalizeLevelText(item)!==normalizeLevelText(value));
     setCharacterStat(sheet,section,field,current.join('; '));
     sheet={...sheet}; saveSheetMutation();
+  }
+  function setManualProgressionSubclass(value:string) {
+    if(!sheet||!value) return;
+    setCharacterStat(sheet,'PERSONAJE','Subclase',value);
+    sheet={...sheet}; saveSheetMutation();
+    progressionSubclassChoice='';
   }
   function manualProgressionTraitOptions(target:RawSheet):string[] {
     const className=sheetClassName(target);
@@ -6105,6 +6112,9 @@ import ITEMS from './items.json';
                   </section>
                   <section class="sheet-section progression-manual-panel">
                     <div class="sheet-section-title"><h3>Dotes y rasgos</h3></div>
+                    {#if getSubclassOptions(sheetClassName(sheet)).length}
+                      <div class="progression-manual-select-row"><label>Subclase<select bind:value={progressionSubclassChoice}><option value="">Seleccionar subclase</option>{#each getSubclassOptions(sheetClassName(sheet)) as option}<option value={option}>{formatSubclassName(option)}</option>{/each}</select></label><button type="button" disabled={!progressionSubclassChoice} on:click={()=>setManualProgressionSubclass(progressionSubclassChoice)}>Aplicar</button></div>
+                    {/if}
                     <div class="progression-manual-select-row"><label>Dote<select bind:value={progressionFeatChoice}><option value="">Seleccionar dote</option>{#each [...new Set([...BUILDER_FEATS,...BARBARIAN_GENERAL_FEATS,...BUILDER_EPIC_FEATS])] as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionFeatChoice} on:click={()=>{addManualProgressionChoice('RASGOS Y DOTES','Dotes adicionales',progressionFeatChoice);progressionFeatChoice='';}}>Añadir</button></div>
                     <div class="progression-manual-select-row"><label>Rasgo de clase o subclase<select bind:value={progressionTraitChoice}><option value="">Seleccionar rasgo</option>{#each manualProgressionTraitOptions(sheet) as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionTraitChoice} on:click={()=>{addManualProgressionChoice('RASGOS Y DOTES','Rasgos adicionales',progressionTraitChoice);progressionTraitChoice='';}}>Añadir</button></div>
                     {#each [{label:'Dotes',field:'Dotes adicionales'},{label:'Rasgos',field:'Rasgos adicionales'}] as group}
