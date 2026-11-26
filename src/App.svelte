@@ -2242,7 +2242,9 @@
     if(armorFormula) {
       const dexMod=Math.floor((scores.Destreza-10)/2),conMod=Math.floor((scores.Constitución-10)/2),wisMod=Math.floor((scores.Sabiduría-10)/2),chaMod=Math.floor((scores.Carisma-10)/2);
       let ac:number|null=null;
-      if(armorFormula.startsWith('10 + DES + CON')) ac=10+dexMod+conMod;
+      const shopArmorMatch=armorFormula.match(/^SHOP_ARMOR:(\\d+):(-?\\d+):(\\d+)$/);
+      if(shopArmorMatch) ac=Number(shopArmorMatch[1])+(Number(shopArmorMatch[2])<0?0:Math.min(Number(shopArmorMatch[2]),dexMod))+Number(shopArmorMatch[3]);
+      else if(armorFormula.startsWith('10 + DES + CON')) ac=10+dexMod+conMod;
       else if(armorFormula.startsWith('10 + DES + CAR')) ac=10+dexMod+chaMod;
       else if(armorFormula.startsWith('10 + DES + SAB')) ac=10+dexMod+wisMod;
       else if(armorFormula.startsWith('13 + DES (máx. +2)')) ac=13+Math.min(2,dexMod)+2;
@@ -2545,6 +2547,8 @@
   import RULES from './rules.json';
 import SPELLS from './spells.json';
 import ITEMS from './items.json';
+  import SHOP_CATALOG from './shopItems.json';
+  import { currencyToCopper, copperToCurrency, parsePriceToCopper, parseInventoryLine, formatInventoryLine } from './shopRules.mjs';
 
 
   type Combatant = { id:string; monster:any; name:string; ac:number; hp:number; maxHp:number; tempHp:number; initiative:number; damageInput:number; compact:boolean; dead:boolean; acMod:number; participating:boolean };
@@ -3414,6 +3418,221 @@ import ITEMS from './items.json';
     return Array.isArray((sheet as any)?.progressionChangeLog)?(sheet as any).progressionChangeLog.slice().reverse():[];
   }
   const PROGRESSION_CURRENCIES=[{key:'PC',label:'Cobre'},{key:'PP',label:'Plata'},{key:'PE',label:'Electro'},{key:'PO',label:'Oro'},{key:'PPt',label:'Platino'}];
+
+  let shopMode: 'Comprar' | 'Vender' = 'Comprar';
+  let shopSearch = '';
+  let shopCategory = 'Todos';
+  let shopQuantities: Record<string, number> = {};
+  let shopNotice = '';
+  let shopFilteredItems: any[] = [];
+  let shopOwnedItems: any[] = [];
+  let shopCategories: string[] = [];
+  $: shopCategories = ['Todos', ...Array.from(new Set((SHOP_CATALOG as any[]).map((item:any) => String(item.type || 'Otros')))).sort((a,b)=>a.localeCompare(b,'es'))];
+  $: shopFilteredItems = (SHOP_CATALOG as any[]).filter((item:any) => {
+    const query = normalizeLevelText(shopSearch);
+    const matchesQuery = !query || normalizeLevelText(item.name + ' ' + item.type + ' ' + (item.rarity || '')).includes(query);
+    return matchesQuery && (shopCategory === 'Todos' || item.type === shopCategory);
+  });
+  $: shopOwnedItems = sheet ? getShopOwnedItems(sheet) : [];
+
+  function shopCurrencyCopper(): number {
+    return currencyToCopper({ PC: progressionCurrencyValue('PC'), PP: progressionCurrencyValue('PP'), PE: progressionCurrencyValue('PE'), PO: progressionCurrencyValue('PO'), PPt: progressionCurrencyValue('PPt') });
+  }
+  function shopFormatCopper(value:number): string {
+    return (Math.max(0,value)/100).toLocaleString('es-CL',{minimumFractionDigits:value%100?2:0,maximumFractionDigits:2}) + ' po';
+  }
+  function shopSetCurrencyCopper(value:number) {
+    if (!sheet) return;
+    const coins = copperToCurrency(value);
+    for (const key of ['PC','PP','PE','PO','PPt']) setCharacterStat(sheet,'ECONOMÍA',key,String(coins[key] || 0));
+  }
+  function shopCustomPrice(name:string): string {
+    return String((sheet as any)?.shopCustomPrices?.[name] ?? '');
+  }
+  function setShopCustomPrice(name:string,event:Event) {
+    if (!sheet) return;
+    const value = (event.currentTarget as HTMLInputElement).value;
+    const prices = { ...((sheet as any).shopCustomPrices || {}) };
+    if (value.trim() === '') delete prices[name];
+    else prices[name] = value;
+    (sheet as any).shopCustomPrices = prices;
+    sheet = { ...sheet };
+    scheduleAutoSync();
+  }
+  function shopItemPriceCopper(item:any): number | null {
+    const custom = shopCustomPrice(item.name);
+    if (custom.trim() !== '') {
+      const amount = Number(custom.replace(',','.'));
+      return Number.isFinite(amount) && amount >= 0 ? Math.round(amount * 100) : null;
+    }
+    return typeof item.priceCopper === 'number' ? item.priceCopper : null;
+  }
+  function shopPriceLabel(item:any): string {
+    const custom = shopCustomPrice(item.name);
+    if (custom.trim() !== '') {
+      const value = shopItemPriceCopper(item);
+      return value === null ? 'Precio no válido' : shopFormatCopper(value);
+    }
+    if (item.rarity === 'Artefacto') return 'Incalculable';
+    return item.priceLabel || 'A convenir';
+  }
+  function shopInventoryFields() { return ['Equipo de clase','Equipo de trasfondo','Equipo adicional']; }
+  function getShopOwnedItems(target:RawSheet) {
+    const totals = new Map<string,any>();
+    for (const field of shopInventoryFields()) {
+      const lines = String(getCharacterStat(target,'INVENTARIO',field) || '').split(/\\n/);
+      for (const line of lines) {
+        const parsed = parseInventoryLine(line);
+        if (!parsed) continue;
+        const key = normalizeLevelText(parsed.name);
+        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || {name:parsed.name,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'A convenir',armorBase:null,armorMaxDex:null};
+        const current = totals.get(key) || {name:parsed.name,item,quantity:0};
+        current.quantity += parsed.quantity;
+        totals.set(key,current);
+      }
+    }
+    return [...totals.values()].sort((a,b)=>a.name.localeCompare(b.name,'es'));
+  }
+  function shopOwnedQuantity(name:string): number {
+    return sheet ? (getShopOwnedItems(sheet).find((entry:any)=>normalizeLevelText(entry.name)===normalizeLevelText(name))?.quantity || 0) : 0;
+  }
+  function shopAddInventoryItem(item:any,quantity:number) {
+    if (!sheet) return;
+    const lines = String(getCharacterStat(sheet,'INVENTARIO','Equipo adicional') || '').split(/\\n/).map(value=>value.trim()).filter(Boolean);
+    const key = normalizeLevelText(item.name);
+    const index = lines.findIndex(line=>normalizeLevelText(parseInventoryLine(line)?.name)===key);
+    if (index >= 0) {
+      const parsed = parseInventoryLine(lines[index]);
+      lines[index] = formatInventoryLine(item.name,(parsed?.quantity || 1)+quantity);
+    } else lines.push(formatInventoryLine(item.name,quantity));
+    setCharacterStat(sheet,'INVENTARIO','Equipo adicional',lines.join('\\n'));
+  }
+  function shopRemoveInventoryItem(name:string,quantity:number): boolean {
+    if (!sheet || quantity < 1) return false;
+    let remaining = quantity;
+    for (const field of shopInventoryFields()) {
+      const lines = String(getCharacterStat(sheet,'INVENTARIO',field) || '').split(/\\n/).map(value=>value.trim()).filter(Boolean);
+      let changed = false;
+      for (let i=lines.length-1;i>=0 && remaining>0;i--) {
+        const parsed = parseInventoryLine(lines[i]);
+        if (!parsed || normalizeLevelText(parsed.name)!==normalizeLevelText(name)) continue;
+        const take = Math.min(remaining,parsed.quantity);
+        const left = parsed.quantity-take;
+        if (left>0) lines[i]=formatInventoryLine(parsed.name,left);
+        else lines.splice(i,1);
+        remaining-=take;
+        changed=true;
+      }
+      if (changed) setCharacterStat(sheet,'INVENTARIO',field,lines.join('\\n'));
+      if (remaining===0) break;
+    }
+    return remaining===0;
+  }
+  function shopWeaponBase(name:string): string {
+    return name.replace(/\\s*\\+\\d+$/,'').trim();
+  }
+  function shopUpdateWeaponList(item:any,remove=false) {
+    if (!sheet || item.type!=='Arma') return;
+    const base=shopWeaponBase(item.name);
+    if (!WEAPON_PROFILES[base] && !WEAPON_PROFILES[item.name]) return;
+    const names=splitChoiceList(getCharacterStat(sheet,'ATAQUES','Armas incluidas en el equipo'));
+    const hasMore=shopOwnedQuantity(item.name)>0;
+    const exists=names.some(value=>normalizeLevelText(value)===normalizeLevelText(item.name));
+    if (!remove && !exists) names.push(item.name);
+    if (remove && !hasMore) {
+      const index=names.findIndex(value=>normalizeLevelText(value)===normalizeLevelText(item.name));
+      if(index>=0) names.splice(index,1);
+    }
+    setCharacterStat(sheet,'ATAQUES','Armas incluidas en el equipo',names.join(', '));
+    refreshDerivedCharacterSheet(sheet);
+  }
+  function shopApplyArmorClass(target:RawSheet) {
+    const armorName=getCharacterStat(target,'EQUIPO','Armadura equipada en tienda');
+    const shieldName=getCharacterStat(target,'EQUIPO','Escudo equipado en tienda');
+    if (!armorName && !shieldName) {
+      if(getCharacterStat(target,'EQUIPO','Estado CA previa a tienda')==='guardada') {
+        setCharacterStat(target,'COMBATE','Fórmula de clase de armadura',getCharacterStat(target,'EQUIPO','Fórmula CA previa a tienda'));
+        setCharacterStat(target,'COMBATE','Armor Class',getCharacterStat(target,'EQUIPO','CA previa a tienda'));
+        setCharacterStat(target,'EQUIPO','Estado CA previa a tienda','');
+        setCharacterStat(target,'EQUIPO','Fórmula CA previa a tienda','');
+        setCharacterStat(target,'EQUIPO','CA previa a tienda','');
+      }
+      return;
+    }
+    if(getCharacterStat(target,'EQUIPO','Estado CA previa a tienda')!=='guardada') {
+      setCharacterStat(target,'EQUIPO','Fórmula CA previa a tienda',getCharacterStat(target,'COMBATE','Fórmula de clase de armadura'));
+      setCharacterStat(target,'EQUIPO','CA previa a tienda',getCharacterStat(target,'COMBATE','Armor Class'));
+      setCharacterStat(target,'EQUIPO','Estado CA previa a tienda','guardada');
+    }
+    const armor=(SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===normalizeLevelText(armorName));
+    const base=armor && typeof armor.armorBase==='number' ? armor.armorBase : 10;
+    const maxDex=armor && typeof armor.armorMaxDex==='number' ? armor.armorMaxDex : 99;
+    const shieldBonus=shieldName ? 2 : 0;
+    setCharacterStat(target,'COMBATE','Fórmula de clase de armadura',`SHOP_ARMOR:${base}:${maxDex}:${shieldBonus}`);
+    refreshDerivedCharacterSheet(target);
+  }
+  function shopToggleEquip(item:any) {
+    if(!sheet || (item.type!=='Escudo' && typeof item.armorBase!=='number')) return;
+    if(shopOwnedQuantity(item.name)<1) { shopNotice='Debes tener el objeto en el inventario para equiparlo.'; return; }
+    const before=captureProgressionSections();
+    if(item.type==='Escudo') {
+      const current=getCharacterStat(sheet,'EQUIPO','Escudo equipado en tienda');
+      setCharacterStat(sheet,'EQUIPO','Escudo equipado en tienda',normalizeLevelText(current)===normalizeLevelText(item.name)?'':item.name);
+    } else {
+      const current=getCharacterStat(sheet,'EQUIPO','Armadura equipada en tienda');
+      setCharacterStat(sheet,'EQUIPO','Armadura equipada en tienda',normalizeLevelText(current)===normalizeLevelText(item.name)?'':item.name);
+    }
+    shopApplyArmorClass(sheet);
+    sheet={...sheet};
+    recordProgressionChange('Equipo: '+item.name,before);
+    shopNotice=(shopItemIsEquipped(item)?'Se actualizó el equipo.':'Se equipó '+item.name+'.');
+  }
+  function shopItemIsEquipped(item:any): boolean {
+    if(!sheet)return false;
+    return normalizeLevelText(getCharacterStat(sheet,'EQUIPO',item.type==='Escudo'?'Escudo equipado en tienda':'Armadura equipada en tienda'))===normalizeLevelText(item.name);
+  }
+  function shopBuyItem(item:any) {
+    if(!sheet)return;
+    const quantity=Math.max(1,Math.min(999,Number(shopQuantities[item.name])||1));
+    const price=shopItemPriceCopper(item);
+    if(price===null || price<0){shopNotice='Este objeto necesita un precio establecido por el director de juego.';return;}
+    const total=price*quantity, balance=shopCurrencyCopper();
+    if(balance<total){shopNotice='No tienes monedas suficientes para esta compra.';return;}
+    const before=captureProgressionSections();
+    shopSetCurrencyCopper(balance-total);
+    shopAddInventoryItem(item,quantity);
+    shopUpdateWeaponList(item,false);
+    sheet={...sheet};
+    recordProgressionChange('Compra: '+item.name+' ×'+quantity,before);
+    shopNotice='Compra realizada: '+item.name+' ×'+quantity+'.';
+  }
+  function shopSellItem(item:any,ownedQuantity:number) {
+    if(!sheet)return;
+    const quantity=Math.max(1,Math.min(ownedQuantity,Number(shopQuantities[item.name])||1));
+    if(quantity>ownedQuantity){shopNotice='No tienes esa cantidad en el inventario.';return;}
+    const price=shopItemPriceCopper(item);
+    if(price===null || price<0){shopNotice='El director de juego debe establecer un precio para este objeto antes de venderlo.';return;}
+    const payout=Math.floor(price*quantity*0.8);
+    const before=captureProgressionSections();
+    if(!shopRemoveInventoryItem(item.name,quantity)){shopNotice='No se encontró el objeto en el inventario.';return;}
+    if(shopItemIsEquipped(item)) {
+      setCharacterStat(sheet,'EQUIPO',item.type==='Escudo'?'Escudo equipado en tienda':'Armadura equipada en tienda','');
+      shopApplyArmorClass(sheet);
+    }
+    shopSetCurrencyCopper(shopCurrencyCopper()+payout);
+    shopUpdateWeaponList(item,true);
+    sheet={...sheet};
+    recordProgressionChange('Venta: '+item.name+' ×'+quantity,before);
+    shopNotice='Venta realizada: '+item.name+' ×'+quantity+'. Recibiste '+shopFormatCopper(payout)+'.';
+  }
+  function shopSalePriceLabel(item:any): string {
+    const price=shopItemPriceCopper(item);
+    return price===null ? 'A convenir' : shopFormatCopper(Math.floor(price*0.8))+' (80 %)';
+  }
+  function shopEquipLabel(item:any): string {
+    return shopItemIsEquipped(item) ? 'Desequipar' : 'Equipar';
+  }
+
   function progressionCurrencyValue(key:string):number {
     const stored=getCharacterStat(sheet as RawSheet,'ECONOMÍA',key);
     if(stored!=='') return Math.max(0,Number(stored)||0);
@@ -5013,7 +5232,7 @@ import ITEMS from './items.json';
     const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
     const profText = normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armas'));
     return [...new Set(names.split(/[,;\n]+/).map(name=>name.trim()).filter(name=>Boolean(name && WEAPON_PROFILES[name])))].map(name=>{
-      const profile = WEAPON_PROFILES[name];
+      const profile = WEAPON_PROFILES[name] || WEAPON_PROFILES[name.replace(/\\s*\\+\\d+$/,'')];
       if (!profile) return {name, attackBonus:null as number|null, damage:'—', damageType:'No disponible', range:'—'};
       const abilityMod = profile.ability==='finesse' ? Math.max(strengthMod,dexterityMod) : profile.ability==='dexterity' ? dexterityMod : strengthMod;
       const normalizedName = normalizeLevelText(name);
@@ -6441,7 +6660,55 @@ import ITEMS from './items.json';
           </div>
         </section>
                 {:else if playerSheetTab === 'Tiendita'}
-                  <section class="sheet-section player-shop-section"><div class="sheet-section-title"><h3>Tiendita</h3></div></section>
+                  <section class="sheet-section player-shop-section">
+                    <div class="shopkeeper-banner">
+                      <img src="/images/character-creation/portraits/po_hu_m_501_h.webp" alt="Comerciante de la tienda" />
+                      <div><h3>La Tiendita</h3><p>Compra equipo para tus aventuras o vende lo que ya no necesites. Los objetos mágicos siguen los valores de rareza de la Guía del Dungeon Master 2024.</p></div>
+                    </div>
+                    <div class="shop-balance">
+                      <div><span>Dinero disponible</span><strong>{shopFormatCopper(shopCurrencyCopper())}</strong></div>
+                      {#each PROGRESSION_CURRENCIES as currency}
+                        <div class="shop-coin"><small>{currency.label}</small><b>{progressionCurrencyValue(currency.key).toLocaleString('es-CL')}</b><small>{currency.key}</small></div>
+                      {/each}
+                    </div>
+                    <div class="shop-toolbar">
+                      <div class="shop-mode-switch"><button type="button" class:active={shopMode==='Comprar'} on:click={()=>shopMode='Comprar'}>Comprar</button><button type="button" class:active={shopMode==='Vender'} on:click={()=>shopMode='Vender'}>Vender</button></div>
+                      <input type="search" bind:value={shopSearch} placeholder="Buscar objeto..." aria-label="Buscar objeto en la tienda" />
+                      {#if shopMode==='Comprar'}<select bind:value={shopCategory} aria-label="Filtrar por categoría">{#each shopCategories as category}<option value={category}>{category}</option>{/each}</select>{/if}
+                    </div>
+                    {#if shopNotice}<p class="shop-notice" role="status">{shopNotice}</p>{/if}
+                    {#if shopMode==='Comprar'}
+                      <p class="shop-caption">{shopFilteredItems.length} objetos disponibles · Las rarezas y precios mágicos se basan en la Guía del Dungeon Master 2024. Los objetos con precio a convenir requieren una tarifa manual.</p>
+                      <div class="shop-item-grid">
+                        {#each shopFilteredItems as item (item.name)}
+                          <article class="shop-item-card">
+                            <div class="shop-item-title"><div><h4>{item.name}</h4><small>{item.type}</small></div>{#if item.rarity}<span class:shop-artifact={item.rarity==='Artefacto'} class="shop-rarity">{item.rarity}</span>{/if}</div>
+                            <div class="shop-item-price"><strong>{shopPriceLabel(item)}</strong>{#if item.source}<small>{item.source}</small>{/if}</div>
+                            {#if item.priceCopper===null || shopCustomPrice(item.name)!==''}
+                              <label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(item.name)} on:input={(event)=>setShopCustomPrice(item.name,event)} placeholder="Establecer precio" /></label>
+                            {/if}
+                            <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max="999" value={shopQuantities[item.name]||1} on:input={(event)=>shopQuantities[item.name]=Math.max(1,Number((event.currentTarget as HTMLInputElement).value)||1)} /></label><button type="button" disabled={shopItemPriceCopper(item)===null} on:click={()=>shopBuyItem(item)}>Comprar</button></div>
+                          </article>
+                        {/each}
+                        {#if !shopFilteredItems.length}<p class="muted">No se encontraron objetos.</p>{/if}
+                      </div>
+                    {:else}
+                      <p class="shop-caption">La tienda compra los objetos al 80 % de su precio de referencia. Los objetos sin precio requieren una tarifa manual.</p>
+                      <div class="shop-owned-list">
+                        {#each shopOwnedItems.filter((entry:any)=>!shopSearch || normalizeLevelText(entry.name).includes(normalizeLevelText(shopSearch))) as owned (owned.name)}
+                          <article class="shop-owned-card">
+                            <div class="shop-owned-info"><h4>{owned.name}</h4><small>{owned.item.type} · Cantidad: {owned.quantity}</small><strong>Venta: {shopSalePriceLabel(owned.item)}</strong></div>
+                            {#if shopItemPriceCopper(owned.item)===null || shopCustomPrice(owned.name)!==''}
+                              <label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(owned.name)} on:input={(event)=>setShopCustomPrice(owned.name,event)} placeholder="Establecer precio" /></label>
+                            {/if}
+                            <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max={owned.quantity} value={Math.min(owned.quantity,shopQuantities[owned.name]||1)} on:input={(event)=>shopQuantities[owned.name]=Math.max(1,Math.min(owned.quantity,Number((event.currentTarget as HTMLInputElement).value)||1))} /></label><button type="button" disabled={shopItemPriceCopper(owned.item)===null} on:click={()=>shopSellItem(owned.item,owned.quantity)}>Vender</button></div>
+                            {#if owned.item.type==='Escudo' || typeof owned.item.armorBase==='number'}<button type="button" class="shop-equip-button" on:click={()=>shopToggleEquip(owned.item)}>{shopEquipLabel(owned.item)}</button>{/if}
+                          </article>
+                        {/each}
+                        {#if !shopOwnedItems.length}<p class="muted">No tienes objetos reconocidos en el inventario.</p>{/if}
+                      </div>
+                    {/if}
+                  </section>
                 {:else if playerSheetTab === 'Subir nivel'}
                   {@const progression = getPlayerClassProgression(sheet)}
                   <section class="sheet-section class-progression-panel">

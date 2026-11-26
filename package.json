@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "audit:manual": "node scripts/audit-manual.mjs",
-    "test:builder": "node --test scripts/character-creation-regression.test.mjs",
+    "test:builder": "node --test scripts/character-creation-regression.test.mjs scripts/shop-regression.test.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
