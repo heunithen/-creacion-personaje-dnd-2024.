@@ -3683,6 +3683,12 @@ import ITEMS from './items.json';
       }
       if(normalizeLevelText(levelUpFeat)==='maestro de armas') setCharacterStat(updated,'ATAQUES','Maestría adicional por dote',levelUpBarbarianFeatWeaponMastery);
       if(normalizeLevelText(levelUpFeat)==='muy acorazado') setCharacterStat(updated,'COMPETENCIAS','Entrenamiento con armaduras adicionales','Armaduras pesadas');
+      if(['chef','envenenador'].includes(normalizeLevelText(levelUpFeat))) {
+        const oldTools=splitChoiceList(getCharacterStat(updated,'COMPETENCIAS','Herramientas'));
+        const newTool=normalizeLevelText(levelUpFeat)==='chef'?'Útiles de cocinero':'Útiles de envenenador';
+        if(!oldTools.some(tool=>normalizeLevelText(tool)===normalizeLevelText(newTool))) oldTools.push(newTool);
+        setCharacterStat(updated,'COMPETENCIAS','Herramientas',oldTools.join('; '));
+      }
       if(normalizeLevelText(levelUpFeat)==='telepatico') {
         mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de dotes',['Detectar pensamientos']);
         mergeBarbarianFeatField(updated,'CONJUROS','Aptitudes mágicas de dotes',['Telepático: '+levelUpGeneralFeatAbility]);
