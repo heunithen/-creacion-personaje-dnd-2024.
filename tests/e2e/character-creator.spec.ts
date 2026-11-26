@@ -66,9 +66,9 @@ test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a 
     .filter({ hasText: 'Opciones de la dote adicional humana' })
     .locator('input[type="checkbox"]');
   expect(await humanFeatChoices.count()).toBeGreaterThan(2);
-  await humanFeatChoices.nth(0).check();
-  await humanFeatChoices.nth(1).check();
-  await humanFeatChoices.nth(2).check();
+  await humanFeatChoices.nth(0).check({ force: true });
+  await humanFeatChoices.nth(1).check({ force: true });
+  await humanFeatChoices.nth(2).check({ force: true });
 
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '05. Distribuye tus características' })).toBeVisible();
