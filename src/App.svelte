@@ -5985,7 +5985,7 @@ import ITEMS from './items.json';
                   {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
                     <label>Dote general<select bind:value={levelUpFeat}><option value="">Elige una dote disponible</option>{#each getBarbarianGeneralFeatOptions(levelUpEntry.sheet) as feat}<option value={feat}>{feat}</option>{/each}</select></label>
                     {#if levelUpFeat}
-                      <label>Característica que aumenta +1<select bind:value={levelUpGeneralFeatAbility}><option value="">Elige una característica</option>{#each getBarbarianFeatAbilityOptions(levelUpFeat) as ability}<option value={ability}>{ability}</option>{/each}</select></label>
+                      <label>Característica que aumenta +1<select bind:value={levelUpGeneralFeatAbility}><option value="">Elige una característica</option>{#each (normalizeLevelText(levelUpFeat)==='resiliente'?getBarbarianResilientSaveOptions(levelUpEntry.sheet):getBarbarianFeatAbilityOptions(levelUpFeat)) as ability}<option value={ability}>{ability}</option>{/each}</select></label>
                       {#if ['mente aguda','observador'].includes(normalizeLevelText(levelUpFeat))}
                         <label>Habilidad de la dote<select bind:value={levelUpBarbarianFeatSkill}><option value="">Elige una habilidad</option>{#each getBarbarianFeatSkillOptions(levelUpFeat) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
                       {/if}
