@@ -2202,7 +2202,15 @@ import ITEMS from './items.json';
     const original=combatants.find(x=>x.id===id); if(!original)return;
     combatants=[...combatants,{...original,id:String(Date.now())+Math.random().toString(36).slice(2),name:original.name+' 2',hp:original.maxHp,tempHp:0,initiative:0,damageInput:0,dead:false}];
   }
-  function setCombatantField(id:string,field:'name'|'ac'|'hp'|'initiative'|'damageInput',event:Event) {\n    const value=(event.target as HTMLInputElement).value;\n    if(field==='name') updateCombatant(id,{name:value});\n    else if(field==='ac') updateCombatant(id,{acMod:Number(value)- (combatants.find(c=>c.id===id)?.ac||0)});\n    else if(field==='hp'){const c=combatants.find(x=>x.id===id);if(c){const hp=Math.min(c.maxHp,Math.max(0,Number(value)||0));updateCombatant(id,{hp,dead:hp===0});}}\n    else if(field==='initiative') updateCombatant(id,{initiative:Number(value)||0});\n    else updateCombatant(id,{damageInput:Number(value)||0});\n  }\n  function updateCombatant(id:string,patch:Partial<Combatant>) {
+  function setCombatantField(id:string,field:'name'|'ac'|'hp'|'initiative'|'damageInput',event:Event) {
+    const value=(event.target as HTMLInputElement).value;
+    if(field==='name') updateCombatant(id,{name:value});
+    else if(field==='ac') updateCombatant(id,{acMod:Number(value)- (combatants.find(c=>c.id===id)?.ac||0)});
+    else if(field==='hp'){const c=combatants.find(x=>x.id===id);if(c){const hp=Math.min(c.maxHp,Math.max(0,Number(value)||0));updateCombatant(id,{hp,dead:hp===0});}}
+    else if(field==='initiative') updateCombatant(id,{initiative:Number(value)||0});
+    else updateCombatant(id,{damageInput:Number(value)||0});
+  }
+  function updateCombatant(id:string,patch:Partial<Combatant>) {
     combatants=combatants.map(c=>c.id===id?{...c,...patch}:c);
   }
   function adjustCombatHp(id:string,amount:number) {
