@@ -3271,8 +3271,8 @@ import ITEMS from './items.json';
 
   function openLevelUp(entry: RoomEntry) {
     levelUpEntry = entry; levelUpDecision = '';
-    levelUpClassCantrips=getCharacterStat(entry.sheet,'CONJUROS','Trucos de clase') || '';
-    levelUpClassSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros preparados de clase') || '';
+    levelUpClassCantrips=getCharacterStat(entry.sheet,'CONJUROS','Trucos de clase') || (getCharacterStat(entry.sheet,'PERSONAJE','Clase')==='Bardo'?getCharacterStat(entry.sheet,'CONJUROS','Trucos'):'');
+    levelUpClassSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros preparados de clase') || (getCharacterStat(entry.sheet,'PERSONAJE','Clase')==='Bardo'?getCharacterStat(entry.sheet,'CONJUROS','Conjuros de nivel 1'):'');
     if(!levelUpClassSpells && getCharacterStat(entry.sheet,'PERSONAJE','Clase')==='Mago') levelUpClassSpells=(String(getCharacterStat(entry.sheet,'CONJUROS','Conjuros de nivel 1')).match(/Preparados:\s*([^.]*)/i)||[])[1]||'';
     levelUpWizardBookAdditions=''; levelUpExpertise=''; levelUpNewSkill=''; levelUpLanguages=''; levelUpWildShapeForms=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Formas salvajes conocidas') || '';
     levelUpWeaponMasteries=getCharacterStat(entry.sheet,'ATAQUES','Maestrías con armas') || '';
@@ -3368,8 +3368,8 @@ import ITEMS from './items.json';
     const classPreparedTarget=Number(classSpellResourcesForLevel['Conjuros preparados']);
     const classCantripNames=splitChoiceList(levelUpClassCantrips);
     const classSpellNames=splitChoiceList(levelUpClassSpells);
-    const oldClassCantripNames=splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos de clase'));
-    const oldClassSpellNames=splitChoiceList(getCharacterStat(original,'CONJUROS','Conjuros preparados de clase'));
+    const oldClassCantripNames=splitChoiceList(getCharacterStat(original,'CONJUROS','Trucos de clase') || (className==='Bardo'?getCharacterStat(original,'CONJUROS','Trucos'):''));
+    const oldClassSpellNames=splitChoiceList(getCharacterStat(original,'CONJUROS','Conjuros preparados de clase') || (className==='Bardo'?getCharacterStat(original,'CONJUROS','Conjuros de nivel 1'):''));
     const oldClassCantripCount=oldClassCantripNames.length || getCharacterNumber(original,'CONJUROS','Trucos máximos',0);
     const oldClassPreparedCount=getCharacterNumber(original,'CONJUROS','Conjuros preparados máximos',0);
     const maxClassSpellLevel=highestSpellLevel(classSpellResourcesForLevel);
@@ -3378,11 +3378,14 @@ import ITEMS from './items.json';
     const isClericCantripProgression=className==='Clérigo' && nextLevel>=2;
     const isDruidCantripProgression=className==='Druida' && nextLevel>=2;
     const isPaladinSpellProgression=className==='Paladín' && nextLevel>=2;
-    if(classCastingAbility && Number.isFinite(classCantripTarget) && (classCantripTarget>oldClassCantripCount || isWarlockSpellProgression || isClericCantripProgression || isDruidCantripProgression || isSorcererSpellProgression) && classCantripNames.length!==classCantripTarget) { notice='Debes registrar la lista completa de '+classCantripTarget+' trucos de clase.'; return; }
-    if(classCastingAbility && Number.isFinite(classPreparedTarget) && (classPreparedTarget>oldClassPreparedCount || isWarlockSpellProgression || isSorcererSpellProgression) && classSpellNames.length!==classPreparedTarget) { notice='Debes registrar la lista completa de '+classPreparedTarget+' conjuros de clase preparados/conocidos.'; return; }
-    if((isWarlockSpellProgression || isSorcererSpellProgression || isPaladinSpellProgression) && (new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length || new Set(classSpellNames.map(name=>normalizeLevelText(name))).size!==classSpellNames.length)) { notice='No puedes repetir trucos ni conjuros en tu lista de clase.'; return; }
+    const isBardSpellProgression=className==='Bardo';
+    if(classCastingAbility && Number.isFinite(classCantripTarget) && (classCantripTarget>oldClassCantripCount || isWarlockSpellProgression || isClericCantripProgression || isDruidCantripProgression || isSorcererSpellProgression || isBardSpellProgression) && classCantripNames.length!==classCantripTarget) { notice='Debes registrar la lista completa de '+classCantripTarget+' trucos de clase.'; return; }
+    if(classCastingAbility && Number.isFinite(classPreparedTarget) && (classPreparedTarget>oldClassPreparedCount || isWarlockSpellProgression || isSorcererSpellProgression || isBardSpellProgression) && classSpellNames.length!==classPreparedTarget) { notice='Debes registrar la lista completa de '+classPreparedTarget+' conjuros de clase preparados/conocidos.'; return; }
+    if((isWarlockSpellProgression || isSorcererSpellProgression || isPaladinSpellProgression || isBardSpellProgression) && (new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length || new Set(classSpellNames.map(name=>normalizeLevelText(name))).size!==classSpellNames.length)) { notice='No puedes repetir trucos ni conjuros en tu lista de clase.'; return; }
     if(isSorcererSpellProgression && oldClassCantripNames.length && classCantripNames.filter(name=>oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassCantripNames.length-1) { notice='Al subir de nivel de hechicero solo puedes sustituir un truco que ya conozcas.'; return; }
     if(isSorcererSpellProgression && oldClassSpellNames.length && classSpellNames.filter(name=>oldClassSpellNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassSpellNames.length-1) { notice='Al subir de nivel de hechicero solo puedes sustituir un conjuro preparado que ya conozcas.'; return; }
+    if(isBardSpellProgression && oldClassCantripNames.length && classCantripNames.filter(name=>oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassCantripNames.length-1) { notice='Al subir de nivel de bardo puedes sustituir como máximo un truco que ya conozcas.'; return; }
+    if(isBardSpellProgression && oldClassSpellNames.length && classSpellNames.filter(name=>oldClassSpellNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassSpellNames.length-1) { notice='Al subir de nivel de bardo puedes sustituir como máximo un conjuro preparado que ya conozcas.'; return; }
     if(isClericCantripProgression && new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length) { notice='No puedes repetir trucos en la lista del clérigo.'; return; }
     if(isClericCantripProgression && oldClassCantripNames.length && classCantripNames.filter(name=>oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassCantripNames.length-1) { notice='Al subir de nivel de clérigo puedes sustituir como máximo un truco que ya conozcas.'; return; }
     if(isDruidCantripProgression && new Set(classCantripNames.map(name=>normalizeLevelText(name))).size!==classCantripNames.length) { notice='No puedes repetir trucos en la lista del druida.'; return; }
@@ -3390,7 +3393,7 @@ import ITEMS from './items.json';
     if(isWarlockSpellProgression && oldClassCantripNames.length && classCantripNames.filter(name=>oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassCantripNames.length-1) { notice='Al subir de nivel de brujo solo puedes sustituir un truco que ya conozcas.'; return; }
     if(isWarlockSpellProgression && oldClassSpellNames.length && classSpellNames.filter(name=>oldClassSpellNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name))).length<oldClassSpellNames.length-1) { notice='Al subir de nivel de brujo solo puedes sustituir un conjuro que ya conozcas.'; return; }
     if(classCastingAbility && classCantripNames.length && classCantripNames.some(name=>!isValidClassSpell(name,className,0,0))) { notice='Hay trucos que no pertenecen a la lista de '+className+'.'; return; }
-    if(classCastingAbility && classSpellNames.length && classSpellNames.some(name=>!(className==='Bardo' && nextLevel>=10 ? Boolean(getSpellRecord(name)) && getSpellRecord(name)!.level<=maxClassSpellLevel : isValidClassSpell(name,className,maxClassSpellLevel)))) { notice='Hay conjuros que no pertenecen a la lista permitida o superan el nivel de espacio disponible.'; return; }
+    if(classCastingAbility && classSpellNames.length && classSpellNames.some(name=>!(className==='Bardo' && nextLevel>=10 ? Boolean(getSpellRecord(name)) && getSpellRecord(name)!.level>0 && getSpellRecord(name)!.level<=maxClassSpellLevel && getSpellRecord(name)!.classes.some((value:string)=>['bardo','clerigo','druida','mago'].includes(normalizeLevelText(value))) : isValidClassSpell(name,className,maxClassSpellLevel)))) { notice='Hay conjuros que no pertenecen a la lista permitida o superan el nivel de espacio disponible.'; return; }
     const oldBookText=getCharacterStat(original,'CONJUROS','Libro de conjuros') || (String(getCharacterStat(original,'CONJUROS','Conjuros de nivel 1')).match(/Libro:\s*([^.]*)/i)||[])[1] || '';
     const currentWizardBook=splitChoiceList(oldBookText);
     const wizardBookAdditions=splitChoiceList(levelUpWizardBookAdditions);
@@ -3860,14 +3863,14 @@ import ITEMS from './items.json';
       }
       setCharacterStat(updated,'CONJUROS','Lista de conjuros de clase',className);
       if(levelUpClassCantrips.trim()) {
-        const oldClassTricks=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos de clase'));
+        const oldClassTricks=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos de clase') || (className==='Bardo'?getCharacterStat(updated,'CONJUROS','Trucos'):''));
         const combinedTricks=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos'));
         const otherTricks=combinedTricks.filter(name=>!oldClassTricks.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
         setCharacterStat(updated,'CONJUROS','Trucos de clase',classCantripNames.join(', '));
         setCharacterStat(updated,'CONJUROS','Trucos',[...classCantripNames,...otherTricks].join(', '));
       }
       if(levelUpClassSpells.trim()) {
-        const oldClassSpells=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros preparados de clase') || (className==='Mago'?(String(getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1')).match(/Preparados:\s*([^.]*)/i)||[])[1]||'':''));
+        const oldClassSpells=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros preparados de clase') || (className==='Mago'?(String(getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1')).match(/Preparados:\s*([^.]*)/i)||[])[1]||'':className==='Bardo'?getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1'):''));
         const combinedSpells=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1'));
         const oldPreparedText=className==='Mago'?(String(getCharacterStat(updated,'CONJUROS','Conjuros de nivel 1')).split(/Preparados:/i).pop()||''):'';
         const otherSpells=(className==='Mago'?splitChoiceList(oldPreparedText):combinedSpells).filter(name=>!oldClassSpells.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) && !/^libro:|^preparados:/i.test(name));
@@ -5867,10 +5870,10 @@ import ITEMS from './items.json';
                 <p class="muted">Los conjuros de dominio o círculo se incorporarán automáticamente desde la tabla de la subclase del manual.</p>
               {/if}
               {#if BUILDER_MAGIC_ABILITY[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Trucos']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Trucos máximos',0))}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bardo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Trucos']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Trucos máximos',0))}
                   <label>Trucos de clase conocidos (lista completa){#if ['Brujo','Clérigo','Druida'].includes(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'))} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos los trucos de clase conocidos, separados por comas" /></label>
                 {/if}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Conjuros preparados']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Conjuros preparados máximos',0))}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bardo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Conjuros preparados']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Conjuros preparados máximos',0))}
                   <label>Conjuros de clase preparados/conocidos (lista completa){#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo'} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassSpells} rows="2" placeholder="Escribe la lista completa de conjuros de clase" /></label>
                 {/if}
                 {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago'}
