@@ -2819,6 +2819,15 @@ import ITEMS from './items.json';
     const existing=splitChoiceList(getCharacterStat(target,'COMPETENCIAS','Tiradas de salvación adicionales'));
     return ['Destreza','Inteligencia','Sabiduría','Carisma'].filter(ability=>!existing.some(old=>normalizeLevelText(old)===normalizeLevelText(ability)));
   }
+  function getBarbarianFeatWeaponMasteryOptions(target:RawSheet):string[] {
+    const existing=[...splitChoiceList(getCharacterStat(target,'ATAQUES','Maestrías con armas')),...splitChoiceList(getCharacterStat(target,'ATAQUES','Maestría adicional por dote'))].map(normalizeLevelText);
+    return BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>!existing.includes(normalizeLevelText(weapon)));
+  }
+  function mergeBarbarianFeatField(target:RawSheet,section:string,field:string,values:string[]) {
+    const old=splitChoiceList(getCharacterStat(target,section,field));
+    const merged=[...new Map([...old,...values].filter(Boolean).map(value=>[normalizeLevelText(value),value])).values()];
+    setCharacterStat(target,section,field,merged.join(', '));
+  }
   function toggleBarbarianFeatRitualSpell(choice:string,event:Event,max:number) {
     const input=event.currentTarget as HTMLInputElement;
     const current=splitChoiceList(levelUpBarbarianFeatRituals);
@@ -2832,7 +2841,6 @@ import ITEMS from './items.json';
   function addBarbarianFeatSkill(target:RawSheet,skill:string,grantExpertise:boolean) {
     const raw=getCharacterStat(target,'COMPETENCIAS','Skills') || '';
     const data=getBarbarianFeatSkillData(target);
-    const baseText=String(raw).replace(/;?\s*Pericia\s*:\s*[^\n;]+/i,'').trim();
     const skills=[...data.proficient];
     if(!skills.some(old=>normalizeLevelText(old)===normalizeLevelText(skill))) skills.push(skill);
     const expertise=[...data.expertise];
@@ -3587,7 +3595,7 @@ import ITEMS from './items.json';
       if(!getBarbarianFeatExpertiseOptions(original,levelUpBarbarianFeatSkill).some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpBarbarianFeatExpertise))) { notice='Elige para Pericia una habilidad competente que todavía no tenga Pericia.'; return; }
     }
     if(acquiringBarbarianFeat && ['influencia feerica','influencia sombria'].includes(barbarianFeatKey) && !getBarbarianFeatSpellOptions(levelUpFeat).some(spell=>normalizeLevelText(spell)===normalizeLevelText(levelUpBarbarianFeatSpell))) { notice='Elige un conjuro de nivel 1 de la escuela permitida por la dote.'; return; }
-    if(acquiringBarbarianFeat && barbarianFeatKey==='maestro de armas' && !BUILDER_WEAPON_MASTERY_OPTIONS.some(weapon=>normalizeLevelText(weapon)===normalizeLevelText(levelUpBarbarianFeatWeaponMastery))) { notice='Elige un arma sencilla o marcial para la maestría adicional.'; return; }
+    if(acquiringBarbarianFeat && barbarianFeatKey==='maestro de armas' && !getBarbarianFeatWeaponMasteryOptions(original).some(weapon=>normalizeLevelText(weapon)===normalizeLevelText(levelUpBarbarianFeatWeaponMastery))) { notice='Elige un arma sencilla o marcial para la maestría adicional.'; return; }
     if(hasBarbarianRitualFeat && (barbarianRitualChoices.length!==barbarianRitualTarget || new Set(barbarianRitualChoices.map(name=>normalizeLevelText(name))).size!==barbarianRitualTarget || barbarianRitualChoices.some(name=>!getBarbarianRitualSpellOptions().some(option=>normalizeLevelText(option)===normalizeLevelText(name))) || oldBarbarianRituals.some(name=>!barbarianRitualChoices.some(choice=>normalizeLevelText(choice)===normalizeLevelText(name))))) { notice='Lanzador ritual requiere '+barbarianRitualTarget+' conjuros rituales de nivel 1. Conserva los que ya conoces y añade los que falten.'; return; }
     if(needsASI && levelUpAsiMode==='feat') {
       const featAbilities=getBarbarianFeatAbilityOptions(levelUpFeat);
@@ -3670,18 +3678,19 @@ import ITEMS from './items.json';
       if(['influencia feerica','influencia sombria'].includes(normalizeLevelText(levelUpFeat))) {
         const bonusSpell=normalizeLevelText(levelUpFeat)==='influencia feerica'?'Paso brumoso':'Invisibilidad';
         setCharacterStat(updated,'CONJUROS','Conjuro elegido de influencia',levelUpBarbarianFeatSpell);
-        setCharacterStat(updated,'CONJUROS','Conjuros siempre preparados de dotes',[levelUpBarbarianFeatSpell,bonusSpell].join(', '));
-        setCharacterStat(updated,'CONJUROS','Aptitud mágica de dotes',levelUpGeneralFeatAbility);
+        mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de dotes',[levelUpBarbarianFeatSpell,bonusSpell]);
+        mergeBarbarianFeatField(updated,'CONJUROS','Conjuros adicionales de dotes',[levelUpBarbarianFeatSpell]);
+        mergeBarbarianFeatField(updated,'CONJUROS','Aptitudes mágicas de dotes',['Influencia: '+levelUpGeneralFeatAbility]);
       }
       if(normalizeLevelText(levelUpFeat)==='maestro de armas') setCharacterStat(updated,'ATAQUES','Maestría adicional por dote',levelUpBarbarianFeatWeaponMastery);
       if(normalizeLevelText(levelUpFeat)==='muy acorazado') setCharacterStat(updated,'COMPETENCIAS','Entrenamiento con armaduras adicionales','Armaduras pesadas');
       if(normalizeLevelText(levelUpFeat)==='telepatico') {
-        setCharacterStat(updated,'CONJUROS','Conjuros siempre preparados de dotes','Detectar pensamientos');
-        setCharacterStat(updated,'CONJUROS','Aptitud mágica de dotes',levelUpGeneralFeatAbility);
+        mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de dotes',['Detectar pensamientos']);
+        mergeBarbarianFeatField(updated,'CONJUROS','Aptitudes mágicas de dotes',['Telepático: '+levelUpGeneralFeatAbility]);
       }
       if(normalizeLevelText(levelUpFeat)==='telequinetico') {
-        setCharacterStat(updated,'CONJUROS','Trucos de dote','Mano de mago');
-        setCharacterStat(updated,'CONJUROS','Aptitud mágica de dotes',levelUpGeneralFeatAbility);
+        mergeBarbarianFeatField(updated,'CONJUROS','Trucos de dote',['Mano de mago']);
+        mergeBarbarianFeatField(updated,'CONJUROS','Aptitudes mágicas de dotes',['Telequinético: '+levelUpGeneralFeatAbility]);
       }
       if(normalizeLevelText(levelUpFeat)==='resiliente') {
         const oldSaves=splitChoiceList(getCharacterStat(updated,'COMPETENCIAS','Tiradas de salvación adicionales'));
@@ -3717,7 +3726,7 @@ import ITEMS from './items.json';
     }
     if(hasBarbarianRitualFeat) {
       setCharacterStat(updated,'CONJUROS','Conjuros rituales de dote',barbarianRitualChoices.join(', '));
-      if(acquiringBarbarianFeat) setCharacterStat(updated,'CONJUROS','Aptitud mágica de dotes',levelUpGeneralFeatAbility);
+      if(acquiringBarbarianFeat) mergeBarbarianFeatField(updated,'CONJUROS','Aptitudes mágicas de dotes',['Lanzador ritual: '+levelUpGeneralFeatAbility]);
     }
     if(needsBarbarianWildAspect) setCharacterStat(updated,'RASGOS Y DOTES','Aspecto de lo salvaje',levelUpBarbarianAspect);
     if(isBarbarianWildHeart && nextLevel===3) {
@@ -3907,7 +3916,7 @@ import ITEMS from './items.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim()+' · '+levelUpGeneralFeatAbility+' +1'+(normalizeLevelText(levelUpFeat)==='resiliente'?' · Salvación: '+levelUpResilientSave:''):' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsRangerStyle?' · Estilo de combate: '+levelUpRangerStyle:'')+(needsFighterStyle?' · Estilos de combate: '+fighterStyleChoices.join(', '):'')+(isRangerDruidicWarrior?' · Guerrero druídico: '+rangerCantripChoices.join(', '):'')+(needsHunterPrey?' · Cazador y presa: '+levelUpRangerHunterPrey:'')+(needsHunterDefense?' · Tácticas defensivas: '+levelUpRangerHunterDefense:'')+(needsRangerFeyGift?' · Bendición feérica: '+levelUpRangerFeyGift:'')+(needsRangerBeastCompanion?' · Compañero primigenio: '+levelUpRangerBeastProfile+' · '+levelUpRangerBeastAnimal:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsDraconicAffinity?' · Afinidad elemental: '+levelUpSorcererAffinity:'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(className==='Monje' && nextLevel===20?' · Cuerpo y mente: +4 Destreza y +4 Sabiduría (máximo 25)':'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim()+' · '+levelUpGeneralFeatAbility+' +1'+(normalizeLevelText(levelUpFeat)==='resiliente'?' · Salvación: '+levelUpResilientSave:''):' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(acquiringBarbarianFeat && ['mente aguda','observador'].includes(barbarianFeatKey)?' · Habilidad de dote: '+levelUpBarbarianFeatSkill:'')+(acquiringBarbarianFeat && barbarianFeatKey==='experto en habilidades'?' · Competencia: '+levelUpBarbarianFeatSkill+' · Pericia: '+levelUpBarbarianFeatExpertise:'')+(acquiringBarbarianFeat && ['influencia feerica','influencia sombria'].includes(barbarianFeatKey)?' · Conjuro de dote: '+levelUpBarbarianFeatSpell:'')+(acquiringBarbarianFeat && barbarianFeatKey==='maestro de armas'?' · Maestría adicional: '+levelUpBarbarianFeatWeaponMastery:'')+(hasBarbarianRitualFeat?' · Conjuros rituales de dote: '+barbarianRitualChoices.join(', '):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsRangerStyle?' · Estilo de combate: '+levelUpRangerStyle:'')+(needsFighterStyle?' · Estilos de combate: '+fighterStyleChoices.join(', '):'')+(isRangerDruidicWarrior?' · Guerrero druídico: '+rangerCantripChoices.join(', '):'')+(needsHunterPrey?' · Cazador y presa: '+levelUpRangerHunterPrey:'')+(needsHunterDefense?' · Tácticas defensivas: '+levelUpRangerHunterDefense:'')+(needsRangerFeyGift?' · Bendición feérica: '+levelUpRangerFeyGift:'')+(needsRangerBeastCompanion?' · Compañero primigenio: '+levelUpRangerBeastProfile+' · '+levelUpRangerBeastAnimal:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsDraconicAffinity?' · Afinidad elemental: '+levelUpSorcererAffinity:'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(className==='Monje' && nextLevel===20?' · Cuerpo y mente: +4 Destreza y +4 Sabiduría (máximo 25)':'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -5983,7 +5992,7 @@ import ITEMS from './items.json';
                         <label>Conjuro de nivel 1 de la dote<select bind:value={levelUpBarbarianFeatSpell}><option value="">Elige un conjuro</option>{#each getBarbarianFeatSpellOptions(levelUpFeat) as spell}<option value={spell}>{spell}</option>{/each}</select></label>
                       {/if}
                       {#if normalizeLevelText(levelUpFeat)==='maestro de armas'}
-                        <label>Arma para la maestría adicional<select bind:value={levelUpBarbarianFeatWeaponMastery}><option value="">Elige un arma</option>{#each BUILDER_WEAPON_MASTERY_OPTIONS as weapon}<option value={weapon}>{weapon}</option>{/each}</select></label>
+                        <label>Arma para la maestría adicional<select bind:value={levelUpBarbarianFeatWeaponMastery}><option value="">Elige un arma</option>{#each getBarbarianFeatWeaponMasteryOptions(levelUpEntry.sheet) as weapon}<option value={weapon}>{weapon}</option>{/each}</select></label>
                       {/if}
                       {#if (normalizeLevelText(levelUpFeat)==='lanzador ritual' && levelUpAsiMode==='feat') || splitChoiceList(getCharacterStat(levelUpEntry.sheet,'RASGOS Y DOTES','Dotes adicionales')).some(feat=>normalizeLevelText(feat)==='lanzador ritual')}
                         <div class="builder-choice-wrapper"><strong>Conjuros rituales (elige {Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+',''))})</strong><div class="builder-checkbox-grid">{#each getBarbarianRitualSpellOptions() as spell}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpBarbarianFeatRituals).some(value=>normalizeLevelText(value)===normalizeLevelText(spell))} on:change={(event)=>toggleBarbarianFeatRitualSpell(spell,event,Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+','')))} disabled={!splitChoiceList(levelUpBarbarianFeatRituals).some(value=>normalizeLevelText(value)===normalizeLevelText(spell)) && splitChoiceList(levelUpBarbarianFeatRituals).length>=Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+',''))} /><span>{spell}</span></label>{/each}</div></div>
