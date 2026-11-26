@@ -77,6 +77,8 @@ jobs:
         run: npm install
       - name: Type check
         run: npm run check
+      - name: Test character creation combinations
+        run: npm run test:builder
       - name: Audit manual and character progression
         run: npm run audit:manual
       - name: Build
