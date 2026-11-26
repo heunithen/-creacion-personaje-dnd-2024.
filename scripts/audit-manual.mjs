@@ -4,6 +4,7 @@ import fs from 'node:fs';
 const readJson = (path) => JSON.parse(fs.readFileSync(path, 'utf8'));
 const manual = fs.readFileSync('DND_2024_Reglas_del_Manual_del_Jugador.txt', 'utf8');
 const app = fs.readFileSync('src/App.svelte', 'utf8');
+const builderRules = fs.readFileSync('src/builderRules.mjs', 'utf8');
 const progression = readJson('src/levelProgression.json');
 const classFeatures = readJson('src/classFeatures.json');
 const subclasses = readJson('src/subclassProgression.json');
@@ -321,8 +322,8 @@ try {
   report('builder-ability-increase-cap',
     app.includes('function builderRawAdjustedAbilities()') &&
     app.includes('isValidAbilityIncreases({mode:builderData.abilityIncreaseMode,choices,allowed,baseAbilities:builderData.abilities,abilityNames:BUILDER_ABILITY_NAMES,max:20})') &&
-    app.includes('adjusted[choices[0]] = Number(adjusted[choices[0]]) + 2') &&
-    app.includes('adjusted[choices[1]] = Number(adjusted[choices[1]]) + 1'),
+    builderRules.includes('adjusted[choices[0]] = Number(adjusted[choices[0]]) + 2') &&
+    builderRules.includes('adjusted[choices[1]] = Number(adjusted[choices[1]]) + 1'),
     'El motor de reglas comprueba los aumentos reales antes de limitar los valores mostrados a 20.');
 
   report('builder-creation-validation-and-preview',
