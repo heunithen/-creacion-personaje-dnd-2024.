@@ -2183,8 +2183,11 @@ import ITEMS from './items.json';
   let combatRollMode: 'normal'|'advantage'|'disadvantage' = 'normal';
   let combatSort = true;
   function monsterNumber(monster:any,label:string): number {
-    const profile=parseMonsterProfile(monster);
-    const row=profile.info.find(x=>x.label===label);
+    const raw=String(monster.statBlock||'');
+    if(label==='Armor Class'){const m=raw.match(/^AC\s*(\d+)/im);return m?Number(m[1]):0;}
+    if(label==='Initiative'){const m=raw.match(/Initiative\s*([+-]\d+)/i);return m?Number(m[1]):0;}
+    if(label==='Hit Points'){const m=raw.match(/^HP\s*(\d+)/im);return m?Number(m[1]):0;}
+    const row=parseMonsterProfile(monster).info.find(x=>x.label===label);
     const value=String(row?.value||'').match(/-?\d+/);
     return value ? Number(value[0]) : 0;
   }
