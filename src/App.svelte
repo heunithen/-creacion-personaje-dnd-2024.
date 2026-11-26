@@ -3159,7 +3159,8 @@ import ITEMS from './items.json';
     if(!sheet) return;
     adjustProgressionResource('Espacios nivel '+level,delta,spellSlotMaximums(sheet)[level]||0);
   }
-  function manualProgressionList(target:RawSheet,section:string,field:string):string[] {
+  function manualProgressionList(target:RawSheet|null,section:string,field:string):string[] {
+    if(!target) return [];
     return splitChoiceList(getCharacterStat(target,section,field)||'').filter(Boolean);
   }
   function addManualProgressionChoice(section:string,field:string,value:string) {
