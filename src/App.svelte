@@ -2375,7 +2375,7 @@ import ITEMS from './items.json';
   ).sort((a,b) => a.name.localeCompare(b.name,'en',{sensitivity:'base'})) : [];
   const RULE_CATEGORIES = ['General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro', 'Abreviatura'];
   let openRuleName = '';
-  const normalizeRuleText = (value: string) => String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase('es').trim();
+  const normalizeRuleText = (value: string) => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('es').trim();
   const ruleNameCase = (value: string) => value ? value.charAt(0).toLocaleUpperCase('es') + value.slice(1).toLocaleLowerCase('es') : '';
   const escapeRuleHtml = (value: string) => value.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char] || char));
   function highlightedRuleName(value: string) {
@@ -2389,7 +2389,7 @@ import ITEMS from './items.json';
     return [...new Set(matches)].filter(name => RULES.some((candidate:any) => normalizeRuleText(candidate.name) === normalizeRuleText(name) && normalizeRuleText(candidate.name) !== normalizeRuleText(rule.name))).slice(0,8);
   }
   function ruleTextParagraphs(value: string): string[] {
-    return String(value || '').replace(/\\r/g,'').split(/\\n\\s*\\n+/).map(block => block.replace(/\\n/g,' ').replace(/\\s+/g,' ').trim()).filter(Boolean);
+    return String(value || '').replace(/\r/g,'').split(/\n\s*\n+/).map(block => block.replace(/\n/g,' ').replace(/\s+/g,' ').trim()).filter(Boolean);
   }
   function jumpToRule(name: string) {
     rulesSearch = ''; rulesCategoryFilter = ''; openRuleName = name;
@@ -4602,7 +4602,7 @@ import ITEMS from './items.json';
       {:else if masterTab === 'Reglas'}
         <section class="panel rules-panel">
           <div class="section-heading"><h2>Reglas · Manual del Jugador 2024</h2><span class="count">{filteredRules.length} / {RULES.length}</span></div>
-          <p class="muted">Glosario del Apéndice C. Busca términos, acciones, condiciones y definiciones reglamentarias extraídas del manual del proyecto.</p>
+          <p class="muted">Glosario del Apéndice C. Fuente: Manual del Jugador 2024 · Las páginas indicadas corresponden a la numeración del PDF.</p>
           <div class="rules-toolbar">
             <label class="rules-search">Buscar regla
               <div class="rules-search-input"><input type="search" bind:value={rulesSearch} placeholder="Escribe al menos dos letras..." /><button type="button" on:click={() => rulesSearch = ''} disabled={!rulesSearch}>Limpiar</button></div>
@@ -4619,13 +4619,13 @@ import ITEMS from './items.json';
               <h3 class="rules-letter" id={'rules-letter-' + group.letter}>{group.letter}</h3>
               {#each group.rules as rule (rule.name)}
                 {#if rule.category === 'Abreviatura'}
-                  <div class="rule-abbreviation"><strong>{ruleNameCase(rule.name)}</strong><span class="rule-category category-abreviatura">{rule.category}</span><span class="rule-abbreviation-meaning">→ {ruleTextParagraphs(rule.description).join(' ')}</span><span class="rule-page">p. {rule.pdfPage}</span></div>
+                  <div class="rule-abbreviation"><strong>{ruleNameCase(rule.name)}</strong><span class="rule-category category-abreviatura">{rule.category}</span><span class="rule-abbreviation-meaning">→ {ruleTextParagraphs(rule.description).join(' ')}</span><span class="rule-page">p. {rule.pdfPage ?? '—'}</span></div>
                 {:else}
                   <details class="rule-card" id={'rule-' + encodeURIComponent(rule.name)} open={openRuleName === '*' || openRuleName === rule.name} on:toggle={(event) => handleRuleToggle(event, rule.name)}>
-                    <summary><span class="rule-name">{@html highlightedRuleName(rule.name)}</span><span class={'rule-category category-' + normalizeRuleText(rule.category).replace(/\\s+/g,'-')}>{rule.category}</span><span class="rule-page">p. {rule.pdfPage}</span></summary>
+                    <summary><span class="rule-name">{@html highlightedRuleName(rule.name)}</span><span class={'rule-category category-' + normalizeRuleText(rule.category).replace(/\s+/g,'-')}>{rule.category}</span><span class="rule-page">p. {rule.pdfPage}</span></summary>
                     <div class="rule-details"><div class="rule-description">{#each ruleTextParagraphs(rule.description) as paragraph}<p>{paragraph}</p>{/each}</div>
                       {#if ruleRelatedNames(rule).length}<div class="rule-related"><strong>Ver también:</strong>{#each ruleRelatedNames(rule) as related,index}<button type="button" on:click={() => jumpToRule(related)}>{related}</button>{index < ruleRelatedNames(rule).length - 1 ? ' · ' : ''}{/each}</div>{/if}
-                      <small class="rule-source">PDF p. {rule.pdfPage}</small>
+                      
                     </div>
                   </details>
                 {/if}
