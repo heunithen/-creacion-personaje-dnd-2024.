@@ -2225,7 +2225,7 @@ import ITEMS from './items.json';
       await OBR.popover.open({
         id:INITIATIVE_POPOVER_ID,
         url,
-        width:340,
+        width:300,
         height:Math.min(620,180+initiativeOrder.length*34),
         anchorReference:'POSITION',
         anchorPosition:{left:Math.max(12,width-16),top:Math.max(12,height-16)},
@@ -8129,16 +8129,16 @@ import ITEMS from './items.json';
   @media(max-width:520px){.initiative-list li{grid-template-columns:26px minmax(0,1fr)}.initiative-roll{grid-column:2;white-space:normal}.initiative-turn-controls strong{flex-basis:100%;order:-1}}
   @media(max-width:480px){.combatant-vitals{align-items:flex-start;flex-direction:column}.combat-initiative{align-items:flex-start;flex-direction:column}}
 
-  .initiative-screen-overlay{box-sizing:border-box;width:100%;height:100%;overflow:auto;padding:14px;background:#0b171d;color:#fff;font-family:Arial,sans-serif;border:2px solid #5fe6e0;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+  .initiative-screen-overlay{box-sizing:border-box;width:100%;height:100%;overflow:auto;padding:10px;background:#0b171d;color:#fff;font-family:Arial,sans-serif;border:2px solid #5fe6e0;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.4)}
   .initiative-screen-overlay header{display:flex;flex-direction:column;gap:5px;padding-bottom:10px;border-bottom:1px solid #3a6870}
   .initiative-screen-overlay header strong{font-size:17px;letter-spacing:.04em;color:#9fe9e5}
   .initiative-screen-overlay header span{font-size:12px;color:#e6b83f;font-weight:700}
   .initiative-screen-overlay ol{display:flex;flex-direction:column;gap:5px;list-style:none;margin:10px 0 0;padding:0}
-  .initiative-screen-overlay li{display:grid;grid-template-columns:25px minmax(0,1fr) 34px;align-items:center;gap:8px;padding:7px 8px;border:1px solid #29444d;border-radius:7px;background:#13262e}
+  .initiative-screen-overlay li{display:grid;grid-template-columns:22px minmax(0,1fr) 30px;align-items:center;gap:6px;padding:6px 7px;border:1px solid #29444d;border-radius:7px;background:#13262e}
   .initiative-screen-overlay li.current{border:2px solid #e6b83f;background:#493d1d}
-  .screen-overlay-index{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:#263d46;color:#9fe9e5;font-weight:800;font-size:12px}
+  .screen-overlay-index{display:grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#263d46;color:#9fe9e5;font-weight:800;font-size:12px}
   .initiative-screen-overlay li.current .screen-overlay-index{background:#e6b83f;color:#17242a}
-  .screen-overlay-name{font-size:13px;font-weight:700;overflow-wrap:anywhere}
+  .screen-overlay-name{font-size:12px;font-weight:700;overflow-wrap:anywhere}
   .initiative-screen-overlay li strong{text-align:right;font-size:16px;color:#fff}
   /* Bonificadores de habilidades: competencia en amarillo y pericia en rojo. */
   :global(.nautical-skills .sheet-stat.proficient .skill-number),
