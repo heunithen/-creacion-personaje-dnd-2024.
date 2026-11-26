@@ -1209,6 +1209,7 @@
     lastGeneratedName = name;
   }
   let builderStep = 0;
+  let builderClassSlideIndex = 0;
   let builderClassChosen = false;
   let builderSpeciesChosen = false;
   let builderBackgroundChosen = false;
@@ -1333,6 +1334,29 @@
     'Paladín':'Combatiente juramentado que une destreza marcial con poder sagrado.',
     'Pícaro':'Especialista ágil en sigilo, precisión, pericia y aprovechar oportunidades.'
   };
+  // Correspondencia de los emblemas recortados con las doce clases del set Pinfinity.
+  const BUILDER_CLASS_EMBLEMS: Record<string,string> = {
+    'Bárbaro':'06','Bardo':'03','Brujo':'02','Clérigo':'07','Druida':'08','Explorador':'05',
+    'Guerrero':'09','Hechicero':'01','Mago':'04','Monje':'10','Paladín':'11','Pícaro':'12'
+  };
+  const BUILDER_CLASS_PLAYSTYLE: Record<string,string> = {
+    'Bárbaro':'Fuerza bruta · Resistencia · Combate cuerpo a cuerpo',
+    'Bardo':'Apoyo · Versatilidad · Magia e inspiración',
+    'Brujo':'Magia de pacto · Poder sobrenatural · Recursos limitados',
+    'Clérigo':'Magia divina · Curación y apoyo · Combate',
+    'Druida':'Magia natural · Transformación · Adaptabilidad',
+    'Explorador':'Exploración · Rastreo · Combate a distancia',
+    'Guerrero':'Dominio de armas · Defensa · Adaptabilidad táctica',
+    'Hechicero':'Magia innata · Poder concentrado · Metamagia',
+    'Mago':'Estudio arcano · Variedad de conjuros · Preparación',
+    'Monje':'Movilidad · Artes marciales · Disciplina',
+    'Paladín':'Defensa · Juramentos · Poder sagrado',
+    'Pícaro':'Sigilo · Precisión · Habilidades y pericia'
+  };
+  $: builderDisplayedClass = BUILDER_CLASSES[builderClassSlideIndex] || BUILDER_CLASSES[0];
+  function builderMoveClass(direction:number) {
+    builderClassSlideIndex = (builderClassSlideIndex + direction + BUILDER_CLASSES.length) % BUILDER_CLASSES.length;
+  }
   function builderChooseBackground(event:Event|string) {
     const value=typeof event === 'string' ? event : (event.currentTarget as HTMLSelectElement).value;
     if(!value) return;
@@ -1914,7 +1938,7 @@
   }
   function builderStepCanAdvance():boolean {
     if(builderStep===0) return true;
-    if(builderStep===1) return builderClassChosen;
+    if(builderStep===1) return true;
     if(builderStep===2) {
       if(!builderBackgroundChosen) return false;
       const options=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
@@ -1965,6 +1989,10 @@
   }
   function builderNext() {
     if(builderStep<11) {
+      if(builderStep===1) {
+        builderSelectClass(builderDisplayedClass);
+        builderClassChosen=true;
+      }
       if(!builderStepCanAdvance()) {
         const stepFields=builderMissingFields().filter(field=>field.includes('(paso '+(builderStep+1)+')'));
         builderStepError=stepFields.length
@@ -1976,7 +2004,7 @@
       builderStepError=''; builderStep+=1; keepBuilderAtTop();
     }
   }
-  function builderBack() { if(builderStep>0){builderStep-=1;builderStepError='';keepBuilderAtTop();} }
+  function builderBack() { if(builderStep>0){if(builderStep===2&&builderClassChosen){builderClassSlideIndex=Math.max(0,BUILDER_CLASSES.indexOf(builderData.className));}builderStep-=1;builderStepError='';keepBuilderAtTop();} }
   const WEAPON_PROFILES: Record<string,{damage:string;damageType:string;category:'simple'|'martial';ability:'strength'|'dexterity'|'finesse';properties:string}> = {
     'Garrote':{damage:'1d4',damageType:'contundente',category:'simple',ability:'strength',properties:'Ligera'},
     'Daga':{damage:'1d4',damageType:'perforante',category:'simple',ability:'finesse',properties:'Sutil, ligera, arrojadiza (6/18 m)'},
@@ -5651,25 +5679,24 @@ import ITEMS from './items.json';
               <p class="hint">No necesitas completar todos los detalles narrativos ahora.</p>
             {:else if builderStep===1}
               <h3>02. Elige tu clase</h3>
-              <p class="muted">La clase determina las capacidades, el estilo de combate y la progresión de tu aventurero.</p>
-              
-
-              
-              <h4>Elige una clase</h4>
-              <p class="muted">Selecciona la clase que define el entrenamiento y las capacidades principales del personaje. Cada tarjeta resume su estilo, característica principal, resistencia y acceso a la magia.</p>
-              <div class="builder-class-grid">
-                {#each BUILDER_CLASSES as item}
-                  <label class="builder-class-card" class:selected={builderClassChosen && builderData.className === item}>
-                    <input type="radio" name="builder-class" value={item} checked={builderClassChosen && builderData.className === item} on:change={() => builderSelectClass(item)} />
-                    <span class="builder-class-card-heading"><strong>{item}</strong><span>d{BUILDER_HIT_DIE[item]}</span></span>
-                    <span class="builder-class-description">{BUILDER_CLASS_GUIDANCE[item]}</span>
-                    <span class="builder-class-meta"><span>Característica clave</span><strong>{BUILDER_PRIMARY[item]}</strong></span>
-                    <span class="builder-class-meta"><span>Salvaciones</span><strong>{BUILDER_SAVES[item]}</strong></span>
-                    <span class="builder-class-meta"><span>Magia</span><strong>{BUILDER_CLASS_DATA[item].cantrips || BUILDER_CLASS_DATA[item].spells || BUILDER_CLASS_DATA[item].spellbook ? 'Sí' : 'No'}</strong></span>
-                  </label>
-                {/each}
-              </div>
-              {#if builderClassChosen}<div class="builder-info"><strong>Rasgos de nivel 1 identificados</strong><p>{BUILDER_CLASS_FEATURES[builderData.className]}</p><small>La subclase no se elige a nivel 1. Salvaciones: {BUILDER_SAVES[builderData.className]}. Dado de golpe: d{BUILDER_HIT_DIE[builderData.className]}.</small></div>{/if}
+              <p class="muted">Explora las clases y revisa qué tipo de aventurero quieres interpretar.</p>
+              <section class="builder-class-flyer" aria-label={'Información de la clase '+builderDisplayedClass}>
+                <img class="builder-class-emblem" src={'/-creacion-personaje-dnd-2024./images/character-creation/classes/individual/class-emblem-'+BUILDER_CLASS_EMBLEMS[builderDisplayedClass]+'.webp'} alt={'Emblema de '+builderDisplayedClass} />
+                <div class="builder-class-title-row">
+                  <button type="button" class="builder-class-arrow" aria-label="Clase anterior" on:click={()=>builderMoveClass(-1)}>‹</button>
+                  <h4>{builderDisplayedClass}</h4>
+                  <button type="button" class="builder-class-arrow" aria-label="Clase siguiente" on:click={()=>builderMoveClass(1)}>›</button>
+                </div>
+                <p class="builder-class-flyer-description">{BUILDER_CLASS_GUIDANCE[builderDisplayedClass]}</p>
+                <div class="builder-class-flyer-detail">
+                  <span>Característica principal</span>
+                  <strong>{BUILDER_PRIMARY[builderDisplayedClass]}</strong>
+                </div>
+                <div class="builder-class-flyer-detail">
+                  <span>Estilo de juego</span>
+                  <strong>{BUILDER_CLASS_PLAYSTYLE[builderDisplayedClass]}</strong>
+                </div>
+              </section>
                           
             {:else if builderStep===2}
               <h3>03. Elige tu trasfondo</h3>
@@ -7335,6 +7362,18 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats>.quick-stats-row>div>strong){display:block;width:100%;text-align:center}
   :global(.nautical-skills .sheet-stat .skill-number){font-size:1.25rem!important;font-weight:800!important;line-height:1.2!important;text-align:center!important;justify-self:center}
  
+  /* Ficha informativa y navegación de clases */
+  .builder-class-flyer{display:flex;flex-direction:column;align-items:center;gap:.85rem;max-width:620px;margin:1rem auto 1.2rem;padding:1rem 1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;text-align:center}
+  .builder-class-emblem{display:block;width:116px;height:166px;object-fit:contain;image-rendering:pixelated}
+  .builder-class-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%;max-width:430px}
+  .builder-class-title-row h4{margin:0;color:#fff;font:700 1.25rem Georgia,serif;text-align:center}
+  .builder-class-arrow{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:1px solid #b5bec3;border-radius:7px;background:#13262e;color:#fff;font:400 2rem/1 system-ui,sans-serif;cursor:pointer}
+  .builder-class-arrow:hover{border-color:#5fe6e0;color:#5fe6e0}
+  .builder-class-flyer-description{max-width:520px;margin:0;color:#b5bec3;font:.88rem/1.55 system-ui,sans-serif}
+  .builder-class-flyer-detail{display:flex;flex-direction:column;gap:.2rem;width:100%;max-width:520px;padding-top:.6rem;border-top:1px solid #b5bec3;text-align:left}
+  .builder-class-flyer-detail span{color:#3fb8b8;font:650 .65rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.05em}
+  .builder-class-flyer-detail strong{color:#fff;font:.82rem/1.45 system-ui,sans-serif}
+  @media(max-width:460px){.builder-class-flyer{padding:.8rem}.builder-class-emblem{width:100px;height:145px}.builder-class-title-row{grid-template-columns:40px minmax(0,1fr) 40px;gap:.45rem}.builder-class-arrow{width:36px;height:36px}}
   /* Selector visual de clases del creador */
   .builder-class-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin:.8rem 0 1rem}
   .builder-class-card{display:flex;min-width:0;flex-direction:column;gap:.55rem;padding:.8rem;border:1px solid #3fb8b8;border-radius:9px;background:linear-gradient(150deg,#13262e,#13262e);cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
