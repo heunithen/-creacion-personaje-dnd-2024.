@@ -3513,12 +3513,18 @@ import ITEMS from './items.json';
     const needsFeySkill=isFeyWanderer && nextLevel===3;
     const isCollegeOfKnowledge=className==='Bardo' && selectedSubclassKey==='colegio del conocimiento';
     const needsCollegeKnowledgeSkills=isCollegeOfKnowledge && nextLevel===3;
-    const collegeKnowledgeSkills=splitChoiceList(levelUpSubclassSkills);
+    const collegeKnowledgeSkills=[levelUpCollegeKnowledgeSkill1,levelUpCollegeKnowledgeSkill2,levelUpCollegeKnowledgeSkill3].filter(Boolean);
+    const needsBardMagicDiscoveries=isCollegeOfKnowledge && nextLevel>=6;
+    const oldBardDiscoveries=splitChoiceList(getCharacterStat(original,'CONJUROS','Conjuros de descubrimientos mágicos'));
+    const bardDiscoveryChoices=[levelUpBardDiscovery1,levelUpBardDiscovery2].filter(Boolean);
+    const isBardGlamour=className==='Bardo' && selectedSubclassKey==='colegio del glamour';
+    const isBardValor=className==='Bardo' && selectedSubclassKey==='colegio del valor';
     const currentSkillChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Skills'));
     const currentToolChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Herramientas'));
     if(needsBattleMasterTraining && (!BUILDER_CLASS_SKILLS.Guerrero.options.includes(levelUpSubclassSkill) || currentSkillChoices.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpSubclassSkill)) || !BUILDER_ARTISAN_TOOLS.includes(levelUpSubclassTool) || currentToolChoices.some(tool=>normalizeLevelText(tool)===normalizeLevelText(levelUpSubclassTool)))) { notice='Maestro del combate requiere una habilidad de la lista de guerrero y una herramienta de artesano en las que aún no tengas competencia.'; return; }
     if(needsFeySkill && (!['Engaño','Interpretación','Persuasión'].includes(levelUpSubclassSkill) || currentSkillChoices.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpSubclassSkill)))) { notice='Glamur sobrenatural requiere elegir Engaño, Interpretación o Persuasión, una habilidad en la que aún no tengas competencia.'; return; }
     if(needsCollegeKnowledgeSkills && (collegeKnowledgeSkills.length!==3 || new Set(collegeKnowledgeSkills.map(skill=>normalizeLevelText(skill))).size!==3 || collegeKnowledgeSkills.some(skill=>!BUILDER_SKILL_OPTIONS.some(option=>normalizeLevelText(option)===normalizeLevelText(skill)) || currentSkillChoices.some(old=>normalizeLevelText(old)===normalizeLevelText(skill))))) { notice='El Colegio del Conocimiento requiere tres habilidades distintas en las que todavía no tengas competencia.'; return; }
+    if(needsBardMagicDiscoveries && (bardDiscoveryChoices.length!==2 || new Set(bardDiscoveryChoices.map(spell=>normalizeLevelText(spell))).size!==2 || bardDiscoveryChoices.some(spell=>!getBardMagicDiscoveryOptions(nextLevel).some(option=>normalizeLevelText(option)===normalizeLevelText(spell))) || (oldBardDiscoveries.length>0 && oldBardDiscoveries.filter(old=>bardDiscoveryChoices.some(spell=>normalizeLevelText(spell)===normalizeLevelText(old))).length<oldBardDiscoveries.length-1))) { notice='Descubrimientos mágicos requiere dos trucos o conjuros distintos de las listas de clérigo, druida o mago, de nivel para el que tengas espacios. Conserva al menos uno de los dos anteriores.'; return; }
     const needsBattleManeuvers=isBattleMaster && [3,7,10,15].includes(nextLevel);
     const maneuverTarget=nextLevel>=15?9:nextLevel>=10?7:nextLevel>=7?5:3;
     const maneuverChoices=splitChoiceList(levelUpManeuvers);
