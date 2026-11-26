@@ -1899,9 +1899,10 @@
     for(const ability of BUILDER_ABILITY_NAMES) scores[ability]=getCharacterNumber(target,'ATRIBUTOS',ability,10);
     const armorFormula=getCharacterStat(target,'COMBATE','Fórmula de clase de armadura');
     if(armorFormula) {
-      const dexMod=Math.floor((scores.Destreza-10)/2),conMod=Math.floor((scores.Constitución-10)/2),wisMod=Math.floor((scores.Sabiduría-10)/2);
+      const dexMod=Math.floor((scores.Destreza-10)/2),conMod=Math.floor((scores.Constitución-10)/2),wisMod=Math.floor((scores.Sabiduría-10)/2),chaMod=Math.floor((scores.Carisma-10)/2);
       let ac:number|null=null;
       if(armorFormula.startsWith('10 + DES + CON')) ac=10+dexMod+conMod;
+      else if(armorFormula.startsWith('10 + DES + CAR')) ac=10+dexMod+chaMod;
       else if(armorFormula.startsWith('10 + DES + SAB')) ac=10+dexMod+wisMod;
       else if(armorFormula.startsWith('13 + DES (máx. +2)')) ac=13+Math.min(2,dexMod)+2;
       else if(armorFormula.startsWith('11 + DES + escudo')) ac=11+dexMod+2;
@@ -3910,6 +3911,7 @@ import ITEMS from './items.json';
       const retainedCantrips=allCantrips.filter(name=>!oldDiscoveryCantrips.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) || oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
       setCharacterStat(updated,'CONJUROS','Trucos',[...new Map([...retainedCantrips,...newDiscoveryCantrips].map(name=>[normalizeLevelText(name),name])).values()].join(', '));
     }
+    if(className==='Bardo' && selectedSubclassKey==='colegio de la danza' && nextLevel===3) setCharacterStat(updated,'COMBATE','Fórmula de clase de armadura','10 + DES + CAR (Colegio de la Danza)');
     if(isBardGlamour && nextLevel===3) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Hechizar persona','Imagen múltiple']);
     if(isBardGlamour && nextLevel===6) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Orden imperiosa']);
     if(isBardValor && nextLevel===3) {
