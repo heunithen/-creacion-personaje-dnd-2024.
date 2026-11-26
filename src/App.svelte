@@ -3605,9 +3605,9 @@ import ITEMS from './items.json';
     try {
       const attackNotation=quickFormulaForDicePlus(button.attack,button.mode);
       const attackHasD20=/\\d*d20/i.test(button.attack);
-      const damageNotation=button.damage.trim()?quickFormulaForDicePlus(button.damage,'normal',attackHasD20):'';
+      const damageNotation=button.damage.trim()?quickFormulaForDicePlus(button.damage):'';
       await sendSheetRoll(attackNotation,button.name+' · Ataque');
-      if (damageNotation) await sendSheetRoll(damageNotation,button.name+' · Daño'+(attackHasD20?' · Crítico posible':''));
+      if (damageNotation) await sendSheetRoll(damageNotation,button.name+' · Daño');
       quickRollHistory=[{id:Date.now(),name:button.name || 'Tirada',attack:attackNotation,damage:damageNotation,mode:button.mode,critical:false,fumble:false},...quickRollHistory].slice(0,20);
     } catch (error) {
       notice=error instanceof Error?error.message:'No se pudo realizar la tirada.';
