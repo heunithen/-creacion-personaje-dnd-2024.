@@ -2252,7 +2252,46 @@ import ITEMS from './items.json';
       notice='No se pudo ocultar el tracker.';
     }
   }
-    function rollInitiativeDie():number { return Math.floor(Math.random()*20)+1; }
+    let combatRollMode: 'normal'|'advantage'|'disadvantage' = 'normal';
+  let combatSort = true;
+  function monsterNumber(monster:any,label:string): number {
+    const raw=String(monster.statBlock||'');
+    if(label==='Armor Class'){const m=raw.match(/^AC\s*(\d+)/im);return m?Number(m[1]):0;}
+    if(label==='Initiative'){const m=raw.match(/Initiative\s*([+-]\d+)/i);return m?Number(m[1]):0;}
+    if(label==='Hit Points'){const m=raw.match(/^HP\s*(\d+)/im);return m?Number(m[1]):0;}
+    const row=parseMonsterProfile(monster).info.find(x=>x.label===label);
+    const value=String(row?.value||'').match(/-?\d+/);
+    return value ? Number(value[0]) : 0;
+  }
+  function monsterMaxHp(monster:any): number {
+    const row=parseMonsterProfile(monster).info.find(x=>x.label==='Hit Points');
+    return Number(String(row?.value||'').match(/^\s*(\d+)/)?.[1] || 1);
+  }
+  function addCombatant(monster:any) {
+    const maxHp=monsterMaxHp(monster);
+    combatants=[...combatants,{id:String(Date.now())+Math.random().toString(36).slice(2),monster,name:monster.name,ac:monsterNumber(monster,'Armor Class'),hp:maxHp,maxHp,tempHp:0,initiative:monsterNumber(monster,'Initiative'),damageInput:0,compact:true,dead:false,acMod:0,participating:true}];
+    masterTab='Combate';
+    showAllCombatants=false;
+    notice=monster.name+' añadido y marcado como participante.';
+  }
+  function duplicateCombatant(id:string) {
+    const original=combatants.find(x=>x.id===id); if(!original)return;
+    combatants=[...combatants,{...original,id:String(Date.now())+Math.random().toString(36).slice(2),name:original.name+' 2',hp:original.maxHp,tempHp:0,damageInput:0,dead:false}];
+  }
+  function playerInitiative(entry:RoomEntry):number {
+    const raw=getCharacterStat(entry.sheet,'COMBATE','Initiative') || getCharacterStat(entry.sheet,'COMBATE','Iniciativa') || '0';
+    const match=String(raw).replace(/−/g,'-').match(/[+-]?\d+/);
+    return match ? Number(match[0]) : 0;
+  }
+  function getInitiativeParticipants():InitiativeParticipant[] {
+    // La lista del director ya combina personajes conectados y fichas guardadas en esta sala.
+    // Se incluyen todos los personajes del roster, sin exigir que tengan el indicador live activo.
+    const players=roomSheets.map(entry=>({id:'player:'+entry.playerId,name:String(entry.sheet?.name || entry.playerName || 'Personaje'),bonus:playerInitiative(entry),roll:0,total:0}));
+    const monsters=combatants.filter(c=>c.participating!==false).map(c=>({id:'monster:'+c.id,name:c.name,bonus:Number(c.initiative)||0,roll:0,total:0}));
+    return [...players,...monsters];
+  }
+
+  function rollInitiativeDie():number { return Math.floor(Math.random()*20)+1; }
   function rollInitiative():void {
     const participants=getInitiativeParticipants();
     if(!participants.length){initiativeOrder=[];notice='No hay participantes en el combate.';return;}
