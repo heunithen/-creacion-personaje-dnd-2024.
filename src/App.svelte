@@ -1218,6 +1218,7 @@
   let builderSpeciesChosen = false;
   let builderBackgroundChosen = false;
   let builderRolledScores: number[] = [];
+  let builderCurrentPointCost = 0;
   let builderPreview: RawSheet | null = null;
 
   let playerCreating = false;
