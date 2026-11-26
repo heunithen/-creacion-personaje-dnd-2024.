@@ -3317,7 +3317,7 @@
     "pdfPage": 352,
     "printedPage": 349,
     "cr": "0 (XP 10; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nMURCIÉLAGO\nTiny Beast, Unaligned\nAC 12 Initiative +2 (12)\nHP 1 (1d4 - 1)\nSpeed 5 ft., Fly 30 ft.\nABILITY SCORES\nSTR 2 (-4) · Save -4\nDEX 15 (+2) · Save +2\nCON 8 (-1) · Save -1\nINT 2 (-4) · Save -4\nWIS 12 (+1) · Save +1\nCHA 4 (-3) · Save -3\nSenses Blindsight 60 ft.; Passive Perception 11\nLanguages None\nCR 0 (XP 10; PB +2)\nACTIONS\nBite. Melee Attack Roll: +4, reach 5 ft. Hit: 1 Piercing\ndamage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nMURCIÉLAGO\nBestia Diminuta, No alineado\nCA 12 Iniciativa +2 (12)\nPG 1 (1d4 - 1)\nVelocidad 5 pies, Volar 30 pies\nCARACTERÍSTICAS\nFUE 2 (-4) · Salvación -4\nDES 15 (+2) · Salvación +2\nCON 8 (-1) · Salvación -1\nINT 2 (-4) · Salvación -4\nSAB 12 (+1) · Salvación +1\nCAR 4 (-3) · Salvación -3\nSentidos Visión ciega 60 pies; Percepción pasiva 11\nIdiomas Ninguno\nVD 0 (PX 10; Bonif. competencia +2)\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 1 de daño perforante."
   },
   {
     "name": "Oso negro",
@@ -3325,7 +3325,7 @@
     "pdfPage": 352,
     "printedPage": 349,
     "cr": "1/2 (XP 100; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nOSO NEGRO\nMedium Beast, Unaligned\nAC 11 Initiative +1 (11)\nHP 19 (3d8 + 6)\nSpeed 30 ft., Climb 30 ft., Swim 30 ft.\nABILITY SCORES\nSTR 15 (+2) · Save +2\nDEX 12 (+1) · Save +1\nCON 14 (+2) · Save +2\nINT 2 (-4) · Save -4\nWIS 12 (+1) · Save +1\nCHA 7 (-2) · Save -2\nSkills Perception +5\nSenses Darkvision 60 ft.; Passive Perception 15\nLanguages None\nCR 1/2 (XP 100; PB +2)\nACTIONS\nMultiattack. The bear makes two Rend attacks.\nRend. Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2)\nSlashing damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nOSO NEGRO\nBestia Mediana, No alineado\nCA 11 Iniciativa +1 (11)\nPG 19 (3d8 + 6)\nVelocidad 30 pies, Trepar 30 pies, Nadar 30 pies\nCARACTERÍSTICAS\nFUE 15 (+2) · Salvación +2\nDES 12 (+1) · Salvación +1\nCON 14 (+2) · Salvación +2\nINT 2 (-4) · Salvación -4\nSAB 12 (+1) · Salvación +1\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +5\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 15\nIdiomas Ninguno\nVD 1/2 (PX 100; Bonif. competencia +2)\nACCIONES\nAtaque múltiple. El oso realiza dos ataques de Desgarrar.\nDesgarrar. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 5 (1d6 + 2) de daño cortante."
   },
   {
     "name": "Halcón sanguinario",
@@ -3333,7 +3333,7 @@
     "pdfPage": 352,
     "printedPage": 349,
     "cr": "1/8 (XP 25; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nBLoop Hawk\nSmall Beast, Unaligned\nAC 12 Initiative +2 (12)\nHP 7 (2d6)\nSpeed 10 ft., Fly 60 ft.\nABILITY SCORES\nSTR 6 (-2) · Save -2\nDEX 14 (+2) · Save +2\nCON 10 (+0) · Save +0\nINT 3 (-4) · Save -4\nWIS 14 (+2) · Save +2\nCHA 5 (-3) · Save -3\nSkills Perception +6\nSenses Passive Perception 16\nLanguages None\nCR 1/8 (XP 25; PB +2)\nTRAITS\nPack Tactics. The hawk has Advantage on an attack roll\nagainst a creature if at least one of the hawk’s allies is\nwithin 5 feet of the creature and the ally doesn’t have\nthe Incapacitated condition.\nACTIONS\nBeak. Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2)\nPiercing damage, or 6 (1d8 + 2) Piercing damage if the\ntarget is Bloodied."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nHALCÓN SANGUINARIO\nBestia Pequeña, No alineado\nCA 12 Iniciativa +2 (12)\nPG 7 (2d6)\nVelocidad 10 pies, Volar 60 pies\nCARACTERÍSTICAS\nFUE 6 (-2) · Salvación -2\nDES 14 (+2) · Salvación +2\nCON 10 (+0) · Salvación +0\nINT 3 (-4) · Salvación -4\nSAB 14 (+2) · Salvación +2\nCAR 5 (-3) · Salvación -3\nHabilidades Percepción +6\nSentidos Percepción pasiva 16\nIdiomas Ninguno\nVD 1/8 (PX 25; Bonif. competencia +2)\nRASGOS\nTácticas de grupo. El halcón tiene ventaja en una tirada de ataque contra una criatura si al menos uno de sus aliados está a 5 pies o menos de ella y ese aliado no está Incapacitado.\nACCIONES\nPico. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 4 (1d4 + 2) de daño perforante, o 6 (1d8 + 2) de daño perforante si el objetivo está Sangrante."
   },
   {
     "name": "Jabalí",
@@ -3341,7 +3341,7 @@
     "pdfPage": 353,
     "printedPage": 350,
     "cr": "1/4 (XP 50; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nMedium Beast, Unaligned\nAC 11 Initiative +0 (10)\nHP 13 (2d8 + 4)\nSpeed 40 ft.\nABILITY SCORES\nSTR 13 (+1) · Save +1\nDEX 11 (+0) · Save +0\nCON 14 (+2) · Save +2\nINT 2 (-4) · Save -4\nWIS 9 (-1) · Save -1\nCHA 5 (-3) · Save -3\nSenses Passive Perception 9\nLanguages None\nCR 1/4 (XP 50; PB +2)\nTRAITS\nBloodied Fury. While Bloodied, the boar has Advantage\non attack rolls.\nACTIONS\nGore. Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d6 + 1)\nPiercing damage. If the target is a Medium or smaller\ncreature and the boar moved 20+ feet straight toward\nit immediately before the hit, the target takes an extra 3\n(1d6) Piercing damage and has the Prone condition."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nJABALÍ\nBestia Mediana, No alineado\nCA 11 Iniciativa +0 (10)\nPG 13 (2d8 + 4)\nVelocidad 40 pies\nCARACTERÍSTICAS\nFUE 13 (+1) · Salvación +1\nDES 11 (+0) · Salvación +0\nCON 14 (+2) · Salvación +2\nINT 2 (-4) · Salvación -4\nSAB 9 (-1) · Salvación -1\nCAR 5 (-3) · Salvación -3\nSentidos Percepción pasiva 9\nIdiomas Ninguno\nVD 1/4 (PX 50; Bonif. competencia +2)\nRASGOS\nFuria sangrienta. Mientras esté Sangrante, el jabalí tiene ventaja en las tiradas de ataque.\nACCIONES\nCornada. Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. Impacto: 4 (1d6 + 1) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña y el jabalí se movió al menos 20 pies en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 3 (1d6) de daño perforante adicional y queda Derribado."
   },
   {
     "name": "Oso pardo",
@@ -3349,7 +3349,7 @@
     "pdfPage": 353,
     "printedPage": 350,
     "cr": "1 (XP 200; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nOSO PARDO\nLarge Beast, Unaligned\nAC 11 Initiative +1 (11)\nHP 22 (3d10 + 6)\nSpeed 40 ft., Climb 30 ft.\nABILITY SCORES\nSTR 17 (+3) · Save +3\nDEX 12 (+1) · Save +1\nCON 15 (+2) · Save +2\nINT 2 (-4) · Save -4\nWIS 13 (+1) · Save +1\nCHA 7 (-2) · Save -2\nSkills Perception +3\nSenses Darkvision 60 ft.; Passive Perception 13\nLanguages None\nCR 1 (XP 200; PB +2)\nACTIONS\nMultiattack. The bear makes one Bite attack and one\nClaw attack.\nBite. Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3)\nPiercing damage.\nClaw. Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3)\nSlashing damage. If the target is a Large or smaller\ncreature, it has the Prone condition."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nOSO PARDO\nBestia Grande, No alineado\nCA 11 Iniciativa +1 (11)\nPG 22 (3d10 + 6)\nVelocidad 40 pies, Trepar 30 pies\nCARACTERÍSTICAS\nFUE 17 (+3) · Salvación +3\nDES 12 (+1) · Salvación +1\nCON 15 (+2) · Salvación +2\nINT 2 (-4) · Salvación -4\nSAB 13 (+1) · Salvación +1\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +3\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 13\nIdiomas Ninguno\nVD 1 (PX 200; Bonif. competencia +2)\nACCIONES\nAtaque múltiple. El oso realiza un ataque de Mordisco y uno de Garra.\nMordisco. Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. Impacto: 7 (1d8 + 3) de daño perforante.\nGarra. Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. Impacto: 5 (1d4 + 3) de daño cortante. Si el objetivo es una criatura Grande o más pequeña, queda Derribada."
   },
   {
     "name": "Camello",
@@ -3357,7 +3357,7 @@
     "pdfPage": 353,
     "printedPage": 350,
     "cr": "1/8 (XP 25; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nLarge Beast, Unaligned\nAC 10 Initiative -1 (9)\nHP 17 (2d10 + 6)\nSpeed 50 ft.\nABILITY SCORES\nSTR 15 (+2) · Save +2\nDEX 8 (-1) · Save -1\nCON 17 (+3) · Save +5\nINT 2 (-4) · Save -4\nWIS 11 (+0) · Save +0\nCHA 5 (-3) · Save -3\nSenses Darkvision 60 ft.; Passive Perception 10\nLanguages None\nCR 1/8 (XP 25; PB +2)\nACTIONS\nBite. Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2)\nBludgeoning damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCAMELLO\nBestia Grande, No alineado\nCA 10 Iniciativa -1 (9)\nPG 17 (2d10 + 6)\nVelocidad 50 pies\nCARACTERÍSTICAS\nFUE 15 (+2) · Salvación +2\nDES 8 (-1) · Salvación -1\nCON 17 (+3) · Salvación +5\nINT 2 (-4) · Salvación -4\nSAB 11 (+0) · Salvación +0\nCAR 5 (-3) · Salvación -3\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 10\nIdiomas Ninguno\nVD 1/8 (PX 25; Bonif. competencia +2)\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 4 (1d4 + 2) de daño contundente."
   },
   {
     "name": "Gato",
@@ -3365,7 +3365,7 @@
     "pdfPage": 354,
     "printedPage": 351,
     "cr": "0 (XP 10; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nTiny Beast, Unaligned\nAC 12 Initiative +2 (12)\nHP 2 (1d4)\nSpeed 40 ft., Climb 40 ft.\nABILITY SCORES\nSTR 3 (-4) · Save -4\nDEX 15 (+2) · Save +4\nCON 10 (+0) · Save +0\nINT 3 (-4) · Save -4\nWIS 12 (+1) · Save +1\nCHA 7 (-2) · Save -2\nSkills Perception +3, Stealth +4\nSenses Darkvision 60 ft.; Passive Perception 13\nLanguages None\nCR 0 (XP 10; PB +2)\nTRAITS\nJumper. The cat’s jump distance is determined using its\nDexterity rather than its Strength.\nACTIONS\nScratch. Melee Attack Roll: +4, reach 5 ft. Hit: 1 Slashing damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nGATO\nBestia Diminuta, No alineado\nCA 12 Iniciativa +2 (12)\nPG 2 (1d4)\nVelocidad 40 pies, Trepar 40 pies\nCARACTERÍSTICAS\nFUE 3 (-4) · Salvación -4\nDES 15 (+2) · Salvación +4\nCON 10 (+0) · Salvación +0\nINT 3 (-4) · Salvación -4\nSAB 12 (+1) · Salvación +1\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +3, Sigilo +4\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 13\nIdiomas Ninguno\nVD 0 (PX 10; Bonif. competencia +2)\nRASGOS\nSaltador. La distancia de salto del gato se determina usando su Destreza en lugar de su Fuerza.\nACCIONES\nZarpazo. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 1 de daño cortante."
   },
   {
     "name": "Serpiente constrictora",
@@ -3373,7 +3373,7 @@
     "pdfPage": 354,
     "printedPage": 351,
     "cr": "1/4 (XP 50; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\n( CONSTRICTOR\nSNAKE\nLarge Beast, Unaligned\nAC 13 Initiative +2 (12)\nHP 13 (2d10 + 2)\nSpeed 30 ft., Swim 30 ft.\nABILITY SCORES\nSTR 15 (+2) · Save +2\nDEX 14 (+2) · Save +2\nCON 12 (+1) · Save +1\nINT 1 (-5) · Save -5\nWIS 10 (+0) · Save +0\nCHA 3 (-4) · Save -4\nSkills Perception +2, Stealth +4\nSenses Blindsight 10 ft.; Passive Perception 12\nLanguages None\nCR 1/4 (XP 50; PB +2)\nACTIONS\nBite. Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2)\nPiercing damage.\nConstrict. Strength Saving Throw: DC 12, one Medium\nor smaller creature the snake can see within 5 feet. Failure: 7 (3d4) Bludgeoning damage, and the target has\nthe Grappled condition (escape DC 12)."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSERPIENTE CONSTRICTORA\nBestia Grande, No alineado\nCA 13 Iniciativa +2 (12)\nPG 13 (2d10 + 2)\nVelocidad 30 pies, Nadar 30 pies\nCARACTERÍSTICAS\nFUE 15 (+2) · Salvación +2\nDES 14 (+2) · Salvación +2\nCON 12 (+1) · Salvación +1\nINT 1 (-5) · Salvación -5\nSAB 10 (+0) · Salvación +0\nCAR 3 (-4) · Salvación -4\nHabilidades Percepción +2, Sigilo +4\nSentidos Visión ciega 10 pies; Percepción pasiva 12\nIdiomas Ninguno\nVD 1/4 (PX 50; Bonif. competencia +2)\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 6 (1d8 + 2) de daño perforante.\nConstricción. Tirada de salvación de Fuerza: CD 12, una criatura Mediana o más pequeña que la serpiente pueda ver a 5 pies o menos. Fallo: 7 (3d4) de daño contundente, y el objetivo queda Agarrado (CD de escape 12)."
   },
   {
     "name": "Cangrejo",
@@ -3381,7 +3381,7 @@
     "pdfPage": 354,
     "printedPage": 351,
     "cr": "0 (XP 10; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nTiny Beast, Unaligned\nAC 11 Initiative +0 (10)\nHP 3 (1d4 + 1)\nSpeed 20 ft., Swim 20 ft.\nABILITY SCORES\nSTR 6 (-2) · Save -2\nDEX 11 (+0) · Save +0\nCON 12 (+1) · Save +1\nINT 1 (-5) · Save -5\nWIS 8 (-1) · Save -1\nCHA 2 (-4) · Save -4\nSkills Stealth +2\nSenses Blindsight 30 ft.; Passive Perception 9\nLanguages None\nCR 0 (XP 10; PB +2)\nTRAITS\nAmphibious. The crab can breathe air and water.\nACTIONS\nClaw. Melee Attack Roll: +2, reach 5 ft. Hit: 1 Bludgeoning damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCANGREJO\nBestia Diminuta, No alineado\nCA 11 Iniciativa +0 (10)\nPG 3 (1d4 + 1)\nVelocidad 20 pies, Nadar 20 pies\nCARACTERÍSTICAS\nFUE 6 (-2) · Salvación -2\nDES 11 (+0) · Salvación +0\nCON 12 (+1) · Salvación +1\nINT 1 (-5) · Salvación -5\nSAB 8 (-1) · Salvación -1\nCAR 2 (-4) · Salvación -4\nHabilidades Sigilo +2\nSentidos Visión ciega 30 pies; Percepción pasiva 9\nIdiomas Ninguno\nVD 0 (PX 10; Bonif. competencia +2)\nRASGOS\nAnfibio. El cangrejo puede respirar aire y agua.\nACCIONES\nPinza. Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. Impacto: 1 de daño contundente."
   },
   {
     "name": "Cocodrilo",
@@ -3389,7 +3389,7 @@
     "pdfPage": 354,
     "printedPage": 351,
     "cr": "1/2 (XP 100; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCOCODRILO\nLarge Beast, Unaligned\nAC 12 Initiative +0 (10)\nHP 13 (2d10 + 2)\nSpeed 20 ft., Swim 30 ft.\nABILITY SCORES\nSTR 15 (+2) · Save +2\nDEX 10 (+0) · Save +0\nCON 13 (+1) · Save +3\nINT 2 (-4) · Save -4\nWIS 10 (+0) · Save +0\nCHA 5 (-3) · Save -3\nSkills Stealth +2\nSenses Passive Perception 10\nLanguages None\nCR 1/2 (XP 100; PB +2)\nTRAITS\nHold Breath. The crocodile can hold its breath for 1 hour.\nACTIONS\nBite. Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2)\nPiercing damage. If the target is a Medium or smaller\ncreature, it has the Grappled condition (escape DC 12).\nWhile Grappled, the target has the Restrained condition."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCOCODRILO\nBestia Grande, No alineado\nCA 12 Iniciativa +0 (10)\nPG 13 (2d10 + 2)\nVelocidad 20 pies, Nadar 30 pies\nCARACTERÍSTICAS\nFUE 15 (+2) · Salvación +2\nDES 10 (+0) · Salvación +0\nCON 13 (+1) · Salvación +3\nINT 2 (-4) · Salvación -4\nSAB 10 (+0) · Salvación +0\nCAR 5 (-3) · Salvación -3\nHabilidades Sigilo +2\nSentidos Percepción pasiva 10\nIdiomas Ninguno\nVD 1/2 (PX 100; Bonif. competencia +2)\nRASGOS\nContener la respiración. El cocodrilo puede contener la respiración durante 1 hora.\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 6 (1d8 + 2) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña, queda Agarrado (CD de escape 12). Mientras esté Agarrado, queda Apresado."
   },
   {
     "name": "Ciervo",
