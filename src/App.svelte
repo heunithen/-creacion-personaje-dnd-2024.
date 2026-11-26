@@ -781,7 +781,13 @@
   let levelUpLanguages = '';
   let levelUpMetamagic = '';
   let levelUpInvocations = '';
-  let levelUpMysticArcanum = '';
+  let levelUpInvocationSlots: string[] = [];
+  let levelUpMysticArcanum1 = '';
+  let levelUpMysticArcanum2 = '';
+  let levelUpMysticArcanum3 = '';
+  let levelUpMysticArcanum4 = '';
+  let levelUpWarlockTomeCantrips: string[] = [];
+  let levelUpWarlockTomeRituals: string[] = [];
   let levelUpElementalFury = '';
   let levelUpSorcererAffinity = '';
   let levelUpBlessedStrikes = '';
@@ -1452,6 +1458,71 @@
     {name:'Visiones de reinos remotos',level:9},
     {name:'Vista del diablo',level:2}
   ];
+  function getWarlockInvocationData(name:string) {
+    return BUILDER_WARLOCK_INVOCATIONS.find(item=>normalizeLevelText(item.name)===normalizeLevelText(name));
+  }
+  function getWarlockInvocationSlotName(entry:string) { return String(entry||'').split(':')[0].trim(); }
+  function getWarlockInvocationSlotChoice(entry:string) { return String(entry||'').split(':').slice(1).join(':').trim(); }
+  function getWarlockCantripQualifies(name:string,kind:string,target:RawSheet) {
+    const spell=getSpellRecord(name);
+    if(!spell || spell.level!==0 || !spell.classes?.some((value:string)=>normalizeLevelText(value)==='brujo')) return false;
+    const description=String(spell.description||'');
+    const damage=/\d+d\d+/.test(description)&&normalizeLevelText(description).includes('dano');
+    const attack=normalizeLevelText(description).includes('ataque de conjuro');
+    const range=String(spell.range||'').match(/(\d+(?:[.,]\d+)?)\s*m/i);
+    const meters=range?Number(range[1].replace(',','.')):0;
+    return kind==='damage'?damage:kind==='attack'?damage&&attack:damage&&meters>=3;
+  }
+  function getWarlockInvocationOptions(targetLevel:number,slotIndex:number) {
+    const selected=levelUpInvocationSlots.map((entry,index)=>index===slotIndex?'':normalizeLevelText(getWarlockInvocationSlotName(entry)));
+    return BUILDER_WARLOCK_INVOCATIONS.filter(item=>{
+      if(item.level>targetLevel) return false;
+      if(!item.repeatable && selected.includes(normalizeLevelText(item.name))) return false;
+      if(item.pact && !selected.includes(normalizeLevelText(item.pact))) return false;
+      if(item.cantrip && !splitChoiceList(levelUpClassCantrips).some(name=>getWarlockCantripQualifies(name,item.cantrip!,levelUpEntry?.sheet||{}))) return false;
+      if(item.choice==='feat' && !BUILDER_FEATS.some(feat=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'RASGOS Y DOTES','Dotes de origen')).some(old=>normalizeLevelText(old)===normalizeLevelText(feat)))) return false;
+      return true;
+    });
+  }
+  function getWarlockInvocationChoiceOptions(name:string,slotIndex:number) {
+    const item=getWarlockInvocationData(name);
+    if(!item) return [];
+    const otherChoices=levelUpInvocationSlots.filter((entry,index)=>index!==slotIndex && normalizeLevelText(getWarlockInvocationSlotName(entry))===normalizeLevelText(name)).map(getWarlockInvocationSlotChoice).map(normalizeLevelText);
+    if(item.choice==='feat') return BUILDER_FEATS.filter(feat=>!otherChoices.includes(normalizeLevelText(feat)) && !splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'RASGOS Y DOTES','Dotes de origen')).some(old=>normalizeLevelText(old)===normalizeLevelText(feat)));
+    if(item.cantrip) return splitChoiceList(levelUpClassCantrips || getCharacterStat(levelUpEntry?.sheet||{},'CONJUROS','Trucos de clase') || getCharacterStat(levelUpEntry?.sheet||{},'CONJUROS','Trucos')).filter(cantrip=>getWarlockCantripQualifies(cantrip,item.cantrip!,levelUpEntry?.sheet||{}) && !otherChoices.includes(normalizeLevelText(cantrip)));
+    return [];
+  }
+  function setWarlockInvocationName(index:number,name:string) {
+    const next=[...levelUpInvocationSlots];
+    next[index]=name;
+    levelUpInvocationSlots=next;
+    levelUpInvocations=next.filter(Boolean).join(', ');
+  }
+  function setWarlockInvocationChoice(index:number,choice:string) {
+    const next=[...levelUpInvocationSlots];
+    const name=getWarlockInvocationSlotName(next[index]||'');
+    next[index]=choice?name+': '+choice:name;
+    levelUpInvocationSlots=next;
+    levelUpInvocations=next.filter(Boolean).join(', ');
+  }
+  function getWarlockTomeCantripOptions(target:RawSheet,index:number) {
+    const oldPact=splitChoiceList(getCharacterStat(target,'CONJUROS','Trucos de pacto'));
+    const known=splitChoiceList(getCharacterStat(target,'CONJUROS','Trucos')).filter(name=>!oldPact.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+    const classKnown=splitChoiceList(levelUpClassCantrips || getCharacterStat(target,'CONJUROS','Trucos de clase'));
+    const selected=levelUpWarlockTomeCantrips.filter((_,i)=>i!==index);
+    return BUILDER_TOME_CANTRIPS.filter(name=>!known.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) && !classKnown.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) && !selected.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+  }
+  function getWarlockTomeRitualOptions(target:RawSheet,index:number) {
+    const oldPact=splitChoiceList(getCharacterStat(target,'CONJUROS','Conjuros rituales de pacto'));
+    const known=[...splitChoiceList(levelUpClassSpells || getCharacterStat(target,'CONJUROS','Conjuros preparados de clase')),...splitChoiceList(getCharacterStat(target,'CONJUROS','Conjuros siempre preparados de subclase'))].filter(name=>!oldPact.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+    const selected=levelUpWarlockTomeRituals.filter((_,i)=>i!==index);
+    return BUILDER_TOME_RITUALS.filter(name=>!known.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) && !selected.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+  }
+  function setWarlockTomeCantrip(index:number,name:string) { const next=[...levelUpWarlockTomeCantrips]; next[index]=name; levelUpWarlockTomeCantrips=next; }
+  function setWarlockTomeRitual(index:number,name:string) { const next=[...levelUpWarlockTomeRituals]; next[index]=name; levelUpWarlockTomeRituals=next; }
+  function getWarlockArcanumOptions(level:number):string[] {
+    return [...new Set((SPELLS as any[]).filter(spell=>spell.level===level && spell.classes?.some((name:string)=>normalizeLevelText(name)==='brujo')).map(spell=>spell.name))].sort((a,b)=>a.localeCompare(b,'es'));
+  }
   const BUILDER_GAMING_SETS = ['Ajedrez dragón','Apuesta de los tres dragones','Dados','Naipes'];
   const BUILDER_FEAT_TOOL_OPTIONS = [...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS,...BUILDER_GAMING_SETS,'Suministros de alquimista','Suministros de calígrafo','Suministros de cervecero','Suministros de pintor','Útiles de cocinero','Herramientas de ladrón','Herramientas de navegante','Útiles de envenenador','Útiles de herborista','Útiles para disfrazarse','Útiles para falsificar'];
   function builderFeatChoiceOptions(feat:string) {
