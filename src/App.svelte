@@ -24,14 +24,17 @@
   let playerName = '';
   let activeTab = 'Todas';
   let monsterCrFilter = '';
+  let monsterLetterFilter = '';
   let monsterSearch = '';
   let itemSearch = '';
+  let itemLetterFilter = '';
   let itemTypeFilter = '';
   let itemPriceMin = '';
   let itemPriceMax = '';
   let itemWeightMin = '';
   let itemWeightMax = '';
   let spellSearch = '';
+  let spellLetterFilter = '';
   let rulesSearch = '';
   let rulesCategoryFilter = '';
   let spellLevelFilter = '';
@@ -831,8 +834,10 @@
     if (tab === 'Monstruos') {
       monsterSearch = '';
       monsterCrFilter = '';
+      monsterLetterFilter = '';
     } else if (tab === 'Objetos') {
       itemSearch = '';
+      itemLetterFilter = '';
       itemTypeFilter = '';
       itemPriceMin = '';
       itemPriceMax = '';
@@ -840,6 +845,7 @@
       itemWeightMax = '';
     } else if (tab === 'Conjuros') {
       spellSearch = '';
+      spellLetterFilter = '';
       spellLevelFilter = '';
       spellClassFilter = '';
       spellSchoolFilter = '';
@@ -2220,7 +2226,7 @@ import ITEMS from './items.json';
     const sections: { title: string; entries: { name: string; description: string }[] }[] = [];
     const info: { label: string; value: string }[] = [];
     let current: { title: string; entries: { name: string; description: string }[] } | null = null;
-    const sectionNames: Record<string,string> = {'TRAITS':'Atributos','ACTIONS':'Acciones','BONUS ACTIONS':'Acciones adicionales','REACTIONS':'Reacciones','LEGENDARY ACTIONS':'Acciones legendarias','MYTHIC ACTIONS':'Acciones míticas','LAIR ACTIONS':'Acciones en guarida'};
+    const sectionNames: Record<string,string> = {'TRAITS':'Traits','ACTIONS':'Actions','BONUS ACTIONS':'Bonus Actions','REACTIONS':'Reactions','LEGENDARY ACTIONS':'Legendary Actions','MYTHIC ACTIONS':'Mythic Actions','LAIR ACTIONS':'Lair Actions'};
     const labelMap: [RegExp,string][] = [
       [/^AC\s*/i,'Clase de armadura'],[/^HP\s*/i,'Puntos de golpe'],[/^Speed\s*/i,'Velocidad'],[/^Skills\s*/i,'Habilidades'],[/^Resistances\s*/i,'Resistencias'],[/^Immunities\s*/i,'Inmunidades'],[/^Condition Immunities\s*/i,'Inmunidades a estados'],[/^Vulnerabilities\s*/i,'Vulnerabilidades'],[/^Gear\s*/i,'Equipo'],[/^Senses\s*/i,'Sentidos'],[/^Languages\s*/i,'Idiomas'],[/^Initiative\s*/i,'Iniciativa']
     ];
@@ -2236,23 +2242,27 @@ import ITEMS from './items.json';
       let matched = false;
       for (const [regex,label] of labelMap) {
         const m = line.match(regex);
-        if (m) { info.push({label,value:translateMonsterText(line.slice(m[0].length))}); matched=true; break; }
+        if (m) { info.push({label,value:line.slice(m[0].length)}); matched=true; break; }
       }
       if (matched) continue;
-      if (/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\b/.test(line)) { info.unshift({label:'Tipo y alineamiento',value:translateMonsterText(line)}); continue; }
+      if (/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\b/.test(line)) { info.unshift({label:'Tipo y alineamiento',value:line}); continue; }
       if (/^CR\s/i.test(line)) { info.push({label:'Valor de desafío',value:translateMonsterText(line.replace(/^CR\s*/i,''))}); continue; }
       if (current) {
         const split = line.match(/^([^.!?]{2,90})\.\s+(.+)$/);
-        if (split) current.entries.push({name:translateMonsterText(split[1]),description:translateMonsterText(split[2])});
-        else if (current.entries.length) current.entries[current.entries.length-1].description += ' ' + translateMonsterText(line);
-        else current.entries.push({name:'',description:translateMonsterText(line)});
-      } else info.push({label:'Otros datos',value:translateMonsterText(line)});
+        if (split) current.entries.push({name:split[1],description:split[2]});
+        else if (current.entries.length) current.entries[current.entries.length-1].description += ' ' + line;
+        else current.entries.push({name:'',description:line});
+      } else info.push({label:'Otros datos',value:line});
     }
     return {info,sections};
   }
 
+  const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  function startsWithLetter(name: string, letter: string) {
+    return !letter || String(name || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toUpperCase().startsWith(letter);
+  }
   const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
-  $: filteredMonsters = (monsterSearch.trim() || monsterCrFilter) ? MONSTERS.filter(monster => (!monsterCrFilter || monster.cr.startsWith(monsterCrFilter + ' ')) && (!monsterSearch.trim() || monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()))) : [];
+  $: filteredMonsters = (monsterSearch.trim() || monsterCrFilter || monsterLetterFilter) ? MONSTERS.filter(monster => (!monsterCrFilter || monster.cr.startsWith(monsterCrFilter + ' ')) && startsWithLetter(monster.name, monsterLetterFilter) && (!monsterSearch.trim() || monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()))).sort((a,b) => a.name.localeCompare(b.name,'en',{sensitivity:'base'})) : [];
   const itemTypes = ['Todos', ...Array.from(new Set(ITEMS.map(item => item.type))).sort((a,b) => a.localeCompare(b,'es'))];
   function itemPriceGold(price: string): number | null {
     const match = price.match(/^([\\d.,]+)\\s*(po|pp|pc|ppt)$/i);
@@ -2266,25 +2276,25 @@ import ITEMS from './items.json';
     const amount = Number(match[1].replace(/\\./g, '').replace(',', '.'));
     return Number.isFinite(amount) ? amount * (match[2].toLowerCase() === 'g' ? 0.001 : 1) : null;
   }
-  $: filteredItems = (itemSearch.trim() || itemTypeFilter || itemPriceMin !== '' || itemPriceMax !== '' || itemWeightMin !== '' || itemWeightMax !== '') ? ITEMS.filter(item => {
+  $: filteredItems = (itemSearch.trim() || itemLetterFilter || itemTypeFilter || itemPriceMin !== '' || itemPriceMax !== '' || itemWeightMin !== '' || itemWeightMax !== '') ? ITEMS.filter(item => {
     const query = itemSearch.trim().toLocaleLowerCase('es');
     const price = itemPriceGold(item.price);
     const weight = itemWeightKg(item.weight);
-    return (!itemTypeFilter || item.type === itemTypeFilter) &&
+    return (!itemTypeFilter || item.type === itemTypeFilter) && startsWithLetter(item.name, itemLetterFilter) &&
       (!query || (item.name + ' ' + item.type + ' ' + item.source).toLocaleLowerCase('es').includes(query)) &&
       (itemPriceMin === '' || (price !== null && price >= Number(itemPriceMin))) &&
       (itemPriceMax === '' || (price !== null && price <= Number(itemPriceMax))) &&
       (itemWeightMin === '' || (weight !== null && weight >= Number(itemWeightMin))) &&
       (itemWeightMax === '' || (weight !== null && weight <= Number(itemWeightMax)));
-  }) : [];
+  }).sort((a,b) => a.name.localeCompare(b.name,'en',{sensitivity:'base'})) : [];
   const SPELL_CLASSES = ['Bardo', 'Brujo', 'Clérigo', 'Druida', 'Explorador', 'Hechicero', 'Mago', 'Paladín'];
   const SPELL_SCHOOLS = ['Abjuración', 'Adivinación', 'Conjuración', 'Encantamiento', 'Evocación', 'Ilusionismo', 'Nigromancia', 'Transmutación'];
-  $: filteredSpells = (spellSearch.trim() || spellLevelFilter || spellClassFilter || spellSchoolFilter) ? SPELLS.filter(spell =>
+  $: filteredSpells = (spellSearch.trim() || spellLetterFilter || spellLevelFilter || spellClassFilter || spellSchoolFilter) ? SPELLS.filter(spell =>
     (!spellLevelFilter || String(spell.level) === spellLevelFilter) &&
     (!spellClassFilter || spell.classes.includes(spellClassFilter.toLocaleLowerCase('es'))) &&
-    (!spellSchoolFilter || spell.school === spellSchoolFilter) &&
+    (!spellSchoolFilter || spell.school === spellSchoolFilter) && startsWithLetter(spell.name, spellLetterFilter) &&
     (!spellSearch.trim() || (spell.name + ' ' + spell.description).toLocaleLowerCase('es').includes(spellSearch.trim().toLocaleLowerCase('es')))
-  ) : [];
+  ).sort((a,b) => a.name.localeCompare(b.name,'en',{sensitivity:'base'})) : [];
   const RULE_CATEGORIES = ['General', 'Acción', 'Estado', 'Área de efecto', 'Actitud', 'Peligro', 'Abreviatura'];
   $: filteredRules = (rulesCategoryFilter || rulesSearch.trim()) ? RULES.filter(rule =>
     (!rulesCategoryFilter || rule.category === rulesCategoryFilter) &&
@@ -4173,6 +4183,9 @@ import ITEMS from './items.json';
             <input type="search" bind:value={itemSearch} placeholder="Nombre del objeto..." />
           </label>
           <div class="items-filters">
+            <label>Letra inicial
+              <select bind:value={itemLetterFilter}><option value="">Ninguna</option>{#each ALPHABET as letter}<option value={letter}>{letter}</option>{/each}</select>
+            </label>
             <label>Tipo
               <select bind:value={itemTypeFilter}>
                 <option value="">Ninguno</option>
@@ -4196,6 +4209,9 @@ import ITEMS from './items.json';
             <input type="search" bind:value={spellSearch} placeholder="Nombre o texto del conjuro..." />
           </label>
           <div class="spell-filters">
+            <label>Letra inicial
+              <select bind:value={spellLetterFilter}><option value="">Ninguna</option>{#each ALPHABET as letter}<option value={letter}>{letter}</option>{/each}</select>
+            </label>
             <label>Nivel
               <select bind:value={spellLevelFilter}>
                 <option value="">Ninguno</option>
@@ -4276,6 +4292,9 @@ import ITEMS from './items.json';
           <p class="muted">Consulta las criaturas por nombre o valor de desafío. Los perfiles conservan sus datos y se presentan por apartados.</p>
           <label class="monster-filter">Buscar monstruo
             <input type="search" bind:value={monsterSearch} placeholder="Nombre del monstruo..." />
+          </label>
+          <label class="monster-filter">Letra inicial
+            <select bind:value={monsterLetterFilter}><option value="">Ninguna</option>{#each ALPHABET as letter}<option value={letter}>{letter}</option>{/each}</select>
           </label>
           <label class="monster-filter">Filtrar por VD
             <select bind:value={monsterCrFilter}>
@@ -4614,7 +4633,7 @@ import ITEMS from './items.json';
                   <div class="builder-review-derived">
                     <div><span>Puntos de golpe</span><strong>{BUILDER_HIT_DIE[builderData.className] + builderModifier(builderAdjustedAbilities().Constitución)} <small>PG</small></strong></div>
                     <div><span>Clase de armadura</span><strong>{builderStartingAC()}</strong></div>
-                    <div><span>Iniciativa</span><button type="button" class="inline-roll" title="Tirar 1d20${signedBonus(builderModifier(builderAdjustedAbilities().Destreza))} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(builderModifier(builderAdjustedAbilities().Destreza)), 'Iniciativa')}>{signedBonus(builderModifier(builderAdjustedAbilities().Destreza))}</button></div>
+                    <div><span>Iniciativa</span><button type="button" class="inline-roll" title={'Tirar 1d20' + signedBonus(builderModifier(builderAdjustedAbilities().Destreza)) + ' en Dice+'} on:click={() => sendSheetRoll('1d20' + signedBonus(builderModifier(builderAdjustedAbilities().Destreza)), 'Iniciativa')}>{signedBonus(builderModifier(builderAdjustedAbilities().Destreza))}</button></div>
                     <div><span>Dado de golpe</span><strong>d{BUILDER_HIT_DIE[builderData.className]}</strong></div>
                   </div>
                 </section>
