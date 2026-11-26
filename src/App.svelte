@@ -2245,14 +2245,14 @@ import ITEMS from './items.json';
         if (m) { info.push({label,value:line.slice(m[0].length)}); matched=true; break; }
       }
       if (matched) continue;
-      if (/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\b/.test(line)) { info.unshift({label:'Tipo y alineamiento',value:line}); continue; }
+      if (/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\b/.test(line)) { info.unshift({label:'Type and Alignment',value:line}); continue; }
       if (/^CR\s/i.test(line)) { info.push({label:'Challenge Rating',value:translateMonsterText(line.replace(/^CR\s*/i,''))}); continue; }
       if (current) {
         const split = line.match(/^([^.!?]{2,90})\.\s+(.+)$/);
         if (split) current.entries.push({name:split[1],description:split[2]});
         else if (current.entries.length) current.entries[current.entries.length-1].description += ' ' + line;
         else current.entries.push({name:'',description:line});
-      } else info.push({label:'Otros datos',value:line});
+      } else info.push({label:'Other Details',value:line});
     }
     return {info,sections};
   }
@@ -4314,6 +4314,7 @@ import ITEMS from './items.json';
                   <span class="monster-cr">VD {monster.cr.split(' ')[0] || '—'}</span>
                 </summary>
                 <div class="monster-statblock">
+                  {#if monster.description}<p class="monster-description">{monster.description}</p>{/if}
                   {#each [parseMonsterProfile(monster)] as profile}
                   <div class="monster-info-grid">
                     {#each profile.info as item}
