@@ -3589,46 +3589,30 @@ import ITEMS from './items.json';
     }
     return {detail:details.join(' '),total};
   }
-  function rollQuickButton(index:number) {
+  function quickFormulaForDicePlus(formula:string, mode:'normal'|'advantage'|'disadvantage'='normal', critical=false): string {
+    let notation=formula.replace(/\\s+/g,'').replace(/−/g,'-');
+    if (!/^(?:[+-]?(?:\\d+)?d(?:4|6|8|10|12|20|100)|[+-]?\\d+)(?:(?:[+-])(?:(?:\\d+)?d(?:4|6|8|10|12|20|100)|\\d+))*$/i.test(notation)) throw new Error('Fórmula no válida: '+formula);
+    if (critical) notation=notation.replace(/(\\d*)d(4|6|8|10|12|20|100)/gi,(_,count,sides)=>(Number(count||1)*2)+'d'+sides);
+    if (mode!=='normal') {
+      if (!/^(?:\\d*)d20/i.test(notation)) throw new Error('Ventaja y desventaja requieren un d20 en el ataque.');
+      notation=notation.replace(/^(\\d*)d20/i, '2d20'+(mode==='advantage'?'kh1':'kl1'));
+    }
+    return notation;
+  }
+  async function rollQuickButton(index:number) {
     if (!sheet) return;
     const button=getQuickButtons(sheet)[index];
     try {
-      const attackFormula=button.attack.trim();
-      const hasD20=/\d*d20/i.test(attackFormula);
-      let attackDetail='';
-      let attackTotal=0;
-      let natural:number|null=null;
-      if (hasD20) {
-        const match=attackFormula.match(/(\d*)d20/i);
-        const count=Math.max(1,Number(match?.[1] || 1));
-        if (count !== 1) throw new Error('La tirada de ataque debe contener un solo d20.');
-        const first=Math.floor(Math.random()*20)+1;
-        const second=button.mode==='normal'?null:Math.floor(Math.random()*20)+1;
-        natural=second===null?first:button.mode==='advantage'?Math.max(first,second):Math.min(first,second);
-        const chosen=natural;
-        const bonusFormula=attackFormula.replace(/(\d*)d20/i,'').replace(/^\+/,'');
-        const bonus=bonusFormula ? rollFormula(bonusFormula) : {detail:'',total:0};
-        attackTotal=chosen+bonus.total;
-        attackDetail=(second===null?'['+first+']':'['+first+', '+second+']')+' → '+chosen+(bonus.total?(bonus.total>0?' + ':' - ')+Math.abs(bonus.total):'')+' = '+attackTotal;
-      } else {
-        if (button.mode!=='normal') throw new Error('Ventaja y desventaja requieren un d20 en el ataque.');
-        const result=rollFormula(attackFormula);
-        attackTotal=result.total;
-        attackDetail=result.detail+' = '+result.total;
-      }
-      const critical=natural===20;
-      const fumble=natural===1;
-      let damageDetail='';
-      if (button.damage.trim()) {
-        const damage=rollFormula(button.damage.trim(),critical);
-        damageDetail=damage.detail+' = '+damage.total;
-      }
-      quickRollHistory=[{id:Date.now(),name:button.name || 'Tirada',attack:attackDetail,damage:damageDetail,mode:button.mode,critical,fumble},...quickRollHistory].slice(0,20);
+      const attackNotation=quickFormulaForDicePlus(button.attack,button.mode);
+      const attackHasD20=/\\d*d20/i.test(button.attack);
+      const damageNotation=button.damage.trim()?quickFormulaForDicePlus(button.damage,'normal',attackHasD20):'';
+      await sendSheetRoll(attackNotation,button.name+' · Ataque');
+      if (damageNotation) await sendSheetRoll(damageNotation,button.name+' · Daño'+(attackHasD20?' · Crítico posible':''));
+      quickRollHistory=[{id:Date.now(),name:button.name || 'Tirada',attack:attackNotation,damage:damageNotation,mode:button.mode,critical:false,fumble:false},...quickRollHistory].slice(0,20);
     } catch (error) {
       notice=error instanceof Error?error.message:'No se pudo realizar la tirada.';
     }
   }
-
 
   function playerFeatureGroups(target: RawSheet) {
     const className = sheetClassName(target);
