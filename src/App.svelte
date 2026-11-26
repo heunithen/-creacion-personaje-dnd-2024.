@@ -2198,125 +2198,61 @@ import ITEMS from './items.json';
   let initiativeOrder: InitiativeParticipant[] = [];
   let activeInitiativeIndex = 0;
   let initiativeRound = 1;
-  const INITIATIVE_OVERLAY_KEY = 'com.heunithen.dnd2024-character-builder/initiative-overlay';
+  const INITIATIVE_OVERLAY_CHANNEL = 'com.heunithen.dnd2024-character-builder/initiative-overlay';
+  const INITIATIVE_POPOVER_ID = 'com.heunithen.dnd2024-character-builder/initiative-popover';
   let initiativeOverlayVisible = false;
-  $: if (combatantsStorageReady) {
-    try { localStorage.setItem(COMBATANTS_STORAGE_KEY, JSON.stringify(combatants)); } catch (error) { console.warn('No se pudo guardar el combate', error); }
+  const isInitiativeOverlay = new URLSearchParams(window.location.search).get('initiativeOverlay') === '1';
+  let initiativeOverlayState:{round:number;activeIndex:number;participants:InitiativeParticipant[]} = {round:1,activeIndex:0,participants:[]};
+  function getInitiativeOverlayState() {
+    return {round:initiativeRound,activeIndex:activeInitiativeIndex,participants:initiativeOrder.map(p=>({...p}))};
   }
-  let combatRollMode: 'normal'|'advantage'|'disadvantage' = 'normal';
-  let combatSort = true;
-  function monsterNumber(monster:any,label:string): number {
-    const raw=String(monster.statBlock||'');
-    if(label==='Armor Class'){const m=raw.match(/^AC\s*(\d+)/im);return m?Number(m[1]):0;}
-    if(label==='Initiative'){const m=raw.match(/Initiative\s*([+-]\d+)/i);return m?Number(m[1]):0;}
-    if(label==='Hit Points'){const m=raw.match(/^HP\s*(\d+)/im);return m?Number(m[1]):0;}
-    const row=parseMonsterProfile(monster).info.find(x=>x.label===label);
-    const value=String(row?.value||'').match(/-?\d+/);
-    return value ? Number(value[0]) : 0;
-  }
-  function monsterMaxHp(monster:any): number {
-    const row=parseMonsterProfile(monster).info.find(x=>x.label==='Hit Points');
-    return Number(String(row?.value||'').match(/^\s*(\d+)/)?.[1] || 1);
-  }
-  function addCombatant(monster:any) {
-    const maxHp=monsterMaxHp(monster);
-    combatants=[...combatants,{id:String(Date.now())+Math.random().toString(36).slice(2),monster,name:monster.name,ac:monsterNumber(monster,'Armor Class'),hp:maxHp,maxHp,tempHp:0,initiative:monsterNumber(monster,'Initiative'),damageInput:0,compact:true,dead:false,acMod:0,participating:true}];
-    masterTab='Combate';
-    showAllCombatants=false;
-    notice=monster.name+' añadido y marcado como participante.';
-  }
-  function duplicateCombatant(id:string) {
-    const original=combatants.find(x=>x.id===id); if(!original)return;
-    combatants=[...combatants,{...original,id:String(Date.now())+Math.random().toString(36).slice(2),name:original.name+' 2',hp:original.maxHp,tempHp:0,damageInput:0,dead:false}];
-  }
-  function playerInitiative(entry:RoomEntry):number {
-    const raw=getCharacterStat(entry.sheet,'COMBATE','Initiative') || getCharacterStat(entry.sheet,'COMBATE','Iniciativa') || '0';
-    const match=String(raw).replace(/−/g,'-').match(/[+-]?\d+/);
-    return match ? Number(match[0]) : 0;
-  }
-  function getInitiativeParticipants():InitiativeParticipant[] {
-    // La lista del director ya combina personajes conectados y fichas guardadas en esta sala.
-    // Se incluyen todos los personajes del roster, sin exigir que tengan el indicador live activo.
-    const players=roomSheets.map(entry=>({id:'player:'+entry.playerId,name:String(entry.sheet?.name || entry.playerName || 'Personaje'),bonus:playerInitiative(entry),roll:0,total:0}));
-    const monsters=combatants.filter(c=>c.participating!==false).map(c=>({id:'monster:'+c.id,name:c.name,bonus:Number(c.initiative)||0,roll:0,total:0}));
-    return [...players,...monsters];
-  }
-  function initiativeOverlayText():string {
-    const lines=initiativeOrder.map((participant,index)=>
-      (index===activeInitiativeIndex?'▶ ':'   ')+(index+1)+'. '+participant.name+' · '+participant.total
-    );
-    return 'INICIATIVA · RONDA '+initiativeRound+'\\n'+
-      'Turno actual: '+(initiativeOrder[activeInitiativeIndex]?.name || '—')+'\\n\\n'+lines.join('\\n');
-  }
-  async function findInitiativeOverlay():Promise<any[]> {
-    if(!obrReady || !(await OBR.scene.isReady()))return [];
-    return await OBR.scene.items.getItems(item=>item.metadata?.[INITIATIVE_OVERLAY_KEY]===true);
+  function publishInitiativeOverlayState():void {
+    initiativeOverlayState=getInitiativeOverlayState();
+    if(obrReady)void OBR.broadcast.sendMessage(INITIATIVE_OVERLAY_CHANNEL,{type:'update',state:initiativeOverlayState},{destination:'ALL'});
   }
   async function refreshInitiativeOverlay():Promise<void> {
     if(!initiativeOverlayVisible)return;
-    try {
-      const overlays=await findInitiativeOverlay();
-      if(!overlays.length){initiativeOverlayVisible=false;return;}
-      const text=initiativeOverlayText();
-      await OBR.scene.items.updateItems(overlays,items=>{
-        for(const item of items)if(item.type==='LABEL')item.text.plainText=text;
-      });
-    } catch(error) { console.warn('No se pudo actualizar el mensaje de iniciativa',error); }
+    publishInitiativeOverlayState();
   }
   async function showInitiativeOverlay():Promise<void> {
     if(!initiativeOrder.length){notice='Primero debes tirar la iniciativa.';return;}
     if(!obrReady || !(await OBR.scene.isReady())){notice='Abre una escena de Owlbear Rodeo para mostrar la iniciativa.';return;}
     try {
-      const existing=await findInitiativeOverlay();
-      if(existing.length){
-        initiativeOverlayVisible=true;
-        await refreshInitiativeOverlay();
-        notice='Mensaje de iniciativa actualizado en la escena.';
-        return;
-      }
       const width=await OBR.viewport.getWidth();
       const height=await OBR.viewport.getHeight();
-      const center=await OBR.viewport.inverseTransformPoint({x:width/2,y:height/2});
-      const label=buildLabel()
-        .name('Tracker de iniciativa')
-        .plainText(initiativeOverlayText())
-        .width(380)
-        .height(Math.min(560,110+initiativeOrder.length*30))
-        .padding(16)
-        .fontSize(18)
-        .fontWeight(800)
-        .fillColor('#ffffff')
-        .backgroundColor('#0b171d')
-        .backgroundOpacity(0.96)
-        .strokeColor('#5fe6e0')
-        .strokeWidth(3)
-        .cornerRadius(12)
-        .textAlign('LEFT')
-        .position(center)
-        .layer('NOTE')
-        .locked(true)
-        .metadata({[INITIATIVE_OVERLAY_KEY]:true})
-        .build();
-      await OBR.scene.items.addItems([label]);
+      const state=encodeURIComponent(JSON.stringify(getInitiativeOverlayState()));
+      const url=window.location.origin+window.location.pathname+'?initiativeOverlay=1&state='+state;
+      await OBR.popover.open({
+        id:INITIATIVE_POPOVER_ID,
+        url,
+        width:340,
+        height:Math.min(620,180+initiativeOrder.length*34),
+        anchorReference:'POSITION',
+        anchorPosition:{left:Math.max(12,width-16),top:Math.max(12,height-16)},
+        anchorOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
+        transformOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
+        disableClickAway:true,
+        marginThreshold:12
+      });
       initiativeOverlayVisible=true;
-      notice='Iniciativa publicada en la escena para todos los jugadores.';
+      publishInitiativeOverlayState();
+      notice='Tracker fijado en la esquina inferior derecha de la pantalla.';
     } catch(error) {
-      console.error('No se pudo mostrar la iniciativa en la escena',error);
-      notice='No se pudo publicar la iniciativa en la escena.';
+      console.error('No se pudo mostrar el tracker de iniciativa',error);
+      notice='No se pudo fijar el tracker en la pantalla.';
     }
   }
   async function hideInitiativeOverlay():Promise<void> {
     try {
-      const overlays=await findInitiativeOverlay();
-      if(overlays.length)await OBR.scene.items.deleteItems(overlays.map(item=>item.id));
+      await OBR.popover.close(INITIATIVE_POPOVER_ID);
       initiativeOverlayVisible=false;
-      notice='Mensaje de iniciativa ocultado.';
+      notice='Tracker de iniciativa ocultado.';
     } catch(error) {
-      console.error('No se pudo ocultar el mensaje de iniciativa',error);
-      notice='No se pudo ocultar el mensaje de iniciativa.';
+      console.error('No se pudo ocultar el tracker de iniciativa',error);
+      notice='No se pudo ocultar el tracker.';
     }
   }
-  function rollInitiativeDie():number { return Math.floor(Math.random()*20)+1; }
+    function rollInitiativeDie():number { return Math.floor(Math.random()*20)+1; }
   function rollInitiative():void {
     const participants=getInitiativeParticipants();
     if(!participants.length){initiativeOrder=[];notice='No hay participantes en el combate.';return;}
@@ -4367,6 +4303,16 @@ import ITEMS from './items.json';
       localStorage.removeItem('forja-raw-character');
     }
     if (OBR.isAvailable) OBR.onReady(async () => {
+      if(isInitiativeOverlay) {
+        try {
+          const params=new URLSearchParams(window.location.search);
+          const raw=params.get('state');
+          if(raw)initiativeOverlayState=JSON.parse(raw);
+        } catch { /* Se actualizará con el estado compartido del tracker. */ }
+        OBR.broadcast.onMessage(INITIATIVE_OVERLAY_CHANNEL,(event:any)=>{
+          if(event.data?.type==='update'&&event.data.state)initiativeOverlayState=event.data.state;
+        });
+      }
       obrReady = true;
       try {
         obrRole = await OBR.player.getRole();
@@ -4401,7 +4347,21 @@ import ITEMS from './items.json';
   });
 </script>
 
-<svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
+<svelte:head><title>{isInitiativeOverlay ? 'Iniciativa del combate' : 'Forja de Aventureros — D&D 2024'}</title></svelte:head>
+{#if isInitiativeOverlay}
+  <section class="initiative-screen-overlay">
+    <header><strong>INICIATIVA · RONDA {initiativeOverlayState.round}</strong><span>Turno actual: {initiativeOverlayState.participants[initiativeOverlayState.activeIndex]?.name || '—'}</span></header>
+    <ol>
+      {#each initiativeOverlayState.participants as participant,i}
+        <li class:current={i===initiativeOverlayState.activeIndex}>
+          <span class="screen-overlay-index">{i+1}</span>
+          <span class="screen-overlay-name">{participant.name}</span>
+          <strong>{participant.total}</strong>
+        </li>
+      {/each}
+    </ol>
+  </section>
+{:else}
 <div class="app-shell">
   <header class="topbar">
     <a class="brand" href="#inicio"><img class="brand-icon" src="/-creacion-personaje-dnd-2024./icono.webp" alt="" /><span><strong>FORJA DE AVENTUREROS</strong><small>D&D · 2024</small></span></a>
@@ -5707,6 +5667,7 @@ import ITEMS from './items.json';
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
   <footer><span>FORJA DE AVENTUREROS · v1.0.53</span></footer>
 </div>
+{/if}
 
 <style>
   :global(:root){--paper:#13262e;--paper-deep:#1b2a33;--ink:#ffffff;--ink-soft:#b5bec3;--rule:#3a4a52;--red:#3fb8b8;--gold:#5fe6e0}
@@ -8129,6 +8090,17 @@ import ITEMS from './items.json';
   @media(max-width:520px){.initiative-list li{grid-template-columns:26px minmax(0,1fr)}.initiative-roll{grid-column:2;white-space:normal}.initiative-turn-controls strong{flex-basis:100%;order:-1}}
   @media(max-width:480px){.combatant-vitals{align-items:flex-start;flex-direction:column}.combat-initiative{align-items:flex-start;flex-direction:column}}
 
+  .initiative-screen-overlay{box-sizing:border-box;width:100%;height:100%;overflow:auto;padding:14px;background:#0b171d;color:#fff;font-family:Arial,sans-serif;border:2px solid #5fe6e0;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.4)}
+  .initiative-screen-overlay header{display:flex;flex-direction:column;gap:5px;padding-bottom:10px;border-bottom:1px solid #3a6870}
+  .initiative-screen-overlay header strong{font-size:17px;letter-spacing:.04em;color:#9fe9e5}
+  .initiative-screen-overlay header span{font-size:12px;color:#e6b83f;font-weight:700}
+  .initiative-screen-overlay ol{display:flex;flex-direction:column;gap:5px;list-style:none;margin:10px 0 0;padding:0}
+  .initiative-screen-overlay li{display:grid;grid-template-columns:25px minmax(0,1fr) 34px;align-items:center;gap:8px;padding:7px 8px;border:1px solid #29444d;border-radius:7px;background:#13262e}
+  .initiative-screen-overlay li.current{border:2px solid #e6b83f;background:#493d1d}
+  .screen-overlay-index{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:#263d46;color:#9fe9e5;font-weight:800;font-size:12px}
+  .initiative-screen-overlay li.current .screen-overlay-index{background:#e6b83f;color:#17242a}
+  .screen-overlay-name{font-size:13px;font-weight:700;overflow-wrap:anywhere}
+  .initiative-screen-overlay li strong{text-align:right;font-size:16px;color:#fff}
   /* Bonificadores de habilidades: competencia en amarillo y pericia en rojo. */
   :global(.nautical-skills .sheet-stat.proficient .skill-number),
   :global(.nautical-skills .sheet-stat.proficient .inline-roll){color:#ffd34e!important}
