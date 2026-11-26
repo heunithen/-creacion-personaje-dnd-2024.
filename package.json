@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "audit:manual": "node scripts/audit-manual.mjs"
+    "audit:manual": "node scripts/audit-manual.mjs",
+    "test:builder": "node --test scripts/character-creation-regression.test.mjs"
   },
   "dependencies": {
     "@owlbear-rodeo/sdk": "3.1.0"
