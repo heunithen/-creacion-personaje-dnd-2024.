@@ -2178,6 +2178,77 @@ import SPELLS from './spells.json';
 import ITEMS from './items.json';
 
 
+  type Combatant = { id:string; monster:any; name:string; ac:number; hp:number; maxHp:number; tempHp:number; initiative:number; damageInput:number; compact:boolean; dead:boolean; acMod:number };
+  let combatants: Combatant[] = [];
+  let combatRollMode: 'normal'|'advantage'|'disadvantage' = 'normal';
+  let combatSort = true;
+  function monsterNumber(monster:any,label:string): number {
+    const profile=parseMonsterProfile(monster);
+    const row=profile.info.find(x=>x.label===label);
+    const value=String(row?.value||'').match(/-?\d+/);
+    return value ? Number(value[0]) : 0;
+  }
+  function monsterMaxHp(monster:any): number {
+    const row=parseMonsterProfile(monster).info.find(x=>x.label==='Hit Points');
+    return Number(String(row?.value||'').match(/^\s*(\d+)/)?.[1] || 1);
+  }
+  function addCombatant(monster:any) {
+    const maxHp=monsterMaxHp(monster);
+    combatants=[...combatants,{id:String(Date.now())+Math.random().toString(36).slice(2),monster,name:monster.name,ac:monsterNumber(monster,'Armor Class'),hp:maxHp,maxHp,tempHp:0,initiative:0,damageInput:0,compact:true,dead:false,acMod:0}];
+    masterTab='Tiradas';
+    notice=monster.name+' añadido al combate.';
+  }
+  function duplicateCombatant(id:string) {
+    const original=combatants.find(x=>x.id===id); if(!original)return;
+    combatants=[...combatants,{...original,id:String(Date.now())+Math.random().toString(36).slice(2),name:original.name+' 2',hp:original.maxHp,tempHp:0,initiative:0,damageInput:0,dead:false}];
+  }
+  function updateCombatant(id:string,patch:Partial<Combatant>) {
+    combatants=combatants.map(c=>c.id===id?{...c,...patch}:c);
+  }
+  function adjustCombatHp(id:string,amount:number) {
+    const c=combatants.find(x=>x.id===id); if(!c)return;
+    if(amount<0){
+      const damage=Math.abs(amount),absorbed=Math.min(c.tempHp,damage),remaining=damage-absorbed;
+      updateCombatant(id,{tempHp:c.tempHp-absorbed,hp:Math.max(0,c.hp-remaining),dead:c.hp-remaining<=0});
+    } else updateCombatant(id,{hp:Math.min(c.maxHp,c.hp+amount),dead:false});
+  }
+  function setCombatTempHp(id:string,value:number) {
+    const c=combatants.find(x=>x.id===id); if(!c)return;
+    updateCombatant(id,{tempHp:Math.max(c.tempHp,Math.max(0,Number(value)||0))});
+  }
+  function applyCombatDamage(id:string,kind:'damage'|'heal') {
+    const c=combatants.find(x=>x.id===id); if(!c)return;
+    const amount=Math.max(0,Math.floor(Number(c.damageInput)||0));
+    if(!amount)return;
+    adjustCombatHp(id,kind==='damage'?-amount:amount);
+    updateCombatant(id,{damageInput:0});
+  }
+  function combatInitiative(id:string) {
+    const c=combatants.find(x=>x.id===id); if(!c)return;
+    const bonus=monsterNumber(c.monster,'Initiative');
+    sendCombatRoll('1d20'+(bonus>=0?'+':'')+bonus,c.name+' · Iniciativa',true);
+  }
+  async function sendCombatRoll(notation:string,label:string,initiative=false) {
+    if(combatRollMode!=='normal' && /^1d20[+-]?\d*$/.test(notation) && !initiative){
+      const match=notation.match(/^1d20([+-]\d+)?$/); if(match){
+        const bonus=Number(match[1]||0);
+        await performCustomRoll({id:'combat',name:label,parts:[]},{id:'combat',name:label,die:20,bonus},combatRollMode);
+        return;
+      }
+    }
+    await sendSheetRoll(notation,label);
+  }
+  function getMonsterCombatActions(monster:any) {
+    const sections=parseMonsterProfile(monster).sections;
+    return sections.flatMap(section=>section.entries.map(entry=>{
+      const text=entry.description;
+      const attack=text.match(/Attack Roll:\s*([+-]\d+)/i);
+      const damage=text.match(/Hit:\s*[\d,]+\s*\(([^)]+)\)/i);
+      const dc=text.match(/(?:save|saving throw)[^\n]{0,50}?DC\s*(\d+)/i) || text.match(/DC\s*(\d+)/i);
+      const damageNotation=damage?.[1]?.replace(/\s+/g,'').replace(/×/g,'*') || '';
+      return {...entry,attackNotation:attack?'1d20'+attack[1]:'',damageNotation:/^\d*d(?:4|6|8|10|12|20)(?:[+-]\d+)?$/i.test(damageNotation)?damageNotation:'',dc:dc?.[1]||''};
+    })).filter(x=>x.attackNotation||x.damageNotation||x.dc);
+  }
   let customRolls: CustomRoll[] = [];
   let lastRollId = '';
   let newRollName = '';
@@ -4146,6 +4217,52 @@ import ITEMS from './items.json';
           {/if}
         </section>
       {:else if masterTab === 'Tiradas'}
+        <section class="panel combat-panel">
+          <div class="section-heading"><h2>Combate</h2><span class="count">{combatants.length} criaturas</span></div>
+          <div class="combat-toolbar">
+            <label>Modo de tirada
+              <select bind:value={combatRollMode}><option value="normal">Normal</option><option value="advantage">Ventaja</option><option value="disadvantage">Desventaja</option></select>
+            </label>
+            <label class="combat-sort"><input type="checkbox" bind:checked={combatSort}/> Ordenar por iniciativa</label>
+            <button class="secondary" type="button" on:click={()=>combatants=[]}>Vaciar combate</button>
+          </div>
+          {#if combatants.length}
+            <div class="combat-grid">
+              {#each (combatSort?[...combatants].sort((a,b)=>b.initiative-a.initiative):combatants) as c (c.id)}
+                <article class:combat-dead={c.hp===0} class="combatant-card">
+                  <header class="combatant-header">
+                    <input aria-label="Nombre de criatura" class="combatant-name" value={c.name} on:change={e=>updateCombatant(c.id,{name:(e.currentTarget as HTMLInputElement).value})}/>
+                    <div class="combatant-tools">
+                      <button title="Duplicar" on:click={()=>duplicateCombatant(c.id)}>⧉</button>
+                      <button title="Quitar del combate" on:click={()=>combatants=combatants.filter(x=>x.id!==c.id)}>×</button>
+                    </div>
+                  </header>
+                  <div class="combatant-vitals">
+                    <label class="combat-ac">🛡 CA <input type="number" value={c.ac+c.acMod} on:change={e=>updateCombatant(c.id,{acMod:Number((e.currentTarget as HTMLInputElement).value)-c.ac})}/></label>
+                    <div class="combat-hp"><span>❤ PG</span><button on:click={()=>adjustCombatHp(c.id,-1)}>−</button><input aria-label="Puntos de golpe actuales" type="number" min="0" max={c.maxHp} value={c.hp} on:change={e=>updateCombatant(c.id,{hp:Math.min(c.maxHp,Math.max(0,Number((e.currentTarget as HTMLInputElement).value)||0)),dead:Number((e.currentTarget as HTMLInputElement).value)<=0})}/><button on:click={()=>adjustCombatHp(c.id,1)}>+</button><span>/ {c.maxHp}</span></div>
+                  </div>
+                  <div class="combat-hp-track"><span style="width:{Math.max(0,Math.min(100,c.hp/c.maxHp*100))}%" class:hp-yellow={c.hp/c.maxHp<=.5&&c.hp/c.maxHp>.25} class:hp-red={c.hp/c.maxHp<=.25}></span></div>
+                  <div class="combat-temp"><span>✦ PG temporales</span><button on:click={()=>updateCombatant(c.id,{tempHp:Math.max(0,c.tempHp-1)})}>−</button><strong>{c.tempHp}</strong><button on:click={()=>setCombatTempHp(c.id,c.tempHp+1)}>+</button></div>
+                  <div class="combat-damage-tools"><input type="number" min="0" value={c.damageInput} aria-label="Daño o curación" on:input={e=>updateCombatant(c.id,{damageInput:Number((e.currentTarget as HTMLInputElement).value)})}/><button class="damage-button" on:click={()=>applyCombatDamage(c.id,'damage')}>Daño</button><button class="heal-button" on:click={()=>applyCombatDamage(c.id,'heal')}>Curar</button></div>
+                  <div class="combat-initiative"><label>Iniciativa <input type="number" value={c.initiative} on:change={e=>updateCombatant(c.id,{initiative:Number((e.currentTarget as HTMLInputElement).value)||0})}/></label><button on:click={()=>combatInitiative(c.id)}>🎲 Tirar iniciativa</button></div>
+                  <button class="combat-expand" on:click={()=>updateCombatant(c.id,{compact:!c.compact})}>{c.compact?'Mostrar acciones y tiradas':'Ocultar acciones y tiradas'}</button>
+                  {#if !c.compact}
+                    <div class="combat-actions">
+                      {#each getMonsterCombatActions(c.monster) as action}
+                        <div class="combat-action-row"><strong>{translateMonsterText(action.name)}</strong>
+                          <div>{#if action.attackNotation}<button on:click={()=>sendCombatRoll(action.attackNotation,c.name+' · '+action.name)}>{'⚔ '+action.attackNotation}</button>{/if}
+                          {#if action.damageNotation}<button on:click={()=>sendSheetRoll(action.damageNotation,c.name+' · '+action.name+' · Daño')}>{'🎲 '+action.damageNotation}</button>{/if}
+                          {#if action.dc}<span class="combat-dc">CD {action.dc}</span>{/if}</div>
+                        </div>
+                      {/each}
+                    </div>
+                  {/if}
+                  {#if c.hp===0}<div class="combat-fallen">💀 Caído</div>{/if}
+                </article>
+              {/each}
+            </div>
+          {:else}<p class="muted">Añade criaturas desde la pestaña Monstruos para preparar el combate.</p>{/if}
+        </section>
         <section class="panel gm-rolls-panel">
           <div class="section-heading"><h2>Crear tiradas</h2><span class="count">Dice+</span></div>
           <section class="custom-rolls">
@@ -4346,6 +4463,7 @@ import ITEMS from './items.json';
                   <span class="monster-cr">VD {monster.cr.split(' ')[0] || '—'}</span>
                 </summary>
                 <div class="monster-statblock">
+                  <button class="primary add-to-combat" type="button" on:click={()=>addCombatant(monster)}>＋ Añadir al combate</button>
                   {#each [parseMonsterProfile(monster)] as profile}
                     <div class="monster-block-heading">
                       <h3>{monster.name}</h3>
@@ -7265,5 +7383,40 @@ import ITEMS from './items.json';
   .chest-opened-note{font-weight:700;color:var(--gm-accent);margin:16px 0 5px}
   .chest-empty{margin-top:16px}
   @media(max-width:520px){.monster-quick-stats{grid-template-columns:1fr}.monster-statblock{padding:10px}.monster-ability-row{font-size:12px}}
+
+
+  .combat-toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:12px 0}
+  .combat-toolbar label,.combat-initiative label{display:flex;gap:8px;align-items:center;font-size:12px}
+  .combat-toolbar select,.combatant-card input{min-width:0;background:#0b171d;color:#fff;border:1px solid #3fb8b8;border-radius:5px;padding:6px}
+  .combat-sort input{width:auto}
+  .combat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:10px}
+  .combatant-card{position:relative;min-width:0;padding:12px;border:1px solid #3fb8b8;border-radius:9px;background:#0b171d;color:#fff}
+  .combatant-card.combat-dead{opacity:.58;filter:grayscale(.65)}
+  .combatant-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .combatant-name{flex:1;font-weight:800;font-size:15px}
+  .combatant-tools{display:flex;gap:4px}.combatant-tools button,.combat-hp button,.combat-temp button{border:1px solid #3fb8b8;border-radius:4px;background:#13262e;color:#fff;padding:4px 8px}
+  .combatant-vitals{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:12px 0 6px;font-size:13px;font-weight:800}
+  .combat-ac,.combat-hp{display:flex;align-items:center;gap:5px}
+  .combat-ac input{width:48px;text-align:center;font-weight:800}
+  .combat-hp input{width:48px;text-align:center;font-weight:800}
+  .combat-hp-track{height:9px;background:#34434a;border-radius:9px;overflow:hidden;margin:5px 0 9px}
+  .combat-hp-track span{display:block;height:100%;background:#29b765;transition:width .2s}
+  .combat-hp-track span.hp-yellow{background:#e6b83f}.combat-hp-track span.hp-red{background:#d64b4b}
+  .combat-temp{display:flex;justify-content:center;align-items:center;gap:10px;color:#8abfff;font-size:12px;margin:6px 0 10px}
+  .combat-damage-tools{display:grid;grid-template-columns:minmax(48px,1fr) auto auto;gap:6px;padding:8px 0;border-top:1px solid #3fb8b8}
+  .combat-damage-tools input{width:100%;box-sizing:border-box}
+  .combat-damage-tools button,.combat-initiative button,.combat-expand,.combat-actions button{border:1px solid #3fb8b8;border-radius:5px;background:#13262e;color:#fff;padding:6px 9px;font-size:12px}
+  .combat-damage-tools .damage-button{border-color:#c95c5c}.combat-damage-tools .heal-button{border-color:#36b978}
+  .combat-initiative{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:4px 0 9px;font-size:12px}
+  .combat-initiative input{width:52px}
+  .combat-expand{width:100%;margin:4px 0}
+  .combat-actions{display:grid;gap:7px;margin-top:8px}
+  .combat-action-row{display:grid;gap:5px;padding:7px 0;border-top:1px solid #31525a;font-size:12px}
+  .combat-action-row>div{display:flex;gap:5px;flex-wrap:wrap}
+  .combat-action-row button{font-weight:800;color:#5fe6e0}
+  .combat-dc{padding:6px 9px;border:1px solid #7b83c5;border-radius:5px;color:#b7baff;font-weight:800}
+  .combat-fallen{text-align:center;font-weight:900;color:#e87979;margin-top:8px}
+  .add-to-combat{margin-bottom:12px}
+  @media(max-width:480px){.combatant-vitals{align-items:flex-start;flex-direction:column}.combat-initiative{align-items:flex-start;flex-direction:column}}
 
 </style>
