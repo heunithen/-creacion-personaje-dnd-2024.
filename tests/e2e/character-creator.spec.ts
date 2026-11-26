@@ -126,8 +126,10 @@ test('compra de puntos actualiza el gasto y permite recuperar puntos; creación 
   await nextButton(page).click();
   await nextButton(page).click();
   await nextButton(page).click();
-  await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '03.1. Elecciones del trasfondo' })).toBeVisible();
+
+  const backgroundTool = page.getByLabel('Competencia con herramienta del trasfondo');
+  if (await backgroundTool.count()) await backgroundTool.selectOption({ index: 1 });
 
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '04. Elige tu especie' })).toBeVisible();
