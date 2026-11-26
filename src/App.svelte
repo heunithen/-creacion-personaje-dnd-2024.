@@ -795,6 +795,8 @@
   let levelUpSubclass = '';
   let levelUpSubclassVariant = '';
   let levelUpBarbarianAspect = '';
+  let levelUpBarbarianWildFury = '';
+  let levelUpBarbarianWildPower = '';
   let levelUpRangerStyle = '';
   let levelUpPaladinStyle = '';
   let levelUpFighterStyles = '';
@@ -2695,7 +2697,15 @@ import ITEMS from './items.json';
 
   const LEVEL_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
   const LEVEL_XP_THRESHOLDS: Record<number,number> = {1:0,2:300,3:900,4:2700,5:6500,6:14000,7:23000,8:34000,9:48000,10:64000,11:85000,12:100000,13:120000,14:140000,15:165000,16:195000,17:225000,18:265000,19:305000,20:355000};
-  const BARBARIAN_GENERAL_FEATS = ['Actor','Atleta','Cargador','Chef','Experto en ballestas','Aplastador','Duelista defensivo','Combate con dos armas','Resistente','Luchador','Gran maestro de armas','Muy acorazado','Maestro de armaduras pesadas','Líder inspirador','Mente aguda','Ligeramente acorazado','Asesino de magos','Entrenamiento con armas marciales','Maestro de armaduras medias','Moderadamente acorazado','Combatiente montado','Observador','Perforador','Envenenador','Maestro de armas de asta','Resiliente','Lanzador ritual','Centinela','Toque sombrío','Francotirador','Maestro del escudo','Experto en habilidades','Sigiloso','Cortador','Veloz','Telequinético','Telepático','Maestro de armas'];
+  const BARBARIAN_GENERAL_FEATS = [
+    'Acechador','Actor','Apresador','Atacante a la carga','Atleta','Azote de magos','Centinela','Chef',
+    'Combatiente con dos armas','Combatiente montado','Duelista defensivo','Entrenamiento con armas marciales',
+    'Envenenador','Experto en ballestas','Experto en habilidades','Influencia feérica','Influencia sombría',
+    'Lanzador ritual','Líder inspirador','Ligeramente acorazado','Maestro de armas','Maestro en armaduras medias',
+    'Maestro en armas de asta','Maestro en armas pesadas','Maestro en escudos','Mente aguda',
+    'Moderadamente acorazado','Muy acorazado','Observador','Perforador','Rebanador','Resiliente',
+    'Resistente','Telepático','Telequinético','Tirador de primera','Triturador','Veloz'
+  ];
   function getCharacterExperience(target:RawSheet):number {
     const raw=getCharacterStat(target,'PERSONAJE','Experiencia') || '0';
     const digits=String(raw).replace(/[^0-9]/g,'');
@@ -2704,48 +2714,51 @@ import ITEMS from './items.json';
   function getBarbarianGeneralFeatOptions(target:RawSheet):string[] {
     const score=(ability:string)=>getCharacterNumber(target,'ATRIBUTOS',ability,10);
     const hasAny=(...abilities:string[])=>abilities.some(ability=>score(ability)>=13);
+    const armorTraining=(kind:string)=>normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armaduras')).includes(normalizeLevelText(kind)) ||
+      normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Entrenamiento con armaduras')).includes(normalizeLevelText(kind)) ||
+      (kind==='armaduras ligeras' && true) || (kind==='armaduras medias' && true) || (kind==='escudos' && true);
     const existing=splitChoiceList([getCharacterStat(target,'RASGOS Y DOTES','Dote de origen'),getCharacterStat(target,'RASGOS Y DOTES','Dotes adicionales')].join('; ')).map(normalizeLevelText);
     const requirements:Record<string,()=>boolean>={
+      'Acechador':()=>score('Destreza')>=13,
       'Actor':()=>score('Carisma')>=13,
+      'Apresador':()=>hasAny('Fuerza','Destreza'),
+      'Atacante a la carga':()=>hasAny('Fuerza','Destreza'),
       'Atleta':()=>hasAny('Fuerza','Destreza'),
-      'Cargador':()=>hasAny('Fuerza','Destreza'),
-      'Chef':()=>hasAny('Constitución','Sabiduría'),
-      'Experto en ballestas':()=>score('Destreza')>=13,
-      'Aplastador':()=>hasAny('Fuerza','Destreza'),
-      'Duelista defensivo':()=>score('Destreza')>=13,
-      'Diestro con dos armas':()=>hasAny('Fuerza','Destreza'),
-      'Resistente':()=>score('Constitución')>=13,
-      'Luchador':()=>hasAny('Fuerza','Destreza'),
-      'Gran maestro de armas':()=>score('Fuerza')>=13,
-      'Muy acorazado':()=>true,
-      'Maestro de armaduras pesadas':()=>false,
-      'Líder inspirador':()=>score('Carisma')>=13,
-      'Mente aguda':()=>score('Inteligencia')>=13,
-      'Ligeramente acorazado':()=>true,
-      'Asesino de magos':()=>true,
-      'Entrenamiento con armas marciales':()=>true,
-      'Maestro de armaduras medias':()=>true,
-      'Moderadamente acorazado':()=>true,
+      'Azote de magos':()=>true,
+      'Centinela':()=>hasAny('Fuerza','Destreza'),
+      'Chef':()=>true,
+      'Combatiente con dos armas':()=>hasAny('Fuerza','Destreza'),
       'Combatiente montado':()=>true,
-      'Observador':()=>hasAny('Inteligencia','Sabiduría'),
-      'Perforador':()=>hasAny('Fuerza','Destreza'),
+      'Duelista defensivo':()=>score('Destreza')>=13,
+      'Entrenamiento con armas marciales':()=>true,
       'Envenenador':()=>true,
-      'Maestro de armas de asta':()=>hasAny('Fuerza','Destreza'),
-      'Resiliente':()=>true,
-      'Lanzador ritual':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
-      'Centinela':()=>true,
-      'Toque sombrío':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
-      'Francotirador':()=>score('Destreza')>=13,
-      'Maestro del escudo':()=>score('Fuerza')>=13,
+      'Experto en ballestas':()=>score('Destreza')>=13,
       'Experto en habilidades':()=>true,
-      'Sigiloso':()=>score('Destreza')>=13,
-      'Cortador':()=>hasAny('Fuerza','Destreza'),
-      'Veloz':()=>score('Destreza')>=13,
-      'Telequinético':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
-      'Telepático':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
-      'Maestro de armas':()=>true
+      'Influencia feérica':()=>true,
+      'Influencia sombría':()=>true,
+      'Lanzador ritual':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
+      'Líder inspirador':()=>hasAny('Sabiduría','Carisma'),
+      'Ligeramente acorazado':()=>true,
+      'Maestro de armas':()=>true,
+      'Maestro en armaduras medias':()=>armorTraining('armaduras medias'),
+      'Maestro en armas de asta':()=>hasAny('Fuerza','Destreza'),
+      'Maestro en armas pesadas':()=>score('Fuerza')>=13,
+      'Maestro en escudos':()=>armorTraining('escudos'),
+      'Mente aguda':()=>score('Inteligencia')>=13,
+      'Moderadamente acorazado':()=>armorTraining('armaduras ligeras'),
+      'Muy acorazado':()=>armorTraining('armaduras medias'),
+      'Observador':()=>hasAny('Inteligencia','Sabiduría'),
+      'Perforador':()=>true,
+      'Rebanador':()=>true,
+      'Resiliente':()=>true,
+      'Resistente':()=>true,
+      'Telepático':()=>true,
+      'Telequinético':()=>true,
+      'Tirador de primera':()=>score('Destreza')>=13,
+      'Triturador':()=>true,
+      'Veloz':()=>hasAny('Destreza','Constitución')
     };
-    return BARBARIAN_GENERAL_FEATS.filter(feat=>(requirements[feat]?.() ?? true) && !existing.includes(normalizeLevelText(feat)));
+    return BARBARIAN_GENERAL_FEATS.filter(feat=>(requirements[feat]?.() ?? false) && !existing.includes(normalizeLevelText(feat)));
   }
   const LEVEL_HIT_DIE: Record<string,number> = { 'Bárbaro':12,'Guerrero':10,'Paladín':10,'Explorador':10,'Bardo':8,'Brujo':8,'Clérigo':8,'Druida':8,'Monje':8,'Pícaro':8,'Hechicero':6,'Mago':6 };
   const LEVEL_FIXED_HP: Record<string,number> = { 'Bárbaro':7,'Guerrero':6,'Paladín':6,'Explorador':6,'Bardo':5,'Brujo':5,'Clérigo':5,'Druida':5,'Monje':5,'Pícaro':5,'Hechicero':4,'Mago':4 };
@@ -3194,6 +3207,8 @@ import ITEMS from './items.json';
     levelUpSubclass = getSubclassData(getCharacterStat(entry.sheet,'PERSONAJE','Clase'),savedSubclass) ? savedSubclass : '';
     levelUpSubclassVariant = getCharacterStat(entry.sheet,'PERSONAJE','Opción de subclase');
     levelUpBarbarianAspect = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Aspecto de lo salvaje') || '';
+    levelUpBarbarianWildFury = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Furia de lo salvaje') || '';
+    levelUpBarbarianWildPower = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Poder de lo salvaje') || '';
     levelUpRangerStyle = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Estilo de combate') || '';
     levelUpPaladinStyle = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Estilo de combate de paladín') || '';
     levelUpFighterStyles = getCharacterStat(entry.sheet,'RASGOS Y DOTES','Estilos de combate') || ((String(getCharacterStat(entry.sheet,'RASGOS Y DOTES','Rasgos de clase')||'').match(/Estilo de combate:\s*([^\n;]+)/i)||[])[1] || '');
@@ -3373,6 +3388,13 @@ import ITEMS from './items.json';
     const barbarianAspectChoice=findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices as LevelUpChoiceDefinition[],'barbarian.wildHeart.aspect');
     const needsBarbarianWildAspect=className==='Bárbaro' && selectedSubclassKey===(barbarianAspectChoice?.subclass || '') && nextLevel===barbarianAspectChoice?.level;
     if(needsBarbarianWildAspect && !validateSingleLevelUpChoice(barbarianAspectChoice,levelUpBarbarianAspect)) { notice='Elige una opción válida para Aspecto de lo salvaje: '+(barbarianAspectChoice?.options||[]).join(', ')+'.'; return; }
+    const isBarbarianWildHeart=className==='Bárbaro' && selectedSubclassKey==='senda del corazon salvaje';
+    const needsBarbarianWildFury=isBarbarianWildHeart && nextLevel===3;
+    const needsBarbarianWildPower=isBarbarianWildHeart && nextLevel===14;
+    if(needsBarbarianWildFury && !['Águila','Lobo','Oso'].includes(levelUpBarbarianWildFury)) { notice='Elige Águila, Lobo u Oso para Furia de lo salvaje.'; return; }
+    if(needsBarbarianWildPower && !['Carnero','Halcón','León'].includes(levelUpBarbarianWildPower)) { notice='Elige Carnero, Halcón o León para Poder de lo salvaje.'; return; }
+    const isBarbarianZealot=className==='Bárbaro' && selectedSubclassKey==='senda del fanatico';
+    const barbarianEpicFeatOptions=BUILDER_EPIC_FEATS.filter(feat=>normalizeLevelText(feat)!=='don del recuerdo de conjuros');
     const isFighter=className==='Guerrero';
     const needsFighterStyle=isFighter;
     const fighterStyleTarget=isFighter && selectedSubclassKey==='campeon' && nextLevel>=7?2:1;
@@ -3468,7 +3490,7 @@ import ITEMS from './items.json';
     if(targetMasteries>oldMasteryCount && !validMasteries) { notice='Conserva tus maestrías anteriores y añade las nuevas hasta completar '+targetMasteries+'. No repitas armas y elige solo opciones permitidas.'; return; }
     if (needsASI && levelUpAsiMode === 'feat' && !getBarbarianGeneralFeatOptions(original).some(feat=>normalizeLevelText(feat)===normalizeLevelText(levelUpFeat))) { notice = 'Selecciona una dote general disponible para tu Bárbaro y que todavía no tenga.'; return; }
     if (needsEpicFeat && !levelUpFeat.trim()) { notice = 'Selecciona un Don épico.'; return; }
-    if(needsEpicFeat && (!BUILDER_EPIC_FEATS.some(feat=>normalizeLevelText(feat)===normalizeLevelText(levelUpFeat)) || !builderEpicFeatAbilities(levelUpFeat).includes(levelUpEpicFeatAbility) || getCharacterNumber(original,'ATRIBUTOS',levelUpEpicFeatAbility,10)>=30)) { notice='Elige un Don épico del manual y una característica permitida que no supere 30.'; return; }
+    if(needsEpicFeat && (!barbarianEpicFeatOptions.some(feat=>normalizeLevelText(feat)===normalizeLevelText(levelUpFeat)) || !builderEpicFeatAbilities(levelUpFeat).includes(levelUpEpicFeatAbility) || getCharacterNumber(original,'ATRIBUTOS',levelUpEpicFeatAbility,10)>=30)) { notice='Elige un Don épico del manual y una característica permitida que no supere 30.'; return; }
     if (needsASI && levelUpAsiMode === 'asi') {
       const inc1=Number(levelUpIncrease1), inc2=Number(levelUpIncrease2);
       if (![1,2].includes(inc1) || ![0,1,2].includes(inc2) || (inc2>0 && inc1+inc2!==2) || (inc2===0 && inc1!==2) || (inc2>0 && levelUpAbility1===levelUpAbility2)) { notice='La mejora debe ser +2 a una característica o +1 a dos características.'; return; }
@@ -3557,6 +3579,21 @@ import ITEMS from './items.json';
       if(oldCurrentHp===oldHp) setCharacterStat(updated,'COMBATE','Puntos de golpe actuales',(oldCurrentHp+hpGain+constitutionHpAdjustment)+' PG');
     }
     if(needsBarbarianWildAspect) setCharacterStat(updated,'RASGOS Y DOTES','Aspecto de lo salvaje',levelUpBarbarianAspect);
+    if(needsBarbarianWildFury) setCharacterStat(updated,'RASGOS Y DOTES','Furia de lo salvaje',levelUpBarbarianWildFury);
+    if(needsBarbarianWildPower) setCharacterStat(updated,'RASGOS Y DOTES','Poder de lo salvaje',levelUpBarbarianWildPower);
+    if(isBarbarianWildHeart && nextLevel===3) {
+      const ritualSpells=['Hablar con los animales','Sentidos de la bestia'];
+      const oldRituals=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros rituales de subclase'));
+      setCharacterStat(updated,'CONJUROS','Conjuros rituales de subclase',[...new Map([...oldRituals,...ritualSpells].map(name=>[normalizeLevelText(name),name])).values()].join(', '));
+    }
+    if(isBarbarianWildHeart && nextLevel===10) {
+      const oldRituals=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros rituales de subclase'));
+      setCharacterStat(updated,'CONJUROS','Conjuros rituales de subclase',[...new Map([...oldRituals,'Comunión con la naturaleza'].map(name=>[normalizeLevelText(name),name])).values()].join(', '));
+    }
+    if(isBarbarianZealot && [3,6,12,17].includes(nextLevel)) {
+      const reserveDice=nextLevel>=17?7:nextLevel>=12?6:nextLevel>=6?5:4;
+      setCharacterStat(updated,'RASGOS Y DOTES','Reserva de Guerrero de los dioses',reserveDice+'d12');
+    }
     if(needsRangerStyle) setCharacterStat(updated,'RASGOS Y DOTES','Estilo de combate',levelUpRangerStyle);
     if(needsPaladinStyle && levelUpPaladinStyle.trim()) setCharacterStat(updated,'RASGOS Y DOTES','Estilo de combate de paladín',levelUpPaladinStyle);
     if(className==='Paladín') {
@@ -3731,7 +3768,7 @@ import ITEMS from './items.json';
     const previous=getCharacterStat(updated,'PROGRESIÓN','Historial de niveles');
     const subclassFeatureText=subclassFeatures.map((feature:any)=>'Nivel '+feature.level+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const subclassFeatureNames=subclassFeatures.map((feature:any)=>feature.name);
-    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsRangerStyle?' · Estilo de combate: '+levelUpRangerStyle:'')+(needsFighterStyle?' · Estilos de combate: '+fighterStyleChoices.join(', '):'')+(isRangerDruidicWarrior?' · Guerrero druídico: '+rangerCantripChoices.join(', '):'')+(needsHunterPrey?' · Cazador y presa: '+levelUpRangerHunterPrey:'')+(needsHunterDefense?' · Tácticas defensivas: '+levelUpRangerHunterDefense:'')+(needsRangerFeyGift?' · Bendición feérica: '+levelUpRangerFeyGift:'')+(needsRangerBeastCompanion?' · Compañero primigenio: '+levelUpRangerBeastProfile+' · '+levelUpRangerBeastAnimal:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsDraconicAffinity?' · Afinidad elemental: '+levelUpSorcererAffinity:'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(className==='Monje' && nextLevel===20?' · Cuerpo y mente: +4 Destreza y +4 Sabiduría (máximo 25)':'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
+    const record='Nivel '+nextLevel+': '+features.join(', ')+(subclassFeatureNames.length?' · '+formatSubclassName(subclass?.key || '')+': '+subclassFeatureNames.join(', '):'')+(needsASI?(levelUpAsiMode==='feat'?' · Dote: '+levelUpFeat.trim():' · Mejora: '+levelUpAbility1+' +'+levelUpIncrease1+(Number(levelUpIncrease2)?', '+levelUpAbility2+' +'+levelUpIncrease2:'')):'')+(needsEpicFeat?' · Don épico: '+levelUpFeat.trim()+' · '+levelUpEpicFeatAbility+' +1':'')+(needsBarbarianWildAspect?' · Aspecto de lo salvaje: '+levelUpBarbarianAspect:'')+(needsBarbarianWildFury?' · Furia de lo salvaje: '+levelUpBarbarianWildFury:'')+(needsBarbarianWildPower?' · Poder de lo salvaje: '+levelUpBarbarianWildPower:'')+(needsRangerStyle?' · Estilo de combate: '+levelUpRangerStyle:'')+(needsFighterStyle?' · Estilos de combate: '+fighterStyleChoices.join(', '):'')+(isRangerDruidicWarrior?' · Guerrero druídico: '+rangerCantripChoices.join(', '):'')+(needsHunterPrey?' · Cazador y presa: '+levelUpRangerHunterPrey:'')+(needsHunterDefense?' · Tácticas defensivas: '+levelUpRangerHunterDefense:'')+(needsRangerFeyGift?' · Bendición feérica: '+levelUpRangerFeyGift:'')+(needsRangerBeastCompanion?' · Compañero primigenio: '+levelUpRangerBeastProfile+' · '+levelUpRangerBeastAnimal:'')+(needsExpertise?' · Pericia: '+expertiseChoices.join(', '):'')+(needsNewSkill?' · Competencia: '+levelUpNewSkill:'')+(needsNewLanguages?' · Idiomas: '+languageChoices.join(', '):'')+(needsWildShapeForms?' · Formas salvajes: '+wildShapeForms.join(', '):'')+(needsMetamagic?' · Metamagia: '+metamagicChoices.join(', '):'')+(needsDraconicAffinity?' · Afinidad elemental: '+levelUpSorcererAffinity:'')+(needsWarlockInvocations?' · Invocaciones: '+invocationChoices.join(', '):'')+(needsMysticArcanum?' · Arcanum místico: '+arcanumChoices.join(', '):'')+(needsElementalFury?' · Furia elemental: '+levelUpElementalFury:'')+(needsBlessedStrikes?' · Golpes benditos: '+levelUpBlessedStrikes:'')+(needsWizardMastery?' · Maestría sobre conjuros: '+levelUpWizardMastery1+', '+levelUpWizardMastery2:'')+(needsWizardSignature?' · Conjuros característicos: '+wizardSignatureChoices.join(', '):'')+(className==='Monje' && nextLevel===20?' · Cuerpo y mente: +4 Destreza y +4 Sabiduría (máximo 25)':'')+(needsBattleMasterTraining?' · Estudioso de la guerra: '+levelUpSubclassSkill+', '+levelUpSubclassTool:'')+(needsFeySkill?' · Glamur sobrenatural: '+levelUpSubclassSkill:'')+(needsCollegeKnowledgeSkills?' · Competencias adicionales del Colegio del Conocimiento: '+collegeKnowledgeSkills.join(', '):'')+(needsBattleManeuvers?' · Maniobras: '+maneuverChoices.join(', '):'')+(targetMasteries>oldMasteryCount?' · Maestrías con armas: '+masteryChoices.join(', '):'')+(levelUpDecision.trim()?' · '+levelUpDecision.trim():'');
     setCharacterStat(updated,'PROGRESIÓN','Historial de niveles',[previous,record].filter(Boolean).join('\n'));
     setCharacterStat(updated,'PROGRESIÓN','Rasgos de clase del nivel '+nextLevel,classFeatureDetails || features.join(', ') || 'Sin rasgos nuevos indicados');
     if (subclassFeatureText) {
@@ -5742,6 +5779,14 @@ import ITEMS from './items.json';
                 <label>Animal que representa a tu compañero<input bind:value={levelUpRangerBeastAnimal} placeholder="Ej. lobo, oso, águila, tiburón…" /></label>
                 {#if levelUpRangerBeastProfile}<div class="builder-info"><strong>Estadísticas del perfil</strong><p>{BUILDER_RANGER_BEAST_PROFILES[levelUpRangerBeastProfile]}</p></div>{/if}
               {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='senda del corazon salvaje' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Furia de lo salvaje<select bind:value={levelUpBarbarianWildFury}><option value="">Elige una forma animal</option><option>Águila</option><option>Lobo</option><option>Oso</option></select></label>
+                <small>La opción elegida se obtiene al enfurecerte. Puedes elegir una nueva cada vez que uses Furia.</small>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='senda del corazon salvaje' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===14}
+                <label>Poder de lo salvaje<select bind:value={levelUpBarbarianWildPower}><option value="">Elige una forma animal</option><option>Carnero</option><option>Halcón</option><option>León</option></select></label>
+                <small>La opción elegida se obtiene al enfurecerte. Puedes elegir una nueva cada vez que uses Furia.</small>
+              {/if}
               {#if normalizeLevelText(levelUpSubclass)==='colegio del conocimiento' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
                 <label>Competencias adicionales del Colegio del Conocimiento (elige tres habilidades nuevas)<textarea bind:value={levelUpSubclassSkills} rows="2" placeholder="Tres habilidades distintas, separadas por comas" /></label>
               {/if}
@@ -5798,7 +5843,7 @@ import ITEMS from './items.json';
                 {/if}
               {/if}
               {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('don épico')}
-                <label>Don épico<select bind:value={levelUpFeat}><option value="">Elige un Don épico</option>{#each BUILDER_EPIC_FEATS as feat}<option value={feat}>{feat}</option>{/each}</select></label>
+                <label>Don épico<select bind:value={levelUpFeat}><option value="">Elige un Don épico</option>{#each (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'?BUILDER_EPIC_FEATS.filter(feat=>normalizeLevelText(feat)!=='don del recuerdo de conjuros'):BUILDER_EPIC_FEATS) as feat}<option value={feat}>{feat}</option>{/each}</select></label>
                 <label>Característica que aumenta +1<select bind:value={levelUpEpicFeatAbility}>{#each builderEpicFeatAbilities(levelUpFeat) as ability}<option value={ability}>{ability}</option>{/each}</select></label>
               {/if}
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Bárbaro'}
