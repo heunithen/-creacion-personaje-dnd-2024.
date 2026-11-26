@@ -1321,6 +1321,15 @@
   }
 
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
+  const BUILDER_CLASS_COLORS: Record<string,string> = {
+    'Bárbaro':'#e87945','Bardo':'#e7bd62','Brujo':'#a78bfa','Clérigo':'#f2d27a','Druida':'#83b779','Explorador':'#8fae70',
+    'Guerrero':'#d76b5d','Hechicero':'#65b9dc','Mago':'#8eb9e8','Monje':'#d6a06b','Paladín':'#f0d889','Pícaro':'#b5a0c9'
+  };
+  const BUILDER_BACKGROUND_COLORS: Record<string,string> = {
+    'Acólito':'#e6cf8b','Animador':'#e7a65f','Artesano':'#c99b70','Campesino':'#91b878','Charlatán':'#c58ad6','Comerciante':'#d7b65e',
+    'Criminal':'#b58b91','Ermitaño':'#91b7a8','Erudito':'#8eb9e8','Escriba':'#9caed0','Guardia':'#a6b2bd','Guía':'#a6bd7c',
+    'Marinero':'#70b8ce','Noble':'#e1c18b','Soldado':'#d77b6c','Vagabundo':'#b3a18c'
+  };
   const BUILDER_CLASS_GUIDANCE: Record<string,string> = {
     'Bárbaro':'Guerrero feroz que recurre a una furia primitiva para superar sus límites. Combate en primera línea, soporta castigos que derribarían a otros aventureros y convierte su fuerza y resistencia en sus mayores ventajas. Es ideal para quien quiere enfrentarse directamente a los peligros y proteger al grupo mediante pura determinación.',
     'Bardo':'Artista, narrador y portador de magia que encuentra poder en las palabras, la música y la creatividad. Puede inspirar a sus aliados, confundir a sus enemigos y adaptarse a muchas situaciones gracias a una combinación de conjuros, conocimientos y habilidades. Es una clase versátil, especialmente útil cuando el grupo necesita soluciones distintas al combate.',
@@ -5709,7 +5718,7 @@ import ITEMS from './items.json';
                 <img class="builder-class-emblem" src={'/-creacion-personaje-dnd-2024./images/character-creation/classes/individual/class-emblem-'+BUILDER_CLASS_EMBLEMS[builderDisplayedClass]+'.webp'} alt={'Emblema de '+builderDisplayedClass} />
                 <div class="builder-class-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Clase anterior" on:click={()=>builderMoveClass(-1)}>‹</button>
-                  <h4>{builderDisplayedClass}</h4>
+                  <h4 style={`color:${BUILDER_CLASS_COLORS[builderDisplayedClass]}`}>{builderDisplayedClass}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Clase siguiente" on:click={()=>builderMoveClass(1)}>›</button>
                 </div>
                 <p class="builder-class-flyer-description">{BUILDER_CLASS_GUIDANCE[builderDisplayedClass]}</p>
@@ -5732,7 +5741,7 @@ import ITEMS from './items.json';
               <section class="builder-background-flyer" aria-label={'Información del trasfondo '+BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}>
                 <div class="builder-background-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Trasfondo anterior" on:click={()=>builderMoveBackground(-1)}>‹</button>
-                  <h4>{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
+                  <h4 style={`color:${BUILDER_BACKGROUND_COLORS[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}`}>{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Trasfondo siguiente" on:click={()=>builderMoveBackground(1)}>›</button>
                 </div>
                 <p class="builder-background-description">{BUILDER_BACKGROUND_GUIDANCE[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}</p>
@@ -7394,8 +7403,8 @@ import ITEMS from './items.json';
   .builder-background-flyer{box-sizing:border-box;display:flex;flex-direction:column;gap:1rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;overflow:hidden}
   .builder-background-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%}
   .builder-background-title-row h4{margin:0;color:#fff;font:700 1.35rem Georgia,serif;text-align:center}
-  .builder-background-description{flex:1 1 auto;min-height:0;margin:0;padding:.25rem .2rem;color:#e0e7e9;font:400 .98rem/1.8 system-ui,sans-serif;line-height:1.8;overflow-y:auto}
-  .builder-background-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem 1rem;padding:.85rem 0;border-top:1px solid #668087;border-bottom:1px solid #668087}
+  .builder-background-description{flex:0 0 auto;min-height:0;max-height:190px;margin:0;padding:.15rem .2rem .35rem;color:#e0e7e9;font:400 .98rem/1.7 system-ui,sans-serif;line-height:1.7;overflow-y:auto}
+  .builder-background-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem 1rem;padding:.55rem 0;border-top:1px solid #668087;border-bottom:1px solid #668087}
   .builder-background-details .builder-class-flyer-detail{min-width:0;max-width:none;padding:0;border:0}
   .builder-background-details .builder-class-flyer-detail strong{font-size:.86rem;line-height:1.5;overflow-wrap:anywhere}
   .builder-background-equipment{flex:0 0 auto;max-height:78px;margin:0;color:#d1dadd;font:.82rem/1.55 system-ui,sans-serif;overflow-y:auto}
