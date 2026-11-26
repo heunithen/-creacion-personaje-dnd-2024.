@@ -2694,6 +2694,54 @@ import ITEMS from './items.json';
 
 
   const LEVEL_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+  const LEVEL_XP_THRESHOLDS: Record<number,number> = {1:0,2:300,3:900,4:2700,5:6500,6:14000,7:23000,8:34000,9:48000,10:64000,11:85000,12:100000,13:120000,14:140000,15:165000,16:195000,17:225000,18:265000,19:305000,20:355000};
+  const BARBARIAN_GENERAL_FEATS = ['Actor','Atleta','Cargador','Chef','Experto en ballestas','Aplastador','Duelista defensivo','Combate con dos armas','Resistente','Luchador','Gran maestro de armas','Muy acorazado','Maestro de armaduras pesadas','Líder inspirador','Mente aguda','Ligeramente acorazado','Asesino de magos','Entrenamiento con armas marciales','Maestro de armaduras medias','Moderadamente acorazado','Combatiente montado','Observador','Perforador','Envenenador','Maestro de armas de asta','Resiliente','Lanzador ritual','Centinela','Toque sombrío','Francotirador','Maestro del escudo','Experto en habilidades','Sigiloso','Cortador','Veloz','Telequinético','Telepático','Maestro de armas'];
+  function getBarbarianGeneralFeatOptions(target:RawSheet):string[] {
+    const score=(ability:string)=>getCharacterNumber(target,'ATRIBUTOS',ability,10);
+    const hasAny=(...abilities:string[])=>abilities.some(ability=>score(ability)>=13);
+    const existing=normalizeLevelText([getCharacterStat(target,'RASGOS Y DOTES','Dote de origen'),getCharacterStat(target,'RASGOS Y DOTES','Dotes adicionales')].join('; '));
+    const requirements:Record<string,()=>boolean>={
+      'Actor':()=>score('Carisma')>=13,
+      'Atleta':()=>hasAny('Fuerza','Destreza'),
+      'Cargador':()=>hasAny('Fuerza','Destreza'),
+      'Chef':()=>hasAny('Constitución','Sabiduría'),
+      'Experto en ballestas':()=>score('Destreza')>=13,
+      'Aplastador':()=>hasAny('Fuerza','Destreza'),
+      'Duelista defensivo':()=>score('Destreza')>=13,
+      'Combate con dos armas':()=>hasAny('Fuerza','Destreza'),
+      'Resistente':()=>score('Constitución')>=13,
+      'Luchador':()=>hasAny('Fuerza','Destreza'),
+      'Gran maestro de armas':()=>score('Fuerza')>=13,
+      'Muy acorazado':()=>true,
+      'Maestro de armaduras pesadas':()=>false,
+      'Líder inspirador':()=>score('Carisma')>=13,
+      'Mente aguda':()=>score('Inteligencia')>=13,
+      'Ligeramente acorazado':()=>true,
+      'Asesino de magos':()=>true,
+      'Entrenamiento con armas marciales':()=>true,
+      'Maestro de armaduras medias':()=>true,
+      'Moderadamente acorazado':()=>true,
+      'Combatiente montado':()=>true,
+      'Observador':()=>hasAny('Inteligencia','Sabiduría'),
+      'Perforador':()=>hasAny('Fuerza','Destreza'),
+      'Envenenador':()=>true,
+      'Maestro de armas de asta':()=>hasAny('Fuerza','Destreza'),
+      'Resiliente':()=>true,
+      'Lanzador ritual':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
+      'Centinela':()=>true,
+      'Toque sombrío':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
+      'Francotirador':()=>score('Destreza')>=13,
+      'Maestro del escudo':()=>score('Fuerza')>=13,
+      'Experto en habilidades':()=>true,
+      'Sigiloso':()=>score('Destreza')>=13,
+      'Cortador':()=>hasAny('Fuerza','Destreza'),
+      'Veloz':()=>score('Destreza')>=13,
+      'Telequinético':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
+      'Telepático':()=>hasAny('Inteligencia','Sabiduría','Carisma'),
+      'Maestro de armas':()=>true
+    };
+    return BARBARIAN_GENERAL_FEATS.filter(feat=>(requirements[feat]?.() ?? true) && !existing.includes(normalizeLevelText(feat)));
+  }
   const LEVEL_HIT_DIE: Record<string,number> = { 'Bárbaro':12,'Guerrero':10,'Paladín':10,'Explorador':10,'Bardo':8,'Brujo':8,'Clérigo':8,'Druida':8,'Monje':8,'Pícaro':8,'Hechicero':6,'Mago':6 };
   const LEVEL_FIXED_HP: Record<string,number> = { 'Bárbaro':7,'Guerrero':6,'Paladín':6,'Explorador':6,'Bardo':5,'Brujo':5,'Clérigo':5,'Druida':5,'Monje':5,'Pícaro':5,'Hechicero':4,'Mago':4 };
   function normalizeLevelText(value: unknown) { return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }
@@ -3413,7 +3461,8 @@ import ITEMS from './items.json';
     const masteryDefinition=className==='Bárbaro'?barbarianMasteryChoice:undefined;
     const validMasteries=masteryDefinition ? validateMultipleLevelUpChoice(masteryDefinition,masteryChoices,targetMasteries,oldMasteryChoices) : masteryChoices.length===targetMasteries && new Set(masteryChoices.map(name=>normalizeLevelText(name))).size===targetMasteries && masteryChoices.every(name=>BUILDER_WEAPON_MASTERY_OPTIONS.some((option:string)=>normalizeLevelText(option)===normalizeLevelText(name))) && oldMasteryChoices.every(old=>masteryChoices.some(name=>normalizeLevelText(name)===normalizeLevelText(old)));
     if(targetMasteries>oldMasteryCount && !validMasteries) { notice='Conserva tus maestrías anteriores y añade las nuevas hasta completar '+targetMasteries+'. No repitas armas y elige solo opciones permitidas.'; return; }
-    if ((needsEpicFeat || (needsASI && levelUpAsiMode === 'feat')) && !levelUpFeat.trim()) { notice = 'Indica el nombre de la dote elegida.'; return; }
+    if (needsASI && levelUpAsiMode === 'feat' && !getBarbarianGeneralFeatOptions(original).some(feat=>normalizeLevelText(feat)===normalizeLevelText(levelUpFeat))) { notice = 'Selecciona una dote general disponible para tu Bárbaro y que todavía no tenga.'; return; }
+    if (needsEpicFeat && !levelUpFeat.trim()) { notice = 'Selecciona un Don épico.'; return; }
     if(needsEpicFeat && (!BUILDER_EPIC_FEATS.some(feat=>normalizeLevelText(feat)===normalizeLevelText(levelUpFeat)) || !builderEpicFeatAbilities(levelUpFeat).includes(levelUpEpicFeatAbility) || getCharacterNumber(original,'ATRIBUTOS',levelUpEpicFeatAbility,10)>=30)) { notice='Elige un Don épico del manual y una característica permitida que no supere 30.'; return; }
     if (needsASI && levelUpAsiMode === 'asi') {
       const inc1=Number(levelUpIncrease1), inc2=Number(levelUpIncrease2);
@@ -3449,7 +3498,11 @@ import ITEMS from './items.json';
     const oldCurrentHp=getCharacterNumber(updated,'COMBATE','Puntos de golpe actuales',oldHp);
     const oldHitDice=Number(String(getCharacterStat(updated,'COMBATE','Dados de golpe')).match(/[0-9]+/)?.[0]) || currentLevel;
     setCharacterStat(updated,'PERSONAJE','Nivel',nextLevel);
-    // La experiencia es acumulativa y no debe reemplazarse por el umbral del siguiente nivel.
+    // La experiencia acumulada nunca se reinicia al subir de nivel; se registra el umbral del siguiente nivel desde la tabla de XP.
+    const accumulatedXP=getCharacterStat(updated,'PERSONAJE','Experiencia');
+    const followingLevel=nextLevel+1;
+    setCharacterStat(updated,'PROGRESIÓN','Experiencia mínima para siguiente nivel',nextLevel>=20?'Nivel máximo':(LEVEL_XP_THRESHOLDS[followingLevel] ?? 'Consultar progresión'));
+    if(accumulatedXP) setCharacterStat(updated,'PROGRESIÓN','Experiencia acumulada registrada',accumulatedXP);
     setCharacterStat(updated,'COMBATE','Puntos de golpe máximos',(oldHp+hpGain)+' PG');
     setCharacterStat(updated,'COMBATE','Puntos de golpe actuales',(oldCurrentHp+hpGain)+' PG');
     setCharacterStat(updated,'COMBATE','Dados de golpe',oldHitDice+1+'d'+hitDie);
@@ -5581,6 +5634,9 @@ import ITEMS from './items.json';
               {#if getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).features.length || getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.length}
                 <div class="subclass-level-preview"><strong>Desbloqueo de especie</strong>{#each getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).features as feature}<div><b>{feature.name}</b><p>{feature.description}</p></div>{/each}{#if getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.length}<p>Conjuros que se añadirán automáticamente: {getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.join(', ')}.</p>{/if}</div>
               {/if}
+              {@const nextLevelNumber=Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1}
+              {@const xpCurrent=getCharacterNumber(levelUpEntry.sheet,'PERSONAJE','Experiencia',0)}
+              <div class="subclass-level-preview"><strong>Experiencia</strong><p>Experiencia acumulada: {xpCurrent.toLocaleString('es-CL')} PX. Se conservará al subir de nivel.</p><p>Umbral para nivel {nextLevelNumber}: {(LEVEL_XP_THRESHOLDS[nextLevelNumber] ?? 0).toLocaleString('es-CL')} PX.</p></div>
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro' && getNextLevelRowSafe(levelUpEntry)?.resources}
                 <div class="subclass-level-preview"><strong>Recursos que se actualizarán desde la tabla del Bárbaro</strong>{#each Object.entries(getNextLevelRowSafe(levelUpEntry)?.resources || {}) as resource}<p><b>{resource[0]}:</b> {resource[1]}</p>{/each}</div>
               {/if}
@@ -5732,7 +5788,11 @@ import ITEMS from './items.json';
                 {#if levelUpAsiMode==='asi'}
                   <div class="level-up-choice-grid"><label>Primera característica<select bind:value={levelUpAbility1}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease1}><option value="2">+2</option><option value="1">+1</option></select></label></div>
                   <div class="level-up-choice-grid"><label>Segunda característica<select bind:value={levelUpAbility2}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease2}><option value="0">No aplicar</option><option value="1">+1</option></select></label></div>
-                {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
+                {:else}
+                  {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
+                    <label>Dote general<select bind:value={levelUpFeat}><option value="">Elige una dote disponible</option>{#each getBarbarianGeneralFeatOptions(levelUpEntry.sheet) as feat}<option value={feat}>{feat}</option>{/each}</select></label>
+                  {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
+                {/if}
               {/if}
               {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('don épico')}
                 <label>Don épico<select bind:value={levelUpFeat}><option value="">Elige un Don épico</option>{#each BUILDER_EPIC_FEATS as feat}<option value={feat}>{feat}</option>{/each}</select></label>
