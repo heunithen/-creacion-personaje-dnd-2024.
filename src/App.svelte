@@ -1212,6 +1212,8 @@
   let builderClassSlideIndex = 0;
   let builderBackgroundSlideIndex = 14;
   let builderBackgroundSetup = false;
+  let builderSpeciesSlideIndex = 7;
+  let builderSpeciesSetup = false;
   let builderClassChosen = false;
   let builderSpeciesChosen = false;
   let builderBackgroundChosen = false;
@@ -1231,7 +1233,7 @@
   function resetBuilder() {
     builderData = createInitialBuilderData();
     builderData.player = playerName || '';
-    builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderBackgroundSetup = false; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
+    builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderBackgroundSetup = false; builderSpeciesSlideIndex = 7; builderSpeciesSetup = false; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
   const BUILDER_PORTRAITS: string[] = ["https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Dusty_F_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Irieni_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_annis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dabuus_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_fell_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_glamis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_gn_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_grnhag_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_508_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_513_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_516_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_522_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_529_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_512_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_520_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_521_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_523_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_524_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_525_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_528_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_529_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_530_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_532_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_506_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_orcwar_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_sormen_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead504_h.webp"];
   let portraitPickerOpen = false;
@@ -1370,6 +1372,9 @@
   }
   function builderMoveBackground(direction:number) {
     builderBackgroundSlideIndex = (builderBackgroundSlideIndex + direction + BUILDER_BACKGROUNDS.length) % BUILDER_BACKGROUNDS.length;
+  }
+  function builderMoveSpecies(direction:number) {
+    builderSpeciesSlideIndex = (builderSpeciesSlideIndex + direction + BUILDER_SPECIES.length) % BUILDER_SPECIES.length;
   }
   function builderChooseBackground(event:Event|string) {
     const value=typeof event === 'string' ? event : (event.currentTarget as HTMLSelectElement).value;
@@ -1978,7 +1983,7 @@
       return (!options.length||options.includes(builderData.backgroundToolChoice))&&builderOriginFeatChoicesOk(feat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell);
     }
     if(builderStep===3) {
-      if(!builderSpeciesChosen) return false;
+      if(!builderSpeciesChosen || !builderSpeciesSetup) return false;
       const choiceOk=BUILDER_SPECIES_CHOICES[builderData.species].length===0||BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice);
       const skillOk=!['Elfo','Humano'].includes(builderData.species)||(BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill)&&!BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(builderData.speciesSkill));
       const magicOk=!['Elfo','Gnomo','Tiefling'].includes(builderData.species)||['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
@@ -2025,6 +2030,10 @@
         if(!builderBackgroundChosen || builderData.background!==BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]) builderChooseBackground(BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]);
         builderBackgroundSetup=true; builderStepError=''; keepBuilderAtTop(); return;
       }
+      if(builderStep===3 && !builderSpeciesSetup) {
+        if(!builderSpeciesChosen || builderData.species!==BUILDER_SPECIES[builderSpeciesSlideIndex]) builderChooseSpecies(BUILDER_SPECIES[builderSpeciesSlideIndex]);
+        builderSpeciesSetup=true; builderStepError=''; keepBuilderAtTop(); return;
+      }
       if(!builderStepCanAdvance()) {
         const stepFields=builderMissingFields().filter(field=>field.includes('(paso '+(builderStep+1)+')'));
         builderStepError=stepFields.length
@@ -2036,7 +2045,7 @@
       builderStepError=''; builderStep+=1; keepBuilderAtTop();
     }
   }
-  function builderBack() { if(builderStep===2&&builderBackgroundSetup){builderBackgroundSetup=false;builderStepError='';keepBuilderAtTop();return;} if(builderStep>0){if(builderStep===2&&builderClassChosen){builderClassSlideIndex=Math.max(0,BUILDER_CLASSES.indexOf(builderData.className));}if(builderStep===3&&builderBackgroundChosen){builderBackgroundSlideIndex=Math.max(0,BUILDER_BACKGROUNDS.indexOf(builderData.background));}builderStep-=1;builderStepError='';keepBuilderAtTop();} }
+  function builderBack() { if(builderStep===2&&builderBackgroundSetup){builderBackgroundSetup=false;builderStepError='';keepBuilderAtTop();return;} if(builderStep===3&&builderSpeciesSetup){builderSpeciesSetup=false;builderStepError='';keepBuilderAtTop();return;} if(builderStep>0){if(builderStep===2&&builderClassChosen){builderClassSlideIndex=Math.max(0,BUILDER_CLASSES.indexOf(builderData.className));}if(builderStep===3&&builderBackgroundChosen){builderBackgroundSlideIndex=Math.max(0,BUILDER_BACKGROUNDS.indexOf(builderData.background));}if(builderStep===4&&builderSpeciesChosen){builderSpeciesSlideIndex=Math.max(0,BUILDER_SPECIES.indexOf(builderData.species));}builderStep-=1;builderStepError='';keepBuilderAtTop();} }
   const WEAPON_PROFILES: Record<string,{damage:string;damageType:string;category:'simple'|'martial';ability:'strength'|'dexterity'|'finesse';properties:string}> = {
     'Garrote':{damage:'1d4',damageType:'contundente',category:'simple',ability:'strength',properties:'Ligera'},
     'Daga':{damage:'1d4',damageType:'perforante',category:'simple',ability:'finesse',properties:'Sutil, ligera, arrojadiza (6/18 m)'},
@@ -5770,24 +5779,24 @@ import ITEMS from './items.json';
             
               {/if}
               {:else if builderStep===3}
-              <h3>04. Elige tu especie</h3>
-              <p class="muted">La especie determina rasgos biológicos y capacidades innatas.</p>
-              
-
-              
-              
-              <h4>Elige una especie</h4>
-              <div class="builder-class-grid builder-species-grid">
-                {#each BUILDER_SPECIES as item}
-                  <label class="builder-class-card builder-option-card" class:selected={builderSpeciesChosen && builderData.species === item}>
-                    <input type="radio" name="builder-species" value={item} checked={builderSpeciesChosen && builderData.species === item} on:change={() => builderChooseSpecies(item)} />
-                    <span class="builder-class-card-heading"><strong>{item}</strong><span>Especie</span></span>
-                    <span class="builder-class-description">{BUILDER_SPECIES_TRAITS[item]}</span>
-                    <span class="builder-class-meta"><span>Rasgos y capacidades</span><strong>{BUILDER_SPECIES_CHOICES[item].length ? 'Incluye elección de linaje' : 'Rasgos propios de especie'}</strong></span>
-                  </label>
-                {/each}
-              </div>
-              {#if builderSpeciesChosen}
+              <h3>{builderSpeciesSetup ? '04.1. Elecciones de especie' : '04. Elige tu especie'}</h3>
+              {#if !builderSpeciesSetup}
+              <p class="muted">Explora las especies y sus capacidades antes de elegir.</p>
+              <section class="builder-species-flyer" aria-label={'Información de la especie '+BUILDER_SPECIES[builderSpeciesSlideIndex]}>
+                <div class="builder-species-title-row">
+                  <button type="button" class="builder-class-arrow" aria-label="Especie anterior" on:click={()=>builderMoveSpecies(-1)}>‹</button>
+                  <h4>{BUILDER_SPECIES[builderSpeciesSlideIndex]}</h4>
+                  <button type="button" class="builder-class-arrow" aria-label="Especie siguiente" on:click={()=>builderMoveSpecies(1)}>›</button>
+                </div>
+                <p class="builder-species-description">{BUILDER_SPECIES_TRAITS[BUILDER_SPECIES[builderSpeciesSlideIndex]]}</p>
+                <div class="builder-species-details">
+                  <div class="builder-class-flyer-detail"><span>Linaje o variante</span><strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].join(' · ') : 'No requiere elección de linaje'}</strong></div>
+                  <div class="builder-class-flyer-detail"><span>Rasgos y capacidades</span><strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? 'Incluye una elección propia de especie' : 'Capacidades propias de la especie'}</strong></div>
+                </div>
+                <span class="builder-background-counter">{builderSpeciesSlideIndex+1} de {BUILDER_SPECIES.length}</span>
+              </section>
+              {/if}
+              {#if builderSpeciesSetup && builderSpeciesChosen}
               <div class="builder-name-block">
                 <label>Nombre del personaje<input bind:value={builderData.name} placeholder="Escribe el nombre de tu aventurero" /></label>
                 <div class="name-generator-controls">
@@ -5819,10 +5828,9 @@ import ITEMS from './items.json';
                   <label>Un conjuro de nivel 1 de la dote adicional<select bind:value={builderData.speciesMagicSpell}><option value="">Elige un conjuro</option>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(builderData.speciesExtraFeat)].level1 as spell}<option>{spell}</option>{/each}</select></label>
                 {/if}
               {/if}
-              <div class="builder-info"><strong>Rasgos automáticos de especie</strong><p>{BUILDER_SPECIES_TRAITS[builderData.species]}</p>{#if builderData.speciesChoice}<p>Elección: {builderData.speciesChoice}</p>{/if}</div>
-                        
-            
+
               {/if}
+              
               {:else if builderStep===4}
               <h3>05. Distribuye tus características</h3>
               <p class="muted">Elige cómo generar las seis puntuaciones. Los aumentos del trasfondo se aplican en la etapa siguiente.</p>
