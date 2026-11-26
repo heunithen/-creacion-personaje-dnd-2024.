@@ -2082,13 +2082,16 @@
       if (!generated || !Array.isArray(generated.sections) || !generated.sections.length) {
         throw new Error('La ficha se generó sin secciones. Revisa las elecciones y vuelve a intentarlo.');
       }
-      builderPreview = generated;
-      // Use the same nautical sheet renderer as the example and saved characters.
-      sheet = generated;
+      // El resumen es la última etapa: guardar directamente en el almacenamiento local del jugador.
+      const characterToSave = JSON.parse(JSON.stringify(generated)) as RawSheet;
+      localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave));
+      builderPreview = null;
+      sheet = characterToSave;
       playerCreating = false;
       demoPreview = false;
       activeTab = 'Datos';
-      builderStep = 12;
+      builderStep = 0;
+      notice = 'Personaje guardado en este dispositivo.';
       keepBuilderAtTop();
     } catch (error) {
       console.error('Error al generar la ficha:', error);
@@ -2106,15 +2109,7 @@
       builderPreview = null;
       playerCreating = false;
       activeTab = 'Datos';
-      if (obrReady && obrRole === 'PLAYER') {
-        syncPending = true;
-        await flushAutoSync();
-        notice = syncStatus === 'Ficha sincronizada con Owlbear y guardada en GitHub.'
-          ? 'Personaje guardado permanentemente y sincronizado con Owlbear.'
-          : syncStatus;
-      } else {
-        notice = 'Personaje guardado en tu ficha y en este navegador.';
-      }
+      notice = 'Personaje guardado localmente en este dispositivo.';
     } catch (error) {
       notice = 'No se pudo guardar el personaje: ' + (error instanceof Error ? error.message : String(error));
     } finally {
@@ -2420,37 +2415,15 @@ import ITEMS from './items.json';
   function scheduleAutoSync() {
     if (!sheet) return;
     localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-    if (!obrReady || obrRole !== 'PLAYER') return;
-    syncStatus = 'Cambios pendientes de sincronizar…';
-    clearTimeout(autoSyncTimer);
-    autoSyncTimer = setTimeout(() => {
-      syncPending = true;
-      void flushAutoSync();
-    }, 650);
+    return; // El guardado local ya se realizó; no sincronizar fichas de jugador.
   }
 
   async function flushAutoSync() {
-    if (syncInProgress || !syncPending || !sheet || !obrReady || obrRole !== 'PLAYER') return;
-    syncInProgress = true;
-    try {
-      while (syncPending && sheet) {
-        syncPending = false;
-        const snapshot = JSON.parse(JSON.stringify(sheet)) as RawSheet;
-        const id = await OBR.player.getId();
-        const name = await OBR.player.getName();
-        await OBR.player.setMetadata({ [KEY]: { character: snapshot, playerName: name, updatedAt: new Date().toISOString() } });
-        await OBR.broadcast.sendMessage(CHANNEL, {
-          type: 'character-updated', playerId: id, playerName: name, character: snapshot
-        }, { destination: 'ALL' });
-        await saveCharacterToGithub(snapshot, id, name);
-      }
-      syncStatus = 'Ficha sincronizada con Owlbear y guardada en GitHub.';
-    } catch {
-      syncStatus = 'No se pudo completar el guardado permanente. Revisa la conexión de Owlbear y GitHub.';
-    } finally {
-      syncInProgress = false;
-      if (syncPending) void flushAutoSync();
-    }
+    // Las fichas de jugador son privadas y locales: nunca se envían a Owlbear ni a GitHub.
+    if (!sheet) return;
+    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
+    syncPending = false;
+    syncStatus = 'Ficha guardada localmente en este dispositivo.';
   }
 
   function editSheetField(key: string, event: Event) {
@@ -2475,15 +2448,7 @@ import ITEMS from './items.json';
       playerCreating = false;
       localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
       importOpen = false;
-      if (obrReady && obrRole === 'PLAYER') {
-        syncPending = true;
-        await flushAutoSync();
-        notice = syncStatus === 'Ficha sincronizada con la sala.'
-          ? 'Ficha importada y compartida con el director.'
-          : 'Ficha importada localmente. No se pudo compartir con la sala; vuelve a intentarlo.';
-      } else {
-        notice = 'Ficha importada.';
-      }
+      notice = 'Ficha importada y guardada localmente en este dispositivo.';
       input.value = '';
     }).catch(() => {
       notice = 'No se pudo leer el archivo JSON.';
@@ -2557,7 +2522,7 @@ import ITEMS from './items.json';
   function saveSheetMutation() {
     if (!sheet) return;
     localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-    if (obrReady && obrRole === 'PLAYER') { syncPending = true; void flushAutoSync(); }
+    // Solo almacenamiento local del jugador.
   }
   function featureSourceGroups(target: RawSheet) {
     const className = sheetClassName(target);
@@ -3746,45 +3711,16 @@ import ITEMS from './items.json';
 
   async function restoreOwnSheet() {
     if (obrRole !== 'PLAYER') return;
-    const metadata: any = await OBR.player.getMetadata();
-    const payload = metadata?.[KEY];
-
-    // A local character can be newer than an old deletion marker (for example,
-    // when it was created while Owlbear was temporarily unavailable).
-    if (payload?.deleted && !sheet) {
-      localStorage.removeItem('forja-raw-character');
-      return;
-    }
-    if (payload?.character) {
-      sheet = repairGenericStatLabels(payload.character as RawSheet) as RawSheet;
-      localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-      await saveOwnCharacterToGithub(sheet);
-      return;
-    }
-    if (sheet) {
-      // Keep the browser copy and replace a stale/empty Owlbear metadata value.
-      syncPending = true;
-      await flushAutoSync();
-      return;
-    }
-
-    // Last recovery source: the player's own record in the configured GitHub store.
-    if (githubStore) {
+    // La ficha del jugador se restaura exclusivamente desde el almacenamiento local.
+    if (!sheet) {
       try {
-        const id = await OBR.player.getId();
-        const index = await githubStore.readIndex();
-        const record = index.characters.find(item => item.playerId === id);
-        if (record) {
-          const saved = await githubStore.load(record);
-          if (saved?.character && Array.isArray(saved.character.sections)) {
-            sheet = repairGenericStatLabels(saved.character as RawSheet) as RawSheet;
-            localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
-            syncPending = true;
-            await flushAutoSync();
-          }
+        const saved = localStorage.getItem('forja-raw-character');
+        if (saved) {
+          const parsed = JSON.parse(saved) as RawSheet;
+          if (parsed && Array.isArray(parsed.sections)) sheet = repairGenericStatLabels(parsed) as RawSheet;
         }
-      } catch (error) {
-        cloudStatus = 'No se pudo recuperar la ficha desde GitHub: ' + (error instanceof Error ? error.message : String(error));
+      } catch {
+        localStorage.removeItem('forja-raw-character');
       }
     }
   }
@@ -3807,10 +3743,6 @@ import ITEMS from './items.json';
     link.click();
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    if (obrReady && obrRole === 'PLAYER') {
-      syncPending = true;
-      await flushAutoSync();
-    }
     notice = 'Personaje exportado como ' + safeName + '.json';
   }
 
@@ -3853,7 +3785,7 @@ import ITEMS from './items.json';
         obrRole = await OBR.player.getRole();
         playerName = await OBR.player.getName();
         builderData.player = playerName;
-        await loadGithubRoomConfig();
+        if (obrRole === 'GM') await loadGithubRoomConfig();
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
         if (!demoPreview) await restoreOwnSheet();
         await refreshPlayers();
@@ -4689,7 +4621,7 @@ import ITEMS from './items.json';
             {#if builderStepError}<p class="builder-step-error" role="alert">{builderStepError}</p>{/if}
             <div class="builder-actions">
               {#if builderStep>0}<button class="secondary" on:click={builderBack}>Anterior</button>{/if}
-              {#if builderStep<11}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button type="button" class="primary" on:click={finishBuilder}>Crear personaje</button>{/if}
+              {#if builderStep<11}<button class="primary" on:click={builderNext}>Siguiente</button>{:else}<button type="button" class="primary" on:click={finishBuilder}>Guardar cambios y abrir ficha</button>{/if}
             </div>
           {:else}
 <div class="section-heading"><h3>Personaje generado</h3><span class="count">Nivel 1</span></div>
