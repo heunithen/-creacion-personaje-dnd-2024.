@@ -2216,6 +2216,7 @@ import ITEMS from './items.json';
   }
   const INITIATIVE_OVERLAY_CHANNEL = 'com.heunithen.dnd2024-character-builder/initiative-overlay';
   const INITIATIVE_POPOVER_ID = 'com.heunithen.dnd2024-character-builder/initiative-popover';
+  let initiativePopoverResizeObserver: ResizeObserver | null = null;
   let initiativeOverlayVisible = false;
   const isInitiativeOverlay = new URLSearchParams(window.location.search).get('initiativeOverlay') === '1';
   let initiativeOverlayState:{round:number;activeIndex:number;participants:InitiativeParticipant[]} = {round:1,activeIndex:0,participants:[]};
@@ -2248,13 +2249,13 @@ import ITEMS from './items.json';
         id:INITIATIVE_POPOVER_ID,
         url,
         width:250,
-        height:Math.min(560,82+initiativeOrder.length*28),
+        height:120,
         anchorReference:'POSITION',
-        anchorPosition:{left:Math.max(12,width-16),top:Math.max(12,height-16)},
+        anchorPosition:{left:Math.max(24,width-32),top:Math.max(24,height-16)},
         anchorOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
         transformOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
         disableClickAway:true,
-        marginThreshold:12
+        marginThreshold:24
       });
       initiativeOverlayVisible=true;
       publishInitiativeOverlayState();
@@ -4384,6 +4385,19 @@ import ITEMS from './items.json';
         } catch { /* Se actualizará con el estado compartido del tracker. */ }
         OBR.broadcast.onMessage(INITIATIVE_OVERLAY_CHANNEL,(event:any)=>{
           if(event.data?.type==='update'&&event.data.state)initiativeOverlayState=event.data.state;
+        });
+        // El iframe informa al popover la altura real de la tarjeta, también cuando cambia la lista.
+        requestAnimationFrame(()=>{
+          const overlay=document.querySelector<HTMLElement>('.initiative-screen-overlay');
+          if(!overlay)return;
+          initiativePopoverResizeObserver?.disconnect();
+          initiativePopoverResizeObserver=new ResizeObserver(()=>{
+            const measuredHeight=Math.ceil(overlay.getBoundingClientRect().height);
+            if(measuredHeight>0)void OBR.popover.setHeight(INITIATIVE_POPOVER_ID,measuredHeight);
+          });
+          initiativePopoverResizeObserver.observe(overlay);
+          const initialHeight=Math.ceil(overlay.getBoundingClientRect().height);
+          if(initialHeight>0)void OBR.popover.setHeight(INITIATIVE_POPOVER_ID,initialHeight);
         });
       }
       obrReady = true;
@@ -8163,7 +8177,8 @@ import ITEMS from './items.json';
   @media(max-width:520px){.initiative-list li{grid-template-columns:26px minmax(0,1fr)}.initiative-roll{grid-column:2;white-space:normal}.initiative-turn-controls strong{flex-basis:100%;order:-1}}
   @media(max-width:480px){.combatant-vitals{align-items:flex-start;flex-direction:column}.combat-initiative{align-items:flex-start;flex-direction:column}}
 
-  .initiative-screen-overlay{box-sizing:border-box;width:100%;max-width:100%;min-width:0;height:auto;max-height:calc(100vh - 24px);overflow-x:hidden;overflow-y:auto;padding:7px;background:#0b171d;color:#fff;font-family:Arial,sans-serif;border:1px solid #5fe6e0;border-radius:9px;box-shadow:0 5px 18px rgba(0,0,0,.35)}
+  :global(html),:global(body),:global(#app){box-sizing:border-box;width:100%;min-width:0;max-width:100vw;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}
+  .initiative-screen-overlay{box-sizing:border-box;display:block;width:100%;max-width:100%;min-width:0;height:fit-content;max-height:calc(100vh - 24px);margin:0;overflow-x:hidden;overflow-y:auto;padding:7px;background:#0b171d;color:#fff;font-family:Arial,sans-serif;border:1px solid #5fe6e0;border-radius:9px;box-shadow:0 5px 18px rgba(0,0,0,.35)}
   .initiative-screen-overlay header{display:flex;flex-direction:column;gap:3px;min-width:0;padding-bottom:6px;border-bottom:1px solid #3a6870}
   .initiative-screen-overlay header strong{font-size:12px;line-height:1.2;letter-spacing:.02em;color:#9fe9e5;overflow-wrap:anywhere}
   .initiative-screen-overlay header span{font-size:10px;line-height:1.25;color:#e6b83f;font-weight:700;overflow-wrap:anywhere}
