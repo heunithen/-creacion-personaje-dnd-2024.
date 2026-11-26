@@ -835,6 +835,13 @@
   let levelUpEpicFeatAbility = 'Fuerza';
   let levelUpHpMode = 'average';
   let levelUpHpRoll = '';
+  let progressionFeatChoice = '';
+  let progressionSkillChoice = '';
+  let progressionToolChoice = '';
+  let progressionArmorChoice = '';
+  let progressionWeaponChoice = '';
+  let progressionLanguageChoice = '';
+  let progressionTraitChoice = '';
   let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
   function rollChestLoot() {
     const dice = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10) + 1);
@@ -3095,7 +3102,64 @@ import ITEMS from './items.json';
       const match = key.match(/Espacios nivel (\d+)/i);
       if (match && value !== '—') result[match[1]] = Math.max(0, Number(value) || 0);
     }
+    const overrides=readJsonRecord(target,'PROGRESIÓN','Recursos manuales');
+    for (const [key,value] of Object.entries(overrides)) {
+      const slot=key.match(/^Espacios nivel (\d+)$/i);
+      if(slot) result[slot[1]]=Math.max(0,Number(value)||0);
+    }
     return result;
+  }
+  function progressionManualResources(target:RawSheet):Record<string,number> {
+    return readJsonRecord(target,'PROGRESIÓN','Recursos manuales');
+  }
+  function progressionResourceValue(target:RawSheet,key:string,base:any):number {
+    const overrides=progressionManualResources(target);
+    if(Object.prototype.hasOwnProperty.call(overrides,key)) return Math.max(0,Number(overrides[key])||0);
+    const match=String(base??'').match(/[+-]?\d+/);
+    return match ? Math.max(0,Number(match[0])) : 0;
+  }
+  function adjustProgressionResource(key:string,delta:number,base:any=0) {
+    if(!sheet) return;
+    const overrides=progressionManualResources(sheet);
+    overrides[key]=Math.max(0,progressionResourceValue(sheet,key,base)+delta);
+    setCharacterStat(sheet,'PROGRESIÓN','Recursos manuales',JSON.stringify(overrides));
+    sheet={...sheet}; saveSheetMutation();
+  }
+  function adjustProgressionSpellSlot(level:string,delta:number) {
+    if(!sheet) return;
+    adjustProgressionResource('Espacios nivel '+level,delta,spellSlotMaximums(sheet)[level]||0);
+  }
+  function manualProgressionList(target:RawSheet,section:string,field:string):string[] {
+    return splitChoiceList(getCharacterStat(target,section,field)||'').filter(Boolean);
+  }
+  function addManualProgressionChoice(section:string,field:string,value:string) {
+    if(!sheet||!value) return;
+    const current=manualProgressionList(sheet,section,field);
+    if(!current.some(item=>normalizeLevelText(item)===normalizeLevelText(value))) current.push(value);
+    setCharacterStat(sheet,section,field,current.join('; '));
+    sheet={...sheet}; saveSheetMutation();
+  }
+  function removeManualProgressionChoice(section:string,field:string,value:string) {
+    if(!sheet) return;
+    const current=manualProgressionList(sheet,section,field).filter(item=>normalizeLevelText(item)!==normalizeLevelText(value));
+    setCharacterStat(sheet,section,field,current.join('; '));
+    sheet={...sheet}; saveSheetMutation();
+  }
+  function manualProgressionTraitOptions(target:RawSheet):string[] {
+    const className=sheetClassName(target);
+    const classTraits=((CLASS_FEATURES as any).classes?.[className]||[]).map((feature:any)=>feature.name).filter(Boolean);
+    const subclassName=getCharacterStat(target,'PERSONAJE','Subclase');
+    const subclass=getSubclassData(className,subclassName);
+    const subclassTraits=(subclass?.features||[]).map((feature:any)=>feature.name).filter(Boolean);
+    return [...new Set([...classTraits,...subclassTraits])].sort((a,b)=>a.localeCompare(b,'es'));
+  }
+  function manualProgressionCompetencyChoices(kind:string):string[] {
+    if(kind==='skill') return BUILDER_SKILL_OPTIONS;
+    if(kind==='tool') return BUILDER_FEAT_TOOL_OPTIONS;
+    if(kind==='armor') return ['Armaduras ligeras','Armaduras medias','Armaduras pesadas','Escudos'];
+    if(kind==='weapon') return ['Armas sencillas','Armas marciales',...BUILDER_WEAPON_MASTERY_OPTIONS];
+    if(kind==='language') return ['Común','Enano','Élfico','Gigante','Gnómico','Goblin','Mediano','Orco','Abisal','Celestial','Dracónico','Infracomún','Infernal','Primordial','Silvano','Druídico','Jerga de ladrones'];
+    return [];
   }
   function spellStates(target: RawSheet) {
     return readJsonRecord(target, 'GESTIÓN DE FICHA', 'Estados de conjuros');
@@ -5985,6 +6049,37 @@ import ITEMS from './items.json';
                       {/each}
                       <div class="progression-manual-row"><span>Experiencia (PX)</span><div><button type="button" aria-label="Disminuir experiencia" on:click={()=>adjustProgressionValue('PERSONAJE','Experiencia',-100,0,' PX')}>−</button><strong>{getCharacterStat(sheet,'PERSONAJE','Experiencia') || '0'}</strong><button type="button" aria-label="Aumentar experiencia" on:click={()=>adjustProgressionValue('PERSONAJE','Experiencia',100,0,' PX')}>+</button></div></div>
                     </div>
+                  </section>                      {#if progression}
+                        {@const currentRow=progression.rows.find((row:any)=>row.level===progression.currentLevel)}
+                        {#each Object.entries(currentRow?.resources||{}).filter(([key,value]:any)=>!/^Espacios nivel/i.test(key)&&value!=='—'&&/\d/.test(String(value))) as [resourceName,resourceBase]}
+                          <div class="progression-manual-row"><span>{resourceName}</span><div><button type="button" aria-label={'Disminuir '+resourceName} on:click={()=>adjustProgressionResource(resourceName,-1,resourceBase)}>−</button><strong>{progressionResourceValue(sheet,resourceName,resourceBase)}</strong><button type="button" aria-label={'Aumentar '+resourceName} on:click={()=>adjustProgressionResource(resourceName,1,resourceBase)}>+</button></div></div>
+                        {/each}
+                      {/if}
+                      {#each Object.entries(sheetSpellSlots) as [slotLevel,slotMaximum]}
+                        <div class="progression-manual-row"><span>Espacios de conjuro · nivel {slotLevel}</span><div><button type="button" aria-label={'Disminuir espacios nivel '+slotLevel} on:click={()=>adjustProgressionSpellSlot(slotLevel,-1)}>−</button><strong>{progressionResourceValue(sheet,'Espacios nivel '+slotLevel,slotMaximum)}</strong><button type="button" aria-label={'Aumentar espacios nivel '+slotLevel} on:click={()=>adjustProgressionSpellSlot(slotLevel,1)}>+</button></div></div>
+                      {/each}
+                    </div>
+                  </section>
+                  <section class="sheet-section progression-manual-panel">
+                    <div class="sheet-section-title"><h3>Competencias</h3></div>
+                    <div class="progression-manual-select-row"><label>Habilidad<select bind:value={progressionSkillChoice}><option value="">Seleccionar habilidad</option>{#each manualProgressionCompetencyChoices('skill') as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionSkillChoice} on:click={()=>{addManualProgressionChoice('COMPETENCIAS','Skills',progressionSkillChoice);progressionSkillChoice='';}}>Añadir</button></div>
+                    <div class="progression-manual-select-row"><label>Herramienta<select bind:value={progressionToolChoice}><option value="">Seleccionar herramienta</option>{#each manualProgressionCompetencyChoices('tool') as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionToolChoice} on:click={()=>{addManualProgressionChoice('COMPETENCIAS','Herramientas',progressionToolChoice);progressionToolChoice='';}}>Añadir</button></div>
+                    <div class="progression-manual-select-row"><label>Armadura o escudo<select bind:value={progressionArmorChoice}><option value="">Seleccionar competencia</option>{#each manualProgressionCompetencyChoices('armor') as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionArmorChoice} on:click={()=>{addManualProgressionChoice('COMPETENCIAS','Armaduras',progressionArmorChoice);progressionArmorChoice='';}}>Añadir</button></div>
+                    <div class="progression-manual-select-row"><label>Arma<select bind:value={progressionWeaponChoice}><option value="">Seleccionar competencia o maestría</option>{#each manualProgressionCompetencyChoices('weapon') as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionWeaponChoice} on:click={()=>{addManualProgressionChoice('COMPETENCIAS','Armas',progressionWeaponChoice);addManualProgressionChoice('ATAQUES','Maestrías con armas',progressionWeaponChoice);progressionWeaponChoice='';}}>Añadir</button></div>
+                    <div class="progression-manual-select-row"><label>Idioma<select bind:value={progressionLanguageChoice}><option value="">Seleccionar idioma</option>{#each manualProgressionCompetencyChoices('language') as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionLanguageChoice} on:click={()=>{addManualProgressionChoice('COMPETENCIAS','Languages',progressionLanguageChoice);progressionLanguageChoice='';}}>Añadir</button></div>
+                    {#each [{label:'Habilidades',section:'COMPETENCIAS',field:'Skills'},{label:'Herramientas',section:'COMPETENCIAS',field:'Herramientas'},{label:'Armaduras',section:'COMPETENCIAS',field:'Armaduras'},{label:'Armas',section:'COMPETENCIAS',field:'Armas'},{label:'Maestrías con armas',section:'ATAQUES',field:'Maestrías con armas'},{label:'Idiomas',section:'COMPETENCIAS',field:'Languages'}] as group}
+                      {@const selected=manualProgressionList(sheet,group.section,group.field)}
+                      {#if selected.length}<div class="progression-manual-chips"><strong>{group.label}</strong>{#each selected as item}<span>{item}<button type="button" aria-label={'Quitar '+item} on:click={()=>removeManualProgressionChoice(group.section,group.field,item)}>×</button></span>{/each}</div>{/if}
+                    {/each}
+                  </section>
+                  <section class="sheet-section progression-manual-panel">
+                    <div class="sheet-section-title"><h3>Dotes y rasgos</h3></div>
+                    <div class="progression-manual-select-row"><label>Dote<select bind:value={progressionFeatChoice}><option value="">Seleccionar dote</option>{#each [...new Set([...BUILDER_FEATS,...BARBARIAN_GENERAL_FEATS,...BUILDER_EPIC_FEATS])] as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionFeatChoice} on:click={()=>{addManualProgressionChoice('RASGOS Y DOTES','Dotes adicionales',progressionFeatChoice);progressionFeatChoice='';}}>Añadir</button></div>
+                    <div class="progression-manual-select-row"><label>Rasgo de clase o subclase<select bind:value={progressionTraitChoice}><option value="">Seleccionar rasgo</option>{#each manualProgressionTraitOptions(sheet) as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionTraitChoice} on:click={()=>{addManualProgressionChoice('RASGOS Y DOTES','Rasgos adicionales',progressionTraitChoice);progressionTraitChoice='';}}>Añadir</button></div>
+                    {#each [{label:'Dotes',field:'Dotes adicionales'},{label:'Rasgos',field:'Rasgos adicionales'}] as group}
+                      {@const selected=manualProgressionList(sheet,'RASGOS Y DOTES',group.field)}
+                      {#if selected.length}<div class="progression-manual-chips"><strong>{group.label}</strong>{#each selected as item}<span>{item}<button type="button" aria-label={'Quitar '+item} on:click={()=>removeManualProgressionChoice('RASGOS Y DOTES',group.field,item)}>×</button></span>{/each}</div>{/if}
+                    {/each}
                   </section>
                 {:else if playerSheetTab !== 'Conjuros'}
                   {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
@@ -6253,7 +6348,7 @@ import ITEMS from './items.json';
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.progression-manual-list{display:grid;gap:0}.progression-manual-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.48rem .1rem;border-bottom:1px solid var(--rule);font:.82rem system-ui,sans-serif}.progression-manual-row>span{color:var(--ink-soft)}.progression-manual-row>div{display:flex;align-items:center;gap:.55rem}.progression-manual-row strong{min-width:3.4rem;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}.progression-manual-row button{width:1.8rem;height:1.8rem;padding:0;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font-size:1rem;font-weight:700;cursor:pointer}.progression-manual-row button:hover{border-color:var(--gold);background:rgba(95,230,224,.12)}@media(max-width:480px){.progression-manual-row{font-size:.75rem}.progression-manual-row>div{gap:.3rem}.progression-manual-row strong{min-width:2.8rem}} .level-up-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:1rem;box-sizing:border-box;background:rgba(0,0,0,.76);overflow:auto}.level-up-overlay .level-up-panel{width:min(900px,100%);max-height:calc(100vh - 2rem);overflow:auto;box-sizing:border-box;margin:0}.level-up-trigger{padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:default}.progression-level-trigger{min-width:2rem;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;background:rgba(255,211,78,.14);color:var(--gold);font:700 .85rem system-ui,sans-serif;cursor:pointer}.progression-level-trigger:hover,.progression-level-trigger:focus-visible{background:var(--gold);color:var(--paper);outline:2px solid var(--gold);outline-offset:2px}.level-up-trigger:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
+  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.progression-manual-select-row{display:flex;align-items:end;gap:.55rem;margin:.55rem 0}.progression-manual-select-row label{display:grid;gap:.25rem;flex:1;min-width:0;color:var(--ink-soft);font-size:.78rem}.progression-manual-select-row select{width:100%;min-width:0;padding:.42rem .5rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--ink);font:inherit}.progression-manual-select-row>button{padding:.45rem .7rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font:inherit;cursor:pointer}.progression-manual-select-row>button:disabled{opacity:.4;cursor:not-allowed}.progression-manual-chips{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.65rem 0;padding-top:.5rem;border-top:1px solid var(--rule)}.progression-manual-chips>strong{width:100%;font-size:.78rem;color:var(--ink-soft)}.progression-manual-chips>span{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .4rem;border:1px solid var(--rule);border-radius:4px;font-size:.75rem}.progression-manual-chips button{border:0;background:transparent;color:var(--gold);font-size:1rem;line-height:1;cursor:pointer}.progression-manual-list{display:grid;gap:0}.progression-manual-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.48rem .1rem;border-bottom:1px solid var(--rule);font:.82rem system-ui,sans-serif}.progression-manual-row>span{color:var(--ink-soft)}.progression-manual-row>div{display:flex;align-items:center;gap:.55rem}.progression-manual-row strong{min-width:3.4rem;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}.progression-manual-row button{width:1.8rem;height:1.8rem;padding:0;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font-size:1rem;font-weight:700;cursor:pointer}.progression-manual-row button:hover{border-color:var(--gold);background:rgba(95,230,224,.12)}@media(max-width:480px){.progression-manual-row{font-size:.75rem}.progression-manual-row>div{gap:.3rem}.progression-manual-row strong{min-width:2.8rem}} .level-up-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:1rem;box-sizing:border-box;background:rgba(0,0,0,.76);overflow:auto}.level-up-overlay .level-up-panel{width:min(900px,100%);max-height:calc(100vh - 2rem);overflow:auto;box-sizing:border-box;margin:0}.level-up-trigger{padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:default}.progression-level-trigger{min-width:2rem;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;background:rgba(255,211,78,.14);color:var(--gold);font:700 .85rem system-ui,sans-serif;cursor:pointer}.progression-level-trigger:hover,.progression-level-trigger:focus-visible{background:var(--gold);color:var(--paper);outline:2px solid var(--gold);outline-offset:2px}.level-up-trigger:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
 .spells-panel{margin-top:.5rem}
   .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
   .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:var(--ink);font:500 .82rem system-ui,sans-serif}
