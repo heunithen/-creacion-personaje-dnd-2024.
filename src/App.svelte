@@ -5866,8 +5866,7 @@ import ITEMS from './items.json';
                       {/if}
                     {/if}
                   {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
-                    <label>Dote general<select bind:value={levelUpFeat}><option value="">Elige una dote disponible</option>{#each getBarbarianGeneralFeatOptions(levelUpEntry.sheet) as feat}<option value={feat}>{feat}</option>{/each}</select></label>
-                  {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
+
                 {/if}
               {/if}
               {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('don épico')}
