@@ -3565,15 +3565,15 @@ import ITEMS from './items.json';
     scheduleAutoSync();
   }
   function rollFormula(formula:string, doubleDice=false): {detail:string; total:number} {
-    const source = formula.replace(/\\s+/g,'').replace(/−/g,'-');
-    if (!source || !/^(?:[+-]?(?:\\d+)?d(?:4|6|8|10|12|20|100)|[+-]?\\d+)(?:(?:[+-])(?:(?:\\d+)?d(?:4|6|8|10|12|20|100)|\\d+))*$/i.test(source)) throw new Error('Fórmula no válida');
-    const terms = source.match(/[+-]?(?:\\d+)?d(?:4|6|8|10|12|20|100)|[+-]?\\d+/gi) || [];
+    const source = formula.replace(/\s+/g,'').replace(/−/g,'-');
+    if (!source || !/^(?:[+-]?(?:\d+)?d(?:4|6|8|10|12|20|100)|[+-]?\d+)(?:(?:[+-])(?:(?:\d+)?d(?:4|6|8|10|12|20|100)|\d+))*$/i.test(source)) throw new Error('Fórmula no válida');
+    const terms = source.match(/[+-]?(?:\d+)?d(?:4|6|8|10|12|20|100)|[+-]?\d+/gi) || [];
     let total=0;
     const details:string[]=[];
     for (const term of terms) {
       const sign = term.startsWith('-') ? -1 : 1;
       const clean = term.replace(/^[+-]/,'');
-      const die = clean.match(/^(\\d*)d(4|6|8|10|12|20|100)$/i);
+      const die = clean.match(/^(\d*)d(4|6|8|10|12|20|100)$/i);
       if (die) {
         const count = Math.max(1,Number(die[1] || 1)) * (doubleDice ? 2 : 1);
         const sides = Number(die[2]);
@@ -3594,19 +3594,19 @@ import ITEMS from './items.json';
     const button=getQuickButtons(sheet)[index];
     try {
       const attackFormula=button.attack.trim();
-      const hasD20=/\\d*d20/i.test(attackFormula);
+      const hasD20=/\d*d20/i.test(attackFormula);
       let attackDetail='';
       let attackTotal=0;
       let natural:number|null=null;
       if (hasD20) {
-        const match=attackFormula.match(/(\\d*)d20/i);
+        const match=attackFormula.match(/(\d*)d20/i);
         const count=Math.max(1,Number(match?.[1] || 1));
         if (count !== 1) throw new Error('La tirada de ataque debe contener un solo d20.');
         const first=Math.floor(Math.random()*20)+1;
         const second=button.mode==='normal'?null:Math.floor(Math.random()*20)+1;
         natural=second===null?first:button.mode==='advantage'?Math.max(first,second):Math.min(first,second);
         const chosen=natural;
-        const bonusFormula=attackFormula.replace(/(\\d*)d20/i,'').replace(/^\+/,'');
+        const bonusFormula=attackFormula.replace(/(\d*)d20/i,'').replace(/^\+/,'');
         const bonus=bonusFormula ? rollFormula(bonusFormula) : {detail:'',total:0};
         attackTotal=chosen+bonus.total;
         attackDetail=(second===null?'['+first+']':'['+first+', '+second+']')+' → '+chosen+(bonus.total?(bonus.total>0?' + ':' - ')+Math.abs(bonus.total):'')+' = '+attackTotal;
