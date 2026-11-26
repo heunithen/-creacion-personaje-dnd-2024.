@@ -3106,6 +3106,11 @@ import ITEMS from './items.json';
       const match = key.match(/Espacios nivel (\d+)/i);
       if (match && value !== '—') result[match[1]] = Math.max(0, Number(value) || 0);
     }
+    if(normalizeLevelText(className)==='brujo') {
+      const slots=progressionResourceValue(target,'Espacios de conjuro',row?.resources?.['Espacios de conjuro']||0);
+      const slotLevel=progressionResourceValue(target,'Nivel de los espacios',row?.resources?.['Nivel de los espacios']||1);
+      if(slots>0) result[String(slotLevel)]=slots;
+    }
     const overrides=readJsonRecord(target,'PROGRESIÓN','Recursos manuales');
     for (const [key,value] of Object.entries(overrides)) {
       const slot=key.match(/^Espacios nivel (\d+)$/i);
@@ -3115,7 +3120,7 @@ import ITEMS from './items.json';
   }
   function manualProgressionResourceEntries(progression:any):[string,any][] {
     const row=progression?.rows?.find((item:any)=>item.level===progression.currentLevel);
-    return Object.entries(row?.resources||{}).filter(([key,value])=>!/^Espacios nivel/i.test(key)&&value!=='—'&&/\\d/.test(String(value))) as [string,any][];
+    return Object.entries(row?.resources||{}).filter(([key,value])=>!/^Espacios nivel/i.test(key)&&!['espacios de conjuro','nivel de los espacios'].includes(normalizeLevelText(key))&&value!=='—'&&/\\d/.test(String(value))) as [string,any][];
   }
   function progressionManualResources(target:RawSheet):Record<string,number> {
     return readJsonRecord(target,'PROGRESIÓN','Recursos manuales');
