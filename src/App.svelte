@@ -5959,8 +5959,18 @@ import ITEMS from './items.json';
                 <label>Animal que representa a tu compañero<input bind:value={levelUpRangerBeastAnimal} placeholder="Ej. lobo, oso, águila, tiburón…" /></label>
                 {#if levelUpRangerBeastProfile}<div class="builder-info"><strong>Estadísticas del perfil</strong><p>{BUILDER_RANGER_BEAST_PROFILES[levelUpRangerBeastProfile]}</p></div>{/if}
               {/if}
-              {#if normalizeLevelText(levelUpSubclass)==='colegio del conocimiento' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                <label>Competencias adicionales del Colegio del Conocimiento (elige tres habilidades nuevas)<textarea bind:value={levelUpSubclassSkills} rows="2" placeholder="Tres habilidades distintas, separadas por comas" /></label>
+              {#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='colegio del conocimiento' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <div class="builder-choice-wrapper"><strong>Competencias adicionales del Colegio del Conocimiento</strong>
+                  <label>Primera habilidad<select bind:value={levelUpCollegeKnowledgeSkill1}><option value="">Elige una habilidad</option>{#each getCollegeKnowledgeSkillOptions(levelUpEntry.sheet,[levelUpCollegeKnowledgeSkill2,levelUpCollegeKnowledgeSkill3]) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+                  <label>Segunda habilidad<select bind:value={levelUpCollegeKnowledgeSkill2}><option value="">Elige una habilidad</option>{#each getCollegeKnowledgeSkillOptions(levelUpEntry.sheet,[levelUpCollegeKnowledgeSkill1,levelUpCollegeKnowledgeSkill3]) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+                  <label>Tercera habilidad<select bind:value={levelUpCollegeKnowledgeSkill3}><option value="">Elige una habilidad</option>{#each getCollegeKnowledgeSkillOptions(levelUpEntry.sheet,[levelUpCollegeKnowledgeSkill1,levelUpCollegeKnowledgeSkill2]) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+                </div>
+              {/if}
+              {#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='colegio del conocimiento' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=6}
+                <div class="builder-choice-wrapper"><strong>Descubrimientos mágicos (elige dos y conserva al menos uno al sustituir)</strong>
+                  <label>Primer conjuro<select bind:value={levelUpBardDiscovery1}><option value="">Elige un truco o conjuro</option>{#each getBardMagicDiscoveryOptions(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1) as spell}<option value={spell}>{spell}</option>{/each}</select></label>
+                  <label>Segundo conjuro<select bind:value={levelUpBardDiscovery2}><option value="">Elige un truco o conjuro</option>{#each getBardMagicDiscoveryOptions(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).filter(spell=>normalizeLevelText(spell)!==normalizeLevelText(levelUpBardDiscovery1)) as spell}<option value={spell}>{spell}</option>{/each}</select></label>
+                </div>
               {/if}
               {#if levelUpSubclass==='MAESTRO DEL COMBATE' && [3,7,10,15].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
                 <label>Maniobras de Maestro del combate (lista completa)<textarea bind:value={levelUpManeuvers} rows="3" placeholder="Ej. Arremetida, Ataque preciso, Contraataque" /></label>
