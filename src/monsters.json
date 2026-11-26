@@ -2832,7 +2832,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 303\nGIGANTE DE PIEDRA\nGigante Enorme, Neutral\nCA 17 Iniciativa +5 (15)\nPG 126 (11d12 + 55)\nVelocidad 40 pies\nCARACTERÍSTICAS\nFUE 23 (+6) · Salvación +6\nDES 15 (+2) · Salvación +5\nCON 20 (+5) · Salvación +8\nINT 10 (+0) · Salvación +0\nSAB 12 (+1) · Salvación +4\nCAR 9 (-1) · Salvación -1\nHabilidades Atletismo +12, Percepción +4, Sigilo +5\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 14\nIdiomas Gigante\nVD 7 (PX 2.900; Bonif. competencia +3)\nACCIONES\nAtaque múltiple. El gigante realiza dos ataques, usando Garrote de piedra o Roca en cualquier combinación.\nGarrote de piedra. Tirada de ataque cuerpo a cuerpo: +9, alcance 15 pies. Impacto: 22 (3d10 + 6) de daño contundente.\nRoca. Tirada de ataque a distancia: +9, distancia 60/240 pies. Impacto: 15 (2d8 + 6) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, queda Derribada.\nREACCIONES\nDesviar proyectil (recarga 5-6). Desencadenante: Una tirada de ataque a distancia impacta al gigante y le inflige daño contundente, perforante o cortante. Respuesta: El gigante reduce el daño que recibe del ataque en 11 (1d10 + 6), y si reduce el daño a 0, puede redirigir parte de la fuerza del ataque. Tirada de salvación de Destreza: CD 17, una criatura que el gigante pueda ver a 60 pies o menos. Fallo: 11 (1d10 + 6) de daño de fuerza."
   },
   {
-    "name": "Gólem de piedra",
+    "name": "Gigante de piedra soñador",
     "group": "PDF 304",
     "pdfPage": 304,
     "printedPage": 301,
@@ -2840,7 +2840,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 304\nGIGANTE DE PIEDRA SOÑADOR\nGigante Enorme, Neutral\nCA 17 Iniciativa +5 (15)\nPG 161 (17d12 + 51)\nVelocidad 40 pies\nCARACTERÍSTICAS\nFUE 23 (+6) · Salvación +6\nDES 15 (+2) · Salvación +5\nCON 17 (+3) · Salvación +7\nINT 12 (+1) · Salvación +1\nSAB 16 (+3) · Salvación +7\nCAR 12 (+1) · Salvación +1\nHabilidades Atletismo +12, Percepción +7, Sigilo +5\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 17\nIdiomas Gigante\nVD 8 (PX 3.900; Bonif. competencia +3)\nACCIONES\nAtaque múltiple. El gigante realiza dos ataques de Garrote de piedra.\nGarrote de piedra. Tirada de ataque cuerpo a cuerpo: +9, alcance 15 pies. Impacto: 22 (3d10 + 6) de daño contundente.\nRoca. Tirada de ataque a distancia: +9, distancia 60/240 pies. Impacto: 15 (2d8 + 6) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, queda Derribada.\nSueño de piedra (1/día). El gigante lanza Sueño, sin necesitar componentes de conjuro y usando Sabiduría como característica para lanzar conjuros (CD de salvación 15). Si el objetivo duerme durante 1 minuto, entra en un sueño profético y recibe una visión relacionada con una pregunta, un plan o un acontecimiento que el gigante haya imaginado."
   },
   {
-    "name": "Gigante de las tormentas",
+    "name": "Troll",
     "group": "PDF 305",
     "pdfPage": 305,
     "printedPage": 302,
@@ -2848,7 +2848,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 305\nTROLL\nGigante Grande, Caótico Malvado\nCA 15 Iniciativa +1 (11)\nPG 94 (9d10 + 45)\nVelocidad 30 pies\nCARACTERÍSTICAS\nFUE 18 (+4) · Salvación +4\nDES 13 (+1) · Salvación +1\nCON 20 (+5) · Salvación +5\nINT 7 (-2) · Salvación -2\nSAB 9 (-1) · Salvación -1\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +2\nVulnerabilidades Fuego\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 12\nIdiomas Gigante\nVD 5 (PX 1.800; Bonif. competencia +3)\nRASGOS\nRegeneración. El troll recupera 10 puntos de golpe al comienzo de cada uno de sus turnos. Si recibe daño de ácido o fuego, este rasgo no funciona al comienzo de su siguiente turno. El troll muere solo si comienza su turno con 0 puntos de golpe y no se regenera.\nACCIONES\nAtaque múltiple. El troll realiza tres ataques, usando Mordisco y Garra en cualquier combinación.\nMordisco. Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. Impacto: 7 (1d6 + 4) de daño perforante.\nGarra. Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. Impacto: 11 (2d6 + 4) de daño cortante."
   },
   {
-    "name": "Súcubo",
+    "name": "Troll de las cavernas",
     "group": "PDF 306",
     "pdfPage": 306,
     "printedPage": 303,
@@ -2856,7 +2856,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 306\nTROLL DE LAS CAVERNAS\nGigante Grande, Caótico Malvado\nCA 16 Iniciativa +1 (11)\nPG 115 (10d10 + 60)\nVelocidad 30 pies, Trepar 30 pies\nCARACTERÍSTICAS\nFUE 20 (+5) · Salvación +5\nDES 12 (+1) · Salvación +1\nCON 22 (+6) · Salvación +6\nINT 6 (-2) · Salvación -2\nSAB 9 (-1) · Salvación -1\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +2, Sigilo +4\nVulnerabilidades Fuego\nSentidos Visión ciega 30 pies, visión en la oscuridad 60 pies; Percepción pasiva 12\nIdiomas Gigante\nVD 6 (PX 2.300; Bonif. competencia +3)\nRASGOS\nRegeneración. El troll recupera 10 puntos de golpe al comienzo de cada uno de sus turnos. Si recibe daño de ácido o fuego, este rasgo no funciona al comienzo de su siguiente turno. El troll muere solo si comienza su turno con 0 puntos de golpe y no se regenera.\nACCIONES\nAtaque múltiple. El troll realiza dos ataques de Garra.\nGarra. Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. Impacto: 14 (2d8 + 5) de daño cortante."
   },
   {
-    "name": "Tarasca",
+    "name": "Troll de guerra",
     "group": "PDF 307-308",
     "pdfPage": 308,
     "printedPage": 305,
@@ -2864,7 +2864,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 307\nTROLL DE GUERRA\nGigante Grande, Caótico Malvado\nCA 18 Iniciativa +2 (12)\nPG 161 (17d10 + 68)\nVelocidad 40 pies\nCARACTERÍSTICAS\nFUE 22 (+6) · Salvación +6\nDES 14 (+2) · Salvación +2\nCON 19 (+4) · Salvación +4\nINT 9 (-1) · Salvación -1\nSAB 11 (+0) · Salvación +0\nCAR 9 (-1) · Salvación -1\nHabilidades Atletismo +9, Percepción +3\nVulnerabilidades Fuego\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 13\nIdiomas Gigante\nVD 9 (PX 5.000; Bonif. competencia +4)\nRASGOS\nRegeneración. El troll recupera 15 puntos de golpe al comienzo de cada uno de sus turnos. Si recibe daño de ácido o fuego, este rasgo no funciona al comienzo de su siguiente turno. El troll muere solo si comienza su turno con 0 puntos de golpe y no se regenera.\nACCIONES\nAtaque múltiple. El troll realiza tres ataques, usando Hacha de guerra o Garra en cualquier combinación.\nHacha de guerra. Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. Impacto: 17 (2d10 + 6) de daño cortante.\nGarra. Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. Impacto: 15 (2d8 + 6) de daño cortante.\nREACCIONES\nDesviar. Desencadenante: El troll recibe un impacto de una tirada de ataque cuerpo a cuerpo mientras sostiene un arma. Respuesta: El troll suma 4 a su CA contra ese ataque, lo que podría hacer que falle."
   },
   {
-    "name": "Merodeador thri-kreen",
+    "name": "Troll de la niebla",
     "group": "PDF 309",
     "pdfPage": 309,
     "printedPage": 306,
@@ -2872,7 +2872,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 308\nTROLL DE LA NIEBLA\nGigante Grande, Caótico Malvado\nCA 15 Iniciativa +2 (12)\nPG 119 (14d10 + 42)\nVelocidad 30 pies\nCARACTERÍSTICAS\nFUE 18 (+4) · Salvación +4\nDES 14 (+2) · Salvación +2\nCON 16 (+3) · Salvación +3\nINT 8 (-1) · Salvación -1\nSAB 10 (+0) · Salvación +0\nCAR 8 (-1) · Salvación -1\nHabilidades Sigilo +5\nVulnerabilidades Fuego\nResistencias Frío\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 10\nIdiomas Gigante\nVD 7 (PX 2.900; Bonif. competencia +3)\nRASGOS\nRegeneración. El troll recupera 10 puntos de golpe al comienzo de cada uno de sus turnos. Si recibe daño de ácido o fuego, este rasgo no funciona al comienzo de su siguiente turno. El troll muere solo si comienza su turno con 0 puntos de golpe y no se regenera.\nACCIONES\nAtaque múltiple. El troll realiza dos ataques de Garra y uno de Mordisco.\nGarra. Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. Impacto: 11 (2d6 + 4) de daño cortante.\nMordisco. Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. Impacto: 7 (1d6 + 4) de daño perforante.\nNube de niebla (recarga 5-6). El troll crea una nube de niebla mágica en una Esfera de 20 pies de radio centrada en sí mismo. La nube se extiende por las esquinas, y su zona está muy oscurecida. Dura 1 minuto o hasta que el troll quede Incapacitado o muera. El troll puede ver a través de la niebla."
   },
   {
-    "name": "Psiónico thri-kreen",
+    "name": "Troll de dos cabezas",
     "group": "PDF 309",
     "pdfPage": 309,
     "printedPage": 306,
@@ -2880,7 +2880,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 309\nTROLL DE DOS CABEZAS\nGigante Grande, Caótico Malvado\nCA 15 Iniciativa +1 (11)\nPG 119 (14d10 + 42)\nVelocidad 30 pies\nCARACTERÍSTICAS\nFUE 19 (+4) · Salvación +4\nDES 12 (+1) · Salvación +1\nCON 17 (+3) · Salvación +3\nINT 7 (-2) · Salvación -2\nSAB 9 (-1) · Salvación -1\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +5\nVulnerabilidades Fuego\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 15\nIdiomas Gigante\nVD 5 (PX 1.800; Bonif. competencia +3)\nRASGOS\nDos cabezas. El troll tiene ventaja en las pruebas de Sabiduría (Percepción) y en las tiradas de salvación contra las condiciones Cegado, Hechizado, Ensordecido, Asustado, Aturdido e Inconsciente.\nRegeneración. El troll recupera 10 puntos de golpe al comienzo de cada uno de sus turnos. Si recibe daño de ácido o fuego, este rasgo no funciona al comienzo de su siguiente turno. El troll muere solo si comienza su turno con 0 puntos de golpe y no se regenera.\nACCIONES\nAtaque múltiple. El troll realiza tres ataques, usando Mordisco y Garra en cualquier combinación.\nMordisco. Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. Impacto: 7 (1d6 + 4) de daño perforante.\nGarra. Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. Impacto: 11 (2d6 + 4) de daño cortante."
   },
   {
-    "name": "Pendenciero",
+    "name": "Troll del hielo",
     "group": "PDF 310",
     "pdfPage": 310,
     "printedPage": 307,
@@ -2888,7 +2888,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 310\nTROLL DEL HIELO\nGigante Grande, Caótico Malvado\nCA 16 Iniciativa +1 (11)\nPG 138 (12d10 + 72)\nVelocidad 30 pies\nCARACTERÍSTICAS\nFUE 19 (+4) · Salvación +4\nDES 12 (+1) · Salvación +1\nCON 22 (+6) · Salvación +6\nINT 8 (-1) · Salvación -1\nSAB 9 (-1) · Salvación -1\nCAR 7 (-2) · Salvación -2\nVulnerabilidades Fuego\nResistencias Frío\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 9\nIdiomas Gigante\nVD 7 (PX 2.900; Bonif. competencia +3)\nRASGOS\nRegeneración. El troll recupera 10 puntos de golpe al comienzo de cada uno de sus turnos. Si recibe daño de ácido o fuego, este rasgo no funciona al comienzo de su siguiente turno. El troll muere solo si comienza su turno con 0 puntos de golpe y no se regenera.\nACCIONES\nAtaque múltiple. El troll realiza tres ataques, usando Mordisco y Garra en cualquier combinación.\nMordisco. Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. Impacto: 7 (1d6 + 4) de daño perforante más 3 (1d6) de daño de frío.\nGarra. Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. Impacto: 11 (2d6 + 4) de daño cortante más 3 (1d6) de daño de frío."
   },
   {
-    "name": "Pendenciero jefe",
+    "name": "Espectador tirano",
     "group": "PDF 310",
     "pdfPage": 310,
     "printedPage": 307,
@@ -2896,7 +2896,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 311\nESPECTADOR TIRANO\nAberración Grande (Contemplador), Legal Malvado\nCA 18 Iniciativa +8 (18)\nPG 180 (19d10 + 76)\nVelocidad 5 pies, Volar 30 pies (flota)\nCARACTERÍSTICAS\nFUE 10 (+0) · Salvación +0\nDES 14 (+2) · Salvación +2\nCON 18 (+4) · Salvación +4\nINT 17 (+3) · Salvación +3\nSAB 15 (+2) · Salvación +6\nCAR 17 (+3) · Salvación +7\nHabilidades Percepción +10\nInmunidades Derribado\nSentidos Visión verdadera 120 pies; Percepción pasiva 20\nIdiomas Habla de las profundidades, infracomún; telepatía 120 pies\nVD 13 (PX 10.000; Bonif. competencia +5)\nRASGOS\nAntimagia. El ojo central del espectador tirano emite un cono de 150 pies de antimagia. Este cono funciona como el conjuro Campo antimagia, con la excepción de que la magia creada por el espectador tirano o sus rayos oculares no queda suprimida.\nACCIONES\nAtaque múltiple. El espectador tirano realiza tres ataques de Mordisco y usa Rayos oculares dos veces.\nMordisco. Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. Impacto: 14 (4d6) de daño perforante.\nRayos oculares. El espectador tirano dispara al azar dos de los siguientes rayos mágicos contra objetivos que pueda ver a 120 pies o menos de sí mismo (tira 1d10; repite la tirada si el espectador tirano ya ha usado ese rayo durante este turno):\n1: Rayo de encanto. Tirada de salvación de Sabiduría: CD 16. Fallo: El objetivo queda Hechizado por el espectador tirano hasta el comienzo del siguiente turno de este.\n2: Rayo paralizante. Tirada de salvación de Constitución: CD 16. Fallo: El objetivo queda Paralizado y repite la tirada al final de cada uno de sus turnos; si tiene éxito, el efecto termina sobre él. Después de 1 minuto, tiene éxito automáticamente.\n3: Rayo de miedo. Tirada de salvación de Sabiduría: CD 16. Fallo: El objetivo queda Asustado durante 1 minuto. Repite la tirada al final de cada uno de sus turnos; si tiene éxito, el efecto termina sobre él.\n4: Rayo de lentitud. Tirada de salvación de Destreza: CD 16. Fallo: La Velocidad del objetivo se reduce a la mitad durante 1 minuto. Además, el objetivo no puede realizar Reacciones y en su turno puede realizar una acción o una acción adicional, pero no ambas. El objetivo puede repetir la tirada al final de cada uno de sus turnos; si tiene éxito, el efecto termina sobre él.\n5: Rayo debilitador. Tirada de salvación de Constitución: CD 16. Fallo: El objetivo tiene desventaja en las tiradas de daño basadas en Fuerza durante 1 minuto. El objetivo puede repetir la tirada al final de cada uno de sus turnos; si tiene éxito, el efecto termina sobre él.\n6: Rayo telequinético. Tirada de salvación de Fuerza: CD 16. Fallo: El espectador tirano mueve al objetivo hasta 30 pies en cualquier dirección. El objetivo queda Apresado por la fuerza de agarre del rayo hasta el comienzo del siguiente turno del espectador tirano o hasta que este quede Incapacitado.\n7: Rayo de sueño. Tirada de salvación de Sabiduría: CD 16. Fallo: El objetivo cae Inconsciente durante 1 minuto. Se despierta si recibe daño o si otra criatura emplea una acción para despertarlo. Este rayo no afecta a autómatas ni muertos vivientes.\n8: Rayo petrificador. Tirada de salvación de Destreza: CD 16. Primer fallo: El objetivo queda Apresado y repite la tirada al final de su siguiente turno si todavía está Apresado; si tiene éxito, el efecto termina sobre él. Segundo fallo: El objetivo queda Petrificado.\n9: Rayo desintegrador. Tirada de salvación de Destreza: CD 16. Fallo: 45 (10d8) de daño de fuerza. Si este daño reduce los puntos de golpe del objetivo a 0, su cuerpo se convierte en polvo.\n10: Rayo de muerte. Tirada de salvación de Destreza: CD 16. Fallo: 55 (10d10) de daño necrótico. El objetivo muere si este daño reduce sus puntos de golpe a 0."
   },
   {
-    "name": "Ent",
+    "name": "Unicornio",
     "group": "PDF 311",
     "pdfPage": 311,
     "printedPage": 308,
@@ -2904,7 +2904,7 @@
     "statBlock": "CONTEXTO COMPARTIDO: PDF 312\nUNICORNIO\nCelestial Grande, Legal Bueno\nCA 12 Iniciativa +2 (12)\nPG 67 (9d10 + 18)\nVelocidad 50 pies\nCARACTERÍSTICAS\nFUE 18 (+4) · Salvación +4\nDES 14 (+2) · Salvación +2\nCON 15 (+2) · Salvación +2\nINT 11 (+0) · Salvación +0\nSAB 17 (+3) · Salvación +5\nCAR 16 (+3) · Salvación +5\nHabilidades Percepción +5\nInmunidades Veneno; Hechizado, Paralizado, Envenenado\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 15\nIdiomas Celestial, élfico, silvano; telepatía 60 pies\nVD 5 (PX 1.800; Bonif. competencia +3)\nRASGOS\nCarga. Si el unicornio se mueve al menos 20 pies en línea recta hacia un objetivo y lo impacta con un ataque de Cuerno durante el mismo turno, el objetivo recibe 9 (2d8) de daño radiante adicional.\nResistencia mágica. El unicornio tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos.\nACCIONES\nCuerno. Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. Impacto: 11 (2d6 + 4) de daño perforante más 9 (2d8) de daño radiante.\nACCIONES ADICIONALES\nTeletransporte (1/día). El unicornio se teletransporta a sí mismo y hasta tres criaturas voluntarias que pueda ver a 5 pies o menos hasta un espacio desocupado que pueda ver a 1 milla o menos.\nREACCIONES\nEscudo de fe. Desencadenante: Una criatura a 60 pies o menos que el unicornio pueda ver es objetivo de una tirada de ataque. Respuesta: El unicornio lanza Escudo de fe sobre el objetivo, sin necesitar componentes de conjuro y usando Sabiduría como característica para lanzar conjuros."
   },
   {
-    "name": "Troglodita",
+    "name": "Vampiro",
     "group": "PDF 312",
     "pdfPage": 312,
     "printedPage": 309,
