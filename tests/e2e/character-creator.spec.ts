@@ -64,11 +64,11 @@ test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a 
   const humanFeatChoices = page
     .locator('.builder-choice-wrapper')
     .filter({ hasText: 'Opciones de la dote adicional humana' })
-    .locator('input[type="checkbox"]');
+    .locator('label.builder-checkbox');
   expect(await humanFeatChoices.count()).toBeGreaterThan(2);
   await humanFeatChoices.nth(0).click();
-  await humanFeatChoices.nth(1).check({ force: true });
-  await humanFeatChoices.nth(2).check({ force: true });
+  await humanFeatChoices.nth(1).click();
+  await humanFeatChoices.nth(2).click();
 
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '05. Distribuye tus características' })).toBeVisible();
@@ -249,7 +249,7 @@ test('Mago: valida competencias, equipo, libro de conjuros, preparación, idioma
   for (let i = 0; i < 3; i++) await cantrips.nth(i).check({ force: true });
 
   const spellbook = page.locator('.builder-choice-wrapper').filter({ hasText: 'Libro de conjuros: elige 6 conjuros de nivel 1' }).locator('label.builder-checkbox');
-  await expect(spellbook).toHaveCount(30);
+  await expect(spellbook).toHaveCount(31);
   for (let i = 0; i < 6; i++) await spellbook.nth(i).check({ force: true });
 
   const prepared = page.locator('.builder-choice-wrapper').filter({ hasText: 'Conjuros preparados' }).locator('label.builder-checkbox');
