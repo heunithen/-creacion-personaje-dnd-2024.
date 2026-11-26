@@ -1841,6 +1841,7 @@
   };
   const BUILDER_POINT_COST: Record<number,number> = {8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9};
   function builderPointCost() { return Object.values(builderData.abilities).reduce((sum,value)=>sum+(BUILDER_POINT_COST[Number(value)] ?? 99),0); }
+  $: builderCurrentPointCost = builderPointCost();
   function builderApplyStandardArray() {
     const priority=BUILDER_STANDARD_PRIORITY[builderData.className]||BUILDER_STANDARD_PRIORITY['Guerrero'];
     builderData.abilities=Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,BUILDER_STANDARD[priority.indexOf(name)]]));
@@ -5892,9 +5893,9 @@ import ITEMS from './items.json';
                 {#each BUILDER_ABILITY_NAMES as ability}
                   <div class="builder-ability-card"><strong>{ability}</strong>
                     {#if builderData.method === 'standard'}
-                      <select aria-label={'Puntuación de '+ability} value={builderData.abilities[ability]} on:change={(event)=>builderSetStandardAbility(ability,Number(event.currentTarget.value))}>{#each BUILDER_STANDARD as score}<option value={score} disabled={BUILDER_ABILITY_NAMES.some(name=>name!==ability&&Number(builderData.abilities[name])===score)}>{score}</option>{/each}</select>
+                      <select aria-label={'Puntuación de '+ability} value={builderData.abilities[ability]} on:change={(event)=>builderSetStandardAbility(ability,Number(event.currentTarget.value))}>{#each BUILDER_STANDARD as score}<option value={score}>{score}</option>{/each}</select>
                     {:else if builderData.method === 'pointBuy'}
-                      <div class="builder-ability-stepper"><button type="button" class="secondary" aria-label={'Bajar '+ability} on:click={()=>builderAdjustPointBuy(ability,-1)} disabled={Number(builderData.abilities[ability])<=8}>−</button><strong>{builderData.abilities[ability]}</strong><button type="button" class="secondary" aria-label={'Subir '+ability} on:click={()=>builderAdjustPointBuy(ability,1)} disabled={Number(builderData.abilities[ability])>=15||builderPointCost()-BUILDER_POINT_COST[Number(builderData.abilities[ability])]+BUILDER_POINT_COST[Number(builderData.abilities[ability])+1]>27}>+</button></div>
+                      <div class="builder-ability-stepper"><button type="button" class="secondary ability-plus" aria-label={'Subir '+ability} on:click={()=>builderAdjustPointBuy(ability,1)} disabled={Number(builderData.abilities[ability])>=15||builderCurrentPointCost-BUILDER_POINT_COST[Number(builderData.abilities[ability])]+BUILDER_POINT_COST[Number(builderData.abilities[ability])+1]>27}>+</button><strong>{builderData.abilities[ability]}</strong><button type="button" class="secondary ability-minus" aria-label={'Bajar '+ability} on:click={()=>builderAdjustPointBuy(ability,-1)} disabled={Number(builderData.abilities[ability])<=8}>−</button></div>
                     {:else}
                       <input type="number" min={builderData.method === 'free' ? 1 : 3} max={builderData.method === 'free' ? 20 : 18} step="1" bind:value={builderData.abilities[ability]} />
                     {/if}
@@ -5903,7 +5904,7 @@ import ITEMS from './items.json';
                 {/each}
               </div>
               {#if builderData.method === 'pointBuy'}
-                <p class="hint">Puntos utilizados: <strong>{builderPointCost()} / 27</strong>. Cada puntuación debe estar entre 8 y 15. Si agotas los puntos, baja otra característica para recuperar puntos antes de aumentar una distinta.</p>
+                <p class="hint">Puntos utilizados: <strong>{builderCurrentPointCost} / 27</strong> · Puntos disponibles: <strong>{27-builderCurrentPointCost}</strong>. El total se actualiza al modificar cada característica. Puedes bajar una puntuación para recuperar puntos.</p>
               {:else if builderData.method === 'standard'}
                 <p class="hint">Distribución sugerida para {builderData.className}. Asigna cada valor una sola vez; al cambiar uno, el valor anterior pasa a la característica que tenía el valor elegido.</p>
               {:else if builderData.method === 'rolled'}
@@ -8793,6 +8794,10 @@ import ITEMS from './items.json';
     text-align:center!important;
     font-variant-numeric:tabular-nums!important;
   }
+  :global(.builder-panel .builder-ability-stepper){grid-column:2!important;grid-row:1/3!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:3px!important;width:100%!important}
+  :global(.builder-panel .builder-ability-stepper button){min-height:25px!important;padding:0!important;font-size:1rem!important;line-height:1!important}
+  :global(.builder-panel .builder-ability-stepper strong){display:flex!important;align-items:center!important;justify-content:center!important;min-height:28px!important;color:#5fe6e0!important;font-size:1.25rem!important;font-variant-numeric:tabular-nums!important}
+  :global(.builder-panel .builder-ability-stepper button:disabled){opacity:.3!important;cursor:not-allowed!important}
   :global(.builder-panel .builder-ability-card small){
     grid-column:1!important;
     color:#b5bec3!important;
