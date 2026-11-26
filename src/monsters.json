@@ -3637,7 +3637,7 @@
     "pdfPage": 362,
     "printedPage": 359,
     "cr": "6 (XP 2,300; PB +3)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCALAMAR GIGANTE\nHuge Beast, Unaligned\nAC 12 Initiative +2 (12)\nHP 120 (16d12 + 16)\nSpeed 5 ft., Swim 80 ft.\nABILITY SCORES\nSTR 23 (+6) · Save +9\nDEX 14 (+2) · Save +5\nCON 12 (+1) · Save +1\nINT 5 (-3) · Save -3\nWIS 11 (+0) · Save +0\nCHA 4 (-3) · Save -3\nSkills Perception +6\nSenses Darkvision 120 ft.; Passive Perception 16\nLanguages None\nCR 6 (XP 2,300; PB +3)\nTRAITS\nWater Breathing. The squid can breathe only\nunderwater.\nACTIONS\nMultiattack. The squid makes one Bite attack and one\nTentacle attack.\nBite. Melee Attack Roll: +9, reach 5 ft. Hit: 28 (4d10 + 6)\nPiercing damage.\nTentacle. Melee Attack Roll: +9, reach 15 ft. Hit: 19 (3d8\n+ 6) Bludgeoning damage. If the target is a Huge or\nsmaller creature, it has the Grappled condition (escape\nDC 16) from one of two tentacles, and the squid can\npull the target up to 10 feet straight toward itself.\nREACTIONS\nInk Cloud (1/Day). Trigger: The squid takes damage\nwhile underwater. Response: The squid releases ink that\nfills a 15-foot Cube centered on itself, and the squid\nmoves up to its Swim Speed. The Cube is Heavily Obscured for 1 minute or until a strong current or similar\neffect disperses the ink."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCALAMAR GIGANTE\nBestia Enorme, No alineado\nCA 12 Iniciativa +2 (12)\nPG 120 (16d12 + 16)\nVelocidad 5 pies, Nadar 80 pies\nCARACTERÍSTICAS\nFUE 23 (+6) · Salvación +9\nDES 14 (+2) · Salvación +5\nCON 12 (+1) · Salvación +1\nINT 5 (-3) · Salvación -3\nSAB 11 (+0) · Salvación +0\nCAR 4 (-3) · Salvación -3\nHabilidades Percepción +6\nSentidos Visión en la oscuridad 120 pies; Percepción pasiva 16\nIdiomas Ninguno\nVD 6 (PX 2.300; Bonif. competencia +3)\nRASGOS\nRespiración acuática. El calamar solo puede respirar bajo el agua.\nACCIONES\nAtaque múltiple. El calamar realiza un ataque de Mordisco y uno de Tentáculo.\nMordisco. Tirada de ataque cuerpo a cuerpo: +9, alcance 5 pies. Impacto: 28 (4d10 + 6) de daño perforante.\nTentáculo. Tirada de ataque cuerpo a cuerpo: +9, alcance 15 pies. Impacto: 19 (3d8 + 6) de daño contundente. Si el objetivo es una criatura Enorme o más pequeña, queda Agarrada (CD de escape 16) por uno de los dos tentáculos, y el calamar puede atraerla hasta 10 pies en línea recta hacia sí mismo.\nREACCIONES\nNube de tinta (1/día). Desencadenante: El calamar recibe daño mientras está bajo el agua. Respuesta: El calamar libera tinta que llena un Cubo de 15 pies centrado en sí mismo y se mueve hasta su Velocidad de nado. El cubo queda muy oscurecido durante 1 minuto o hasta que una corriente fuerte o un efecto similar disperse la tinta."
   },
   {
     "name": "Sapo gigante",
@@ -3645,7 +3645,7 @@
     "pdfPage": 363,
     "printedPage": 360,
     "cr": "1 (XP 200; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSAPO GIGANTE\nLarge Beast, Unaligned\nAC 11 Initiative +1 (11)\nHP 39 (6d10 + 6)\nSpeed 30 ft., Swim 30 ft.\nABILITY SCORES\nSTR 15 (+2) · Save +2\nDEX 13 (+1) · Save +1\nCON 13 (+1) · Save +1\nINT 2 (-4) · Save -4\nWIS 10 (+0) · Save +0\nCHA 3 (-4) · Save -4\nSenses Darkvision 60 ft.; Passive Perception 10\nLanguages None\nCR 1 (XP 200; PB +2)\nTRAITS\nAmphibious. The toad can breathe air and water.\nStanding Leap. The toad’s Long Jump is up to 20 feet\nand its High Jump is up to 10 feet with or without a\nrunning start.\nACTIONS\nBite. Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2)\nPiercing damage plus 5 (2d4) Poison damage. If the\ntarget is a Medium or smaller creature, it has the Grappled condition (escape DC 12).\nSwallow. The toad swallows a Medium or smaller target\nit is grappling. While swallowed, the target isn’t Grappled but has the Blinded and Restrained conditions,\nand it has Total Cover against attacks and other effects\noutside the toad. In addition, the target takes 10 (3d6)\nAcid damage at the end of each of the toad’s turns. The\ntoad can have only one target swallowed at a time, and\nit can’t use Bite while it has a swallowed target. If the\ntoad dies, a swallowed creature is no longer Restrained\nand can escape from the corpse using 5 feet of movement, exiting with the Prone condition."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSAPO GIGANTE\nBestia Grande, No alineado\nCA 11 Iniciativa +1 (11)\nPG 39 (6d10 + 6)\nVelocidad 30 pies, Nadar 30 pies\nCARACTERÍSTICAS\nFUE 15 (+2) · Salvación +2\nDES 13 (+1) · Salvación +1\nCON 13 (+1) · Salvación +1\nINT 2 (-4) · Salvación -4\nSAB 10 (+0) · Salvación +0\nCAR 3 (-4) · Salvación -4\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 10\nIdiomas Ninguno\nVD 1 (PX 200; Bonif. competencia +2)\nRASGOS\nAnfibio. El sapo puede respirar aire y agua.\nSalto prodigioso. El salto largo del sapo alcanza hasta 20 pies y su salto alto hasta 10 pies, con o sin carrerilla.\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 5 (1d6 + 2) de daño perforante más 5 (2d4) de daño de veneno. Si el objetivo es una criatura Mediana o más pequeña, queda Agarrado (CD de escape 12).\nEngullir. El sapo engulle a un objetivo Mediano o más pequeño que tenga Agarrado. Mientras está engullido, el objetivo deja de estar Agarrado, pero queda Cegado y Apresado, y tiene cobertura total contra ataques y otros efectos del exterior del sapo. Además, recibe 10 (3d6) de daño de ácido al final de cada uno de los turnos del sapo. El sapo solo puede tener un objetivo engullido a la vez y no puede usar Mordisco mientras lo tenga. Si el sapo muere, la criatura engullida deja de estar Apresada y puede escapar del cadáver gastando 5 pies de movimiento; sale Derribada."
   },
   {
     "name": "Serpiente venenosa gigante",
@@ -3653,7 +3653,7 @@
     "pdfPage": 363,
     "printedPage": 360,
     "cr": "1/4 (XP 50; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSERPIENTE VENENOSA GIGANTE\nMedium Beast, Unaligned\nAC 14 Initiative +4 (14)\nHP 11 (2d8 + 2)\nSpeed 40 ft., Swim 40 ft.\nABILITY SCORES\nSTR 10 (+0) · Save +0\nDEX 18 (+4) · Save +4\nCON 13 (+1) · Save +1\nINT 2 (-4) · Save -4\nWIS 10 (+0) · Save +0\nCHA 3 (-4) · Save -4\nSkills Perception +2\nSenses Blindsight 10 ft.; Passive Perception 12\nLanguages None\nCR 1/4 (XP 50; PB +2)\nACTIONS\nBite. Melee Attack Roll: +6, reach 10 ft. Hit: 6 (1d4 + 4)\nPiercing damage plus 4 (1d8) Poison damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSERPIENTE VENENOSA GIGANTE\nBestia Mediana, No alineado\nCA 14 Iniciativa +4 (14)\nPG 11 (2d8 + 2)\nVelocidad 40 pies, Nadar 40 pies\nCARACTERÍSTICAS\nFUE 10 (+0) · Salvación +0\nDES 18 (+4) · Salvación +4\nCON 13 (+1) · Salvación +1\nINT 2 (-4) · Salvación -4\nSAB 10 (+0) · Salvación +0\nCAR 3 (-4) · Salvación -4\nHabilidades Percepción +2\nSentidos Visión ciega 10 pies; Percepción pasiva 12\nIdiomas Ninguno\nVD 1/4 (PX 50; Bonif. competencia +2)\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. Impacto: 6 (1d4 + 4) de daño perforante más 4 (1d8) de daño de veneno."
   },
   {
     "name": "Buitre gigante",
@@ -3661,7 +3661,7 @@
     "pdfPage": 364,
     "printedPage": 361,
     "cr": "1 (XP 200; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nBUITRE GIGANTE\nLarge Monstrosity, Neutral Evil\nAC 10 Initiative +0 (10)\nHP 25 (3d10 + 9)\nSpeed 10 ft., Fly 60 ft.\nABILITY SCORES\nSTR 15 (+2) · Save +2\nDEX 10 (+0) · Save +0\nCON 16 (+3) · Save +3\nINT 6 (-2) · Save -2\nWIS 12 (+1) · Save +1\nCHA 7 (-2) · Save -2\nSkills Perception +3\nResistances Necrotic\nSenses Darkvision 60 ft.; Passive Perception 13\nLanguages Understands Common but can’t speak\nCR 1 (XP 200; PB +2)\nTRAITS\nPack Tactics. The vulture has Advantage on an attack\nroll against a creature if at least one of the vulture’s\nallies is within 5 feet of the creature and the ally doesn’t\nhave the Incapacitated condition.\nACTIONS\nGouge. Melee Attack Roll: +4, reach 5 ft. Hit: 9 (2d6 + 2)\nPiercing damage, and the target has the Poisoned condition until the end of its next turn."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nBUITRE GIGANTE\nMonstruosidad Grande, Neutral Malvado\nCA 10 Iniciativa +0 (10)\nPG 25 (3d10 + 9)\nVelocidad 10 pies, Volar 60 pies\nCARACTERÍSTICAS\nFUE 15 (+2) · Salvación +2\nDES 10 (+0) · Salvación +0\nCON 16 (+3) · Salvación +3\nINT 6 (-2) · Salvación -2\nSAB 12 (+1) · Salvación +1\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +3\nResistencias Necrótico\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 13\nIdiomas Comprende Común, pero no puede hablar\nVD 1 (PX 200; Bonif. competencia +2)\nRASGOS\nTácticas de grupo. El buitre tiene ventaja en una tirada de ataque contra una criatura si al menos uno de sus aliados está a 5 pies o menos de ella y ese aliado no está Incapacitado.\nACCIONES\nPicotazo desgarrador. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 9 (2d6 + 2) de daño perforante, y el objetivo queda Envenenado hasta el final de su siguiente turno."
   },
   {
     "name": "Avispa gigante",
@@ -3669,7 +3669,7 @@
     "pdfPage": 364,
     "printedPage": 361,
     "cr": "1/2 (XP 100; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nAVISPA GIGANTE\nMedium Beast, Unaligned\nAC 13 Initiative +2 (12)\nHP 22 (5d8)\nSpeed 10 ft., Fly 50 ft.\nABILITY SCORES\nSTR 10 (+0) · Save +0\nDEX 14 (+2) · Save +2\nCON 10 (+0) · Save +0\nINT 1 (-5) · Save -5\nWIS 10 (+0) · Save +0\nCHA 3 (-4) · Save -4\nSenses Passive Perception 10\nLanguages None\nCR 1/2 (XP 100; PB +2)\nTRAITS\nFlyby. The wasp doesn’t provoke an Opportunity Attack\nwhen it flies out of an enemy's reach.\nACTIONS\nSting. Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2)\nPiercing damage plus 5 (2d4) Poison damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nAVISPA GIGANTE\nBestia Mediana, No alineado\nCA 13 Iniciativa +2 (12)\nPG 22 (5d8)\nVelocidad 10 pies, Volar 50 pies\nCARACTERÍSTICAS\nFUE 10 (+0) · Salvación +0\nDES 14 (+2) · Salvación +2\nCON 10 (+0) · Salvación +0\nINT 1 (-5) · Salvación -5\nSAB 10 (+0) · Salvación +0\nCAR 3 (-4) · Salvación -4\nSentidos Percepción pasiva 10\nIdiomas Ninguno\nVD 1/2 (PX 100; Bonif. competencia +2)\nRASGOS\nVuelo rasante. La avispa no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo.\nACCIONES\nAguijón. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 5 (1d6 + 2) de daño perforante más 5 (2d4) de daño de veneno."
   },
   {
     "name": "Comadreja gigante",
@@ -3677,7 +3677,7 @@
     "pdfPage": 364,
     "printedPage": 361,
     "cr": "1/8 (XP 25; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCOMADREJA GIGANTE\nMedium Beast, Unaligned\nAC 13 Initiative +3 (13)\nHP 9 (2d8)\nSpeed 40 ft., Climb 30 ft.\nABILITY SCORES\nSTR 11 (+0) · Save +0\nDEX 17 (+3) · Save +3\nCON 10 (+0) · Save +0\nINT 4 (-3) · Save -3\nWIS 12 (+1) · Save +1\nCHA 5 (-3) · Save -3\nSkills Acrobatics +5, Perception +3, Stealth +5\nSenses Darkvision 60 ft.; Passive Perception 13\nLanguages None\nCR 1/8 (XP 25; PB +2)\nACTIONS\nBite. Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3)\nPiercing damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCOMADREJA GIGANTE\nBestia Mediana, No alineado\nCA 13 Iniciativa +3 (13)\nPG 9 (2d8)\nVelocidad 40 pies, Trepar 30 pies\nCARACTERÍSTICAS\nFUE 11 (+0) · Salvación +0\nDES 17 (+3) · Salvación +3\nCON 10 (+0) · Salvación +0\nINT 4 (-3) · Salvación -3\nSAB 12 (+1) · Salvación +1\nCAR 5 (-3) · Salvación -3\nHabilidades Acrobacias +5, Percepción +3, Sigilo +5\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 13\nIdiomas Ninguno\nVD 1/8 (PX 25; Bonif. competencia +2)\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. Impacto: 5 (1d4 + 3) de daño perforante."
   },
   {
     "name": "Araña lobo gigante",
@@ -3685,7 +3685,7 @@
     "pdfPage": 364,
     "printedPage": 361,
     "cr": "1/4 (XP 50; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nARAÑA LOBO GIGANTE\nMedium Beast, Unaligned\nAC 13 Initiative +3 (13)\nHP 11 (2d8 + 2)\nSpeed 40 ft., Climb 40 ft.\nABILITY SCORES\nSTR 12 (+1) · Save +1\nDEX 16 (+3) · Save +3\nCON 13 (+1) · Save +1\nINT 3 (-4) · Save -4\nWIS 12 (+1) · Save +1\nCHA 4 (-3) · Save -3\nSkills Perception +3, Stealth +7\nSenses Blindsight 10 ft., Darkvision 60 ft.;\nPassive Perception 13\nLanguages None\nCR 1/4 (XP 50; PB +2)\nTRAITS\nSpider Climb. The spider can climb difficult surfaces,\nincluding along ceilings, without needing to make an\nability check.\nACTIONS\nBite. Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3)\nPiercing damage plus 5 (2d4) Poison damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nARAÑA LOBO GIGANTE\nBestia Mediana, No alineado\nCA 13 Iniciativa +3 (13)\nPG 11 (2d8 + 2)\nVelocidad 40 pies, Trepar 40 pies\nCARACTERÍSTICAS\nFUE 12 (+1) · Salvación +1\nDES 16 (+3) · Salvación +3\nCON 13 (+1) · Salvación +1\nINT 3 (-4) · Salvación -4\nSAB 12 (+1) · Salvación +1\nCAR 4 (-3) · Salvación -3\nHabilidades Percepción +3, Sigilo +7\nSentidos Visión ciega 10 pies, visión en la oscuridad 60 pies; Percepción pasiva 13\nIdiomas Ninguno\nVD 1/4 (PX 50; Bonif. competencia +2)\nRASGOS\nTrepar cual arácnido. La araña puede trepar por superficies difíciles, incluso por techos, sin necesidad de realizar una prueba de característica.\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. Impacto: 5 (1d4 + 3) de daño perforante más 5 (2d4) de daño de veneno."
   },
   {
     "name": "Cabra",
@@ -3693,7 +3693,7 @@
     "pdfPage": 365,
     "printedPage": 362,
     "cr": "0 (XP 10; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCABRA\nMedium Beast, Unaligned\nAC 10 Initiative +0 (10)\nHP 4 (1d8)\nSpeed 40 ft., Climb 30 ft.\nABILITY SCORES\nSTR 11 (+0) · Save +2\nDEX 10 (+0) · Save +0\nCON 11 (+0) · Save +0\nINT 2 (-4) · Save -4\nWIS 10 (+0) · Save +0\nCHA 5 (-3) · Save -3\nSkills Perception +2\nSenses Darkvision 60 ft.; Passive Perception 12\nLanguages None\nCR 0 (XP 10; PB +2)\nACTIONS\nRam. Melee Attack Roll: +2, reach 5 ft. Hit: 1 Bludgeoning damage, or 2 (1d4) Bludgeoning damage if the goat\nmoved 20+ feet straight toward the target immediately\nbefore the hit."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCABRA\nBestia Mediana, No alineado\nCA 10 Iniciativa +0 (10)\nPG 4 (1d8)\nVelocidad 40 pies, Trepar 30 pies\nCARACTERÍSTICAS\nFUE 11 (+0) · Salvación +2\nDES 10 (+0) · Salvación +0\nCON 11 (+0) · Salvación +0\nINT 2 (-4) · Salvación -4\nSAB 10 (+0) · Salvación +0\nCAR 5 (-3) · Salvación -3\nHabilidades Percepción +2\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 12\nIdiomas Ninguno\nVD 0 (PX 10; Bonif. competencia +2)\nACCIONES\nCornada. Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. Impacto: 1 de daño contundente, o 2 (1d4) de daño contundente si la cabra se movió al menos 20 pies en línea recta hacia el objetivo inmediatamente antes del impacto."
   },
   {
     "name": "Halcón",
@@ -3701,7 +3701,7 @@
     "pdfPage": 365,
     "printedPage": 362,
     "cr": "0 (XP 10; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nTiny Beast, Unaligned\nAC 13 Initiative +3 (13)\nHP 1 (1d4 - 1)\nSpeed 10 ft., Fly 60 ft.\nABILITY SCORES\nSTR 5 (-3) · Save -3\nDEX 16 (+3) · Save +3\nCON 8 (-1) · Save -1\nINT 2 (-4) · Save -4\nWIS 14 (+2) · Save +2\nCHA 6 (-2) · Save -2\nSkills Perception +6\nSenses Passive Perception 16\nLanguages None\nCR 0 (XP 10; PB +2)\nACTIONS\nTalons. Melee Attack Roll: +5, reach 5 ft. Hit: 1 Slashing damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nHALCÓN\nBestia Diminuta, No alineado\nCA 13 Iniciativa +3 (13)\nPG 1 (1d4 - 1)\nVelocidad 10 pies, Volar 60 pies\nCARACTERÍSTICAS\nFUE 5 (-3) · Salvación -3\nDES 16 (+3) · Salvación +3\nCON 8 (-1) · Salvación -1\nINT 2 (-4) · Salvación -4\nSAB 14 (+2) · Salvación +2\nCAR 6 (-2) · Salvación -2\nHabilidades Percepción +6\nSentidos Percepción pasiva 16\nIdiomas Ninguno\nVD 0 (PX 10; Bonif. competencia +2)\nACCIONES\nGarras. Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. Impacto: 1 de daño cortante."
   },
   {
     "name": "Hipopótamo",
@@ -3709,7 +3709,7 @@
     "pdfPage": 365,
     "printedPage": 362,
     "cr": "4 (XP 1,100; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nHIPOPÓTAMO\nLarge Beast, Unaligned\nAC 14 Initiative -2 (8)\nHP 82 (11d10 + 22)\nSpeed 30 ft., Swim 30 ft.\nABILITY SCORES\nSTR 21 (+5) · Save +7\nDEX 7 (-2) · Save -2\nCON 15 (+2) · Save +2\nINT 2 (-4) · Save -4\nWIS 12 (+1) · Save +1\nCHA 4 (-3) · Save -3\nSkills Perception +3\nSenses Passive Perception 13\nLanguages None\nCR 4 (XP 1,100; PB +2)\nTRAITS\nHold Breath. The hippopotamus can hold its breath for\n10 minutes.\nACTIONS\nMultiattack. The hippopotamus makes two Bite attacks.\nBite. Melee Attack Roll: +7, reach 5 ft. Hit: 16 (2d10+5)\nPiercing damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nHIPOPÓTAMO\nBestia Grande, No alineado\nCA 14 Iniciativa -2 (8)\nPG 82 (11d10 + 22)\nVelocidad 30 pies, Nadar 30 pies\nCARACTERÍSTICAS\nFUE 21 (+5) · Salvación +7\nDES 7 (-2) · Salvación -2\nCON 15 (+2) · Salvación +2\nINT 2 (-4) · Salvación -4\nSAB 12 (+1) · Salvación +1\nCAR 4 (-3) · Salvación -3\nHabilidades Percepción +3\nSentidos Percepción pasiva 13\nIdiomas Ninguno\nVD 4 (PX 1.100; Bonif. competencia +2)\nRASGOS\nContener la respiración. El hipopótamo puede contener la respiración durante 10 minutos.\nACCIONES\nAtaque múltiple. El hipopótamo realiza dos ataques de Mordisco.\nMordisco. Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. Impacto: 16 (2d10 + 5) de daño perforante."
   },
   {
     "name": "Tiburón cazador",
