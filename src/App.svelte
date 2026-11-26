@@ -3749,14 +3749,7 @@ import ITEMS from './items.json';
   async function deleteSheet() {
     sheet = null;
     localStorage.removeItem('forja-raw-character');
-    if (obrReady && obrRole === 'PLAYER') {
-      try {
-        const id = await OBR.player.getId();
-        await OBR.player.setMetadata({ [KEY]: { deleted: true, updatedAt: new Date().toISOString() } });
-        await OBR.broadcast.sendMessage(CHANNEL, { type: 'character-deleted', playerId: id }, { destination: 'ALL' });
-      } catch {}
-    }
-    notice = 'Ficha eliminada.';
+    // El borrado también es exclusivamente local; no deja marcadores en la sala.    notice = 'Ficha eliminada.';
   }
 
   onMount(() => {
@@ -3804,20 +3797,7 @@ import ITEMS from './items.json';
             }];
           }
           if (d?.type === 'character-deleted') roomSheets = roomSheets.filter(x => x.playerId !== d.playerId);
-          if (d?.type === 'character-level-up' && d.character && obrRole === 'PLAYER') {
-            void (async () => {
-              try {
-                const ownId = await OBR.player.getId();
-                if (ownId !== d.playerId) return;
-                sheet = d.character as RawSheet;
-                localStorage.setItem('forja-raw-character',JSON.stringify(sheet));
-                await OBR.player.setMetadata({ [KEY]: { character: sheet, playerName, updatedAt: new Date().toISOString() } });
-                await saveOwnCharacterToGithub(sheet);
-                await OBR.broadcast.sendMessage(CHANNEL,{type:'character-updated',playerId:ownId,playerName,character:sheet},{destination:'ALL'});
-                notice = 'El director ha actualizado tu personaje al nivel '+getCharacterStat(sheet,'PERSONAJE','Nivel')+'.';
-              } catch { notice = 'No se pudo recibir la subida de nivel. Importa la ficha actualizada desde el director.'; }
-            })();
-          }
+          // Las fichas son locales: los cambios de nivel del director no sobrescriben la copia del jugador.
         });
       } catch {
         syncStatus = 'Owlbear está abierto, pero no se pudo leer la sala.';
