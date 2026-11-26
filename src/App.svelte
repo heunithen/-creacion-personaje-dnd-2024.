@@ -4883,7 +4883,8 @@ import ITEMS from './items.json';
         const textResult=typeof summary==='string'&&summary.trim()?summary.trim():
           total!==undefined&&total!==null?'Total: '+total:
           result?.groups?JSON.stringify(result.groups):'Resultado recibido de Dice+';
-        finish(null,textResult);
+        const resultWithTotal=total!==undefined&&total!==null?textResult+' · Total: '+total:textResult;
+        finish(null,resultWithTotal);
       });
       unsubError=OBR.broadcast.onMessage(errorChannel,(event:any)=>{
         const payload=event?.data??event;
