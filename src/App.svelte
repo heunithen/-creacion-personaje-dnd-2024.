@@ -4784,7 +4784,7 @@ import ITEMS from './items.json';
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Skills','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Compendio de conjuros', 'Reglas', 'Botones', 'Inventario', 'Iniciativa', 'Subir nivel'];
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Reglas', 'Botones', 'Inventario', 'Iniciativa', 'Subir nivel'];
   type QuickButton = { name: string; attack: string; damage: string; mode: 'normal'|'advantage'|'disadvantage' };
   type QuickRollResult = { id:number; name:string; attack:string; damage:string; attackResult:string; damageResult:string; mode:string; critical:boolean; fumble:boolean; };
   let editingQuickButton = -1;
@@ -6350,44 +6350,6 @@ import ITEMS from './items.json';
                     </div>
                   </section>
 
-                    <div class="spell-change-actions">
-                      <button type="button" class="primary" on:click={openSpellChange}>Cambiar conjuros</button>
-                    </div>
-
-                  {#if spellChangeOpen}
-                    <section class="sheet-section spell-change-panel">
-                      <div class="sheet-section-title"><h3>Cambiar conjuros</h3></div>
-                      {#if spellChangeStage === 'prompt'}
-                        <p>{spellChangeRule}</p>
-                        <p>{spellChangeMode === 'long-rest' ? '¿Ya completaste un descanso largo?' : '¿Ya subiste un nivel en esta clase?'}</p>
-                        <div class="spell-change-actions">
-                          <button type="button" class="primary" on:click={() => confirmSpellChangeCondition(true)}>Sí, continuar</button>
-                          <button type="button" on:click={() => confirmSpellChangeCondition(false)}>Todavía no</button>
-                        </div>
-                      {:else}
-                        <p>{spellChangeMode === 'long-rest'
-                          ? (spellClassKey(sheet) === 'mago'
-                            ? 'Tu libro de conjuros contiene ' + classSpellOptions(sheet).length + ' conjuros. Puedes preparar ' + spellChangeLimit + '. Marca exactamente esa cantidad. Los conjuros que no marques permanecen en tu libro; no se eliminan.'
-                            : 'Selecciona los conjuros que prepararás. Debes elegir exactamente ' + spellChangeLimit + '.')
-                          : 'Selecciona un conjuro conocido para retirar y otro para incorporar. Solo puedes reemplazar uno.'}</p>
-                        <input class="spell-change-search" type="search" placeholder="Buscar conjuro..." bind:value={spellChangeSearch} />
-                        <div class="spell-change-count">{spellChangeSelected.length} de {spellChangeLimit} {#if spellChangeMode === 'long-rest'}conjuros preparados{:else}seleccionados (debes reemplazar exactamente uno){/if}</div>
-                        <div class="spell-change-options">
-                          {#each classSpellOptions(sheet).filter((spell) => !spellChangeSearch || normalizeLevelText(spell.name).includes(normalizeLevelText(spellChangeSearch))) as spell (spell.name)}
-                            <label class:selected={spellChangeSelected.includes(normalizeLevelText(spell.name))}>
-                              <input type="checkbox" checked={spellChangeSelected.includes(normalizeLevelText(spell.name))} on:change={() => toggleSpellChangeSelection(spell)} />
-                              <span>{spell.name}</span>
-                              <small>{spell.level === 0 ? 'Truco' : 'Nivel ' + spell.level}</small>
-                            </label>
-                          {/each}
-                        </div>
-                        <div class="spell-change-actions">
-                          <button type="button" class="primary" disabled={!canApplySpellChange()} on:click={applySpellChange}>Confirmar cambios</button>
-                          <button type="button" on:click={() => spellChangeOpen = false}>Cancelar</button>
-                        </div>
-                      {/if}
-                    </section>
-                  {/if}
                   <section class="sheet-section player-spell-list-section">
                     <div class="sheet-section-title"><h3>Conjuros</h3></div>
                     {#if playerKnownSpellCards(sheet).length}
@@ -6422,7 +6384,6 @@ import ITEMS from './items.json';
                       <p class="muted nautical-empty">No hay conjuros conocidos registrados.</p>
                     {/if}
                   </section>
-                {:else if playerSheetTab === 'Compendio de conjuros'}
 <section class="sheet-section spells-panel">
           <div class="sheet-section-title"><h3>Compendio de conjuros</h3><span class="count">{filteredSpells.length} / {SPELLS.length}</span></div>
           <p class="muted">Catálogo de conjuros del manual. Cada ficha incluye nivel, escuela, clases, tiempo de lanzamiento, alcance, componentes, duración y descripción.</p>
