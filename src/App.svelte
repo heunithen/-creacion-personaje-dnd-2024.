@@ -2015,6 +2015,9 @@
         builderSelectClass(builderDisplayedClass);
         builderClassChosen=true;
       }
+      if(builderStep===2 && builderData.background!==BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]) {
+        builderChooseBackground(BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]);
+      }
       if(!builderStepCanAdvance()) {
         const stepFields=builderMissingFields().filter(field=>field.includes('(paso '+(builderStep+1)+')'));
         builderStepError=stepFields.length
