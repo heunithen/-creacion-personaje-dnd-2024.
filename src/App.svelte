@@ -3120,7 +3120,7 @@ import ITEMS from './items.json';
   }
   function manualProgressionResourceEntries(progression:any):[string,any][] {
     const row=progression?.rows?.find((item:any)=>item.level===progression.currentLevel);
-    return Object.entries(row?.resources||{}).filter(([key,value])=>!/^Espacios nivel/i.test(key)&&!['espacios de conjuro','nivel de los espacios'].includes(normalizeLevelText(key))&&value!=='—'&&/\\d/.test(String(value))) as [string,any][];
+    return Object.entries(row?.resources||{}).filter(([key,value])=>!/^Espacios nivel/i.test(key)&&!['espacios de conjuro','nivel de los espacios'].includes(normalizeLevelText(key))&&value!=='—'&&/\d/.test(String(value))) as [string,any][];
   }
   function progressionManualResources(target:RawSheet):Record<string,number> {
     return readJsonRecord(target,'PROGRESIÓN','Recursos manuales');
