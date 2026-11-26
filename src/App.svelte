@@ -3185,17 +3185,20 @@ import ITEMS from './items.json';
   function setManualProgressionSubclass(value:string) {
     if(!sheet||!value) return;
     setCharacterStat(sheet,'PERSONAJE','Subclase',value);
+    progressionSubclassChoice=value;
     sheet={...sheet}; saveSheetMutation();
-    progressionSubclassChoice='';
   }
   function manualProgressionTraitOptions(target:RawSheet|null):string[] {
     if(!target) return [];
     const className=sheetClassName(target);
-    const classTraits=((CLASS_FEATURES as any).classes?.[className]||[]).map((feature:any)=>feature.name).filter(Boolean);
+    const classTraits=((CLASS_FEATURES as any).classes?.[className]||[])
+      .map((feature:any)=>feature.name).filter(Boolean);
     const subclassName=getCharacterStat(target,'PERSONAJE','Subclase');
-    const subclass=getSubclassData(className,subclassName);
-    const subclassTraits=(subclass?.features||[]).map((feature:any)=>feature.name).filter(Boolean);
-    return [...new Set([...classTraits,...subclassTraits])].sort((a,b)=>a.localeCompare(b,'es'));
+    const selectedSubclass=subclassName ? getSubclassData(className,subclassName) : null;
+    const selectedSubclassTraits=(selectedSubclass?.features||[])
+      .map((feature:any)=>feature.name).filter(Boolean);
+    return [...new Set([...classTraits,...selectedSubclassTraits])]
+      .sort((a,b)=>a.localeCompare(b,'es'));
   }
   function manualProgressionCompetencyChoices(kind:string):string[] {
     if(kind==='skill') return BUILDER_SKILL_OPTIONS;
@@ -6121,7 +6124,7 @@ import ITEMS from './items.json';
                   <section class="sheet-section progression-manual-panel">
                     <div class="sheet-section-title"><h3>Dotes y rasgos</h3></div>
                     {#if manualProgressionSubclassOptions(sheet).length}
-                      <div class="progression-manual-select-row"><label>Subclase<select bind:value={progressionSubclassChoice}><option value="">Seleccionar subclase</option>{#each manualProgressionSubclassOptions(sheet) as option}<option value={option}>{formatSubclassName(option)}</option>{/each}</select></label><button type="button" disabled={!progressionSubclassChoice} on:click={()=>setManualProgressionSubclass(progressionSubclassChoice)}>Aplicar</button></div>
+                      <div class="progression-manual-select-row"><label>Subclase<select bind:value={progressionSubclassChoice} on:change={()=>setManualProgressionSubclass(progressionSubclassChoice)}><option value="">Seleccionar subclase</option>{#each manualProgressionSubclassOptions(sheet) as option}<option value={option}>{formatSubclassName(option)}</option>{/each}</select></label></div>
                     {/if}
                     <div class="progression-manual-select-row"><label>Dote<select bind:value={progressionFeatChoice}><option value="">Seleccionar dote</option>{#each [...new Set([...BUILDER_FEATS,...BARBARIAN_GENERAL_FEATS,...BUILDER_EPIC_FEATS])] as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionFeatChoice} on:click={()=>{addManualProgressionChoice('RASGOS Y DOTES','Dotes adicionales',progressionFeatChoice);progressionFeatChoice='';}}>Añadir</button></div>
                     <div class="progression-manual-select-row"><label>Rasgo de clase o subclase<select bind:value={progressionTraitChoice}><option value="">Seleccionar rasgo</option>{#each manualProgressionTraitOptions(sheet) as option}<option value={option}>{option}</option>{/each}</select></label><button type="button" disabled={!progressionTraitChoice} on:click={()=>{addManualProgressionChoice('RASGOS Y DOTES','Rasgos adicionales',progressionTraitChoice);progressionTraitChoice='';}}>Añadir</button></div>
