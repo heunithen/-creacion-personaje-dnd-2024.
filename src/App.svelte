@@ -2554,15 +2554,15 @@ import ITEMS from './items.json';
   $: filteredMonsters = (monsterSearch.trim() || monsterCrFilter || monsterLetterFilter) ? MONSTERS.filter(monster => (!monsterCrFilter || monster.cr.startsWith(monsterCrFilter + ' ')) && startsWithLetter(monster.name, monsterLetterFilter) && (!monsterSearch.trim() || monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()))).sort((a,b) => a.name.localeCompare(b.name,'en',{sensitivity:'base'})) : [];
   const itemTypes = ['Todos', ...Array.from(new Set(ITEMS.map(item => item.type))).sort((a,b) => a.localeCompare(b,'es'))];
   function itemPriceGold(price: string): number | null {
-    const match = price.match(/^([\\d.,]+)\\s*(po|pp|pc|ppt)$/i);
+    const match = price.match(/^([\d.,]+)\s*(po|pp|pc|ppt)$/i);
     if (!match) return null;
-    const amount = Number(match[1].replace(/\\./g, '').replace(',', '.'));
+    const amount = Number(match[1].replace(/\./g, '').replace(',', '.'));
     return Number.isFinite(amount) ? amount * ({ po: 1, pp: 0.1, pc: 0.01, ppt: 10 } as Record<string, number>)[match[2].toLowerCase()] : null;
   }
   function itemWeightKg(weight: string): number | null {
-    const match = weight.match(/^([\\d.,]+)\\s*(kg|g)$/i);
+    const match = weight.match(/^([\d.,]+)\s*(kg|g)$/i);
     if (!match) return null;
-    const amount = Number(match[1].replace(/\\./g, '').replace(',', '.'));
+    const amount = Number(match[1].replace(/\./g, '').replace(',', '.'));
     return Number.isFinite(amount) ? amount * (match[2].toLowerCase() === 'g' ? 0.001 : 1) : null;
   }
   $: filteredItems = (itemSearch.trim() || itemLetterFilter || itemTypeFilter || itemPriceMin !== '' || itemPriceMax !== '' || itemWeightMin !== '' || itemWeightMax !== '') ? ITEMS.filter(item => {
@@ -3034,7 +3034,7 @@ import ITEMS from './items.json';
   function adjustProgressionValue(sectionName:string, statName:string, delta:number, fallback:number=0, suffix='', allowNegative=false) {
     if (!sheet) return;
     const raw=getCharacterStat(sheet,sectionName,statName);
-    const match=String(raw).replace(/,/g,'.').match(/-?\\d+(?:\\.\\d+)?/);
+    const match=String(raw).replace(/,/g,'.').match(/-?\d+(?:\.\d+)?/);
     const current=match ? Number(match[0]) : fallback;
     const next=allowNegative ? current+delta : Math.max(0,current+delta);
     setCharacterStat(sheet,sectionName,statName,suffix ? next+suffix : String(next));
@@ -3043,7 +3043,7 @@ import ITEMS from './items.json';
   function adjustProgressionHitDice(delta:number) {
     if (!sheet) return;
     const raw=getCharacterStat(sheet,'COMBATE','Dados de golpe') || '0d8';
-    const match=String(raw).match(/(\\d+)\\s*d\\s*(\\d+)/i);
+    const match=String(raw).match(/(\d+)\s*d\s*(\d+)/i);
     const count=match ? Number(match[1]) : 0;
     const die=match ? Number(match[2]) : (LEVEL_HIT_DIE[getCharacterStat(sheet,'PERSONAJE','Clase')] || 8);
     setCharacterStat(sheet,'COMBATE','Dados de golpe',Math.max(0,count+delta)+'d'+die);
@@ -3126,7 +3126,7 @@ import ITEMS from './items.json';
     ].join(', ');
     if (normalizeLevelText(className) === 'mago') {
       const levelText = getCharacterStat(target, 'CONJUROS', 'Conjuros de nivel 1');
-      prepared += ', ' + ((levelText.match(/Preparados:\\s*([^.]*)/i) || [])[1] || '');
+      prepared += ', ' + ((levelText.match(/Preparados:\s*([^.]*)/i) || [])[1] || '');
     }
     return prepared.toLocaleLowerCase('es').includes(spell.name.toLocaleLowerCase('es'));
   }
@@ -3282,7 +3282,7 @@ import ITEMS from './items.json';
     return Object.keys((SUBCLASS_PROGRESSION as any).classes?.[className] || {});
   }
   function formatSubclassName(value: string): string {
-    return String(value || '').toLocaleLowerCase('es').replace(/(^|[\\s-])([a-záéíóúüñ])/g, (_m, prefix, letter) => prefix + letter.toLocaleUpperCase('es'));
+    return String(value || '').toLocaleLowerCase('es').replace(/(^|[\s-])([a-záéíóúüñ])/g, (_m, prefix, letter) => prefix + letter.toLocaleUpperCase('es'));
   }
   function getSubclassData(className: string, value: string): any {
     const options = (SUBCLASS_PROGRESSION as any).classes?.[className] || {};
@@ -4157,7 +4157,7 @@ import ITEMS from './items.json';
       const expected = labels[String(section.name || '').trim().toUpperCase()];
       if (!expected || !Array.isArray(section.stats)) continue;
       section.stats.forEach((stat, index) => {
-        if (/^Dato\\s*\\d+$/i.test(String(stat.name || '').trim()) && expected[index]) stat.name = expected[index];
+        if (/^Dato\s*\d+$/i.test(String(stat.name || '').trim()) && expected[index]) stat.name = expected[index];
       });
     }
     return target;
