@@ -78,7 +78,7 @@ test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a 
 
 test('la interfaz inicial cabe en una pantalla móvil y conserva visible el selector de clase', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  const pageErrors = [];
+  const pageErrors: string[] = [];
   page.on('pageerror', error => pageErrors.push(error.message));
 
   await page.goto('/');
