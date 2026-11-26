@@ -3397,7 +3397,7 @@
     "pdfPage": 355,
     "printedPage": 352,
     "cr": "0 (XP 10; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCIERVO\nMedium Beast, Unaligned\nAC 13 Initiative +3 (13)\nHP 4 (1d8)\nSpeed 50 ft.\nABILITY SCORES\nSTR 11 (+0) · Save +0\nDEX 16 (+3) · Save +3\nCON 11 (+0) · Save +0\nINT 2 (-4) · Save -4\nWIS 14 (+2) · Save +2\nCHA 5 (-3) · Save -3\nSkills Perception +4\nSenses Darkvision 60 ft.; Passive Perception 14\nLanguages None\nCR 0 (XP 10; PB +2)\nTRAITS\nAgile. The deer doesn’t provoke an Opportunity Attack\nwhen it moves out of an enemy’s reach.\nACTIONS\nRam. Melee Attack Roll: +2, reach 5 ft. Hit: 2 (1d4) Bludgeoning damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCIERVO\nBestia Mediana, No alineado\nCA 13 Iniciativa +3 (13)\nPG 4 (1d8)\nVelocidad 50 pies\nCARACTERÍSTICAS\nFUE 11 (+0) · Salvación +0\nDES 16 (+3) · Salvación +3\nCON 11 (+0) · Salvación +0\nINT 2 (-4) · Salvación -4\nSAB 14 (+2) · Salvación +2\nCAR 5 (-3) · Salvación -3\nHabilidades Percepción +4\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 14\nIdiomas Ninguno\nVD 0 (PX 10; Bonif. competencia +2)\nRASGOS\nÁgil. El ciervo no provoca ataques de oportunidad cuando sale del alcance de un enemigo.\nACCIONES\nCornada. Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. Impacto: 2 (1d4) de daño contundente."
   },
   {
     "name": "Lobo terrible",
@@ -3405,7 +3405,7 @@
     "pdfPage": 355,
     "printedPage": 352,
     "cr": "1 (XP 200; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nLOBO TERRIBLE\nLarge Beast, Unaligned\nAC 14 Initiative +2 (12)\nHP 22 (3d10 + 6)\nSpeed 50 ft.\nABILITY SCORES\nSTR 17 (+3) · Save +3\nDEX 15 (+2) · Save +2\nCON 15 (+2) · Save +2\nINT 3 (-4) · Save -4\nWIS 12 (+1) · Save +1\nCHA 7 (-2) · Save -2\nSkills Perception +5, Stealth +4\nSenses Darkvision 60 ft.; Passive Perception 15\nLanguages None\nCR 1 (XP 200; PB +2)\nTRAITS\nPack Tactics. The wolf has Advantage on an attack roll\nagainst a creature if at least one of the wolf’s allies is\nwithin 5 feet of the creature and the ally doesn’t have\nthe Incapacitated condition.\nACTIONS\nBite. Melee Attack Roll: +5, reach 5 ft. Hit: 8 (1d10 + 3)\nPiercing damage. If the target is a Large or smaller creature, it has the Prone condition."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nLOBO TERRIBLE\nBestia Grande, No alineado\nCA 14 Iniciativa +2 (12)\nPG 22 (3d10 + 6)\nVelocidad 50 pies\nCARACTERÍSTICAS\nFUE 17 (+3) · Salvación +3\nDES 15 (+2) · Salvación +2\nCON 15 (+2) · Salvación +2\nINT 3 (-4) · Salvación -4\nSAB 12 (+1) · Salvación +1\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +5, Sigilo +4\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 15\nIdiomas Ninguno\nVD 1 (PX 200; Bonif. competencia +2)\nRASGOS\nTácticas de grupo. El lobo tiene ventaja en una tirada de ataque contra una criatura si al menos uno de sus aliados está a 5 pies o menos de ella y ese aliado no está Incapacitado.\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. Impacto: 8 (1d10 + 3) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, queda Derribada."
   },
   {
     "name": "Caballo de tiro",
@@ -3413,7 +3413,7 @@
     "pdfPage": 355,
     "printedPage": 352,
     "cr": "1/4 (XP 50; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCABALLO DE TIRO\nLarge Beast, Unaligned\nAC 10 Initiative +0 (10)\nHP 15 (2d10 + 4)\nSpeed 40 ft.\nABILITY SCORES\nSTR 18 (+4) · Save +4\nDEX 10 (+0) · Save +0\nCON 15 (+2) · Save +2\nINT 2 (-4) · Save -4\nWIS 11 (+0) · Save +0\nCHA 7 (-2) · Save -2\nSenses Passive Perception 10\nLanguages None\nCR 1/4 (XP 50; PB +2)\nACTIONS\nHooves. Melee Attack Roll: +6, reach 5 ft. Hit: 6 (1d4\n+ 4) Bludgeoning damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nCABALLO DE TIRO\nBestia Grande, No alineado\nCA 10 Iniciativa +0 (10)\nPG 15 (2d10 + 4)\nVelocidad 40 pies\nCARACTERÍSTICAS\nFUE 18 (+4) · Salvación +4\nDES 10 (+0) · Salvación +0\nCON 15 (+2) · Salvación +2\nINT 2 (-4) · Salvación -4\nSAB 11 (+0) · Salvación +0\nCAR 7 (-2) · Salvación -2\nSentidos Percepción pasiva 10\nIdiomas Ninguno\nVD 1/4 (PX 50; Bonif. competencia +2)\nACCIONES\nCascos. Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. Impacto: 6 (1d4 + 4) de daño contundente."
   },
   {
     "name": "Águila",
@@ -3421,7 +3421,7 @@
     "pdfPage": 355,
     "printedPage": 352,
     "cr": "0 (XP 10; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nÁGUILA\nSmall Beast, Unaligned\nAC 12 Initiative +2 (12)\nHP 4 (1d6 + 1)\nSpeed 10 ft., Fly 60 ft.\nABILITY SCORES\nSTR 6 (-2) · Save -2\nDEX 15 (+2) · Save +2\nCON 12 (+1) · Save +1\nINT 2 (-4) · Save -4\nWIS 14 (+2) · Save +2\nCHA 7 (-2) · Save -2\nSkills Perception +6\nSenses Passive Perception 16\nLanguages None\nCR 0 (XP 10; PB +2)\nACTIONS\nTalons. Melee Attack Roll: +4, reach 5 feet. Hit: 4 (1d4\n+ 2) Slashing damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nÁGUILA\nBestia Pequeña, No alineado\nCA 12 Iniciativa +2 (12)\nPG 4 (1d6 + 1)\nVelocidad 10 pies, Volar 60 pies\nCARACTERÍSTICAS\nFUE 6 (-2) · Salvación -2\nDES 15 (+2) · Salvación +2\nCON 12 (+1) · Salvación +1\nINT 2 (-4) · Salvación -4\nSAB 14 (+2) · Salvación +2\nCAR 7 (-2) · Salvación -2\nHabilidades Percepción +6\nSentidos Percepción pasiva 16\nIdiomas Ninguno\nVD 0 (PX 10; Bonif. competencia +2)\nACCIONES\nGarras. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 4 (1d4 + 2) de daño cortante."
   },
   {
     "name": "Elefante",
@@ -3429,7 +3429,7 @@
     "pdfPage": 356,
     "printedPage": 353,
     "cr": "4 (XP 1,100; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nELEFANTE\nHuge Beast, Unaligned\nAC 12 Initiative -1 (9)\nHP 76 (8d12 + 24)\nSpeed 40 ft.\nABILITY SCORES\nSTR 22 (+6) · Save +6\nDEX 9 (-1) · Save -1\nCON 17 (+3) · Save +3\nINT 3 (-4) · Save -4\nWIS 11 (+0) · Save +0\nCHA 6 (-2) · Save -2\nSenses Passive Perception 10\nLanguages None\nCR 4 (XP 1,100; PB +2)\nACTIONS\nMultiattack. The elephant makes two Gore attacks.\nGore. Melee Attack Roll: +8, reach 5 ft. Hit: 15 (2d8 + 6)\nPiercing damage. If the target is a Huge or smaller creature and the elephant moved 20+ feet straight toward\nit immediately before the hit, the target has the Prone\ncondition.\nBonus ACTIONS\nTrample. Dexterity Saving Throw: DC 16, one creature\nwithin 5 feet that has the Prone condition. Failure: 17\n(2d10 + 6) Bludgeoning damage. Success: Half damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nELEFANTE\nBestia Enorme, No alineado\nCA 12 Iniciativa -1 (9)\nPG 76 (8d12 + 24)\nVelocidad 40 pies\nCARACTERÍSTICAS\nFUE 22 (+6) · Salvación +6\nDES 9 (-1) · Salvación -1\nCON 17 (+3) · Salvación +3\nINT 3 (-4) · Salvación -4\nSAB 11 (+0) · Salvación +0\nCAR 6 (-2) · Salvación -2\nSentidos Percepción pasiva 10\nIdiomas Ninguno\nVD 4 (PX 1.100; Bonif. competencia +2)\nACCIONES\nAtaque múltiple. El elefante realiza dos ataques de Cornada.\nCornada. Tirada de ataque cuerpo a cuerpo: +8, alcance 5 pies. Impacto: 15 (2d8 + 6) de daño perforante. Si el objetivo es una criatura Enorme o más pequeña y el elefante se movió al menos 20 pies en línea recta hacia él inmediatamente antes del impacto, queda Derribado.\nACCIONES ADICIONALES\nPisotear. Tirada de salvación de Destreza: CD 16, una criatura a 5 pies o menos que esté Derribada. Fallo: 17 (2d10 + 6) de daño contundente. Éxito: Mitad del daño."
   },
   {
     "name": "Alce",
@@ -3437,7 +3437,7 @@
     "pdfPage": 356,
     "printedPage": 353,
     "cr": "1/4 (XP 50; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nALCE\nLarge Beast, Unaligned\nAC 10 Initiative +0 (10)\nHP 11 (2d10)\nSpeed 50 ft.\nABILITY SCORES\nSTR 16 (+3) · Save +3\nDEX 10 (+0) · Save +0\nCON 11 (+0) · Save +0\nINT 2 (-4) · Save -4\nWIS 10 (+0) · Save +0\nCHA 6 (-2) · Save -2\nSkills Perception +2\nSenses Darkvision 60 ft.; Passive Perception 12\nLanguages None\nCR 1/4 (XP 50; PB +2)\nACTIONS\nRam. Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3)\nBludgeoning damage. If the target is a Large or smaller\ncreature and the elk moved 20+ feet straight toward it\nimmediately before the hit, the target takes an extra 3\n(1d6) Bludgeoning damage and has the Prone condition."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nALCE\nBestia Grande, No alineado\nCA 10 Iniciativa +0 (10)\nPG 11 (2d10)\nVelocidad 50 pies\nCARACTERÍSTICAS\nFUE 16 (+3) · Salvación +3\nDES 10 (+0) · Salvación +0\nCON 11 (+0) · Salvación +0\nINT 2 (-4) · Salvación -4\nSAB 10 (+0) · Salvación +0\nCAR 6 (-2) · Salvación -2\nHabilidades Percepción +2\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 12\nIdiomas Ninguno\nVD 1/4 (PX 50; Bonif. competencia +2)\nACCIONES\nCornada. Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. Impacto: 6 (1d6 + 3) de daño contundente. Si el objetivo es una criatura Grande o más pequeña y el alce se movió al menos 20 pies en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 3 (1d6) de daño contundente adicional y queda Derribado."
   },
   {
     "name": "Serpiente voladora",
@@ -3445,7 +3445,7 @@
     "pdfPage": 356,
     "printedPage": 353,
     "cr": "1/8 (XP 25; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSERPIENTE VOLADORA\nTiny Monstrosity, Unaligned\nAC 14 Initiative +2 (12)\nHP 5 (2d4)\nSpeed 30 ft., Fly 60 ft., Swim 30 ft.\nABILITY SCORES\nSTR 4 (-3) · Save -3\nDEX 15 (+2) · Save +2\nCON 11 (+0) · Save +0\nINT 2 (-4) · Save -4\nWIS 12 (+1) · Save +1\nCHA 5 (-3) · Save -3\nSenses Blindsight 10 ft.; Passive Perception 11\nLanguages None\nCR 1/8 (XP 25; PB +2)\nTRAITS\nFlyby. The snake doesn’t provoke an Opportunity Attack when it flies out of an enemy’s reach.\nACTIONS\nBite. Melee Attack Roll: +4, reach 5 ft. Hit: 1 Piercing\ndamage plus 5 (2d4) Poison damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSERPIENTE VOLADORA\nMonstruosidad Diminuta, No alineado\nCA 14 Iniciativa +2 (12)\nPG 5 (2d4)\nVelocidad 30 pies, Volar 60 pies, Nadar 30 pies\nCARACTERÍSTICAS\nFUE 4 (-3) · Salvación -3\nDES 15 (+2) · Salvación +2\nCON 11 (+0) · Salvación +0\nINT 2 (-4) · Salvación -4\nSAB 12 (+1) · Salvación +1\nCAR 5 (-3) · Salvación -3\nSentidos Visión ciega 10 pies; Percepción pasiva 11\nIdiomas Ninguno\nVD 1/8 (PX 25; Bonif. competencia +2)\nRASGOS\nVuelo rasante. La serpiente no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo.\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 1 de daño perforante más 5 (2d4) de daño de veneno."
   },
   {
     "name": "Rana",
@@ -3453,7 +3453,7 @@
     "pdfPage": 356,
     "printedPage": 353,
     "cr": "0 (XP 10; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nRANA\nTiny Beast, Unaligned\nAC 11 Initiative +1 (11)\nHP 1 (1d4 - 1)\nSpeed 20 ft., Swim 20 ft.\nABILITY SCORES\nSTR 1 (-5) · Save -5\nDEX 13 (+1) · Save +1\nCON 8 (-1) · Save -1\nINT 1 (-5) · Save -5\nWIS 8 (-1) · Save -1\nCHA 3 (-4) · Save -4\nSkills Perception +1, Stealth +3\nSenses Darkvision 30 ft.; Passive Perception 11\nLanguages None\nCR 0 (XP 10; PB +2)\nTRAITS\nAmphibious. The frog can breathe air and water.\nStanding Leap. The frog’s Long Jump is up to 10 feet\nand its High Jump is up to 5 feet with or without a running start.\nACTIONS\nBite. Melee Attack Roll: +3, reach 5 ft. Hit: 1 Piercing\ndamage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nRANA\nBestia Diminuta, No alineado\nCA 11 Iniciativa +1 (11)\nPG 1 (1d4 - 1)\nVelocidad 20 pies, Nadar 20 pies\nCARACTERÍSTICAS\nFUE 1 (-5) · Salvación -5\nDES 13 (+1) · Salvación +1\nCON 8 (-1) · Salvación -1\nINT 1 (-5) · Salvación -5\nSAB 8 (-1) · Salvación -1\nCAR 3 (-4) · Salvación -4\nHabilidades Percepción +1, Sigilo +3\nSentidos Visión en la oscuridad 30 pies; Percepción pasiva 11\nIdiomas Ninguno\nVD 0 (PX 10; Bonif. competencia +2)\nRASGOS\nAnfibio. La rana puede respirar aire y agua.\nSalto prodigioso. El salto largo de la rana alcanza hasta 10 pies y su salto alto hasta 5 pies, con o sin carrerilla.\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. Impacto: 1 de daño perforante."
   },
   {
     "name": "Simio gigante",
@@ -3461,7 +3461,7 @@
     "pdfPage": 357,
     "printedPage": 354,
     "cr": "7 (XP 2,900; PB +3)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSIMIO GIGANTE\nHuge Beast, Unaligned\nAC 12 Initiative +5 (15)\nHP 168 (16d12 + 64)\nSpeed 40 ft., Climb 40 ft.\nABILITY SCORES\nSTR 23 (+6) · Save +6\nDEX 14 (+2) · Save +2\nCON 18 (+4) · Save +4\nINT 5 (-3) · Save -3\nWIS 12 (+1) · Save +1\nCHA 7 (-2) · Save -2\nSkills Athletics +9, Perception +4, Survival +4\nSenses Passive Perception 14\nLanguages None\nCR 7 (XP 2,900; PB +3)\nACTIONS\nMultiattack. The ape makes two Fist attacks.\nFist. Melee Attack Roll: +9, reach 10 ft. Hit: 22 (3d10\n+ 6) Bludgeoning damage.\nBoulder Toss (Recharge 6). The ape hurls a boulder at a\npoint it can see within 90 feet. Dexterity Saving Throw:\nDC 17, each creature in a 5-foot-radius Sphere centered\non that point. Failure: 24 (7d6) Bludgeoning damage.\nIf the target is a Large or smaller creature, it has the\nProne condition. Success: Half damage only.\nBonus ACTIONS\nLeap. The ape jumps up to 30 feet by spending 10 feet\nof movement."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nSIMIO GIGANTE\nBestia Enorme, No alineado\nCA 12 Iniciativa +5 (15)\nPG 168 (16d12 + 64)\nVelocidad 40 pies, Trepar 40 pies\nCARACTERÍSTICAS\nFUE 23 (+6) · Salvación +6\nDES 14 (+2) · Salvación +2\nCON 18 (+4) · Salvación +4\nINT 5 (-3) · Salvación -3\nSAB 12 (+1) · Salvación +1\nCAR 7 (-2) · Salvación -2\nHabilidades Atletismo +9, Percepción +4, Supervivencia +4\nSentidos Percepción pasiva 14\nIdiomas Ninguno\nVD 7 (PX 2.900; Bonif. competencia +3)\nACCIONES\nAtaque múltiple. El simio realiza dos ataques de Puño.\nPuño. Tirada de ataque cuerpo a cuerpo: +9, alcance 10 pies. Impacto: 22 (3d10 + 6) de daño contundente.\nLanzamiento de roca (recarga 6). El simio lanza una roca a un punto que pueda ver a 90 pies o menos. Tirada de salvación de Destreza: CD 17, cada criatura dentro de una Esfera de 5 pies de radio centrada en ese punto. Fallo: 24 (7d6) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, queda Derribada. Éxito: Solo recibe la mitad del daño.\nACCIONES ADICIONALES\nSalto. El simio salta hasta 30 pies gastando 10 pies de movimiento."
   },
   {
     "name": "Tejón gigante",
@@ -3469,7 +3469,7 @@
     "pdfPage": 357,
     "printedPage": 354,
     "cr": "1/4 (XP 50; PB +2)",
-    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nTEJÓN GIGANTE\nMedium Beast, Unaligned\nAC 13 Initiative +0 (10)\nHP 15 (2d8 + 6)\nSpeed 30 ft., Burrow 10 ft.\nABILITY SCORES\nSTR 13 (+1) · Save +1\nDEX 10 (+0) · Save +0\nCON 17 (+3) · Save +3\nINT 2 (-4) · Save -4\nWIS 12 (+1) · Save +1\nCHA 5 (-3) · Save -3\nSkills Perception +3\nResistances Poison\nSenses Darkvision 60 ft.; Passive Perception 13\nLanguages None\nCR 1/4 (XP 50; PB +2)\nACTIONS\nBite. Melee Attack Roll: +3, reach 5 ft. Hit: 6 (2d4 + 1)\nPiercing damage."
+    "statBlock": "CONTEXTO COMPARTIDO: PDF 351-376\nTEJÓN GIGANTE\nBestia Mediana, No alineado\nCA 13 Iniciativa +0 (10)\nPG 15 (2d8 + 6)\nVelocidad 30 pies, Excavar 10 pies\nCARACTERÍSTICAS\nFUE 13 (+1) · Salvación +1\nDES 10 (+0) · Salvación +0\nCON 17 (+3) · Salvación +3\nINT 2 (-4) · Salvación -4\nSAB 12 (+1) · Salvación +1\nCAR 5 (-3) · Salvación -3\nHabilidades Percepción +3\nResistencias Veneno\nSentidos Visión en la oscuridad 60 pies; Percepción pasiva 13\nIdiomas Ninguno\nVD 1/4 (PX 50; Bonif. competencia +2)\nACCIONES\nMordisco. Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. Impacto: 6 (2d4 + 1) de daño perforante."
   },
   {
     "name": "Murciélago gigante",
