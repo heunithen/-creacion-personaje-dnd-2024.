@@ -2395,6 +2395,9 @@ import ITEMS from './items.json';
     rulesSearch = ''; rulesCategoryFilter = ''; openRuleName = name;
     setTimeout(() => document.getElementById('rule-' + encodeURIComponent(name))?.scrollIntoView({behavior:'smooth',block:'center'}), 80);
   }
+  function handleRuleToggle(event: Event, name: string) {
+    if ((event.currentTarget as HTMLDetailsElement).open && openRuleName !== '*') openRuleName = name;
+  }
   $: normalizedRuleQuery = normalizeRuleText(rulesSearch);
   $: filteredRules = RULES.filter((rule:any) => (!rulesCategoryFilter || rule.category === rulesCategoryFilter) && (normalizedRuleQuery.length < 2 || normalizeRuleText(rule.name + ' ' + rule.description + ' ' + rule.category).includes(normalizedRuleQuery))).sort((a:any,b:any) => {
     if (normalizedRuleQuery.length >= 2) { const aa = normalizeRuleText(a.name).startsWith(normalizedRuleQuery) ? 0 : 1; const bb = normalizeRuleText(b.name).startsWith(normalizedRuleQuery) ? 0 : 1; if (aa !== bb) return aa - bb; }
@@ -4618,7 +4621,7 @@ import ITEMS from './items.json';
                 {#if rule.category === 'Abreviatura'}
                   <div class="rule-abbreviation"><strong>{ruleNameCase(rule.name)}</strong><span class="rule-category category-abreviatura">{rule.category}</span><span class="rule-abbreviation-meaning">→ {ruleTextParagraphs(rule.description).join(' ')}</span><span class="rule-page">p. {rule.pdfPage}</span></div>
                 {:else}
-                  <details class="rule-card" id={'rule-' + encodeURIComponent(rule.name)} open={openRuleName === '*' || openRuleName === rule.name} on:toggle={(event) => { if ((event.currentTarget as HTMLDetailsElement).open && openRuleName !== '*') openRuleName = rule.name; }}>
+                  <details class="rule-card" id={'rule-' + encodeURIComponent(rule.name)} open={openRuleName === '*' || openRuleName === rule.name} on:toggle={(event) => handleRuleToggle(event, rule.name)}>
                     <summary><span class="rule-name">{@html highlightedRuleName(rule.name)}</span><span class={'rule-category category-' + normalizeRuleText(rule.category).replace(/\\s+/g,'-')}>{rule.category}</span><span class="rule-page">p. {rule.pdfPage}</span></summary>
                     <div class="rule-details"><div class="rule-description">{#each ruleTextParagraphs(rule.description) as paragraph}<p>{paragraph}</p>{/each}</div>
                       {#if ruleRelatedNames(rule).length}<div class="rule-related"><strong>Ver también:</strong>{#each ruleRelatedNames(rule) as related,index}<button type="button" on:click={() => jumpToRule(related)}>{related}</button>{index < ruleRelatedNames(rule).length - 1 ? ' · ' : ''}{/each}</div>{/if}
