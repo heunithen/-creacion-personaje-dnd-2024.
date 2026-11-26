@@ -3911,7 +3911,7 @@ import ITEMS from './items.json';
       const retainedCantrips=allCantrips.filter(name=>!oldDiscoveryCantrips.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) || oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
       setCharacterStat(updated,'CONJUROS','Trucos',[...new Map([...retainedCantrips,...newDiscoveryCantrips].map(name=>[normalizeLevelText(name),name])).values()].join(', '));
     }
-    if(className==='Bardo' && selectedSubclassKey==='colegio de la danza' && nextLevel===3) setCharacterStat(updated,'COMBATE','Fórmula de clase de armadura','10 + DES + CAR (Colegio de la Danza)');
+    if(className==='Bardo' && selectedSubclassKey==='colegio de la danza' && nextLevel===3) setCharacterStat(updated,'COMBATE','Fórmula de clase de armadura','10 + DES + CAR (sin armadura ni escudo; Colegio de la Danza)');
     if(isBardGlamour && nextLevel===3) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Hechizar persona','Imagen múltiple']);
     if(isBardGlamour && nextLevel===6) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Orden imperiosa']);
     if(isBardValor && nextLevel===3) {
