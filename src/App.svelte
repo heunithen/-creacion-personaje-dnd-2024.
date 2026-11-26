@@ -42,6 +42,7 @@
   let spellLevelFilter = '';
   let spellClassFilter = '';
   let spellSchoolFilter = '';
+  let spellCompendiumOpen = false;
   let spellChangeOpen = false;
   let spellChangeStage: 'prompt' | 'select' = 'prompt';
   let spellChangeMode: 'long-rest' | 'level-up' = 'long-rest';
@@ -6350,6 +6351,11 @@ import ITEMS from './items.json';
                     </div>
                   </section>
 
+                  <div class="sheet-section-title spell-compendium-toggle">
+                    <h3>Conjuros del personaje</h3>
+                    <button type="button" on:click={() => spellCompendiumOpen = !spellCompendiumOpen}>{spellCompendiumOpen ? 'Cerrar compendio' : 'Abrir compendio'}</button>
+                  </div>
+                  {#if !spellCompendiumOpen}
                   <section class="sheet-section player-spell-list-section">
                     <div class="sheet-section-title"><h3>Conjuros</h3></div>
                     {#if playerKnownSpellCards(sheet).length}
@@ -6445,6 +6451,7 @@ import ITEMS from './items.json';
             {/if}
           </div>
         </section>
+                  {/if}
                 {:else if playerSheetTab === 'Reglas'}
 <section class="sheet-section rules-panel">
           <div class="sheet-section-title"><h3>Reglas</h3><span class="count">{filteredRules.length} / {RULES.length}</span></div>
