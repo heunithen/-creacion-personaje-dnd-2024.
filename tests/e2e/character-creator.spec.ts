@@ -6,7 +6,7 @@ test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a 
   const pageErrors: string[] = [];
   page.on('pageerror', error => pageErrors.push(error.message));
 
-  await page.goto('/');
+  await page.goto('./');
   await expect(page.getByRole('heading', { name: 'Creación de personaje · Nivel 1' })).toBeVisible();
   await expect(page.getByRole('heading', { name: '01. Concepto del personaje' })).toBeVisible();
 
@@ -81,7 +81,7 @@ test('la interfaz inicial cabe en una pantalla móvil y conserva visible el sele
   const pageErrors: string[] = [];
   page.on('pageerror', error => pageErrors.push(error.message));
 
-  await page.goto('/');
+  await page.goto('./');
   await expect(page.getByRole('heading', { name: '01. Concepto del personaje' })).toBeVisible();
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '02. Elige tu clase' })).toBeVisible();
