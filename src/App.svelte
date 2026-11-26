@@ -3812,6 +3812,11 @@ import ITEMS from './items.json';
     const resourceText=resourceEntries.filter(([key,value]:any)=>value!==undefined && value!==null && value!=='—').map(([key,value]:any)=>key+': '+value).join(' · ');
     setCharacterStat(updated,'PROGRESIÓN','Nivel de clase',nextLevel);
     for (const [resourceName,resourceValue] of resourceEntries) setCharacterStat(updated,'PROGRESIÓN',resourceName,String(resourceValue ?? '—'));
+    if(className==='Bardo') {
+      const charismaModifier=Math.floor((getCharacterNumber(updated,'ATRIBUTOS','Carisma',10)-10)/2);
+      setCharacterStat(updated,'PROGRESIÓN','Usos de Inspiración bárdica',String(Math.max(1,charismaModifier)));
+    }
+    if(className==='Bardo' && nextLevel===20) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de clase',['Palabra de poder: sanar','Palabra de poder: matar']);
     const classFeatureDetails=getClassFeaturesAtLevel(className,nextLevel).map((feature:any)=>'Nivel '+nextLevel+' · '+feature.name+'\n'+feature.description).join('\n\n');
     const currentClassFeatures=classFeatureDetails || features.map((feature:string)=>'Nivel '+nextLevel+' · '+feature).join('\n');
     const previousClassFeatures=getCharacterStat(updated,'PROGRESIÓN','Rasgos de clase acumulados');
@@ -3856,6 +3861,19 @@ import ITEMS from './items.json';
     if(needsCollegeKnowledgeSkills) {
       const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Skills');
       setCharacterStat(updated,'COMPETENCIAS','Skills',[oldSkills,...collegeKnowledgeSkills].filter(Boolean).join('; '));
+    }
+    if(needsBardMagicDiscoveries) {
+      const alwaysPrepared=splitChoiceList(getCharacterStat(updated,'CONJUROS','Conjuros siempre preparados de subclase'));
+      const retainedAlways=alwaysPrepared.filter(spell=>!oldBardDiscoveries.some(old=>normalizeLevelText(old)===normalizeLevelText(spell)));
+      setCharacterStat(updated,'CONJUROS','Conjuros de descubrimientos mágicos',bardDiscoveryChoices.join(', '));
+      setCharacterStat(updated,'CONJUROS','Conjuros siempre preparados de subclase',[...retainedAlways,...bardDiscoveryChoices].join(', '));
+    }
+    if(isBardGlamour && nextLevel===3) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Hechizar persona','Imagen múltiple']);
+    if(isBardGlamour && nextLevel===6) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Orden imperiosa']);
+    if(isBardValor && nextLevel===3) {
+      mergeBarbarianFeatField(updated,'COMPETENCIAS','Armas adicionales',['Armas marciales']);
+      mergeBarbarianFeatField(updated,'COMPETENCIAS','Entrenamiento con armaduras adicionales',['Armaduras medias','Escudos']);
+      setCharacterStat(updated,'CONJUROS','Canalizador mágico de subclase','Arma sencilla o marcial');
     }
     if(needsBattleMasterTraining) {
       const oldTools=getCharacterStat(updated,'COMPETENCIAS','Herramientas');
