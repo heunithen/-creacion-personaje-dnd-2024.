@@ -10,10 +10,13 @@
   type RawStat = { id?: number; name?: string; value?: unknown; [key: string]: unknown };
   type RawSection = { id?: number; name?: string; stats?: RawStat[]; [key: string]: unknown };
   type RawSheet = { id?: number; name?: string; notes?: string; sections?: RawSection[]; [key: string]: unknown };
-  type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet; saved?: boolean };
+  type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet; saved?: boolean; live?: boolean };
+  const MASTER_SHEETS_KEY = 'forja-master-saved-characters';
 
   let sheet: RawSheet | null = null;
   let roomSheets: RoomEntry[] = [];
+  let liveRoomSheets: RoomEntry[] = [];
+  let savedMasterSheets: RoomEntry[] = [];
   let importOpen = false;
   let notice = '';
   let obrReady = false;
@@ -3343,7 +3346,7 @@ import ITEMS from './items.json';
     }
     refreshDerivedCharacterSheet(updated);
     const playerId=levelUpEntry.playerId;
-    roomSheets=[...roomSheets.filter(x=>x.playerId!==playerId),{...levelUpEntry,sheet:updated}];
+    receiveLiveCharacter({ ...levelUpEntry, sheet: updated });
     void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
     levelUpEntry=null;
     notice='Nivel '+nextLevel+' aplicado a '+updated.name+'. La ficha contiene los datos de clase, subclase, características, puntos de golpe y conjuros del nuevo nivel.';
@@ -3608,13 +3611,69 @@ import ITEMS from './items.json';
     return String(value).trim() === '' ? '' : String(value);
   }
 
+  function persistMasterCopies() {
+    try { localStorage.setItem(MASTER_SHEETS_KEY, JSON.stringify(savedMasterSheets)); }
+    catch { notice = 'No se pudieron guardar las copias locales del director. El almacenamiento puede estar lleno.'; }
+  }
+
+  function refreshRoomSheetList() {
+    const merged = new Map<string, RoomEntry>();
+    savedMasterSheets.forEach(entry => merged.set(entry.playerId, { ...entry, saved: true, live: false }));
+    liveRoomSheets.forEach(entry => {
+      const saved = savedMasterSheets.find(copy => copy.playerId === entry.playerId);
+      if (saved) merged.set(entry.playerId, { ...entry, saved: true, live: true });
+      else merged.set(entry.playerId, { ...entry, saved: false, live: true });
+    });
+    roomSheets = [...merged.values()].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
+  }
+
+  function loadMasterCopies() {
+    try {
+      const raw = localStorage.getItem(MASTER_SHEETS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      savedMasterSheets = Array.isArray(parsed) ? parsed.filter((entry: any) => entry?.playerId && entry?.sheet?.sections).map((entry: any) => ({ ...entry, saved: true, live: false })) : [];
+    } catch { savedMasterSheets = []; }
+    refreshRoomSheetList();
+  }
+
+  function saveMasterCopy(entry: RoomEntry) {
+    const copy = { playerId: entry.playerId, playerName: entry.playerName, sheet: JSON.parse(JSON.stringify(entry.sheet)), saved: true, live: false } as RoomEntry;
+    savedMasterSheets = [...savedMasterSheets.filter(item => item.playerId !== entry.playerId), copy];
+    persistMasterCopies();
+    refreshRoomSheetList();
+    notice = 'Copia de «' + (copy.sheet.name || copy.playerName) + '» guardada en este dispositivo.';
+  }
+
+  function deleteMasterCopy(entry: RoomEntry) {
+    savedMasterSheets = savedMasterSheets.filter(item => item.playerId !== entry.playerId);
+    persistMasterCopies();
+    refreshRoomSheetList();
+    notice = 'Copia local eliminada: ' + (entry.sheet?.name || entry.playerName) + '.';
+  }
+
+  function receiveLiveCharacter(entry: RoomEntry) {
+    liveRoomSheets = [...liveRoomSheets.filter(item => item.playerId !== entry.playerId), { ...entry, live: true }];
+    const existingCopy = savedMasterSheets.find(item => item.playerId === entry.playerId);
+    if (existingCopy) {
+      savedMasterSheets = [...savedMasterSheets.filter(item => item.playerId !== entry.playerId), { ...entry, saved: true, live: false }];
+      persistMasterCopies();
+    }
+    refreshRoomSheetList();
+  }
+
   function readPlayers(players: any[]) {
-    const liveEntries: RoomEntry[] = players.flatMap((p: any) => {
+    liveRoomSheets = players.flatMap((p: any) => {
       const payload = p.metadata?.[KEY];
       if (!payload || payload.deleted || !payload.character) return [];
-      return [{ playerId: p.id, playerName: p.name || payload.playerName || 'Jugador', sheet: repairGenericStatLabels(payload.character as RawSheet) as RawSheet }];
+      return [{ playerId: p.id, playerName: p.name || payload.playerName || 'Jugador', sheet: repairGenericStatLabels(payload.character as RawSheet) as RawSheet, live: true }];
     });
-    roomSheets = liveEntries;
+    liveRoomSheets.forEach(entry => {
+      if (savedMasterSheets.some(copy => copy.playerId === entry.playerId)) {
+        savedMasterSheets = [...savedMasterSheets.filter(copy => copy.playerId !== entry.playerId), { ...entry, saved: true, live: false }];
+      }
+    });
+    if (liveRoomSheets.some(entry => savedMasterSheets.some(copy => copy.playerId === entry.playerId))) persistMasterCopies();
+    refreshRoomSheetList();
   }
 
   async function refreshPlayers() {
@@ -3654,14 +3713,9 @@ import ITEMS from './items.json';
   }
 
   async function refreshGithubCharacters() {
-    if (!githubStore) { cloudStatus = 'Configura GitHub para consultar las hojas.'; return; }
-    cloudLoading = true;
-    try {
-      cloudRecords = [];
-      roomSheets = roomSheets.filter(entry => !entry.saved);
-      cloudStatus = 'La vista del director ya no muestra personajes guardados. Solo se muestran jugadores conectados a la sala.';
-    } catch (error) { cloudStatus = 'Error al consultar GitHub: ' + (error instanceof Error ? error.message : String(error)); }
-    finally { cloudLoading = false; }
+    cloudRecords = [];
+    cloudStatus = 'Las copias de personajes se guardan localmente en este dispositivo.';
+    refreshRoomSheetList();
   }
 
   async function deleteGithubCharacter(record: GithubCharacterRecord) {
@@ -3761,7 +3815,7 @@ import ITEMS from './items.json';
         obrRole = await OBR.player.getRole();
         playerName = await OBR.player.getName();
         builderData.player = playerName;
-        if (obrRole === 'GM') await loadGithubRoomConfig();
+        if (obrRole === 'GM') { loadMasterCopies(); await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
         if (!demoPreview) await restoreOwnSheet();
         await refreshPlayers();
@@ -3775,11 +3829,12 @@ import ITEMS from './items.json';
         OBR.broadcast.onMessage(CHANNEL, (event: any) => {
           const d = event.data;
           if (d?.type === 'character-updated' && d.character) {
-            roomSheets = [...roomSheets.filter(x => x.playerId !== d.playerId), {
-              playerId: d.playerId, playerName: d.playerName || 'Jugador', sheet: d.character
-            }];
+            receiveLiveCharacter({ playerId: d.playerId, playerName: d.playerName || 'Jugador', sheet: repairGenericStatLabels(d.character as RawSheet) as RawSheet, live: true });
           }
-          if (d?.type === 'character-deleted') roomSheets = roomSheets.filter(x => x.playerId !== d.playerId);
+          if (d?.type === 'character-deleted') {
+            liveRoomSheets = liveRoomSheets.filter(x => x.playerId !== d.playerId);
+            refreshRoomSheetList();
+          }
           // Las fichas son locales: los cambios de nivel del director no sobrescriben la copia del jugador.
         });
       } catch {
@@ -3807,12 +3862,16 @@ import ITEMS from './items.json';
         <section class="panel roster-panel">
           <div class="section-heading"><h2>Personajes de la sala</h2><span class="count">{roomSheets.length}</span></div>
           <div class="actions"><button class="secondary" on:click={refreshPlayers}>Actualizar</button></div>
-          {#if !roomSheets.length}<p class="muted">No hay personajes publicados.</p>
+          {#if !roomSheets.length}<p class="muted">No hay personajes publicados ni copias guardadas.</p>
           {:else}
             {#each roomSheets as entry}
               <article class="character-card">
                 <div class="card-symbol">✧</div>
-                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName}</p></div>
+                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · {entry.live ? 'Conectado' : 'Copia local'}</p></div>
+                <div class="actions">
+                  {#if entry.saved}<span class="muted">✓ Copia guardada</span>{:else}<button class="primary" on:click={() => saveMasterCopy(entry)}>Guardar ficha</button>{/if}
+                  {#if entry.saved}<button class="secondary" on:click={() => deleteMasterCopy(entry)}>Eliminar copia</button>{/if}
+                </div>
                 <details class="gm-sheet-details">
                   <summary>Ver ficha</summary>
                   <div class="actions level-up-action"><button class="primary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button></div>
