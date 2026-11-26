@@ -1,13 +1,13 @@
 {
   "name": "Forja de Aventureros — D&D 2024",
-  "version": "1.0.54",
+  "version": "1.0.55",
   "manifest_version": 1,
   "author": "heunithen",
   "description": "Fichas de personaje D&D 2024 editables en Owlbear Rodeo.",
-  "icon": "https://heunithen.github.io/-creacion-personaje-dnd-2024./icono.webp?v=1.0.54",
+  "icon": "https://heunithen.github.io/-creacion-personaje-dnd-2024./icon.svg?v=1.0.55",
   "action": {
     "title": "Forja de Aventureros",
-    "icon": "https://heunithen.github.io/-creacion-personaje-dnd-2024./icono.webp?v=1.0.54",
+    "icon": "https://heunithen.github.io/-creacion-personaje-dnd-2024./icon.svg?v=1.0.55",
     "popover": "https://heunithen.github.io/-creacion-personaje-dnd-2024./",
     "height": 900,
     "width": 900
