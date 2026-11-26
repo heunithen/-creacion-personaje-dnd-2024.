@@ -2259,7 +2259,9 @@ import ITEMS from './items.json';
 
   const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   function startsWithLetter(name: string, letter: string) {
-    return !letter || String(name || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toUpperCase().startsWith(letter);
+    const initial = String(letter || '').trim().toLocaleUpperCase('en');
+    const normalizedName = String(name || '').trimStart().normalize('NFD').replace(/\p{M}/gu, '').toLocaleUpperCase('en');
+    return !initial || normalizedName.startsWith(initial);
   }
   const MONSTER_CR_FILTERS = ['Todos', ...Array.from(new Set(MONSTERS.map(monster => monster.cr.split(' ')[0]))).sort((a, b) => { const value = (cr: string) => { const [n, d] = cr.split('/').map(Number); return d ? n / d : n; }; return value(a) - value(b); })];
   $: filteredMonsters = (monsterSearch.trim() || monsterCrFilter || monsterLetterFilter) ? MONSTERS.filter(monster => (!monsterCrFilter || monster.cr.startsWith(monsterCrFilter + ' ')) && startsWithLetter(monster.name, monsterLetterFilter) && (!monsterSearch.trim() || monster.name.toLowerCase().includes(monsterSearch.trim().toLowerCase()))).sort((a,b) => a.name.localeCompare(b.name,'en',{sensitivity:'base'})) : [];
