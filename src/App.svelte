@@ -5243,7 +5243,7 @@ import ITEMS from './items.json';
                         <input class="spell-change-search" type="search" placeholder="Buscar conjuro..." bind:value={spellChangeSearch} />
                         <div class="spell-change-count">{spellChangeSelected.length} seleccionados {#if spellChangeMode === 'long-rest'} / {spellChangeLimit}{:else} (debes reemplazar exactamente uno){/if}</div>
                         <div class="spell-change-options">
-                          {#each classSpellOptions(sheet).filter((spell: any) => !spellChangeSearch || normalizeLevelText(spell.name).includes(normalizeLevelText(spellChangeSearch))) as spell (spell.name)}
+                          {#each classSpellOptions(sheet).filter((spell) => !spellChangeSearch || normalizeLevelText(spell.name).includes(normalizeLevelText(spellChangeSearch))) as spell (spell.name)}
                             <label class:selected={spellChangeSelected.includes(normalizeLevelText(spell.name))}>
                               <input type="checkbox" checked={spellChangeSelected.includes(normalizeLevelText(spell.name))} on:change={() => toggleSpellChangeSelection(spell)} />
                               <span>{spell.name}</span>
