@@ -4260,7 +4260,7 @@ import ITEMS from './items.json';
                   {#if !c.compact}
                     <div class="combat-actions">
                       {#each getMonsterCombatActions(c.monster) as action}
-                        <div class="combat-action-row"><strong>{translateMonsterText(action.name)}</strong>
+                        <div class="combat-action-row"><strong>{action.name}</strong>
                           <div>{#if action.attackNotation}<button on:click={()=>sendCombatRoll(action.attackNotation,c.name+' · '+action.name)}>{'⚔ '+action.attackNotation}</button>{/if}
                           {#if action.damageNotation}<button on:click={()=>sendSheetRoll(action.damageNotation,c.name+' · '+action.name+' · Daño')}>{'🎲 '+action.damageNotation}</button>{/if}
                           {#if action.dc}<span class="combat-dc">CD {action.dc}</span>{/if}</div>
@@ -4478,38 +4478,38 @@ import ITEMS from './items.json';
                   {#each [parseMonsterProfile(monster)] as profile}
                     <div class="monster-block-heading">
                       <h3>{monster.name}</h3>
-                      <p>{profile.info.find(x => x.label === 'Type and Alignment')?.value || monster.group || 'Criatura'} · VD {monster.cr}</p>
+                      <p>{profile.info.find(x => x.label === 'Type and Alignment')?.value || monster.group || 'Creature'} · CR {monster.cr}</p>
                     </div>
                     {#if monster.description}<p class="monster-description">{monster.description}</p>{/if}
                     <div class="monster-quick-stats">
                       {#each profile.info.filter(x => ['Armor Class','Hit Points','Speed','Initiative'].includes(x.label)) as item}
-                        <div><small>{monsterQuickLabel(item.label)}</small><strong>{item.value}</strong></div>
+                        <div><small>{({'Armor Class':'AC','Hit Points':'HP','Speed':'Speed','Initiative':'Init'} as Record<string,string>)[item.label] || item.label}</small><strong>{item.value}</strong></div>
                       {/each}
                     </div>
                     <div class="monster-ability-table">
-                      <div class="monster-ability-row monster-ability-head"><span>Característica</span><span>Valor</span><span>Mod.</span><span>Salv.</span></div>
+                      <div class="monster-ability-row monster-ability-head"><span>Ability</span><span>Score</span><span>Mod.</span><span>Save</span></div>
                       {#each profile.info.filter(x => ['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'].includes(x.label)) as ability}
-                        <div class="monster-ability-row"><strong>{monsterAbilityLabel(ability.label)}</strong><span>{ability.value.match(/^\d+/)?.[0] || '—'}</span><span>{ability.value.match(/\([+-]?\d+\)/)?.[0] || '—'}</span><span>{ability.value.match(/Save\s*([+-]?\d+)/i)?.[1] || '—'}</span></div>
+                        <div class="monster-ability-row"><strong>{({'Strength':'STR','Dexterity':'DEX','Constitution':'CON','Intelligence':'INT','Wisdom':'WIS','Charisma':'CHA'} as Record<string,string>)[ability.label] || ability.label}</strong><span>{ability.value.match(/^\d+/)?.[0] || '—'}</span><span>{ability.value.match(/\([+-]?\d+\)/)?.[0] || '—'}</span><span>{ability.value.match(/Save\s*([+-]?\d+)/i)?.[1] || '—'}</span></div>
                       {/each}
                     </div>
                     <div class="monster-details-list">
                       {#each profile.info.filter(x => !['Type and Alignment','Armor Class','Hit Points','Speed','Initiative','Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'].includes(x.label)) as item}
-                        <p><strong>{translateMonsterLabel(item.label)}:</strong> {translateMonsterText(item.value)}</p>
+                        <p><strong>{item.label}:</strong> {item.value}</p>
                       {/each}
                     </div>
                     {#each profile.sections as section}
                       <section class="monster-content-section">
-                        <h4>{translateMonsterSection(section.title)}</h4>
+                        <h4>{section.title.toUpperCase()}</h4>
                         {#each section.entries as entry}
                           <article class="monster-entry">
-                            {#if entry.name}<strong>{translateMonsterText(entry.name)}</strong>{/if}
-                            <p>{translateMonsterText(entry.description)}</p>
+                            {#if entry.name}<strong>{entry.name}</strong>{/if}
+                            <p>{entry.description}</p>
                           </article>
                         {/each}
                       </section>
                     {/each}
                   {/each}
-                  <small class="monster-source">Manual de Monstruos 2024 · PDF p. {monster.pdfPage ?? '—'} · Página impresa {monster.printedPage ?? '—'}</small>
+                  <small class="monster-source">Monster Manual 2024 · PDF p. {monster.pdfPage ?? '—'} · Página impresa {monster.printedPage ?? '—'}</small>
                 </div>
               </details>
             {/each}
