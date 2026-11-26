@@ -7543,4 +7543,9 @@ import ITEMS from './items.json';
   .add-to-combat{margin-bottom:12px}
   @media(max-width:480px){.combatant-vitals{align-items:flex-start;flex-direction:column}.combat-initiative{align-items:flex-start;flex-direction:column}}
 
+  /* Bonificadores de habilidades: competencia en amarillo y pericia en rojo. */
+  :global(.nautical-skills .sheet-stat.proficient .skill-number),
+  :global(.nautical-skills .sheet-stat.proficient .inline-roll){color:#ffd34e!important}
+  :global(.nautical-skills .sheet-stat.expertise .skill-number),
+  :global(.nautical-skills .sheet-stat.expertise .inline-roll){color:#ff6666!important}
 </style>
