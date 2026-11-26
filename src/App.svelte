@@ -6702,7 +6702,7 @@ import ITEMS from './items.json';
                     {:else}
                       <p class="shop-caption">La tienda compra los objetos al 80 % de su precio de referencia. Los objetos sin precio requieren una tarifa manual.</p>
                       <div class="shop-owned-list">
-                        {#each shopOwnedItems.filter((entry:any)=>!shopSearch || normalizeLevelText(entry.name).includes(normalizeLevelText(shopSearch))) as owned (owned.name)}
+                        {#each shopOwnedItems.filter((entry)=>!shopSearch || normalizeLevelText(entry.name).includes(normalizeLevelText(shopSearch))) as owned (owned.name)}
                           <article class="shop-owned-card">
                             <div class="shop-owned-info"><h4>{owned.name}</h4><small>{owned.item.type} · Cantidad: {owned.quantity}</small><strong>Venta: {shopSalePriceLabel(owned.item)}</strong></div>
                             {#if owned.item.priceCopper===null}
