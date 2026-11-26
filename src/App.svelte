@@ -1250,6 +1250,7 @@
   async function migrateBundledPortraitsToSupabase() {
     if (localStorage.getItem('forja-portraits-migrated-v1') === 'yes') return;
     let migrated = 0;
+    let failed = 0;
     for (const publicUrl of BUILDER_PORTRAITS) {
       const filename = publicUrl.split('/').pop();
       if (!filename) continue;
@@ -1270,11 +1271,12 @@
         if (!uploaded.ok) throw new Error('Supabase rechazó ' + filename + ': ' + await uploaded.text());
         migrated++;
       } catch (error) {
+        failed++;
         console.error('No se pudo migrar el retrato ' + filename, error);
       }
     }
-    localStorage.setItem('forja-portraits-migrated-v1', 'yes');
-    console.info('Retratos originales migrados a Supabase:', migrated);
+    if (failed === 0) localStorage.setItem('forja-portraits-migrated-v1', 'yes');
+    console.info('Retratos originales migrados a Supabase:', migrated, 'fallidos:', failed);
   }
   async function chooseUploadedPortrait(event:Event){
     const input=event.currentTarget as HTMLInputElement;
