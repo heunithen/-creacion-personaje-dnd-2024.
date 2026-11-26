@@ -7547,5 +7547,5 @@ import ITEMS from './items.json';
   :global(.nautical-skills .sheet-stat.proficient .skill-number),
   :global(.nautical-skills .sheet-stat.proficient .inline-roll){color:#ffd34e!important}
   :global(.nautical-skills .sheet-stat.expertise .skill-number),
-  :global(.nautical-skills .sheet-stat.expertise .inline-roll){color:#ff6666!important}
+  :global(.nautical-skills .sheet-stat.expertise .inline-roll){color:#b58cff!important}
 </style>
