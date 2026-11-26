@@ -1,3 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
-  <image href="https://heunithen.github.io/-creacion-personaje-dnd-2024./icono.webp?v=1.0.55" xlink:href="https://heunithen.github.io/-creacion-personaje-dnd-2024./icono.webp?v=1.0.55" width="512" height="512" preserveAspectRatio="xMidYMid meet"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#000"/>
+  <path fill="#fff" d="M73 157H145V216C109 216 83 192 73 157Z"/>
+  <path fill="#fff" d="M160 157H439L425 194L358 204Q350 206 350 217V254H160Z"/>
+  <path fill="#fff" d="M220 269H288C287 289 298 306 299 319H210C211 306 222 289 220 269Z"/>
+  <path fill="#fff" d="M157 355Q170 334 187 334H323Q341 334 354 355Z"/>
 </svg>
