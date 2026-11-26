@@ -837,7 +837,7 @@
     applyVisualStyle();
   }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Combate', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
+  const masterTabs = ['Personajes', 'Combate', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
 
   function openMasterTab(tab: string) {
     // Cada entrada a un catálogo comienza sin búsquedas ni filtros anteriores.
@@ -2188,10 +2188,15 @@ import SPELLS from './spells.json';
 import ITEMS from './items.json';
 
 
-  type Combatant = { id:string; monster:any; name:string; ac:number; hp:number; maxHp:number; tempHp:number; initiative:number; damageInput:number; compact:boolean; dead:boolean; acMod:number };
+  type Combatant = { id:string; monster:any; name:string; ac:number; hp:number; maxHp:number; tempHp:number; initiative:number; damageInput:number; compact:boolean; dead:boolean; acMod:number; participating:boolean };
+  type InitiativeParticipant = { id:string; name:string; bonus:number; roll:number; total:number; tieRoll?:number };
   const COMBATANTS_STORAGE_KEY = 'forja-combatants-v1';
   let combatants: Combatant[] = [];
   let combatantsStorageReady = false;
+  let showAllCombatants = false;
+  let initiativeOrder: InitiativeParticipant[] = [];
+  let activeInitiativeIndex = 0;
+  let initiativeRound = 1;
   $: if (combatantsStorageReady) {
     try { localStorage.setItem(COMBATANTS_STORAGE_KEY, JSON.stringify(combatants)); } catch (error) { console.warn('No se pudo guardar el combate', error); }
   }
@@ -2212,13 +2217,70 @@ import ITEMS from './items.json';
   }
   function addCombatant(monster:any) {
     const maxHp=monsterMaxHp(monster);
-    combatants=[...combatants,{id:String(Date.now())+Math.random().toString(36).slice(2),monster,name:monster.name,ac:monsterNumber(monster,'Armor Class'),hp:maxHp,maxHp,tempHp:0,initiative:0,damageInput:0,compact:true,dead:false,acMod:0}];
+    combatants=[...combatants,{id:String(Date.now())+Math.random().toString(36).slice(2),monster,name:monster.name,ac:monsterNumber(monster,'Armor Class'),hp:maxHp,maxHp,tempHp:0,initiative:monsterNumber(monster,'Initiative'),damageInput:0,compact:true,dead:false,acMod:0,participating:true}];
     masterTab='Combate';
-    notice=monster.name+' añadido al combate.';
+    showAllCombatants=false;
+    notice=monster.name+' añadido y marcado como participante.';
   }
   function duplicateCombatant(id:string) {
     const original=combatants.find(x=>x.id===id); if(!original)return;
-    combatants=[...combatants,{...original,id:String(Date.now())+Math.random().toString(36).slice(2),name:original.name+' 2',hp:original.maxHp,tempHp:0,initiative:0,damageInput:0,dead:false}];
+    combatants=[...combatants,{...original,id:String(Date.now())+Math.random().toString(36).slice(2),name:original.name+' 2',hp:original.maxHp,tempHp:0,damageInput:0,dead:false}];
+  }
+  function playerInitiative(entry:RoomEntry):number {
+    const raw=getCharacterStat(entry.sheet,'COMBATE','Initiative') || getCharacterStat(entry.sheet,'COMBATE','Iniciativa') || '0';
+    const match=String(raw).replace(/−/g,'-').match(/[+-]?\d+/);
+    return match ? Number(match[0]) : 0;
+  }
+  function getInitiativeParticipants():InitiativeParticipant[] {
+    const players=roomSheets.filter(entry=>entry.live).map(entry=>({id:'player:'+entry.playerId,name:String(entry.sheet?.name || entry.playerName || 'Personaje'),bonus:playerInitiative(entry),roll:0,total:0}));
+    const monsters=combatants.filter(c=>c.participating!==false).map(c=>({id:'monster:'+c.id,name:c.name,bonus:Number(c.initiative)||0,roll:0,total:0}));
+    return [...players,...monsters];
+  }
+  function rollInitiativeDie():number { return Math.floor(Math.random()*20)+1; }
+  function rollInitiative():void {
+    const participants=getInitiativeParticipants();
+    if(!participants.length){initiativeOrder=[];notice='No hay participantes en el combate.';return;}
+    participants.forEach(p=>{p.roll=rollInitiativeDie();p.total=p.roll+p.bonus;delete p.tieRoll;});
+    participants.sort((a,b)=>b.total-a.total);
+    let start=0;
+    while(start<participants.length){
+      let end=start+1;
+      while(end<participants.length&&participants[end].total===participants[start].total)end++;
+      if(end-start>1){
+        const tied=participants.slice(start,end);
+        let attempts=0;
+        while(tied.length>1&&attempts<100){
+          attempts++;
+          tied.forEach(p=>{p.tieRoll=rollInitiativeDie()+p.bonus;});
+          tied.sort((a,b)=>(b.tieRoll||0)-(a.tieRoll||0));
+          for(let i=tied.length-1;i>0;i--)if(tied[i].tieRoll===tied[i-1].tieRoll){tied.splice(i-1,2,...tied.slice(i-1,i+1));}
+          const unique=tied.every((p,i)=>i===0||p.tieRoll!==tied[i-1].tieRoll);
+          if(unique)break;
+        }
+        participants.splice(start,end-start,...tied);
+      }
+      start=end;
+    }
+    initiativeOrder=participants;
+    activeInitiativeIndex=0;
+    initiativeRound=1;
+  }
+  function moveInitiativeTurn(direction:number):void {
+    if(!initiativeOrder.length)return;
+    const next=activeInitiativeIndex+direction;
+    if(next>=initiativeOrder.length){activeInitiativeIndex=0;initiativeRound++;}
+    else if(next<0){activeInitiativeIndex=initiativeOrder.length-1;initiativeRound=Math.max(1,initiativeRound-1);}
+    else activeInitiativeIndex=next;
+  }
+  function toggleCombatantParticipation(id:string,event:Event):void {
+    const checked=(event.currentTarget as HTMLInputElement).checked;
+    updateCombatant(id,{participating:checked});
+    if(!checked){
+      const removedIndex=initiativeOrder.findIndex(p=>p.id==='monster:'+id);
+      initiativeOrder=initiativeOrder.filter(p=>p.id!=='monster:'+id);
+      if(removedIndex>=0&&removedIndex<activeInitiativeIndex)activeInitiativeIndex--;
+      if(activeInitiativeIndex>=initiativeOrder.length)activeInitiativeIndex=Math.max(0,initiativeOrder.length-1);
+    }
   }
   function setCombatantField(id:string,field:'name'|'ac'|'hp'|'initiative'|'damageInput',event:Event) {
     const value=(event.target as HTMLInputElement).value;
@@ -4077,6 +4139,9 @@ import ITEMS from './items.json';
       if (!payload || payload.deleted || !payload.character) return [];
       return [{ playerId: p.id, playerName: p.name || payload.playerName || 'Jugador', sheet: repairGenericStatLabels(payload.character as RawSheet) as RawSheet, live: true }];
     });
+    const liveIds=new Set(liveRoomSheets.map(entry=>'player:'+entry.playerId));
+    initiativeOrder=initiativeOrder.filter(entry=>!entry.id.startsWith('player:')||liveIds.has(entry.id));
+    if(activeInitiativeIndex>=initiativeOrder.length)activeInitiativeIndex=Math.max(0,initiativeOrder.length-1);
     liveRoomSheets.forEach(entry => {
       if (savedMasterSheets.some(copy => copy.playerId === entry.playerId)) {
         savedMasterSheets = [...savedMasterSheets.filter(copy => copy.playerId !== entry.playerId), { ...entry, saved: true, live: false }];
@@ -4309,24 +4374,25 @@ import ITEMS from './items.json';
         </section>
       {:else if masterTab === 'Combate'}
         <section class="panel combat-panel">
-          <div class="section-heading"><h2>Combate</h2><span class="count">{combatants.length} criaturas</span></div>
+          <div class="section-heading"><h2>Combate</h2><span class="count">{combatants.filter(c=>c.participating!==false).length} participantes · {combatants.length} preparados</span></div>
           <div class="combat-toolbar">
             <label>Modo de tirada
               <select bind:value={combatRollMode}><option value="normal">Normal</option><option value="advantage">Ventaja</option><option value="disadvantage">Desventaja</option></select>
             </label>
-            <button class="secondary" type="button" on:click={()=>combatants=[]}>Vaciar combate</button>
+            <button class="secondary" type="button" on:click={()=>combatants=combatants.map(c=>({...c,participating:false}))}>Retirar todos del combate</button>
+            <button class="secondary" type="button" on:click={()=>showAllCombatants=!showAllCombatants}>{showAllCombatants?'◉ Mostrar solo participantes':'◉ Ver todos los monstruos'}</button>
           </div>
           {#if combatants.length}
             <div class="combat-grid">
-              {#each combatants as c (c.id)}
+              {#each combatants.filter(c=>showAllCombatants||c.participating!==false) as c (c.id)}
                 <article class:combat-dead={c.hp===0} class="combatant-card">
                   <header class="combatant-header">
                     <input aria-label="Nombre de criatura" class="combatant-name" value={c.name} on:change={(e)=>setCombatantField(c.id,'name',e)}/>
                     <div class="combatant-tools">
                       <button title="Duplicar" on:click={()=>duplicateCombatant(c.id)}>⧉</button>
-                      <button title="Quitar del combate" on:click={()=>combatants=combatants.filter(x=>x.id!==c.id)}>×</button>
                     </div>
                   </header>
+                  <label class="combatant-participating"><input type="checkbox" checked={c.participating!==false} on:change={(e)=>toggleCombatantParticipation(c.id,e)}/> Participando</label>
                   <div class="combatant-vitals">
                     <label class="combat-ac">🛡 CA <input type="number" value={c.ac+c.acMod} on:change={(e)=>setCombatantField(c.id,'ac',e)}/></label>
                     <div class="combat-hp"><span>❤ PG</span><button on:click={()=>adjustCombatHp(c.id,-1)}>−</button><input aria-label="Puntos de golpe actuales" type="number" min="0" max={c.maxHp} value={c.hp} on:change={(e)=>setCombatantField(c.id,'hp',e)}/><button on:click={()=>adjustCombatHp(c.id,1)}>+</button><span>/ {c.maxHp}</span></div>
@@ -4354,6 +4420,31 @@ import ITEMS from './items.json';
           {:else}<p class="muted">Añade criaturas desde la pestaña Monstruos para preparar el combate.</p>{/if}
         </section>
         {#if notice}<p class="muted" role="status">{notice}</p>{/if}
+      {:else if masterTab === 'Iniciativa'}
+        <section class="panel initiative-panel">
+          <div class="section-heading"><h2>Tracker de iniciativa</h2><span class="count">Ronda {initiativeRound}</span></div>
+          <div class="initiative-toolbar"><button class="primary initiative-roll-button" type="button" on:click={rollInitiative}>🎲 Tirar iniciativa · d20</button><span class="muted">Las tiradas se resuelven internamente.</span></div>
+          {#if initiativeOrder.length}
+            <ol class="initiative-list">
+              {#each initiativeOrder as participant,i}
+                <li class:initiative-active={i===activeInitiativeIndex}>
+                  <span class="initiative-position">{i+1}</span>
+                  <span class="initiative-name">{participant.name}</span>
+                  <span class="initiative-roll">{participant.roll}{participant.bonus>=0?' + ':' − '}{Math.abs(participant.bonus)} = <strong>{participant.total}</strong>{#if participant.tieRoll!==undefined}<small> · desempate {participant.tieRoll}</small>{/if}</span>
+                </li>
+              {/each}
+            </ol>
+            <div class="initiative-turn-controls"><button class="secondary" type="button" on:click={()=>moveInitiativeTurn(-1)} aria-label="Turno anterior">← Anterior</button><strong>Turno: {initiativeOrder[activeInitiativeIndex]?.name || '—'}</strong><button class="primary" type="button" on:click={()=>moveInitiativeTurn(1)} aria-label="Siguiente turno">Siguiente →</button></div>
+          {:else}
+            <p class="muted">Todavía no se ha lanzado la iniciativa.</p>
+            <ol class="initiative-roster">
+              {#each getInitiativeParticipants() as participant}
+                <li><span>{participant.name}</span><strong>Modificador {participant.bonus>=0?'+':''}{participant.bonus}</strong></li>
+              {/each}
+            </ol>
+            {#if !getInitiativeParticipants().length}<p class="muted">No hay personajes conectados ni monstruos marcados como participantes.</p>{/if}
+          {/if}
+        </section>
       {:else if masterTab === 'Cofres'}
         <section class="panel chest-panel">
           <div class="section-heading"><h2>Cofres</h2><span class="count">10d10 · 10–100</span></div>
@@ -7916,6 +8007,8 @@ import ITEMS from './items.json';
   .combatant-card.combat-dead{opacity:.58;filter:grayscale(.65)}
   .combatant-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
   .combatant-name{flex:1;font-weight:800;font-size:15px}
+  .combatant-participating{display:flex;align-items:center;gap:6px;margin:7px 0;color:#9fe9e5;font:700 11px system-ui,sans-serif}
+  .combatant-participating input{width:auto;accent-color:#5fe6e0}
   .combatant-tools{display:flex;gap:4px}.combatant-tools button,.combat-hp button,.combat-temp button{border:1px solid #3fb8b8;border-radius:4px;background:#13262e;color:#fff;padding:4px 8px}
   .combatant-vitals{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:12px 0 6px;font-size:13px;font-weight:800}
   .combat-ac,.combat-hp{display:flex;align-items:center;gap:5px}
@@ -7939,6 +8032,21 @@ import ITEMS from './items.json';
   .combat-dc{padding:6px 9px;border:1px solid #7b83c5;border-radius:5px;color:#b7baff;font-weight:800}
   .combat-fallen{text-align:center;font-weight:900;color:#e87979;margin-top:8px}
   .add-to-combat{margin-bottom:12px}
+  .initiative-panel{display:grid;gap:12px}
+  .initiative-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .initiative-roll-button{min-height:42px;font-weight:900}
+  .initiative-list,.initiative-roster{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+  .initiative-list li,.initiative-roster li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px;border:1px solid var(--gm-border);border-radius:7px;background:var(--gm-card);color:var(--gm-text)}
+  .initiative-position{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#263d46;color:#9fe9e5;font-weight:900}
+  .initiative-name{font-weight:800;overflow-wrap:anywhere}
+  .initiative-roll{font-size:12px;color:var(--gm-muted);white-space:nowrap}.initiative-roll strong{color:var(--gm-text);font-size:15px}.initiative-roll small{color:#e6b83f}
+  .initiative-list li.initiative-active{border:2px solid #e6b83f;background:rgba(230,184,63,.13)}
+  .initiative-list li.initiative-active .initiative-position{background:#e6b83f;color:#17242a}
+  .initiative-roster li{grid-template-columns:minmax(0,1fr) auto}
+  .initiative-roster strong{font-size:12px;color:#9fe9e5}
+  .initiative-turn-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--gm-border)}
+  .initiative-turn-controls strong{flex:1;text-align:center;color:var(--gm-text)}
+  @media(max-width:520px){.initiative-list li{grid-template-columns:26px minmax(0,1fr)}.initiative-roll{grid-column:2;white-space:normal}.initiative-turn-controls strong{flex-basis:100%;order:-1}}
   @media(max-width:480px){.combatant-vitals{align-items:flex-start;flex-direction:column}.combat-initiative{align-items:flex-start;flex-direction:column}}
 
   /* Bonificadores de habilidades: competencia en amarillo y pericia en rojo. */
