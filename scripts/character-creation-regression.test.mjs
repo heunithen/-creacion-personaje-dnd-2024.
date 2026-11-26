@@ -10,7 +10,7 @@ import {
 
 const app = fs.readFileSync('src/App.svelte', 'utf8');
 function extractConstant(name) {
-  const startMatch = new RegExp('const\s+' + name + '(?:\s*:[^=]+)?\s*=\s*([\[{])').exec(app);
+  const startMatch = new RegExp('const\\s+' + name + '(?:\\s*:[^=]+)?\\s*=\\s*([\\[{])').exec(app);
   assert.ok(startMatch, 'No se encontró la constante ' + name);
   const start = startMatch.index + startMatch[0].lastIndexOf(startMatch[1]);
   const opener = app[start];
