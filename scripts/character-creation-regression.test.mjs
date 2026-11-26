@@ -10,7 +10,7 @@ import {
 
 const app = fs.readFileSync('src/App.svelte', 'utf8');
 function extractConstant(name) {
-  const startMatch = new RegExp('const\\s+' + name + '(?:\\s*:[^=]+)?\\s*=\\s*([\\[{])').exec(app);
+  const startMatch = new RegExp('const\s+' + name + '(?:\s*:[^=]+)?\s*=\s*([\[{])').exec(app);
   assert.ok(startMatch, 'No se encontró la constante ' + name);
   const start = startMatch.index + startMatch[0].lastIndexOf(startMatch[1]);
   const opener = app[start];
@@ -164,7 +164,7 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
 });
 
 test('la pestaña Conjuros contiene el compendio y ya no existe el botón de cambiar conjuros', () => {
-  const tabsMatch = /const\\s+playerSheetTabs\\s*=\\s*\\[([^\\]]+)\\]/.exec(app);
+  const tabsMatch = /const\s+playerSheetTabs\s*=\s*\[([^\]]+)\]/.exec(app);
   assert.ok(tabsMatch, 'No se encontró la lista de pestañas de la ficha');
   assert.match(tabsMatch[1], /'Conjuros'/);
   assert.doesNotMatch(tabsMatch[1], /'Compendio de conjuros'/);
@@ -173,13 +173,13 @@ test('la pestaña Conjuros contiene el compendio y ya no existe el botón de cam
   const nextTabStart = app.indexOf("{:else if playerSheetTab === 'Reglas'}", spellsTabStart);
   assert.ok(spellsTabStart >= 0 && nextTabStart > spellsTabStart, 'No se pudo delimitar la pestaña Conjuros');
   const spellsTab = app.slice(spellsTabStart, nextTabStart);
-  assert.match(spellsTab, /<h3>Conjuros<\\/h3>/);
-  assert.match(spellsTab, /<h3>Compendio de conjuros<\\/h3>/);
-  assert.match(spellsTab, /bind:value=\\{spellSearch\\}/);
-  assert.match(spellsTab, /bind:value=\\{spellLevelFilter\\}/);
-  assert.match(spellsTab, /bind:value=\\{spellClassFilter\\}/);
+  assert.match(spellsTab, /<h3>Conjuros<\/h3>/);
+  assert.match(spellsTab, /<h3>Compendio de conjuros<\/h3>/);
+  assert.match(spellsTab, /bind:value=\{spellSearch\}/);
+  assert.match(spellsTab, /bind:value=\{spellLevelFilter\}/);
+  assert.match(spellsTab, /bind:value=\{spellClassFilter\}/);
   assert.doesNotMatch(spellsTab, /Cambiar conjuros/);
-  assert.doesNotMatch(app, /on:click=\\{openSpellChange\\}/);
+  assert.doesNotMatch(app, /on:click=\{openSpellChange\}/);
 });
 
 test('la interfaz y la ficha final están conectadas a las reglas revisadas', () => {
