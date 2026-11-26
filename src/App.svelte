@@ -42,7 +42,6 @@
   let spellLevelFilter = '';
   let spellClassFilter = '';
   let spellSchoolFilter = '';
-  let spellCompendiumOpen = false;
   let spellChangeOpen = false;
   let spellChangeStage: 'prompt' | 'select' = 'prompt';
   let spellChangeMode: 'long-rest' | 'level-up' = 'long-rest';
@@ -6351,11 +6350,7 @@ import ITEMS from './items.json';
                     </div>
                   </section>
 
-                  <div class="sheet-section-title spell-compendium-toggle">
-                    <h3>Conjuros del personaje</h3>
-                    <button type="button" on:click={() => spellCompendiumOpen = !spellCompendiumOpen}>{spellCompendiumOpen ? 'Cerrar compendio' : 'Abrir compendio'}</button>
-                  </div>
-                  {#if !spellCompendiumOpen}
+                  <div class="sheet-section-title"><h3>Conjuros del personaje</h3></div>
                   <section class="sheet-section player-spell-list-section">
                     <div class="sheet-section-title"><h3>Conjuros</h3></div>
                     {#if playerKnownSpellCards(sheet).length}
@@ -6390,69 +6385,6 @@ import ITEMS from './items.json';
                       <p class="muted nautical-empty">No hay conjuros conocidos registrados.</p>
                     {/if}
                   </section>
-                  {:else}
-<section class="sheet-section spells-panel">
-          <div class="sheet-section-title"><h3>Compendio de conjuros</h3><span class="count">{filteredSpells.length} / {SPELLS.length}</span></div>
-          <p class="muted">Catálogo de conjuros del manual. Cada ficha incluye nivel, escuela, clases, tiempo de lanzamiento, alcance, componentes, duración y descripción.</p>
-          <label class="spell-search">Buscar conjuro
-            <input type="search" bind:value={spellSearch} placeholder="Nombre o texto del conjuro..." />
-          </label>
-          <div class="spell-filters">
-            <label>Letra inicial
-              <select bind:value={spellLetterFilter}><option value="">Ninguna</option>{#each ALPHABET as letter}<option value={letter}>{letter}</option>{/each}</select>
-            </label>
-            <label>Nivel
-              <select bind:value={spellLevelFilter}>
-                <option value="">Ninguno</option>
-                <option value="0">Trucos · Nivel 0</option>
-                {#each [1,2,3,4,5,6,7,8,9] as level}
-                  <option value={String(level)}>Nivel {level}</option>
-                {/each}
-              </select>
-            </label>
-            <label>Clase
-              <select bind:value={spellClassFilter}>
-                <option value="">Ninguna</option>
-                {#each SPELL_CLASSES as className}
-                  <option value={className}>{className}</option>
-                {/each}
-              </select>
-            </label>
-            <label>Escuela
-              <select bind:value={spellSchoolFilter}>
-                <option value="">Ninguna</option>
-                {#each SPELL_SCHOOLS as school}
-                  <option value={school}>{school}</option>
-                {/each}
-              </select>
-            </label>
-          </div>
-          <div class="spell-list">
-            {#if filteredSpells.length === 0}<p class="muted">Selecciona un nivel, clase o escuela, o escribe una búsqueda para mostrar conjuros.</p>{:else}
-            {#each filteredSpells as spell}
-              <details class="spell-card">
-                <summary>
-                  <span class="spell-name">{spell.name}</span>
-                  <span class="spell-level">{spell.level === 0 ? 'Truco' : 'Nivel ' + spell.level}</span>
-                  <span class="spell-subtitle">{spell.school} · {spell.classes.map(name => name.charAt(0).toLocaleUpperCase('es') + name.slice(1)).join(', ')}</span>
-                </summary>
-                <div class="spell-details">
-                  <div class="spell-meta">
-                    <p><strong>Tiempo de lanzamiento:</strong> {spell.castingTime || '—'}</p>
-                    <p><strong>Alcance:</strong> {spell.range || '—'}</p>
-                    <p><strong>Componentes:</strong> {spell.components || '—'}</p>
-                    <p><strong>Duración:</strong> {spell.duration || '—'}</p>
-                    {#if spell.special.length}<p><strong>Especial:</strong> {spell.special.join(', ')}</p>{/if}
-                  </div>
-                  <p class="spell-description">{spell.description || 'Descripción no disponible en el texto extraído del manual.'}</p>
-                  <small class="spell-source">Manual del Jugador 2024 · PDF p. {spell.pdfPage ?? '—'} · Impresa p. {spell.printedPage ?? '—'}</small>
-                </div>
-              </details>
-            {/each}
-            {/if}
-          </div>
-        </section>
-                  {/if}
                 {:else if playerSheetTab === 'Reglas'}
 <section class="sheet-section rules-panel">
           <div class="sheet-section-title"><h3>Reglas</h3><span class="count">{filteredRules.length} / {RULES.length}</span></div>
