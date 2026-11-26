@@ -1218,6 +1218,8 @@
   let builderSpeciesChosen = false;
   let builderBackgroundChosen = false;
   let builderRolledScores: number[] = [];
+  let builderRolledScoresByAbility: Record<string,number> = {};
+  let builderRollingAbility = '';
   let builderCurrentPointCost = 0;
   let builderPreview: RawSheet | null = null;
 
@@ -1234,7 +1236,7 @@
   function resetBuilder() {
     builderData = createInitialBuilderData();
     builderData.player = playerName || '';
-    builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderBackgroundSetup = false; builderSpeciesSlideIndex = 7; builderSpeciesSetup = false; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
+    builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderBackgroundSetup = false; builderSpeciesSlideIndex = 7; builderSpeciesSetup = false; builderRolledScores = []; builderRolledScoresByAbility = {}; builderRollingAbility = ''; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
   const BUILDER_PORTRAITS: string[] = ["https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Dusty_F_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Irieni_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_annis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dabuus_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_fell_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_glamis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_gn_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_grnhag_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_508_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_513_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_516_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_522_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_529_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_512_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_520_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_521_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_523_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_524_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_525_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_528_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_529_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_530_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_532_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_506_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_orcwar_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_sormen_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead504_h.webp"];
   let portraitPickerOpen = false;
@@ -1842,7 +1844,7 @@
   };
   const BUILDER_POINT_COST: Record<number,number> = {8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9};
   function builderPointCost() { return Object.values(builderData.abilities).reduce((sum,value)=>sum+(BUILDER_POINT_COST[Number(value)] ?? 99),0); }
-  $: builderCurrentPointCost = BUILDER_ABILITY_NAMES.reduce((sum,name)=>sum+(BUILDER_POINT_COST[Number(builderData.abilities[name])] ?? 99),0);
+  $: builderCurrentPointCost = builderData.method === 'pointBuy' ? BUILDER_ABILITY_NAMES.reduce((sum,name)=>sum+(BUILDER_POINT_COST[Number(builderData.abilities[name])] ?? 99),0) : 0;
   function builderApplyStandardArray() {
     const priority=BUILDER_STANDARD_PRIORITY[builderData.className]||BUILDER_STANDARD_PRIORITY['Guerrero'];
     builderData.abilities=Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,BUILDER_STANDARD[priority.indexOf(name)]]));
@@ -1859,19 +1861,39 @@
     if(delta>0 && builderPointCost()-BUILDER_POINT_COST[current]+BUILDER_POINT_COST[next]>27) return;
     builderData.abilities={...builderData.abilities,[ability]:next};
   }
-  function builderRollScores() {
-    const scores = Array.from({length:6},()=>Array.from({length:4},()=>Math.floor(Math.random()*6)+1).sort((a,b)=>b-a).slice(0,3).reduce((a,b)=>a+b,0)).sort((a,b)=>b-a);
-    builderRolledScores = [...scores];
-    builderData.abilities = Object.fromEntries(BUILDER_ABILITY_NAMES.map((name,index)=>[name,scores[index]]));
+  function builderResetRolledScores() {
+    builderRolledScores = [];
+    builderRolledScoresByAbility = {};
+    builderRollingAbility = '';
+    builderData.abilities = Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,0]));
   }
-  function builderSetAbilityMethod() {
-    if (builderData.method === 'standard') {
-      builderRolledScores = [];
-      builderApplyStandardArray();
-    } else if (builderData.method === 'pointBuy') {
-      builderRolledScores = [];
-      builderData.abilities = Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,8]));
-    } else if (builderData.method === 'rolled') builderRollScores();
+  async function builderRollAbility(ability:string) {
+    if (builderRolledScoresByAbility[ability] !== undefined || builderRollingAbility) return;
+    builderRollingAbility = ability;
+    notice = 'Esperando resultado de Dice+ para '+ability+'…';
+    try {
+      const resultText = await rollQuickDicePlus('4d6kh3','Característica '+ability);
+      const match = resultText.match(/(?:Total:\s*)?(-?\d+)\s*$/);
+      const value = match ? Number(match[1]) : NaN;
+      if (!Number.isInteger(value) || value < 3 || value > 18) throw new Error('Dice+ no devolvió un total válido para '+ability+'. Resultado: '+resultText);
+      builderRolledScoresByAbility = {...builderRolledScoresByAbility,[ability]:value};
+      builderData.abilities = {...builderData.abilities,[ability]:value};
+      builderRolledScores = Object.values(builderRolledScoresByAbility);
+      notice = ability+': '+value+'. Tiradas completadas: '+builderRolledScores.length+'/6.';
+    } catch(error) {
+      notice = error instanceof Error ? error.message : 'No se pudo obtener el resultado de Dice+.';
+    } finally {
+      builderRollingAbility = '';
+    }
+  }
+  function builderSetAbilityMethod(event?:Event) {
+    if (event) builderData.method = (event.currentTarget as HTMLSelectElement).value;
+    builderRolledScores = [];
+    builderRolledScoresByAbility = {};
+    builderRollingAbility = '';
+    if (builderData.method === 'standard') builderApplyStandardArray();
+    else if (builderData.method === 'pointBuy') builderData.abilities = Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,8]));
+    else if (builderData.method === 'rolled') builderResetRolledScores();
   }
   function builderAdjustedAbilities() {
     const result = {...builderData.abilities};
@@ -5885,10 +5907,9 @@ import ITEMS from './items.json';
               
 
               
-              <label>Método para determinar las puntuaciones<select bind:value={builderData.method} on:change={builderSetAbilityMethod}><option value="standard">Arreglo estándar (15, 14, 13, 12, 10, 8)</option><option value="pointBuy">Compra de puntos (27 puntos)</option><option value="rolled">Tirada (4d6, descartar el menor)</option><option value="free">Creación libre (valores personalizados)</option></select></label>
+              <label>Método para determinar las puntuaciones<select bind:value={builderData.method} on:change={(event)=>builderSetAbilityMethod(event)}><option value="standard">Arreglo estándar (15, 14, 13, 12, 10, 8)</option><option value="pointBuy">Compra de puntos (27 puntos)</option><option value="rolled">Tirada (4d6, descartar el menor)</option><option value="free">Creación libre (valores personalizados)</option></select></label>
               {#if builderData.method === 'rolled'}
-                <button type="button" class="secondary" on:click={builderRollScores}>Volver a tirar las seis puntuaciones</button>
-                <p class="hint">Resultados obtenidos: {builderRolledScores.length ? builderRolledScores.join(', ') : 'Pulsa el botón para tirar.'} Distribúyelos entre las características.</p>
+                <p class="hint">Cada característica se tira una sola vez con 4d6, descartando el dado menor. El resultado de Dice+ se asigna automáticamente y no se puede modificar. Tiradas completadas: {builderRolledScores.length}/6.</p>
               {/if}
               <div class="builder-ability-grid">
                 {#each BUILDER_ABILITY_NAMES as ability}
@@ -5896,20 +5917,22 @@ import ITEMS from './items.json';
                     {#if builderData.method === 'standard'}
                       <select aria-label={'Puntuación de '+ability} value={builderData.abilities[ability]} on:change={(event)=>builderSetStandardAbility(ability,Number(event.currentTarget.value))}>{#each BUILDER_STANDARD as score}<option value={score}>{score}</option>{/each}</select>
                     {:else if builderData.method === 'pointBuy'}
-                      <div class="builder-ability-stepper"><button type="button" class="secondary ability-plus" aria-label={'Subir '+ability} on:click={()=>builderAdjustPointBuy(ability,1)} disabled={Number(builderData.abilities[ability])>=15||builderCurrentPointCost-BUILDER_POINT_COST[Number(builderData.abilities[ability])]+BUILDER_POINT_COST[Number(builderData.abilities[ability])+1]>27}>+</button><strong>{builderData.abilities[ability]}</strong><button type="button" class="secondary ability-minus" aria-label={'Bajar '+ability} on:click={()=>builderAdjustPointBuy(ability,-1)} disabled={Number(builderData.abilities[ability])<=8}>−</button></div>
+                      <div class="builder-ability-stepper"><button type="button" class="secondary ability-plus" aria-label={'Subir '+ability} on:click={()=>builderAdjustPointBuy(ability,1)} disabled={Number(builderData.abilities[ability])>=15||builderPointCost()-BUILDER_POINT_COST[Number(builderData.abilities[ability])]+BUILDER_POINT_COST[Number(builderData.abilities[ability])+1]>27}>+</button><strong>{builderData.abilities[ability]}</strong><button type="button" class="secondary ability-minus" aria-label={'Bajar '+ability} on:click={()=>builderAdjustPointBuy(ability,-1)} disabled={Number(builderData.abilities[ability])<=8}>−</button></div>
+                    {:else if builderData.method === 'rolled'}
+                      <div class="builder-ability-stepper"><strong>{builderData.abilities[ability] || 0}</strong><button type="button" class="secondary" on:click={()=>builderRollAbility(ability)} disabled={builderRolledScoresByAbility[ability] !== undefined || Boolean(builderRollingAbility) || !obrReady}>{builderRollingAbility === ability ? 'Tirando…' : builderRolledScoresByAbility[ability] !== undefined ? 'Tirada hecha' : 'Tirar en Dice+'}</button></div>
                     {:else}
-                      <input type="number" min={builderData.method === 'free' ? 1 : 3} max={builderData.method === 'free' ? 20 : 18} step="1" bind:value={builderData.abilities[ability]} />
+                      <input type="number" min="1" max="20" step="1" bind:value={builderData.abilities[ability]} />
                     {/if}
                     <small class="muted">Modificador: {builderModifier(Number(builderData.abilities[ability]) || 10) >= 0 ? '+' : ''}{builderModifier(Number(builderData.abilities[ability]) || 10)}</small>
                   </div>
                 {/each}
               </div>
               {#if builderData.method === 'pointBuy'}
-                <p class="hint">Puntos utilizados: <strong>{builderCurrentPointCost} / 27</strong> · Puntos disponibles: <strong>{27-builderCurrentPointCost}</strong>. El total se actualiza al modificar cada característica. Puedes bajar una puntuación para recuperar puntos.</p>
+                <p class="hint">Puntos utilizados: <strong>{builderPointCost()} / 27</strong> · Puntos disponibles: <strong>{27-builderPointCost()}</strong>. El total se actualiza al modificar cada característica. Puedes bajar una puntuación para recuperar puntos.</p>
               {:else if builderData.method === 'standard'}
                 <p class="hint">Distribución sugerida para {builderData.className}. Asigna cada valor una sola vez; al cambiar uno, el valor anterior pasa a la característica que tenía el valor elegido.</p>
               {:else if builderData.method === 'rolled'}
-                <p class="hint">Debes asignar exactamente los seis resultados obtenidos, sin modificarlos.</p>
+                <p class="hint">Los resultados se guardan por característica. No puedes repetir ni modificar una tirada. Completa las seis para continuar.</p>
               {:else}
                 <p class="hint">Asigna manualmente cualquier puntuación entre 1 y 20. Este método no aplica límites de arreglo estándar ni compra de puntos.</p>
               {/if}
