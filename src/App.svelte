@@ -2805,13 +2805,13 @@ import ITEMS from './items.json';
     return known.filter(skill=>!already.includes(normalizeLevelText(skill)) && !chosen.includes(normalizeLevelText(skill)));
   }
   function getBardCantripOptions():string[] {
-    return (SPELLS as any[]).filter(spell=>spell.level===0 && spell.classes?.some((name:string)=>normalizeLevelText(name)==='bardo')).map(spell=>spell.name).sort((a,b)=>a.localeCompare(b,'es'));
+    return [...new Set((SPELLS as any[]).filter(spell=>spell.level===0 && spell.classes?.some((name:string)=>normalizeLevelText(name)==='bardo')).map(spell=>spell.name))].sort((a,b)=>a.localeCompare(b,'es'));
   }
   function getBardPreparedSpellOptions(targetLevel:number):string[] {
     const row=(LEVEL_PROGRESSION as any).classes?.Bardo?.rows?.find((item:any)=>Number(item.level)===targetLevel);
     const maxLevel=row?highestSpellLevel(row.resources||{}):0;
     const allowed=targetLevel>=10?['bardo','clerigo','druida','mago']:['bardo'];
-    return (SPELLS as any[]).filter(spell=>spell.level>0 && spell.level<=maxLevel && spell.classes?.some((name:string)=>allowed.includes(normalizeLevelText(name)))).map(spell=>spell.name).sort((a,b)=>a.localeCompare(b,'es'));
+    return [...new Set((SPELLS as any[]).filter(spell=>spell.level>0 && spell.level<=maxLevel && spell.classes?.some((name:string)=>allowed.includes(normalizeLevelText(name)))).map(spell=>spell.name))].sort((a,b)=>a.localeCompare(b,'es'));
   }
   function toggleBardClassSpellChoice(spell:string,event:Event,kind:'cantrip'|'spell',max:number) {
     const input=event.currentTarget as HTMLInputElement;
@@ -2832,7 +2832,7 @@ import ITEMS from './items.json';
   function getBardMagicDiscoveryOptions(targetLevel:number):string[] {
     const row=(LEVEL_PROGRESSION as any).classes?.Bardo?.rows?.find((item:any)=>Number(item.level)===targetLevel);
     const maxLevel=row?highestSpellLevel(row.resources||{}):0;
-    return (SPELLS as any[]).filter(spell=>(spell.level===0 || (spell.level>0 && spell.level<=maxLevel)) && Array.isArray(spell.classes) && spell.classes.some((name:string)=>['clerigo','druida','mago'].includes(normalizeLevelText(name)))).map(spell=>spell.name).sort((a,b)=>a.localeCompare(b,'es'));
+    return [...new Set((SPELLS as any[]).filter(spell=>(spell.level===0 || (spell.level>0 && spell.level<=maxLevel)) && Array.isArray(spell.classes) && spell.classes.some((name:string)=>['clerigo','druida','mago'].includes(normalizeLevelText(name)))).map(spell=>spell.name))].sort((a,b)=>a.localeCompare(b,'es'));
   }
   function getBarbarianFeatSkillOptions(feat:string):string[] {
     const key=normalizeLevelText(feat);
