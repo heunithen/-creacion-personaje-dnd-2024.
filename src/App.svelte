@@ -3870,7 +3870,8 @@ import ITEMS from './items.json';
     if(isBardGlamour && nextLevel===3) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Hechizar persona','Imagen múltiple']);
     if(isBardGlamour && nextLevel===6) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Orden imperiosa']);
     if(isBardValor && nextLevel===3) {
-      mergeBarbarianFeatField(updated,'COMPETENCIAS','Armas adicionales',['Armas marciales']);
+      mergeBarbarianFeatField(updated,'COMPETENCIAS','Armas',['Armas marciales']);
+      mergeBarbarianFeatField(updated,'COMPETENCIAS','Armaduras',['Armaduras medias','Escudos']);
       mergeBarbarianFeatField(updated,'COMPETENCIAS','Entrenamiento con armaduras adicionales',['Armaduras medias','Escudos']);
       setCharacterStat(updated,'CONJUROS','Canalizador mágico de subclase','Arma sencilla o marcial');
     }
