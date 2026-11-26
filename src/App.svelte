@@ -771,6 +771,8 @@
   let levelUpDecision = '';
   let levelUpClassCantrips = '';
   let levelUpClassSpells = '';
+  let levelUpBardCantripSearch = '';
+  let levelUpBardSpellSearch = '';
   let levelUpWizardBookAdditions = '';
   let levelUpExpertise = '';
   let levelUpNewSkill = '';
@@ -2791,6 +2793,26 @@ import ITEMS from './items.json';
     };
     return options[key] || [];
   }
+  function getBardCantripOptions():string[] {
+    return (SPELLS as any[]).filter(spell=>spell.level===0 && spell.classes?.some((name:string)=>normalizeLevelText(name)==='bardo')).map(spell=>spell.name).sort((a,b)=>a.localeCompare(b,'es'));
+  }
+  function getBardPreparedSpellOptions(targetLevel:number):string[] {
+    const row=(LEVEL_PROGRESSION as any).classes?.Bardo?.rows?.find((item:any)=>Number(item.level)===targetLevel);
+    const maxLevel=row?highestSpellLevel(row.resources||{}):0;
+    const allowed=targetLevel>=10?['bardo','clerigo','druida','mago']:['bardo'];
+    return (SPELLS as any[]).filter(spell=>spell.level>0 && spell.level<=maxLevel && spell.classes?.some((name:string)=>allowed.includes(normalizeLevelText(name)))).map(spell=>spell.name).sort((a,b)=>a.localeCompare(b,'es'));
+  }
+  function toggleBardClassSpellChoice(spell:string,event:Event,kind:'cantrip'|'spell',max:number) {
+    const input=event.currentTarget as HTMLInputElement;
+    const current=splitChoiceList(kind==='cantrip'?levelUpClassCantrips:levelUpClassSpells);
+    let next=current;
+    if(input.checked) {
+      if(current.length>=max) { input.checked=false; return; }
+      if(!current.some(name=>normalizeLevelText(name)===normalizeLevelText(spell))) next=[...current,spell];
+    } else next=current.filter(name=>normalizeLevelText(name)!==normalizeLevelText(spell));
+    if(kind==='cantrip') levelUpClassCantrips=next.join(', ');
+    else levelUpClassSpells=next.join(', ');
+  }
   function getCollegeKnowledgeSkillOptions(target:RawSheet, selected:string[]=[]):string[] {
     const existing=splitChoiceList(getCharacterStat(target,'COMPETENCIAS','Skills')).map(normalizeLevelText);
     const chosen=selected.filter(Boolean).map(normalizeLevelText);
@@ -3286,6 +3308,7 @@ import ITEMS from './items.json';
   function openLevelUp(entry: RoomEntry) {
     levelUpEntry = entry; levelUpDecision = '';
     levelUpClassCantrips=getCharacterStat(entry.sheet,'CONJUROS','Trucos de clase') || (getCharacterStat(entry.sheet,'PERSONAJE','Clase')==='Bardo'?getCharacterStat(entry.sheet,'CONJUROS','Trucos'):'');
+    levelUpBardCantripSearch=''; levelUpBardSpellSearch='';
     levelUpClassSpells=getCharacterStat(entry.sheet,'CONJUROS','Conjuros preparados de clase') || (getCharacterStat(entry.sheet,'PERSONAJE','Clase')==='Bardo'?getCharacterStat(entry.sheet,'CONJUROS','Conjuros de nivel 1'):'');
     if(!levelUpClassSpells && getCharacterStat(entry.sheet,'PERSONAJE','Clase')==='Mago') levelUpClassSpells=(String(getCharacterStat(entry.sheet,'CONJUROS','Conjuros de nivel 1')).match(/Preparados:\s*([^.]*)/i)||[])[1]||'';
     levelUpWizardBookAdditions=''; levelUpExpertise=''; levelUpNewSkill=''; levelUpLanguages=''; levelUpWildShapeForms=getCharacterStat(entry.sheet,'RASGOS Y DOTES','Formas salvajes conocidas') || '';
