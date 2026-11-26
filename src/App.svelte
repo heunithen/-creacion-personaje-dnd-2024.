@@ -1842,7 +1842,7 @@
   };
   const BUILDER_POINT_COST: Record<number,number> = {8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9};
   function builderPointCost() { return Object.values(builderData.abilities).reduce((sum,value)=>sum+(BUILDER_POINT_COST[Number(value)] ?? 99),0); }
-  $: builderCurrentPointCost = builderPointCost();
+  $: builderCurrentPointCost = BUILDER_ABILITY_NAMES.reduce((sum,name)=>sum+(BUILDER_POINT_COST[Number(builderData.abilities[name])] ?? 99),0);
   function builderApplyStandardArray() {
     const priority=BUILDER_STANDARD_PRIORITY[builderData.className]||BUILDER_STANDARD_PRIORITY['Guerrero'];
     builderData.abilities=Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,BUILDER_STANDARD[priority.indexOf(name)]]));
