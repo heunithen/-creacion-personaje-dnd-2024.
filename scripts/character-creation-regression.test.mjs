@@ -163,7 +163,7 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
   assert.equal(tested,1920);
 });
 
-test('la pestaña Conjuros contiene el compendio y ya no existe el botón de cambiar conjuros', () => {
+test('el compendio de conjuros solo está disponible en la pantalla del director', () => {
   const tabsMatch = /const\s+playerSheetTabs\s*=\s*\[([^\]]+)\]/.exec(app);
   assert.ok(tabsMatch, 'No se encontró la lista de pestañas de la ficha');
   assert.match(tabsMatch[1], /'Conjuros'/);
@@ -171,14 +171,25 @@ test('la pestaña Conjuros contiene el compendio y ya no existe el botón de cam
 
   const spellsTabStart = app.indexOf("{:else if playerSheetTab === 'Conjuros'}");
   const nextTabStart = app.indexOf("{:else if playerSheetTab === 'Reglas'}", spellsTabStart);
-  assert.ok(spellsTabStart >= 0 && nextTabStart > spellsTabStart, 'No se pudo delimitar la pestaña Conjuros');
+  assert.ok(spellsTabStart >= 0 && nextTabStart > spellsTabStart, 'No se pudo delimitar la pestaña Conjuros del jugador');
   const spellsTab = app.slice(spellsTabStart, nextTabStart);
-  assert.match(spellsTab, /<h3>Conjuros<\/h3>/);
-  assert.match(spellsTab, /<h3>Compendio de conjuros<\/h3>/);
-  assert.match(spellsTab, /bind:value=\{spellSearch\}/);
-  assert.match(spellsTab, /bind:value=\{spellLevelFilter\}/);
-  assert.match(spellsTab, /bind:value=\{spellClassFilter\}/);
-  assert.doesNotMatch(spellsTab, /Cambiar conjuros/);
+  assert.match(spellsTab, /Conjuros del personaje/);
+  assert.match(spellsTab, /playerKnownSpellCards\(sheet\)/);
+  assert.match(spellsTab, /spellIsKnown\(sheet, spell\)/);
+  assert.match(spellsTab, /spellIsPrepared\(sheet, spell\)/);
+  assert.doesNotMatch(spellsTab, /Compendio de conjuros|spellSearch|spellLevelFilter|spellClassFilter|spellSchoolFilter/);
+  assert.doesNotMatch(spellsTab, /spellCompendiumOpen|Abrir compendio|Cerrar compendio/);
+
+  const masterCompendium = app.indexOf("{:else if masterTab === 'Conjuros'}");
+  const masterRules = app.indexOf("{:else if masterTab === 'Reglas'}", masterCompendium);
+  assert.ok(masterCompendium >= 0 && masterRules > masterCompendium, 'No se encontró el compendio en la pantalla del director');
+  const masterSpellsTab = app.slice(masterCompendium, masterRules);
+  assert.match(masterSpellsTab, /<h2>Conjuros · Manual del Jugador 2024<\/h2>/);
+  assert.match(masterSpellsTab, /bind:value=\{spellSearch\}/);
+  assert.match(masterSpellsTab, /bind:value=\{spellLevelFilter\}/);
+  assert.match(masterSpellsTab, /bind:value=\{spellClassFilter\}/);
+  assert.match(masterSpellsTab, /bind:value=\{spellSchoolFilter\}/);
+  assert.doesNotMatch(app, /spellCompendiumOpen|Abrir compendio|Cerrar compendio/);
   assert.doesNotMatch(app, /on:click=\{openSpellChange\}/);
 });
 
