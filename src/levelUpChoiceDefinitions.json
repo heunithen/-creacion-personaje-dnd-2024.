@@ -116,7 +116,7 @@
       "excludeExisting": true,
       "storage": {
         "section": "COMPETENCIAS",
-        "field": "Habilidades"
+        "field": "Skills"
       }
     },
     {
@@ -128,7 +128,7 @@
       "description": "Elige dos habilidades en las que ya tengas competencia en los niveles 2 y 9. Conserva las pericias anteriores y no repitas una habilidad que ya tenga Pericia.",
       "options": [
         "Acrobacias",
-        "Arcanos",
+        "Conocimiento arcano",
         "Atletismo",
         "Engaño",
         "Historia",
@@ -151,7 +151,7 @@
       "countFromResource": "Pericia",
       "storage": {
         "section": "COMPETENCIAS",
-        "field": "Habilidades"
+        "field": "Skills"
       }
     }
   ]
