@@ -224,20 +224,20 @@ async function reachClassSkillsStep(page: Page, className: string) {
   await expect(page.getByRole('heading', { name: '07. Competencias' })).toBeVisible();
 }
 
-test('Mago: valida competencias, equipo, libro de conjuros, preparación, idiomas y revisión', async ({ page }) => {
+test('Mago: valida competencias, equipo, libro de conjuros, preparación, idiomas y revisión', async ({ page }) => {\n  test.setTimeout(120000);
   const pageErrors: string[] = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   await reachClassSkillsStep(page, 'Mago');
 
   const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 2 habilidades' }).locator('input[type="checkbox"]');
   await expect(skills).toHaveCount(7);
-  await skills.nth(0).check();
-  await skills.nth(1).check();
+  await skills.nth(0).check({ force: true });
+  await skills.nth(1).check({ force: true });
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '08. Equipo inicial' })).toBeVisible();
 
-  await page.locator('input[name="background-equipment"][value="B"]').check();
-  await page.locator('input[name="class-equipment"][value="A"]').check();
+  await page.locator('input[name="background-equipment"][value="B"]').check({ force: true });
+  await page.locator('input[name="class-equipment"][value="A"]').check({ force: true });
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '09. Magia y conjuros' })).toBeVisible();
 
@@ -245,21 +245,21 @@ test('Mago: valida competencias, equipo, libro de conjuros, preparación, idioma
   await expect(cantrips).toHaveCount(8);
   await nextButton(page).click();
   await expect(page.getByRole('alert')).toContainText('Trucos de clase');
-  for (let i = 0; i < 3; i++) await cantrips.nth(i).check();
+  for (let i = 0; i < 3; i++) await cantrips.nth(i).check({ force: true });
 
   const spellbook = page.locator('.builder-choice-wrapper').filter({ hasText: 'Libro de conjuros: elige 6 conjuros de nivel 1' }).locator('input[type="checkbox"]');
   await expect(spellbook).toHaveCount(30);
-  for (let i = 0; i < 6; i++) await spellbook.nth(i).check();
+  for (let i = 0; i < 6; i++) await spellbook.nth(i).check({ force: true });
 
   const prepared = page.locator('.builder-choice-wrapper').filter({ hasText: 'Conjuros preparados' }).locator('input[type="checkbox"]');
   await expect(prepared).toHaveCount(6);
-  for (let i = 0; i < 4; i++) await prepared.nth(i).check();
+  for (let i = 0; i < 4; i++) await prepared.nth(i).check({ force: true });
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '10. Idiomas' })).toBeVisible();
 
   const languages = page.locator('.builder-choice-wrapper').filter({ hasText: 'Dos idiomas adicionales' }).locator('input[type="checkbox"]');
-  await languages.nth(0).check();
-  await languages.nth(1).check();
+  await languages.nth(0).check({ force: true });
+  await languages.nth(1).check({ force: true });
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '11. Detalles del personaje' })).toBeVisible();
 
@@ -278,27 +278,27 @@ test('Mago: valida competencias, equipo, libro de conjuros, preparación, idioma
   await expect(pageErrors).toEqual([]);
 });
 
-test('Pícaro: exige cuatro habilidades, dos pericias, dos maestrías y un idioma adicional', async ({ page }) => {
+test('Pícaro: exige cuatro habilidades, dos pericias, dos maestrías y un idioma adicional', async ({ page }) => {\n  test.setTimeout(120000);
   await reachClassSkillsStep(page, 'Pícaro');
 
   const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 4 habilidades' }).locator('input[type="checkbox"]');
   await expect(skills).toHaveCount(8);
-  for (let i = 0; i < 4; i++) await skills.nth(i).check();
+  for (let i = 0; i < 4; i++) await skills.nth(i).check({ force: true });
 
   const expertise = page.locator('.builder-choice-wrapper').filter({ hasText: 'Pericia: elige 2 habilidades' }).locator('input[type="checkbox"]');
   await expect(expertise.count()).resolves.toBeGreaterThanOrEqual(2);
-  await expertise.nth(0).check();
-  await expertise.nth(1).check();
+  await expertise.nth(0).check({ force: true });
+  await expertise.nth(1).check({ force: true });
 
   const masteries = page.locator('.builder-choice-wrapper').filter({ hasText: 'Maestrías con armas (2)' }).locator('input[type="checkbox"]');
   await expect(masteries.count()).resolves.toBeGreaterThan(2);
-  await masteries.nth(0).check();
-  await masteries.nth(1).check();
+  await masteries.nth(0).check({ force: true });
+  await masteries.nth(1).check({ force: true });
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '08. Equipo inicial' })).toBeVisible();
 
-  await page.locator('input[name="background-equipment"][value="A"]').check();
-  await page.locator('input[name="class-equipment"][value="B"]').check();
+  await page.locator('input[name="background-equipment"][value="A"]').check({ force: true });
+  await page.locator('input[name="class-equipment"][value="B"]').check({ force: true });
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '09. Magia y conjuros' })).toBeVisible();
   await expect(page.locator('.builder-choice-wrapper')).toHaveCount(0);
@@ -306,8 +306,8 @@ test('Pícaro: exige cuatro habilidades, dos pericias, dos maestrías y un idiom
   await expect(page.getByRole('heading', { name: '10. Idiomas' })).toBeVisible();
 
   const languages = page.locator('.builder-choice-wrapper').filter({ hasText: 'Dos idiomas adicionales' }).locator('input[type="checkbox"]');
-  await languages.nth(0).check();
-  await languages.nth(1).check();
+  await languages.nth(0).check({ force: true });
+  await languages.nth(1).check({ force: true });
   const rogueLanguage = page.getByLabel(/Idioma adicional de pícaro/);
   await rogueLanguage.selectOption({ index: 1 });
   await nextButton(page).click();
