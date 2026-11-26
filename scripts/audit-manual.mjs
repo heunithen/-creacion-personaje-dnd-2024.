@@ -297,6 +297,32 @@ try {
       app.includes('levelUpBarbarianAspect')),
     'Aspecto de lo salvaje debe mostrarse, validarse y guardarse al subir al nivel 6 de la Senda del corazón salvaje.');
 
+  report('builder-background-and-species-reset-dependencies',
+    app.includes("builderData.classToolsChoices=[];") &&
+    app.includes("builderData.classSkillChoices=[];") &&
+    app.includes("builderData.classExpertise=[];") &&
+    app.includes("function builderChooseBackground") &&
+    app.includes("function builderChooseSpecies"),
+    'Cambiar trasfondo o especie limpia las elecciones dependientes de herramientas, habilidades y pericias.');
+
+  report('builder-skill-proficiency-duplicates',
+    app.includes('const allSkillChoices=[...background.skills,...selected,builderData.speciesSkill,...featSkills].filter(Boolean)') &&
+    app.includes('new Set(allSkillChoices).size!==allSkillChoices.length') &&
+    app.includes('featSkills.includes(builderData.speciesSkill)'),
+    'La validación rechaza habilidades repetidas entre trasfondo, especie, clase y dotes.');
+
+  report('builder-tool-proficiency-duplicates',
+    app.includes('const featTools=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_FEAT_TOOL_OPTIONS.includes(choice))') &&
+    app.includes('const allToolChoices=[builderData.backgroundToolChoice,...featTools,...builderData.classToolsChoices].filter(Boolean)') &&
+    app.includes('!featTools.includes(tool)'),
+    'La validación rechaza herramientas repetidas entre trasfondo, dotes y clase.');
+
+  report('builder-ability-increase-cap',
+    app.includes('function builderRawAdjustedAbilities()') &&
+    app.includes('const adjusted=builderRawAdjustedAbilities()') &&
+    app.includes('Number(adjusted[name])>20'),
+    'El límite de 20 se comprueba con los aumentos sin recortar, antes de aplicar el límite visual de la ficha.');
+
   report('builder-creation-validation-and-preview',
     app.includes('function builderStepCanAdvance()') &&
     app.includes('function builderCanFinish()') &&
