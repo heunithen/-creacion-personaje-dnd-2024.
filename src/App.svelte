@@ -3608,7 +3608,7 @@ import ITEMS from './items.json';
       const damageNotation=button.damage.trim()?quickFormulaForDicePlus(button.damage):'';
       await sendSheetRoll(attackNotation,button.name+' · Ataque');
       if (damageNotation) await sendSheetRoll(damageNotation,button.name+' · Daño');
-      quickRollHistory=[{id:Date.now(),name:button.name || 'Tirada',attack:attackNotation,damage:damageNotation,mode:button.mode,critical:false,fumble:false},...quickRollHistory].slice(0,20);
+      quickRollHistory=[{id:Date.now(),name:button.name || 'Tirada',attack:attackNotation,damage:damageNotation,mode:button.mode,critical:false,fumble:false},...quickRollHistory].slice(0,10);
     } catch (error) {
       notice=error instanceof Error?error.message:'No se pudo realizar la tirada.';
     }
@@ -5009,7 +5009,7 @@ import ITEMS from './items.json';
                     <div class="sheet-section-title"><h3>Botonera de tiradas</h3></div>
                     <div class="quick-buttons-grid">
                       {#each getQuickButtons(sheet) as quickButton, i}
-                        <div class="quick-button-cell">
+                        <div class="quick-button-cell" style={`--quick-hue:${(i*37+185)%360}`}>
                           <button type="button" class="quick-roll-button" disabled={!quickButton.attack.trim()} on:click={() => rollQuickButton(i)}>{quickButton.name || 'Botón '+(i+1)}</button>
                           <small>{quickButton.attack}{#if quickButton.damage} · {quickButton.damage}{/if}</small>
                           <div class="quick-button-controls">
@@ -5027,18 +5027,19 @@ import ITEMS from './items.json';
                         </div>
                       {/each}
                     </div>
-                    {#if quickRollHistory.length}
-                      <div class="quick-roll-results">
-                        <h4>Resultados</h4>
-                        {#each quickRollHistory as result (result.id)}
+                    <div class="quick-roll-results">
+                      <div class="quick-roll-results-header">
+                        <h4>Registro de tiradas ({quickRollHistory.length}/10)</h4>
+                        <button type="button" class="quick-roll-clear" disabled={!quickRollHistory.length} on:click={() => quickRollHistory=[]}>Limpiar registro</button>
+                      </div>
+                      {#each quickRollHistory as result (result.id)}
                           <article class="quick-roll-result">
                             <strong>{result.name}</strong>
                             <p><b>Ataque</b> {#if result.critical}<em class="quick-critical">¡Crítico!</em>{:else if result.fumble}<em class="quick-fumble">¡Pifia!</em>{/if} {#if result.mode==='advantage'}<span class="quick-mode-label">Ventaja</span>{:else if result.mode==='disadvantage'}<span class="quick-mode-label">Desventaja</span>{/if}<br />{result.attack}</p>
                             {#if result.damage}<p><b>Daño</b> {#if result.critical}<span class="quick-critical">Dados dobles</span> {/if}{result.damage}</p>{/if}
                           </article>
-                        {/each}
-                      </div>
-                    {/if}
+                      {/each}
+                    </div>
                   </section>
                 {:else if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
@@ -7375,20 +7376,24 @@ import ITEMS from './items.json';
 
 
   .quick-buttons-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  .quick-button-cell{min-width:0;padding:9px;border:1px solid #3a6870;border-radius:8px;background:#0f1e26;display:grid;gap:5px}
-  .quick-roll-button{min-height:42px;padding:8px;border:1px solid #3fb8b8;border-radius:6px;background:#18343a;color:#fff;font-weight:800;overflow-wrap:anywhere}
-  .quick-button-cell>small{color:#b5bec3;font-size:11px;overflow-wrap:anywhere}
+  .quick-button-cell{--quick-color:hsl(var(--quick-hue) 68% 58%);min-width:0;padding:9px;border:1px solid hsl(var(--quick-hue) 48% 42%);border-radius:8px;background:hsl(var(--quick-hue) 34% 13%);display:grid;gap:5px}
+  .quick-roll-button{min-height:42px;padding:8px;border:1px solid var(--quick-color);border-radius:6px;background:hsl(var(--quick-hue) 48% 25%);color:#fff;font-weight:800;overflow-wrap:anywhere}
+  .quick-button-cell>small{color:hsl(var(--quick-hue) 55% 82%);font-size:11px;overflow-wrap:anywhere}
   .quick-button-controls{display:flex;gap:5px}
-  .quick-button-controls button{flex:1;min-width:0;padding:5px;border:1px solid #3a6870;border-radius:5px;background:#13262e;color:#fff;font-size:11px}
+  .quick-button-controls button{flex:1;min-width:0;padding:5px;border:1px solid hsl(var(--quick-hue) 45% 42%);border-radius:5px;background:hsl(var(--quick-hue) 38% 19%);color:#fff;font-size:11px}
   .quick-button-controls button:disabled{opacity:.35}
   .quick-button-controls .mode-active{border-color:#e6b83f;color:#ffe08a}
   .quick-button-controls .mode-disadvantage{border-color:#d66b6b;color:#ffaaaa}
-  .quick-button-editor{display:grid;gap:6px;padding-top:7px;border-top:1px solid #31525a}
-  .quick-button-editor label{display:grid;gap:3px;color:#b5bec3;font-size:11px}
-  .quick-button-editor input{box-sizing:border-box;width:100%;min-width:0;padding:6px;border:1px solid #3a6870;border-radius:5px;background:#0b171d;color:#fff}
-  .quick-button-editor small{color:#b5bec3;font-size:10px}
+  .quick-button-editor{display:grid;gap:6px;padding:7px;border:1px solid hsl(var(--quick-hue) 45% 35%);border-radius:6px;background:hsl(var(--quick-hue) 32% 16%)}
+  .quick-button-editor label{display:grid;gap:3px;color:hsl(var(--quick-hue) 55% 85%);font-size:11px}
+  .quick-button-editor input{box-sizing:border-box;width:100%;min-width:0;padding:6px;border:1px solid hsl(var(--quick-hue) 45% 42%);border-radius:5px;background:hsl(var(--quick-hue) 35% 10%);color:#fff}
+  .quick-button-editor small{color:hsl(var(--quick-hue) 45% 80%);font-size:10px}
   .quick-roll-results{display:grid;gap:7px;margin-top:15px}
+  .quick-roll-results-header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
   .quick-roll-results h4{margin:0;color:#5fe6e0}
+  .quick-roll-clear{padding:6px 10px;border:1px solid #a65c5c;border-radius:5px;background:#492727;color:#ffdada;font-size:11px;font-weight:700}
+  .quick-roll-clear:disabled{opacity:.4}
+
   .quick-roll-result{padding:9px;border:1px solid #3a6870;border-radius:7px;background:#0f1e26}
   .quick-roll-result strong{color:#fff}
   .quick-roll-result p{margin:6px 0 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
