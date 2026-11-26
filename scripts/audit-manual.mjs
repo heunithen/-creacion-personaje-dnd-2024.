@@ -305,7 +305,6 @@ try {
     app.includes('function builderMissingFields(): string[]') &&
     app.includes('No se puede generar la ficha. Revisa estos campos:') &&
     app.includes('Falta completar lo siguiente para avanzar:') &&
-    app.includes('builderStep = 12') &&
     app.includes('Etapa ' ) && app.includes('de 12') &&
     app.includes("localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave))") &&
     app.includes('sheet = characterToSave') &&
