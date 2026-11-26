@@ -1210,6 +1210,7 @@
   }
   let builderStep = 0;
   let builderClassSlideIndex = 0;
+  let builderBackgroundSlideIndex = 14;
   let builderClassChosen = false;
   let builderSpeciesChosen = false;
   let builderBackgroundChosen = false;
@@ -1357,6 +1358,9 @@
   function builderMoveClass(direction:number) {
     builderClassSlideIndex = (builderClassSlideIndex + direction + BUILDER_CLASSES.length) % BUILDER_CLASSES.length;
   }
+  function builderMoveBackground(direction:number) {
+    builderBackgroundSlideIndex = (builderBackgroundSlideIndex + direction + BUILDER_BACKGROUNDS.length) % BUILDER_BACKGROUNDS.length;
+  }
   function builderChooseBackground(event:Event|string) {
     const value=typeof event === 'string' ? event : (event.currentTarget as HTMLSelectElement).value;
     if(!value) return;
@@ -1407,6 +1411,24 @@
   }
   const BUILDER_SPECIES = ['Aasimar','Dracónido','Enano','Elfo','Gnomo','Goliat','Mediano','Humano','Orco','Tiefling'];
   const BUILDER_BACKGROUNDS = ['Acólito','Animador','Artesano','Campesino','Charlatán','Comerciante','Criminal','Ermitaño','Erudito','Escriba','Guardia','Guía','Marinero','Noble','Soldado','Vagabundo'];
+  const BUILDER_BACKGROUND_GUIDANCE: Record<string,string> = {
+    'Acólito':'Creciste al servicio de un templo, santuario o comunidad religiosa. Aprendiste sus ritos, estudiaste sus enseñanzas y atendiste a quienes buscaban orientación o consuelo. Tu experiencia te ha dado una conexión profunda con las creencias y tradiciones de tu fe.',
+    'Animador':'Te ganabas la vida actuando ante públicos: cantando, tocando música, contando historias o realizando proezas. Sabes captar la atención, adaptarte a distintas audiencias y abrirte camino gracias a tu talento escénico. Estás acostumbrado a viajar y a vivir del ingenio.',
+    'Artesano':'Aprendiste un oficio y dedicaste años a crear, reparar o perfeccionar objetos. Conoces el valor del trabajo bien hecho, las herramientas y los materiales, y sabes tratar con clientes y otros profesionales. Tu habilidad práctica te permite encontrar soluciones donde otros solo ven problemas.',
+    'Campesino':'Tu vida transcurrió entre cultivos, animales y tareas que exigían constancia. Conoces el esfuerzo físico, los ciclos de la naturaleza y la importancia de una comunidad que trabaja unida. Has aprendido a resistir las dificultades y a aprovechar lo que ofrece la tierra.',
+    'Charlatán':'Sobreviviste gracias a la labia, el engaño y una identidad cuidadosamente construida. Sabes leer a las personas, improvisar historias convincentes y cambiar de apariencia o actitud cuando la situación lo exige. Para ti, casi cualquier obstáculo puede superarse con una buena mentira.',
+    'Comerciante':'Recorriste caminos y mercados negociando mercancías, estableciendo contactos y buscando oportunidades. Sabes reconocer el valor de los bienes, tratar con clientes y evaluar riesgos antes de cerrar un trato. Tu experiencia te ha enseñado que la información y las relaciones pueden valer tanto como el oro.',
+    'Criminal':'Te moviste en los bajos fondos, donde la discreción, la rapidez y la confianza se ganan con dificultad. Conoces los códigos de las calles, los métodos para evitar problemas y las personas a las que acudir cuando necesitas algo fuera de la ley. Has aprendido a detectar peligros antes de que sea demasiado tarde.',
+    'Ermitaño':'Pasaste largos periodos apartado de la sociedad, dedicado a la contemplación, el estudio o una búsqueda personal. La soledad te enseñó a depender de tus propios recursos y a observar el mundo con otra perspectiva. Regresas a la vida aventurera llevando contigo conocimientos y convicciones poco comunes.',
+    'Erudito':'Dedicabas tus días al estudio de textos, teorías y conocimientos transmitidos por generaciones. Te especializaste en comprender el pasado, investigar fenómenos y relacionar ideas que otros consideran inconexas. Tu curiosidad te impulsa a buscar respuestas incluso cuando hacerlo resulta peligroso.',
+    'Escriba':'Trabajaste registrando información, copiando documentos y organizando conocimientos para otros. La precisión, la paciencia y la atención al detalle son parte de tu oficio. Sabes encontrar información útil en archivos y reconocer la importancia de una palabra escrita.',
+    'Guardia':'Tu trabajo consistía en vigilar personas, edificios o lugares importantes y responder ante cualquier amenaza. Aprendiste a mantener la atención, reconocer comportamientos sospechosos y actuar con rapidez cuando surgía un peligro. La disciplina y la observación forman parte de tu rutina.',
+    'Guía':'Conoces rutas, terrenos y señales que pasan inadvertidas para quienes no están acostumbrados a viajar. Has conducido a otros a través de regiones salvajes, encontrando agua, refugio y caminos seguros. Sabes que sobrevivir depende tanto de la preparación como de entender el entorno.',
+    'Marinero':'Pasaste buena parte de tu vida a bordo de embarcaciones, enfrentando tormentas, largas travesías y trabajos exigentes. Conoces las tareas de cubierta, la vida en puerto y la camaradería necesaria para mantener una tripulación unida. El mar te enseñó a adaptarte cuando no tienes control sobre las circunstancias.',
+    'Noble':'Naciste o fuiste incorporado a una familia de posición e influencia. Recibiste educación, conociste las normas de etiqueta y aprendiste cómo funcionan las alianzas, las herencias y las disputas de poder. Estás familiarizado con los privilegios de tu posición, pero también con las obligaciones y rivalidades que conlleva.',
+    'Soldado':'Recibiste entrenamiento militar y formaste parte de una fuerza organizada. Conoces la disciplina, las órdenes, la vida en campaña y la cooperación necesaria para sobrevivir en combate. La experiencia te enseñó a mantenerte firme bajo presión y a confiar en quienes luchan a tu lado.',
+    'Vagabundo':'Creciste viajando o viviendo en los márgenes de la sociedad, dependiendo de tu ingenio para encontrar comida y refugio. Aprendiste a pasar desapercibido, reconocer oportunidades y desconfiar de los caminos fáciles. La libertad tiene un precio, y sabes cómo sobrevivir cuando nadie espera ayudarte.'
+  };
   const BUILDER_FEATS = ['Alerta','Afortunado','Atacante salvaje','Duro','Fabricante','Habilidoso','Iniciado en la magia (Clérigo)','Iniciado en la magia (Druida)','Iniciado en la magia (Mago)','Matón de taberna','Músico','Sanador'];
   const BUILDER_EPIC_FEATS = ['Don de la fortaleza','Don de la habilidad','Don de la pericia en combate','Don de la recuperación','Don de la resistencia a energías','Don de la velocidad','Don de la visión verdadera','Don del ataque imparable','Don del destino','Don del espíritu de la noche','Don del recuerdo de conjuros','Don del viaje dimensional'];
   function builderEpicFeatAbilities(feat:string):string[] {
@@ -2004,7 +2026,7 @@
       builderStepError=''; builderStep+=1; keepBuilderAtTop();
     }
   }
-  function builderBack() { if(builderStep>0){if(builderStep===2&&builderClassChosen){builderClassSlideIndex=Math.max(0,BUILDER_CLASSES.indexOf(builderData.className));}builderStep-=1;builderStepError='';keepBuilderAtTop();} }
+  function builderBack() { if(builderStep>0){if(builderStep===2&&builderClassChosen){builderClassSlideIndex=Math.max(0,BUILDER_CLASSES.indexOf(builderData.className));}if(builderStep===3&&builderBackgroundChosen){builderBackgroundSlideIndex=Math.max(0,BUILDER_BACKGROUNDS.indexOf(builderData.background));}builderStep-=1;builderStepError='';keepBuilderAtTop();} }
   const WEAPON_PROFILES: Record<string,{damage:string;damageType:string;category:'simple'|'martial';ability:'strength'|'dexterity'|'finesse';properties:string}> = {
     'Garrote':{damage:'1d4',damageType:'contundente',category:'simple',ability:'strength',properties:'Ligera'},
     'Daga':{damage:'1d4',damageType:'perforante',category:'simple',ability:'finesse',properties:'Sutil, ligera, arrojadiza (6/18 m)'},
@@ -5704,19 +5726,22 @@ import ITEMS from './items.json';
               
 
               
-              <h4>Elige un trasfondo</h4>
-              <div class="builder-class-grid builder-background-grid">
-                {#each BUILDER_BACKGROUNDS as item}
-                  <label class="builder-class-card builder-option-card" class:selected={builderBackgroundChosen && builderData.background === item}>
-                    <input type="radio" name="builder-background" value={item} checked={builderBackgroundChosen && builderData.background === item} on:change={() => builderChooseBackground(item)} />
-                    <span class="builder-class-card-heading"><strong>{item}</strong><span>Trasfondo</span></span>
-                    <span class="builder-class-description">Tu experiencia como {item.toLocaleLowerCase()} determina competencias, dote de origen y equipo.</span>
-                    <span class="builder-class-meta"><span>Características</span><strong>{BUILDER_BACKGROUND_DATA[item].abilities.join(' · ')}</strong></span>
-                    <span class="builder-class-meta"><span>Habilidades</span><strong>{BUILDER_BACKGROUND_DATA[item].skills.join(' · ')}</strong></span>
-                    <span class="builder-class-meta"><span>Dote</span><strong>{BUILDER_BACKGROUND_DATA[item].feat}</strong></span>
-                  </label>
-                {/each}
-              </div>
+              <section class="builder-background-flyer" aria-label={'Información del trasfondo '+BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}>
+                <div class="builder-background-title-row">
+                  <button type="button" class="builder-class-arrow" aria-label="Trasfondo anterior" on:click={()=>builderMoveBackground(-1)}>‹</button>
+                  <h4>{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
+                  <button type="button" class="builder-class-arrow" aria-label="Trasfondo siguiente" on:click={()=>builderMoveBackground(1)}>›</button>
+                </div>
+                <p class="builder-background-description">{BUILDER_BACKGROUND_GUIDANCE[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}</p>
+                <div class="builder-background-details">
+                  <div class="builder-class-flyer-detail"><span>Características</span><strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].abilities.join(' · ')}</strong></div>
+                  <div class="builder-class-flyer-detail"><span>Habilidades</span><strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].skills.join(' · ')}</strong></div>
+                  <div class="builder-class-flyer-detail"><span>Dote de origen</span><strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].feat}</strong></div>
+                  <div class="builder-class-flyer-detail"><span>Herramienta</span><strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].tool}</strong></div>
+                </div>
+                <p class="builder-background-equipment"><strong>Equipo inicial:</strong> {BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].equipmentA}</p>
+                <span class="builder-background-counter">{builderBackgroundSlideIndex+1} de {BUILDER_BACKGROUNDS.length}</span>
+              </section>
               {#if builderBackgroundChosen}
               {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
                 <div class="builder-choice-wrapper"><strong>Elecciones de la dote {BUILDER_BACKGROUND_DATA[builderData.background].feat}</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Opciones de la dote del trasfondo</strong><span>{builderData.backgroundFeatChoices.length}/{3}</span></div><div class="builder-checkbox-grid">{#each builderFeatChoiceOptions(BUILDER_BACKGROUND_DATA[builderData.background].feat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<label class="builder-checkbox"><input type="checkbox" checked={builderData.backgroundFeatChoices.includes(choice)} on:change={(event) => builderToggleChoice('backgroundFeatChoices',choice,3,event)} disabled={!builderData.backgroundFeatChoices.includes(choice) && builderData.backgroundFeatChoices.length >= (3)} /><span>{choice}</span>{#if builderSkillDescription(choice)}<small class="builder-skill-description">{builderSkillDescription(choice)}</small>{/if}</label>{/each}</div></div></div>
@@ -7363,6 +7388,17 @@ import ITEMS from './items.json';
   :global(.nautical-skills .sheet-stat .skill-number){font-size:1.25rem!important;font-weight:800!important;line-height:1.2!important;text-align:center!important;justify-self:center}
  
   /* Ficha informativa y navegación de clases */
+  .builder-background-flyer{box-sizing:border-box;display:flex;flex-direction:column;gap:1rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;overflow:hidden}
+  .builder-background-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%}
+  .builder-background-title-row h4{margin:0;color:#fff;font:700 1.35rem Georgia,serif;text-align:center}
+  .builder-background-description{flex:1 1 auto;min-height:0;margin:0;padding:.25rem .2rem;color:#e0e7e9;font:400 .98rem/1.8 system-ui,sans-serif;line-height:1.8;overflow-y:auto}
+  .builder-background-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem 1rem;padding:.85rem 0;border-top:1px solid #668087;border-bottom:1px solid #668087}
+  .builder-background-details .builder-class-flyer-detail{min-width:0;max-width:none;padding:0;border:0}
+  .builder-background-details .builder-class-flyer-detail strong{font-size:.86rem;line-height:1.5;overflow-wrap:anywhere}
+  .builder-background-equipment{flex:0 0 auto;max-height:78px;margin:0;color:#d1dadd;font:.82rem/1.55 system-ui,sans-serif;overflow-y:auto}
+  .builder-background-equipment strong{color:#5fe6e0}
+  .builder-background-counter{align-self:center;color:#b5bec3;font:.7rem system-ui,sans-serif}
+  @media(max-width:460px){.builder-background-flyer{height:650px;min-height:650px;padding:.9rem;gap:.8rem}.builder-background-title-row{grid-template-columns:40px minmax(0,1fr) 40px;gap:.45rem}.builder-background-title-row h4{font-size:1.15rem}.builder-background-description{font-size:.9rem;line-height:1.7}.builder-background-details{gap:.65rem}.builder-background-details .builder-class-flyer-detail strong{font-size:.78rem}}
   .builder-class-flyer{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1rem 1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;text-align:center;overflow:hidden}
   .builder-class-emblem{display:block;flex:0 0 166px;width:116px;height:166px;object-fit:contain;image-rendering:pixelated}
   .builder-class-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;flex:0 0 44px;width:100%;max-width:430px}
