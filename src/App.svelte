@@ -1365,7 +1365,7 @@
     'Clérigo':{equipmentA:'Camisa de malla, escudo, maza, paquete de sacerdote, símbolo sagrado y 7 po.',equipmentB:'110 po.',features:'Lanzamiento de conjuros (3 trucos, 4 conjuros preparados y 2 espacios de nivel 1); Orden divina.',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:3,spells:4,slots:2,spellbook:0,specialLabel:'Orden divina',specialOptions:['Protector','Taumaturgo']},
     'Druida':{equipmentA:'Armadura de cuero, escudo, hoz, canalizador druídico (bastón), paquete de explorador, útiles de herborista y 9 po.',equipmentB:'50 po.',features:'Lanzamiento de conjuros (2 trucos, 4 conjuros preparados y 2 espacios de nivel 1); Druídico (Hablar con los animales siempre preparado); Orden primigenia.',tool:'Útiles de herborista.',weaponCount:0,cantrips:2,spells:4,slots:2,spellbook:0,specialLabel:'Orden primigenia',specialOptions:['Guardián','Naturalista']},
     'Explorador':{equipmentA:'Armadura de cuero tachonado, cimitarra, espada corta, arco largo, 20 flechas, aljaba, canalizador druídico (rama de muérdago), paquete de explorador y 7 po.',equipmentB:'150 po.',features:'Lanzamiento de conjuros (2 conjuros preparados y 2 espacios de nivel 1); Enemigo predilecto (Marca del cazador siempre preparada); Maestría con armas (2 tipos).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:2,cantrips:0,spells:2,slots:2,spellbook:0,specialLabel:'',specialOptions:[]},
-    'Guerrero':{equipmentA:'Cota de malla, espadón, mangual, 8 jabalinas, paquete de explorador de mazmorras y 4 po.',equipmentB:'Armadura de cuero tachonado, cimitarra, espada corta, arco largo, 20 flechas, aljaba, paquete de explorador de mazmorras y 11 po.',features:'Estilo de combate (elige una dote de estilo de combate); Maestría con armas (3 tipos); Tomar aliento (2 usos).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:3,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'Estilo de combate',specialOptions:['Combate con armas a dos manos','Combate con armas arrojadizas','Combate con dos armas','Combate sin armas','Defensa','Duelo','Intercepción','Lucha a ciegas','Protección','Tiro con arco']},
+    'Guerrero':{equipmentA:'Cota de malla, espadón, mangual, 8 jabalinas, paquete de explorador de mazmorras y 4 po.',equipmentB:'Armadura de cuero tachonado, cimitarra, espada corta, arco largo, 20 flechas, aljaba, paquete de explorador de mazmorras y 11 po.',features:'Estilo de combate (elige una dote de estilo de combate); Maestría con armas (3 tipos); Tomar aliento (2 usos).',tool:'Ninguna competencia con herramientas de clase.',weaponCount:3,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'Estilo de combate',specialOptions:['Combate con armas a dos manos','Combate con armas arrojadizas','Diestro con dos armas','Combate sin armas','Defensa','Duelo','Intercepción','Lucha a ciegas','Protección','Tiro con arco']},
     'Hechicero':{equipmentA:'Lanza, 2 dagas, canalizador arcano (cristal), paquete de explorador de mazmorras y 28 po.',equipmentB:'50 po.',features:'Lanzamiento de conjuros (4 trucos, 2 conjuros preparados y 2 espacios de nivel 1); Hechicería innata.',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:4,spells:2,slots:2,spellbook:0,specialLabel:'',specialOptions:[]},
     'Mago':{equipmentA:'2 dagas, canalizador arcano (bastón), libro de conjuros, paquete de erudito, túnica y 5 po.',equipmentB:'55 po.',features:'Lanzamiento de conjuros (3 trucos, libro con 6 conjuros de nivel 1, 4 preparados y 2 espacios); Adepto en rituales; Recuperación arcana.',tool:'Ninguna competencia con herramientas de clase.',weaponCount:0,cantrips:3,spells:4,slots:2,spellbook:6,specialLabel:'',specialOptions:[]},
     'Monje':{equipmentA:'Lanza, 5 dagas, herramientas de artesano o instrumento musical elegido, paquete de explorador y 11 po.',equipmentB:'50 po.',features:'Artes marciales; Defensa sin armadura.',tool:'Elige herramientas de artesano o un instrumento musical.',weaponCount:0,cantrips:0,spells:0,slots:0,spellbook:0,specialLabel:'',specialOptions:[]},
@@ -2696,10 +2696,15 @@ import ITEMS from './items.json';
   const LEVEL_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
   const LEVEL_XP_THRESHOLDS: Record<number,number> = {1:0,2:300,3:900,4:2700,5:6500,6:14000,7:23000,8:34000,9:48000,10:64000,11:85000,12:100000,13:120000,14:140000,15:165000,16:195000,17:225000,18:265000,19:305000,20:355000};
   const BARBARIAN_GENERAL_FEATS = ['Actor','Atleta','Cargador','Chef','Experto en ballestas','Aplastador','Duelista defensivo','Combate con dos armas','Resistente','Luchador','Gran maestro de armas','Muy acorazado','Maestro de armaduras pesadas','Líder inspirador','Mente aguda','Ligeramente acorazado','Asesino de magos','Entrenamiento con armas marciales','Maestro de armaduras medias','Moderadamente acorazado','Combatiente montado','Observador','Perforador','Envenenador','Maestro de armas de asta','Resiliente','Lanzador ritual','Centinela','Toque sombrío','Francotirador','Maestro del escudo','Experto en habilidades','Sigiloso','Cortador','Veloz','Telequinético','Telepático','Maestro de armas'];
+  function getCharacterExperience(target:RawSheet):number {
+    const raw=getCharacterStat(target,'PERSONAJE','Experiencia') || '0';
+    const digits=String(raw).replace(/[^0-9]/g,'');
+    return digits ? Number(digits) : 0;
+  }
   function getBarbarianGeneralFeatOptions(target:RawSheet):string[] {
     const score=(ability:string)=>getCharacterNumber(target,'ATRIBUTOS',ability,10);
     const hasAny=(...abilities:string[])=>abilities.some(ability=>score(ability)>=13);
-    const existing=normalizeLevelText([getCharacterStat(target,'RASGOS Y DOTES','Dote de origen'),getCharacterStat(target,'RASGOS Y DOTES','Dotes adicionales')].join('; '));
+    const existing=splitChoiceList([getCharacterStat(target,'RASGOS Y DOTES','Dote de origen'),getCharacterStat(target,'RASGOS Y DOTES','Dotes adicionales')].join('; ')).map(normalizeLevelText);
     const requirements:Record<string,()=>boolean>={
       'Actor':()=>score('Carisma')>=13,
       'Atleta':()=>hasAny('Fuerza','Destreza'),
@@ -2708,7 +2713,7 @@ import ITEMS from './items.json';
       'Experto en ballestas':()=>score('Destreza')>=13,
       'Aplastador':()=>hasAny('Fuerza','Destreza'),
       'Duelista defensivo':()=>score('Destreza')>=13,
-      'Combate con dos armas':()=>hasAny('Fuerza','Destreza'),
+      'Diestro con dos armas':()=>hasAny('Fuerza','Destreza'),
       'Resistente':()=>score('Constitución')>=13,
       'Luchador':()=>hasAny('Fuerza','Destreza'),
       'Gran maestro de armas':()=>score('Fuerza')>=13,
@@ -5634,9 +5639,7 @@ import ITEMS from './items.json';
               {#if getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).features.length || getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.length}
                 <div class="subclass-level-preview"><strong>Desbloqueo de especie</strong>{#each getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).features as feature}<div><b>{feature.name}</b><p>{feature.description}</p></div>{/each}{#if getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.length}<p>Conjuros que se añadirán automáticamente: {getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.join(', ')}.</p>{/if}</div>
               {/if}
-              {@const nextLevelNumber=Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1}
-              {@const xpCurrent=getCharacterNumber(levelUpEntry.sheet,'PERSONAJE','Experiencia',0)}
-              <div class="subclass-level-preview"><strong>Experiencia</strong><p>Experiencia acumulada: {xpCurrent.toLocaleString('es-CL')} PX. Se conservará al subir de nivel.</p><p>Umbral para nivel {nextLevelNumber}: {(LEVEL_XP_THRESHOLDS[nextLevelNumber] ?? 0).toLocaleString('es-CL')} PX.</p></div>
+              <div class="subclass-level-preview"><strong>Experiencia</strong><p>Experiencia acumulada: {getCharacterExperience(levelUpEntry.sheet).toLocaleString('es-CL')} PX. Se conservará al subir de nivel.</p><p>Umbral para nivel {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1}: {(LEVEL_XP_THRESHOLDS[Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1] ?? 0).toLocaleString('es-CL')} PX.</p></div>
               {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro' && getNextLevelRowSafe(levelUpEntry)?.resources}
                 <div class="subclass-level-preview"><strong>Recursos que se actualizarán desde la tabla del Bárbaro</strong>{#each Object.entries(getNextLevelRowSafe(levelUpEntry)?.resources || {}) as resource}<p><b>{resource[0]}:</b> {resource[1]}</p>{/each}</div>
               {/if}
