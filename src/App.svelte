@@ -7301,10 +7301,18 @@ import ITEMS from './items.json';
   .combat-toolbar label,.combat-initiative label{display:flex;gap:8px;align-items:center;font-size:12px}
   .combat-toolbar select,.combatant-card input{min-width:0;background:#0b171d;color:#fff;border:1px solid #3fb8b8;border-radius:5px;padding:6px}
   .combat-sort input{width:auto}
-  .combat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start}
-  @media(max-width:1050px){.combat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:650px){.combat-grid{grid-template-columns:minmax(0,1fr)}}
-  .combatant-card{position:relative;min-width:0;padding:12px;border:1px solid #3fb8b8;border-radius:9px;background:#0b171d;color:#fff}
+  .combat-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px;align-items:start;width:100%;min-width:0}
+  .combatant-card{position:relative;min-width:0;width:100%;box-sizing:border-box;padding:8px;border:1px solid #3fb8b8;border-radius:9px;background:#0b171d;color:#fff;overflow-wrap:anywhere}
+  .combatant-card .combatant-name{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
+  .combatant-card .combatant-vitals{gap:4px;font-size:11px}
+  .combatant-card .combat-ac input,.combatant-card .combat-hp input{width:38px;padding:4px 2px}
+  .combatant-card .combatant-tools button,.combatant-card .combat-hp button,.combatant-card .combat-temp button{padding:3px 5px;font-size:11px}
+  .combatant-card .combat-damage-tools{grid-template-columns:minmax(0,1fr) auto auto;gap:3px}
+  .combatant-card .combat-damage-tools button{padding:5px 5px;font-size:10px}
+  .combatant-card .combat-initiative{gap:4px;font-size:11px}
+  .combatant-card .combat-initiative input{width:38px}
+  .combatant-card .combat-action-row{font-size:11px;overflow-wrap:anywhere}
+  .combatant-card .combat-action-row button{padding:5px;font-size:10px}
   .combatant-card.combat-dead{opacity:.58;filter:grayscale(.65)}
   .combatant-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
   .combatant-name{flex:1;font-weight:800;font-size:15px}
