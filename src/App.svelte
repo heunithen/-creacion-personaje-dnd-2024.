@@ -3651,6 +3651,23 @@ import ITEMS from './items.json';
     notice = 'Copia local eliminada: ' + (entry.sheet?.name || entry.playerName) + '.';
   }
 
+  function exportMasterCopy(entry: RoomEntry) {
+    const json = JSON.stringify(entry.sheet, null, 2);
+    const safeName = (entry.sheet?.name || entry.playerName || 'personaje')
+      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'personaje';
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = safeName + '.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    notice = 'Copia exportada como ' + safeName + '.json';
+  }
+
   function receiveLiveCharacter(entry: RoomEntry) {
     liveRoomSheets = [...liveRoomSheets.filter(item => item.playerId !== entry.playerId), { ...entry, live: true }];
     const existingCopy = savedMasterSheets.find(item => item.playerId === entry.playerId);
@@ -3870,7 +3887,7 @@ import ITEMS from './items.json';
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · {entry.live ? 'Conectado' : 'Copia local'}</p></div>
                 <div class="actions">
                   {#if entry.saved}<span class="muted">✓ Copia guardada</span>{:else}<button class="primary" on:click={() => saveMasterCopy(entry)}>Guardar ficha</button>{/if}
-                  {#if entry.saved}<button class="secondary" on:click={() => deleteMasterCopy(entry)}>Eliminar copia</button>{/if}
+                  {#if entry.saved}<button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar copia</button><button class="secondary" on:click={() => deleteMasterCopy(entry)}>Eliminar copia</button>{/if}
                 </div>
                 <details class="gm-sheet-details">
                   <summary>Ver ficha</summary>
