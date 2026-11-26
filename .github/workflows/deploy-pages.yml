@@ -41,6 +41,34 @@ jobs:
             git commit -m 'Convert NWN portraits to WebP'
             git push
           fi
+      - name: Split class pin sheet into individual emblems
+        run: |
+          python -m pip install --quiet Pillow
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          source = Path('public/images/character-creation/classes/dungeons-dragons-limited-edition-class-pin-set-809158_900x_1d4036a4-3e79-4c87-83ce-4b621601ba1d_1024x.webp')
+          output = Path('public/images/character-creation/classes/individual')
+          output.mkdir(parents=True, exist_ok=True)
+          # 4 columnas x 3 filas; cada recorte incluye el emblema completo y su marco.
+          x_positions = [118, 318, 518, 718]
+          y_positions = [48, 348, 668]
+          with Image.open(source) as original:
+              image = original.convert('RGBA')
+              for row, top in enumerate(y_positions, start=1):
+                  for col, left in enumerate(x_positions, start=1):
+                      crop = image.crop((left, top, left + 180, top + 280))
+                      crop.save(output / f'class-emblem-{(row-1)*4+col:02d}.webp',
+                                'WEBP', quality=92, method=6)
+          print('Created 12 individual class emblems.')
+          PY
+          if git status --short | grep -q 'public/images/character-creation/classes/individual/'; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add public/images/character-creation/classes/individual/
+            git commit -m 'Split class pin sheet into individual emblems'
+            git push
+          fi
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
