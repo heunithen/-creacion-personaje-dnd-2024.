@@ -915,7 +915,7 @@
   let cloudStatus = 'Almacenamiento GitHub sin configurar.';
 
   type BuilderData = {
-    name: string; player: string; age: string; height: string; appearance: string; personality: string; ideals: string; bonds: string; flaws: string; className: string; species: string; background: string;
+    name: string; player: string; portrait: string; age: string; height: string; appearance: string; personality: string; ideals: string; bonds: string; flaws: string; className: string; species: string; background: string;
     alignment: string; method: string; abilities: Record<string, number>; feat: string;
     abilityIncreaseMode: 'two' | 'three'; abilityIncrease2: string; abilityIncrease1: string;
     abilityIncrease3: string; backgroundEquipment: 'A' | 'B'; backgroundToolChoice: string; classEquipmentChoice: string;
@@ -1212,7 +1212,7 @@
   let demoPreview = false;
   let builderSaving = false;
   const createInitialBuilderData = (): BuilderData => ({
-    name: '', player: '', age: '', height: '', appearance: '', personality: '', ideals: '', bonds: '', flaws: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
+    name: '', player: '', portrait: '', age: '', height: '', appearance: '', personality: '', ideals: '', bonds: '', flaws: '', className: 'Guerrero', species: 'Humano', background: 'Soldado',
     alignment: 'Neutral', method: 'standard',
     abilities: { Fuerza: 15, Destreza: 14, Constitución: 13, Inteligencia: 12, Sabiduría: 10, Carisma: 8 },
     feat: 'Atacante salvaje', abilityIncreaseMode: 'two', abilityIncrease2: 'Fuerza', abilityIncrease1: 'Destreza', abilityIncrease3: 'Constitución', backgroundEquipment: 'A', backgroundToolChoice: '', classEquipmentChoice: 'A', classSkillChoices: [], classToolsChoices: [], classSpecialChoice: '', classExpertise: [], weaponMasteries: [], selectedCantrips: [], selectedSpells: [], wizardSpellbook: [], speciesChoice: '', speciesMagicAbility: '', speciesSkill: '', speciesExtraFeat: 'Habilidoso', speciesSize: '', speciesBreathShape: 'Cono', backgroundFeatChoices: [], speciesFeatChoices: [], languages: [], rogueLanguage: '', backgroundMagicCantrips: [], backgroundMagicSpell: '', backgroundMagicAbility: 'Inteligencia', warlockTomeCantrips: [], warlockTomeRituals: [], speciesMagicCantrips: [], speciesMagicSpell: '', speciesFeatMagicAbility: 'Inteligencia', skills: '', tools: '', equipment: '', traits: '', spells: '', notes: ''
@@ -1223,6 +1223,7 @@
     builderData.player = playerName || '';
     builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
+  const BUILDER_PORTRAITS: string[] = [];
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_CLASS_GUIDANCE: Record<string,string> = {
     'Bárbaro':'Combatiente resistente que canaliza la furia para dominar el combate cuerpo a cuerpo.',
@@ -2187,7 +2188,7 @@
 
     const spellNames=[...b.selectedCantrips,...speciesCantrips,...(b.species==='Gnomo'&&b.speciesChoice==='Gnomo de los bosques'?['Hablar con los animales']:[]),...b.backgroundMagicCantrips,...(b.species==='Humano'?b.speciesMagicCantrips:[]),...b.warlockTomeCantrips,...b.selectedSpells,...b.wizardSpellbook,b.backgroundMagicSpell,...(b.species==='Humano'?[b.speciesMagicSpell]:[]),...(b.className==='Explorador'?['Marca del cazador']:[]),...(b.className==='Brujo'&&b.classSpecialChoice==='Pacto del grimorio'?b.warlockTomeRituals:[])].filter(Boolean);
     put(detailSpellsIndex,0,describeSpells(spellNames));
-    const result={id:Date.now(),name:b.name || 'Personaje sin nombre',notes:'Personaje de nivel 1 creado desde el asistente de creación del jugador. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
+    const result={id:Date.now(),name:b.name || 'Personaje sin nombre',portrait:b.portrait || '',notes:'Personaje de nivel 1 creado desde el asistente de creación del jugador. La ficha conserva elecciones, progresión y descripciones disponibles en los datos del Manual del Jugador 2024.',sections:pairs.flatMap(p=>[p.heading,p.values])} as RawSheet;
     if(b.className==='Paladín') setCharacterStat(result,'RASGOS Y DOTES','Reserva de Imposición de manos','5 PG');
     refreshDerivedCharacterSheet(result);
     return result;
@@ -5436,7 +5437,21 @@ import ITEMS from './items.json';
               <h3>01. Concepto del personaje</h3>
               <p class="muted">Primero identifica a tu aventurero. Estos datos no modifican sus capacidades.</p>
               <div class="builder-info"><strong>Jugador</strong><p>{playerName || 'Nombre disponible al abrir la Forja desde Owlbear Rodeo'}</p></div>
-              <div class="builder-info"><strong>Imagen del personaje</strong><p>Podrás cargar un retrato más adelante o dejarlo para después.</p></div>
+              <section class="builder-portrait-picker" aria-label="Elegir retrato del personaje">
+                <div class="builder-portrait-heading"><strong>Retrato del personaje</strong><button type="button" class:active={!builderData.portrait} on:click={() => builderData.portrait = ''}>Sin retrato</button></div>
+                {#if BUILDER_PORTRAITS.length}
+                  <div class="builder-portrait-grid">
+                    {#each BUILDER_PORTRAITS as portrait}
+                      <button type="button" class="builder-portrait-option" class:selected={builderData.portrait === portrait} aria-label="Elegir retrato" aria-pressed={builderData.portrait === portrait} on:click={() => builderData.portrait = portrait}>
+                        <img src={portrait} alt="Retrato disponible" loading="lazy" />
+                        {#if builderData.portrait === portrait}<span class="builder-portrait-check">✓</span>{/if}
+                      </button>
+                    {/each}
+                  </div>
+                {:else}
+                  <p class="muted">Todavía no hay retratos disponibles. Cuando agregues imágenes a <code>public/images/character-creation/portraits/</code>, aparecerán aquí.</p>
+                {/if}
+              </section>
               <p class="hint">No necesitas completar todos los detalles narrativos ahora.</p>
             {:else if builderStep===1}
               <h3>02. Elige tu clase</h3>
@@ -5773,7 +5788,7 @@ import ITEMS from './items.json';
       {#if sheet && !playerCreating}
         <article class="character-sheet nautical-sheet">
           <header class="sheet-banner ddb-character-header nautical-header">
-            <div class="portrait-frame" aria-hidden="true"><span>✦</span></div>
+            <div class="portrait-frame">{#if sheet.portrait}<img src={String(sheet.portrait)} alt="Retrato de {sheet.name || 'personaje'}" />{:else}<span>✦</span>{/if}</div>
             <div class="sheet-banner-copy">
               <span class="sheet-kicker">D&D · 2024</span>
               <h1 class="character-name">{sheet.name || 'Personaje'}</h1>
@@ -6548,7 +6563,7 @@ import ITEMS from './items.json';
 
 <style>
   :global(:root){--paper:#13262e;--paper-deep:#1b2a33;--ink:#ffffff;--ink-soft:#b5bec3;--rule:#3a4a52;--red:#3fb8b8;--gold:#5fe6e0}
-  .builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#1b2a33;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(95,230,224,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}/* La hoja de personaje conserva su propia cuadrícula; no hereda el diseño del formulario de creación. */
+  .builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#1b2a33;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s} .builder-portrait-picker{padding:.8rem;border:1px solid var(--rule);border-radius:5px;background:rgba(95,230,224,.18)}.builder-portrait-heading{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.7rem}.builder-portrait-heading button{border:1px solid var(--rule);border-radius:4px;padding:.35rem .6rem;background:transparent;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}.builder-portrait-heading button.active{border-color:var(--gold);color:var(--gold)}.builder-portrait-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:.55rem}.builder-portrait-option{position:relative;aspect-ratio:1;border:2px solid var(--rule);border-radius:5px;padding:0;overflow:hidden;background:#17232b;cursor:pointer}.builder-portrait-option.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(213,174,91,.25)}.builder-portrait-option img{display:block;width:100%;height:100%;object-fit:cover}.builder-portrait-check{position:absolute;right:.25rem;top:.25rem;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--gold);color:#17232b;font-weight:800;display:grid;place-items:center}.portrait-frame img{width:100%;height:100%;object-fit:cover;border-radius:inherit}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(95,230,224,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}/* La hoja de personaje conserva su propia cuadrícula; no hereda el diseño del formulario de creación. */
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
