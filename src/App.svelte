@@ -1385,6 +1385,7 @@
     builderBackgroundChosen=true;
     builderData.background=value;
     builderData.classSkillChoices=[];
+    builderData.classToolsChoices=[];
     builderData.classExpertise=[];
     builderData.backgroundToolChoice=(BUILDER_BACKGROUND_TOOL_OPTIONS[value]?.length===1?BUILDER_BACKGROUND_TOOL_OPTIONS[value][0]:'');
     builderData.backgroundFeatChoices=[];
@@ -1409,6 +1410,7 @@
     builderData.speciesMagicCantrips=[];
     builderData.speciesMagicSpell='';
     builderData.classSkillChoices=[];
+    builderData.classToolsChoices=[];
     builderData.classExpertise=[];
   }
   function builderSpellInfo(name:string):any {
@@ -1898,11 +1900,16 @@
     else if (builderData.method === 'pointBuy') builderData.abilities = Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,8]));
     else if (builderData.method === 'rolled') builderResetRolledScores();
   }
-  function builderAdjustedAbilities() {
+  function builderRawAdjustedAbilities() {
     const result = {...builderData.abilities};
-    const add = (name:string,amount:number) => { if(name && Object.prototype.hasOwnProperty.call(result,name)) result[name] = Math.min(20,Number(result[name] || 8)+amount); };
+    const add = (name:string,amount:number) => { if(name && Object.prototype.hasOwnProperty.call(result,name)) result[name] = Number(result[name] || 8)+amount; };
     if(builderData.abilityIncreaseMode === 'two') { add(builderData.abilityIncrease2,2); add(builderData.abilityIncrease1,1); }
     else { add(builderData.abilityIncrease2,1); add(builderData.abilityIncrease1,1); add(builderData.abilityIncrease3,1); }
+    return result;
+  }
+  function builderAdjustedAbilities() {
+    const result=builderRawAdjustedAbilities();
+    for(const name of BUILDER_ABILITY_NAMES) result[name]=Math.min(20,Number(result[name]));
     return result;
   }
   function builderStartingAC() {
@@ -1973,7 +1980,7 @@
       add(speciesChoices.length>0&&!speciesChoices.includes(builderData.speciesChoice),'Linaje o variante de especie.');
       add(['Aasimar','Humano','Tiefling'].includes(builderData.species)&&!['Pequeño','Mediano'].includes(builderData.speciesSize),'Tamaño de la especie.');
       add(['Elfo','Gnomo','Tiefling'].includes(builderData.species)&&!['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility),'Aptitud mágica de linaje.');
-      add(['Elfo','Humano'].includes(builderData.species)&&(!BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill)||background.skills.includes(builderData.speciesSkill)),'Habilidad adicional de especie.');
+      add(['Elfo','Humano'].includes(builderData.species)&&(!BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill)||background.skills.includes(builderData.speciesSkill)||featSkills.includes(builderData.speciesSkill)),'Habilidad adicional de especie: debe ser válida y no repetir una competencia del trasfondo o de una dote.');
       if(builderData.species==='Humano') {
         const options=builderFeatChoiceOptions(builderData.speciesExtraFeat);
         add(!builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell),'Elecciones de la dote de origen adicional humana.');
@@ -1994,8 +2001,8 @@
         ? allowed.includes(builderData.abilityIncrease2)&&allowed.includes(builderData.abilityIncrease1)&&builderData.abilityIncrease1!==builderData.abilityIncrease2
         : builderData.abilityIncreaseMode==='three'&&allowed.includes(builderData.abilityIncrease1)&&allowed.includes(builderData.abilityIncrease2)&&allowed.includes(builderData.abilityIncrease3)&&new Set([builderData.abilityIncrease1,builderData.abilityIncrease2,builderData.abilityIncrease3]).size===3;
       add(!valid,'Distribución de aumentos de característica del trasfondo.');
-      const adjusted=builderAdjustedAbilities();
-      add(!adjusted||BUILDER_ABILITY_NAMES.some(name=>adjusted[name]>20),'Los aumentos del trasfondo no pueden superar 20 en ninguna característica.');
+      const adjusted=builderRawAdjustedAbilities();
+      add(!adjusted||BUILDER_ABILITY_NAMES.some(name=>!Number.isFinite(Number(adjusted[name]))||Number(adjusted[name])>20),'Los aumentos del trasfondo no pueden superar 20 en ninguna característica.');
     }
 
     if(step===6) {
@@ -2003,9 +2010,13 @@
       const validSkills=selected.length===BUILDER_CLASS_SKILLS[builderData.className].count&&new Set(selected).size===selected.length&&selected.every(skill=>BUILDER_CLASS_SKILLS[builderData.className].options.includes(skill)&&!background.skills.includes(skill)&&skill!==builderData.speciesSkill&&!featSkills.includes(skill));
       add(!validSkills,'Competencias de habilidad de clase: revisa la cantidad, las opciones y que no se repitan competencias.');
       add(cls.weaponCount>0&&(builderData.weaponMasteries.length!==cls.weaponCount||new Set(builderData.weaponMasteries).size!==builderData.weaponMasteries.length||!builderData.weaponMasteries.every(name=>BUILDER_WEAPON_MASTERY_OPTIONS.includes(name))),'Maestrías con armas: revisa la cantidad y elimina opciones repetidas o inválidas.');
+      const allSkillChoices=[...background.skills,...selected,builderData.speciesSkill,...featSkills].filter(Boolean);
+      add(new Set(allSkillChoices).size!==allSkillChoices.length,'Competencias de habilidad: hay una habilidad repetida entre el trasfondo, la especie, la clase o las dotes.');
       const expectedTools=builderData.className==='Bardo'?3:builderData.className==='Monje'?1:0;
       const validTools=builderData.className==='Bardo'?BUILDER_MUSICAL_INSTRUMENTS:builderData.className==='Monje'?[...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS]:[];
-      add(builderData.classToolsChoices.length!==expectedTools||new Set(builderData.classToolsChoices).size!==expectedTools||!builderData.classToolsChoices.every(tool=>validTools.includes(tool)),'Competencias con herramientas de clase: revisa las opciones seleccionadas.');
+      const featTools=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_FEAT_TOOL_OPTIONS.includes(choice));
+      const allToolChoices=[builderData.backgroundToolChoice,...featTools,...builderData.classToolsChoices].filter(Boolean);
+      add(builderData.classToolsChoices.length!==expectedTools||new Set(builderData.classToolsChoices).size!==expectedTools||!builderData.classToolsChoices.every(tool=>validTools.includes(tool)&&tool!==builderData.backgroundToolChoice&&!featTools.includes(tool))||new Set(allToolChoices).size!==allToolChoices.length,'Competencias con herramientas de clase: revisa la cantidad y evita repetir herramientas del trasfondo o de las dotes.');
       add(cls.specialOptions.length>0&&!cls.specialOptions.includes(builderData.classSpecialChoice),(cls.specialLabel||'Elección especial de clase')+'.');
       const eligibleExpertise=[...background.skills,...selected,builderData.speciesSkill,...featSkills].filter(Boolean);
       add(builderData.className==='Pícaro'&&(builderData.classExpertise.length!==2||new Set(builderData.classExpertise).size!==2||!builderData.classExpertise.every(skill=>eligibleExpertise.includes(skill))),'Pericias de Pícaro: elige dos habilidades en las que ya tengas competencia.');
