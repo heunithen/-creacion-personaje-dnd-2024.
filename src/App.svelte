@@ -2281,6 +2281,25 @@ import ITEMS from './items.json';
     initiativeOrder=participants;
     activeInitiativeIndex=0;
     initiativeRound=1;
+    void publishInitiativeOrder(participants);
+  }
+  function startInitiativeAtZero():void {
+    const participants=getInitiativeParticipants();
+    if(!participants.length){initiativeOrder=[];notice='No hay participantes en el combate.';return;}
+    participants.forEach(p=>{p.roll=0;p.total=0;delete p.tieRoll;});
+    initiativeOrder=participants;
+    activeInitiativeIndex=0;
+    initiativeRound=1;
+    notice='Tracker iniciado con todos los participantes en iniciativa 0.';
+  }
+  const INITIATIVE_NOTICE_CHANNEL='com.heunithen.forja/initiative-order-notice';
+  async function publishInitiativeOrder(participants:InitiativeParticipant[]):Promise<void> {
+    const lines=participants.map((p,i)=>(i+1)+'. '+p.name+' — '+p.total);
+    const message='Orden de iniciativa\\n'+lines.join('\\n');
+    try {
+      await OBR.notification.show(message,'INFO');
+      await OBR.broadcast.sendMessage(INITIATIVE_NOTICE_CHANNEL,{message},{destination:'REMOTE'});
+    } catch(error) { console.error('No se pudo mostrar el orden de iniciativa',error); }
   }
   function moveInitiativeTurn(direction:number):void {
     if(!initiativeOrder.length)return;
@@ -4326,6 +4345,10 @@ import ITEMS from './items.json';
         if (!demoPreview) await restoreOwnSheet();
         await refreshPlayers();
         OBR.party.onChange((players: any[]) => readPlayers(players));
+        OBR.broadcast.onMessage(INITIATIVE_NOTICE_CHANNEL, (event: any) => {
+          const message=String(event.data?.message||'').trim();
+          if(message) void OBR.notification.show(message,'INFO').catch(()=>{});
+        });
         OBR.broadcast.onMessage(`${DICE_PLUS_SOURCE}/roll-error`, (event: any) => {
           const failure = event.data;
           if (!failure?.rollId || failure.rollId === lastRollId) {
@@ -4452,7 +4475,7 @@ import ITEMS from './items.json';
       {:else if masterTab === 'Iniciativa'}
         <section class="panel initiative-panel">
           <div class="section-heading"><h2>Tracker de iniciativa</h2><span class="count">Ronda {initiativeRound}</span></div>
-          <div class="initiative-toolbar"><button class="primary initiative-roll-button" type="button" on:click={rollInitiative}>🎲 Tirar iniciativa · d20</button>{#if initiativeOrder.length}<div class="initiative-turn-controls"><button class="secondary" type="button" on:click={()=>moveInitiativeTurn(-1)} aria-label="Turno anterior">←</button><strong>Turno: {initiativeOrder[activeInitiativeIndex]?.name || '—'}</strong><button class="primary" type="button" on:click={()=>moveInitiativeTurn(1)} aria-label="Siguiente turno">→</button></div>{/if}<span class="muted">Las tiradas se resuelven internamente.</span></div>
+          <div class="initiative-toolbar"><button class="primary initiative-roll-button" type="button" on:click={rollInitiative}>🎲 Tirar iniciativa · d20</button><button class="secondary" type="button" on:click={startInitiativeAtZero}>Iniciar en 0</button>{#if initiativeOrder.length}<div class="initiative-turn-controls"><button class="secondary" type="button" on:click={()=>moveInitiativeTurn(-1)} aria-label="Turno anterior">←</button><strong>Turno: {initiativeOrder[activeInitiativeIndex]?.name || '—'}</strong><button class="primary" type="button" on:click={()=>moveInitiativeTurn(1)} aria-label="Siguiente turno">→</button></div>{/if}<span class="muted">Las tiradas se resuelven internamente.</span></div>
           {#if initiativeOrder.length}
             <ol class="initiative-list">
               {#each initiativeOrder as participant,i}
