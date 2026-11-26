@@ -2232,7 +2232,9 @@ import ITEMS from './items.json';
     return match ? Number(match[0]) : 0;
   }
   function getInitiativeParticipants():InitiativeParticipant[] {
-    const players=roomSheets.filter(entry=>entry.live).map(entry=>({id:'player:'+entry.playerId,name:String(entry.sheet?.name || entry.playerName || 'Personaje'),bonus:playerInitiative(entry),roll:0,total:0}));
+    // La lista del director ya combina personajes conectados y fichas guardadas en esta sala.
+    // Se incluyen todos los personajes del roster, sin exigir que tengan el indicador live activo.
+    const players=roomSheets.map(entry=>({id:'player:'+entry.playerId,name:String(entry.sheet?.name || entry.playerName || 'Personaje'),bonus:playerInitiative(entry),roll:0,total:0}));
     const monsters=combatants.filter(c=>c.participating!==false).map(c=>({id:'monster:'+c.id,name:c.name,bonus:Number(c.initiative)||0,roll:0,total:0}));
     return [...players,...monsters];
   }
@@ -4139,9 +4141,6 @@ import ITEMS from './items.json';
       if (!payload || payload.deleted || !payload.character) return [];
       return [{ playerId: p.id, playerName: p.name || payload.playerName || 'Jugador', sheet: repairGenericStatLabels(payload.character as RawSheet) as RawSheet, live: true }];
     });
-    const liveIds=new Set(liveRoomSheets.map(entry=>'player:'+entry.playerId));
-    initiativeOrder=initiativeOrder.filter(entry=>!entry.id.startsWith('player:')||liveIds.has(entry.id));
-    if(activeInitiativeIndex>=initiativeOrder.length)activeInitiativeIndex=Math.max(0,initiativeOrder.length-1);
     liveRoomSheets.forEach(entry => {
       if (savedMasterSheets.some(copy => copy.playerId === entry.playerId)) {
         savedMasterSheets = [...savedMasterSheets.filter(copy => copy.playerId !== entry.playerId), { ...entry, saved: true, live: false }];
@@ -4149,6 +4148,9 @@ import ITEMS from './items.json';
     });
     if (liveRoomSheets.some(entry => savedMasterSheets.some(copy => copy.playerId === entry.playerId))) persistMasterCopies();
     refreshRoomSheetList();
+    const rosterIds=new Set(roomSheets.map(entry=>'player:'+entry.playerId));
+    initiativeOrder=initiativeOrder.filter(entry=>!entry.id.startsWith('player:')||rosterIds.has(entry.id));
+    if(activeInitiativeIndex>=initiativeOrder.length)activeInitiativeIndex=Math.max(0,initiativeOrder.length-1);
   }
 
   async function refreshPlayers() {
