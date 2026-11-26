@@ -1886,9 +1886,9 @@
       else if(armorFormula.startsWith('13 + DES')) ac=13+dexMod;
       else if(armorFormula.startsWith('11 + DES')) ac=11+dexMod;
       else if(armorFormula.startsWith('10 + DES')) ac=10+dexMod;
-      if(ac!==null) setCharacterStat(target,'COMBATE','Clase de armadura',String(ac));
+      if(ac!==null) setCharacterStat(target,'COMBATE','Armor Class',String(ac));
     }
-    const skillRaw=getCharacterStat(target,'COMPETENCIAS','Habilidades');
+    const skillRaw=getCharacterStat(target,'COMPETENCIAS','Skills');
     const skillText=normalizeLevelText(skillRaw);
     const expertiseMatch=String(skillRaw).match(/pericia\s*:\s*([^\n;]+)/i);
     const expertise=normalizeLevelText(expertiseMatch?.[1]||'');
@@ -1911,7 +1911,7 @@
       getCharacterStat(target,'DOTE Y OPCIONES','Dote de origen')
     ].join(' '));
     const initiative=Math.floor((scores.Destreza-10)/2)+(featText.includes('alerta')?proficiency:0);
-    setCharacterStat(target,'COMBATE','Iniciativa',signedBonus(initiative));
+    setCharacterStat(target,'COMBATE','Initiative',signedBonus(initiative));
     const perception=Math.floor((scores.Sabiduría-10)/2)+(skillText.includes('percepcion')?proficiency:0)+
       (expertise.includes('percepcion')&&skillText.includes('percepcion')?proficiency:0);
     setCharacterStat(target,'COMBATE','Percepción pasiva',10+perception);
@@ -1993,16 +1993,16 @@
     const pairs = [
       general('PERSONAJE',['Nombre','Clase','Subclase','Nivel','Especie','Trasfondo','Alineamiento','Experiencia','Jugador']),
       general('ATRIBUTOS',BUILDER_ABILITY_NAMES),
-      general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Clase de armadura','Iniciativa','Velocidad','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
+      general('COMBATE',['Puntos de golpe actuales','Puntos de golpe máximos','Dados de golpe','Armor Class','Initiative','Speed','Bonificador por competencia','Salvaciones','Fórmula de clase de armadura']),
       general('SALVACIONES',BUILDER_ABILITY_NAMES),
       general('HABILIDADES',BUILDER_SKILL_OPTIONS),
-      general('COMPETENCIAS',['Habilidades','Herramientas','Armaduras','Armas','Idiomas']),
+      general('COMPETENCIAS',['Skills','Herramientas','Armaduras','Armas','Languages']),
       general('RASGOS Y DOTES',['Rasgos de clase','Rasgos de especie','Dote de origen','Otros rasgos','Formas salvajes conocidas','Opciones de metamagia','Invocaciones sobrenaturales','Detalles de invocaciones','Maniobras de maestro del combate','Estilos de combate']),
       general('CONJUROS',['Aptitud mágica','CD de salvación','Ataque de conjuro','Trucos','Conjuros de nivel 1','Espacios de conjuro','Trucos máximos','Conjuros preparados máximos','Espacios por nivel','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Aptitud mágica de especie','CD de especie','Ataque de conjuro de especie','Conjuros de trasfondo','Aptitud mágica de trasfondo','CD de trasfondo','Ataque de conjuro de trasfondo','Conjuros de dote','Aptitud mágica de dote','CD de dote','Ataque de conjuro de dote','Trucos de subclase','Conjuros preparados de subclase','Aptitud mágica de subclase','CD de subclase','Ataque de conjuro de subclase','Trucos de estilo de combate','Aptitud mágica de estilo de combate','CD de estilo de combate','Ataque de conjuro de estilo de combate','Lista de conjuros de estilo de combate','Arcanum místico','Conjuros de escuela','Opción de Furia elemental','Opción de Golpes benditos','Maestría sobre conjuros nivel 1','Maestría sobre conjuros nivel 2','Conjuros característicos']),
       general('EQUIPO',['Equipo inicial','Monedas']),
       general('HISTORIA',['Apariencia','Rasgos de personalidad','Ideal','Vínculo','Defecto','Historia','Notas']),
       general('PROGRESIÓN',['Nivel de clase','Rasgos de clase obtenidos']),
-      general('DETALLES DEL TRASFONDO',['Aumentos de característica permitidos','Habilidades','Herramienta','Dote de origen','Equipo del trasfondo']),
+      general('DETALLES DEL TRASFONDO',['Aumentos de característica permitidos','Skills','Herramienta','Dote de origen','Equipo del trasfondo']),
       general('INVENTARIO',['Equipo de clase','Equipo de trasfondo','Equipo adicional']),
       general('ATAQUES',['Armas incluidas en el equipo','Maestrías con armas','Competencia con armas','Perfiles de ataque']),
       general('DETALLE DE CONJUROS',['Conjuros y descripciones']),
@@ -2196,8 +2196,8 @@ import ITEMS from './items.json';
   const MONSTER_ES_TERMS: [string,string][] = [
     ['BONUS ACTIONS','ACCIONES ADICIONALES'],['LEGENDARY ACTIONS','ACCIONES LEGENDARIAS'],['MYTHIC ACTIONS','ACCIONES MÍTICAS'],['REACTIONS','REACCIONES'],['ACTIONS','ACCIONES'],['TRAITS','ATRIBUTOS'],
     ['ABILITY SCORES','CARACTERÍSTICAS'],['Multiattack','Ataque múltiple'],['Melee or Ranged Attack Roll','Tirada de ataque cuerpo a cuerpo o a distancia'],['Melee Attack Roll','Tirada de ataque cuerpo a cuerpo'],['Ranged Attack Roll','Tirada de ataque a distancia'],
-    ['Saving Throw','Tirada de salvación'],['Saving Throws','Tiradas de salvación'],['Hit Points','Puntos de golpe'],['Passive Perception','Percepción pasiva'],['Darkvision','Visión en la oscuridad'],['Blindsight','Vista ciega'],['Tremorsense','Sentido de vibraciones'],['Truesight','Visión verdadera'],
-    ['Armor Class','Clase de armadura'],['Initiative','Iniciativa'],['Speed','Velocidad'],['Skills','Habilidades'],['Senses','Sentidos'],['Languages','Idiomas'],['Resistances','Resistencias'],['Immunities','Inmunidades'],['Vulnerabilities','Vulnerabilidades'],['Condition Immunities','Inmunidades a estados'],['Gear','Equipo'],['Challenge','Valor de desafío'],['Proficiency Bonus','Bonificador por competencia'],
+    ['Saving Throw','Tirada de salvación'],['Saving Throws','Tiradas de salvación'],['Hit Points','Hit Points'],['Passive Perception','Percepción pasiva'],['Darkvision','Visión en la oscuridad'],['Blindsight','Vista ciega'],['Tremorsense','Sentido de vibraciones'],['Truesight','Visión verdadera'],
+    ['Armor Class','Armor Class'],['Initiative','Initiative'],['Speed','Speed'],['Skills','Skills'],['Senses','Senses'],['Languages','Languages'],['Resistances','Resistances'],['Immunities','Immunities'],['Vulnerabilities','Vulnerabilities'],['Condition Immunities','Condition Immunities'],['Gear','Gear'],['Challenge','Challenge Rating'],['Proficiency Bonus','Bonificador por competencia'],
     ['Strength','Fuerza'],['Dexterity','Destreza'],['Constitution','Constitución'],['Intelligence','Inteligencia'],['Wisdom','Sabiduría'],['Charisma','Carisma'],
     ['Tiny','Diminuto'],['Small','Pequeño'],['Medium','Mediano'],['Large','Grande'],['Huge','Enorme'],['Gargantuan','Gargantuesco'],
     ['Aberration','Aberración'],['Beast','Bestia'],['Celestial','Celestial'],['Construct','Autómata'],['Dragon','Dragón'],['Elemental','Elemental'],['Fey','Feérico'],['Fiend','Infernal'],['Giant','Gigante'],['Humanoid','Humanoide'],['Monstrosity','Monstruosidad'],['Ooze','Cieno'],['Plant','Planta'],['Undead','Muerto viviente'],
@@ -2228,7 +2228,7 @@ import ITEMS from './items.json';
     let current: { title: string; entries: { name: string; description: string }[] } | null = null;
     const sectionNames: Record<string,string> = {'TRAITS':'Traits','ACTIONS':'Actions','BONUS ACTIONS':'Bonus Actions','REACTIONS':'Reactions','LEGENDARY ACTIONS':'Legendary Actions','MYTHIC ACTIONS':'Mythic Actions','LAIR ACTIONS':'Lair Actions'};
     const labelMap: [RegExp,string][] = [
-      [/^AC\s*/i,'Clase de armadura'],[/^HP\s*/i,'Puntos de golpe'],[/^Speed\s*/i,'Velocidad'],[/^Skills\s*/i,'Habilidades'],[/^Resistances\s*/i,'Resistencias'],[/^Immunities\s*/i,'Inmunidades'],[/^Condition Immunities\s*/i,'Inmunidades a estados'],[/^Vulnerabilities\s*/i,'Vulnerabilidades'],[/^Gear\s*/i,'Equipo'],[/^Senses\s*/i,'Sentidos'],[/^Languages\s*/i,'Idiomas'],[/^Initiative\s*/i,'Iniciativa']
+      [/^AC\s*/i,'Armor Class'],[/^HP\s*/i,'Hit Points'],[/^Speed\s*/i,'Speed'],[/^Skills\s*/i,'Skills'],[/^Resistances\s*/i,'Resistances'],[/^Immunities\s*/i,'Immunities'],[/^Condition Immunities\s*/i,'Condition Immunities'],[/^Vulnerabilities\s*/i,'Vulnerabilities'],[/^Gear\s*/i,'Gear'],[/^Senses\s*/i,'Senses'],[/^Languages\s*/i,'Languages'],[/^Initiative\s*/i,'Initiative']
     ];
     for (const line of raw) {
       if (/^CONTEXTO COMPARTIDO:/i.test(line) || line.toUpperCase() === String(monster.name).toUpperCase()) continue;
@@ -2236,8 +2236,8 @@ import ITEMS from './items.json';
       if (sectionNames[header]) { current = {title:sectionNames[header],entries:[]}; sections.push(current); continue; }
       const ability = line.match(/^(STR|DEX|CON|INT|WIS|CHA)\s+(.*)$/i);
       if (ability) {
-        const names: Record<string,string> = {STR:'Fuerza',DEX:'Destreza',CON:'Constitución',INT:'Inteligencia',WIS:'Sabiduría',CHA:'Carisma'};
-        info.push({label:names[ability[1].toUpperCase()],value:ability[2].replace(/Save/gi,'Salvación')}); continue;
+        const names: Record<string,string> = {STR:'Strength',DEX:'Dexterity',CON:'Constitution',INT:'Intelligence',WIS:'Wisdom',CHA:'Charisma'};
+        info.push({label:names[ability[1].toUpperCase()],value:ability[2].replace(/Save/gi,'Save')}); continue;
       }
       let matched = false;
       for (const [regex,label] of labelMap) {
@@ -2246,7 +2246,7 @@ import ITEMS from './items.json';
       }
       if (matched) continue;
       if (/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\b/.test(line)) { info.unshift({label:'Tipo y alineamiento',value:line}); continue; }
-      if (/^CR\s/i.test(line)) { info.push({label:'Valor de desafío',value:translateMonsterText(line.replace(/^CR\s*/i,''))}); continue; }
+      if (/^CR\s/i.test(line)) { info.push({label:'Challenge Rating',value:translateMonsterText(line.replace(/^CR\s*/i,''))}); continue; }
       if (current) {
         const split = line.match(/^([^.!?]{2,90})\.\s+(.+)$/);
         if (split) current.entries.push({name:split[1],description:split[2]});
@@ -2996,7 +2996,7 @@ import ITEMS from './items.json';
     const isCollegeOfKnowledge=className==='Bardo' && selectedSubclassKey==='colegio del conocimiento';
     const needsCollegeKnowledgeSkills=isCollegeOfKnowledge && nextLevel===3;
     const collegeKnowledgeSkills=splitChoiceList(levelUpSubclassSkills);
-    const currentSkillChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Habilidades'));
+    const currentSkillChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Skills'));
     const currentToolChoices=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Herramientas'));
     if(needsBattleMasterTraining && (!BUILDER_CLASS_SKILLS.Guerrero.options.includes(levelUpSubclassSkill) || currentSkillChoices.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpSubclassSkill)) || !BUILDER_ARTISAN_TOOLS.includes(levelUpSubclassTool) || currentToolChoices.some(tool=>normalizeLevelText(tool)===normalizeLevelText(levelUpSubclassTool)))) { notice='Maestro del combate requiere una habilidad de la lista de guerrero y una herramienta de artesano en las que aún no tengas competencia.'; return; }
     if(needsFeySkill && (!['Engaño','Interpretación','Persuasión'].includes(levelUpSubclassSkill) || currentSkillChoices.some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpSubclassSkill)))) { notice='Glamur sobrenatural requiere elegir Engaño, Interpretación o Persuasión, una habilidad en la que aún no tengas competencia.'; return; }
@@ -3038,7 +3038,7 @@ import ITEMS from './items.json';
     },0);
     const needsExpertise=expertiseFeature && expertiseCount>0;
     const expertiseChoices=splitChoiceList(levelUpExpertise);
-    const skillRawBefore=getCharacterStat(original,'COMPETENCIAS','Habilidades');
+    const skillRawBefore=getCharacterStat(original,'COMPETENCIAS','Skills');
     const existingExpertise=normalizeLevelText((String(skillRawBefore).match(/pericia\s*:\s*([^\n;]+)/i)||[])[1]||'');
     const proficientSkills=BUILDER_SKILL_OPTIONS.filter(skill=>normalizeLevelText(skillRawBefore).includes(normalizeLevelText(skill)));
     const academicSkills=['Conocimiento arcano','Historia','Investigación','Medicina','Naturaleza','Religión'];
@@ -3056,7 +3056,7 @@ import ITEMS from './items.json';
     if(needsNewSkill && !validNewSkill) { notice='Elige una habilidad válida de la lista de '+className+' en la que aún no tengas competencia.'; return; }
     const needsNewLanguages=/idiomas conoces dos idiomas/.test(normalizeLevelText(nextFeatureDescription));
     const languageChoices=splitChoiceList(levelUpLanguages);
-    const currentLanguages=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Idiomas'));
+    const currentLanguages=splitChoiceList(getCharacterStat(original,'COMPETENCIAS','Languages'));
     if(needsNewLanguages && (languageChoices.length!==2 || new Set(languageChoices.map(x=>normalizeLevelText(x))).size!==2 || languageChoices.some(name=>!BUILDER_LANGUAGES.some(option=>normalizeLevelText(option)===normalizeLevelText(name)) || currentLanguages.some(old=>normalizeLevelText(old)===normalizeLevelText(name))))) { notice='Explorador hábil requiere dos idiomas nuevos y distintos de las listas del manual.'; return; }
     const needsWildShapeForms=className==='Druida' && [2,4,8].includes(nextLevel);
     const wildShapeForms=splitChoiceList(levelUpWildShapeForms);
@@ -3122,7 +3122,7 @@ import ITEMS from './items.json';
       const dexMod=Math.floor((getCharacterNumber(updated,'ATRIBUTOS','Destreza',10)-10)/2);
       const chaMod=Math.floor((getCharacterNumber(updated,'ATRIBUTOS','Carisma',10)-10)/2);
       setCharacterStat(updated,'COMBATE','Fórmula de clase de armadura','Resistencia dracónica: 10 + modificador de Destreza + modificador de Carisma (sin armadura)');
-      setCharacterStat(updated,'COMBATE','Clase de armadura',10+dexMod+chaMod);
+      setCharacterStat(updated,'COMBATE','Armor Class',10+dexMod+chaMod);
     }
     if (numericSubclassCasting && (className==='Guerrero'||className==='Pícaro')) setCharacterStat(updated,'CONJUROS','Aptitud mágica de subclase','Inteligencia');
     if (levelUpSubclassVariant) setCharacterStat(updated,'PERSONAJE','Opción de subclase',levelUpSubclassVariant);
@@ -3206,18 +3206,18 @@ import ITEMS from './items.json';
     const existingClassTraitText=getCharacterStat(updated,'RASGOS Y DOTES','Rasgos de clase') || getCharacterStat(updated,'RASGOS Y DOTES','Rasgos de clase (nivel 1)');
     setCharacterStat(updated,'RASGOS Y DOTES','Rasgos de clase',[existingClassTraitText,currentClassFeatures].filter(Boolean).join('\n\n'));
     if(needsExpertise) {
-      const oldSkillText=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
+      const oldSkillText=getCharacterStat(updated,'COMPETENCIAS','Skills');
       const oldExpertiseList=splitChoiceList((String(oldSkillText).match(/pericia\s*:\s*([^\n;]+)/i)||[])[1]||'');
       const baseSkillText=String(oldSkillText).replace(/;?\s*Pericia\s*:\s*[^\n;]+/i,'').trim();
-      setCharacterStat(updated,'COMPETENCIAS','Habilidades',[baseSkillText,'Pericia: '+[...oldExpertiseList,...expertiseChoices].join(', ')].filter(Boolean).join('; '));
+      setCharacterStat(updated,'COMPETENCIAS','Skills',[baseSkillText,'Pericia: '+[...oldExpertiseList,...expertiseChoices].join(', ')].filter(Boolean).join('; '));
     }
     if(needsNewSkill) {
-      const oldSkillText=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
-      setCharacterStat(updated,'COMPETENCIAS','Habilidades',[oldSkillText,levelUpNewSkill].filter(Boolean).join('; '));
+      const oldSkillText=getCharacterStat(updated,'COMPETENCIAS','Skills');
+      setCharacterStat(updated,'COMPETENCIAS','Skills',[oldSkillText,levelUpNewSkill].filter(Boolean).join('; '));
     }
     if(needsNewLanguages) {
-      const oldLanguages=getCharacterStat(updated,'COMPETENCIAS','Idiomas');
-      setCharacterStat(updated,'COMPETENCIAS','Idiomas',[oldLanguages,...languageChoices].filter(Boolean).join(', '));
+      const oldLanguages=getCharacterStat(updated,'COMPETENCIAS','Languages');
+      setCharacterStat(updated,'COMPETENCIAS','Languages',[oldLanguages,...languageChoices].filter(Boolean).join(', '));
     }
     if(needsWildShapeForms) setCharacterStat(updated,'RASGOS Y DOTES','Formas salvajes conocidas',wildShapeForms.join(', '));
     if(needsMetamagic) setCharacterStat(updated,'RASGOS Y DOTES','Opciones de metamagia',metamagicChoices.join(', '));
@@ -3237,12 +3237,12 @@ import ITEMS from './items.json';
     }
     if(needsWizardSignature) setCharacterStat(updated,'CONJUROS','Conjuros característicos',wizardSignatureChoices.join(', '));
     if(needsBattleMasterTraining || needsFeySkill) {
-      const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
-      setCharacterStat(updated,'COMPETENCIAS','Habilidades',[oldSkills,levelUpSubclassSkill].filter(Boolean).join('; '));
+      const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Skills');
+      setCharacterStat(updated,'COMPETENCIAS','Skills',[oldSkills,levelUpSubclassSkill].filter(Boolean).join('; '));
     }
     if(needsCollegeKnowledgeSkills) {
-      const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Habilidades');
-      setCharacterStat(updated,'COMPETENCIAS','Habilidades',[oldSkills,...collegeKnowledgeSkills].filter(Boolean).join('; '));
+      const oldSkills=getCharacterStat(updated,'COMPETENCIAS','Skills');
+      setCharacterStat(updated,'COMPETENCIAS','Skills',[oldSkills,...collegeKnowledgeSkills].filter(Boolean).join('; '));
     }
     if(needsBattleMasterTraining) {
       const oldTools=getCharacterStat(updated,'COMPETENCIAS','Herramientas');
@@ -3409,7 +3409,7 @@ import ITEMS from './items.json';
     const n = name.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (/conjuro|hechizo|spell|magia/.test(n)) return 'Conjuros';
     if (/uso[s]? limitado|limited use|recurso|recarga|cargas|charges/.test(n)) return 'Rasgos y características';
-    if (/habilidad|skill|percepcion|investigacion|intuicion|acroba|sigilo|supervivencia/.test(n)) return 'Habilidades';
+    if (/habilidad|skill|percepcion|investigacion|intuicion|acroba|sigilo|supervivencia/.test(n)) return 'Skills';
     if (/inventario|equipo|objeto|inventory|equipment/.test(n)) return 'Inventario';
     if (/velocidad|speed|defensa|defenses|resistencia|inmunidad|vulnerabilidad|puntos de golpe|hit points|armadura|armor class|clase de armadura/.test(n)) return 'Velocidad y defensas';
     if (/rasgo|dote|caracteristica de clase|racial|especie|feature|trait/.test(n)) return 'Rasgos y características';
@@ -3447,7 +3447,7 @@ import ITEMS from './items.json';
     const order = [
       'Características y salvaciones',
       'Velocidad y defensas',
-      'Habilidades',
+      'Skills',
       'Acciones',
       'Inventario',
       'Conjuros',
@@ -3482,7 +3482,7 @@ import ITEMS from './items.json';
   }
 
   let builderPreviewTab = 'Características y salvaciones';
-  const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Habilidades','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
+  const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Skills','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
   const playerSheetTabs = ['Acciones', 'Conjuros', 'Inventario', 'Descripción', 'Notas'];
 
@@ -3573,7 +3573,7 @@ import ITEMS from './items.json';
     return sectionPairs(sections).filter(pair => {
       const heading = String(pair.heading.name || '').toLocaleLowerCase();
       const category = sectionTab(heading);
-      if (kind === 'skills') return category === 'Habilidades';
+      if (kind === 'skills') return category === 'Skills';
       if (kind === 'training') return category === 'Rasgos y competencias';
       return /salvaci|saving throw/.test(heading);
     });
@@ -3607,13 +3607,13 @@ import ITEMS from './items.json';
   }
   function skillIsProficient(skill: string, target: RawSheet | null = sheet) {
     if (!target) return false;
-    const raw = getCharacterStat(target, 'COMPETENCIAS', 'Habilidades');
+    const raw = getCharacterStat(target, 'COMPETENCIAS', 'Skills');
     const choices = splitChoiceList(raw.split(/;\s*Pericia:/i)[0]);
     return choices.some(choice => normalizeLevelText(choice) === normalizeLevelText(skill));
   }
   function skillIsExpertise(skill: string, target: RawSheet | null = sheet) {
     if (!target) return false;
-    const raw = getCharacterStat(target, 'COMPETENCIAS', 'Habilidades');
+    const raw = getCharacterStat(target, 'COMPETENCIAS', 'Skills');
     const match = String(raw).match(/pericia\s*:\s*([^\n;]+)/i);
     return splitChoiceList(match?.[1] || '').some(choice => normalizeLevelText(choice) === normalizeLevelText(skill));
   }
@@ -4017,7 +4017,7 @@ import ITEMS from './items.json';
                   <div class="builder-choice-wrapper"><strong>Maestrías con armas: conserva las anteriores y añade las nuevas</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Armas sencillas o marciales</strong><span>{splitChoiceList(levelUpWeaponMasteries).length}/{Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])}</span></div><div class="builder-checkbox-grid">{#each BUILDER_WEAPON_MASTERY_OPTIONS as weapon}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon))} on:change={(event)=>toggleLevelUpWeaponMastery(weapon,event,Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']))} disabled={!splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon)) && splitChoiceList(levelUpWeaponMasteries).length>=Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])} /><span>{weapon}</span></label>{/each}</div></div></div>
                 {:else if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
                   {@const primalSkillChoice=levelUpChoice('barbarian.primalKnowledge.skill')}
-                  <label>{primalSkillChoice?.label}<select bind:value={levelUpNewSkill}><option value="">Elige una habilidad nueva</option>{#each getLevelUpChoiceOptions(primalSkillChoice,splitChoiceList(getCharacterStat(levelUpEntry.sheet,'COMPETENCIAS','Habilidades'))) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+                  <label>{primalSkillChoice?.label}<select bind:value={levelUpNewSkill}><option value="">Elige una habilidad nueva</option>{#each getLevelUpChoiceOptions(primalSkillChoice,splitChoiceList(getCharacterStat(levelUpEntry.sheet,'COMPETENCIAS','Skills'))) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
                 {:else}
                   <label>Nueva competencia en habilidad<input bind:value={levelUpNewSkill} placeholder="Elige una habilidad de la lista de tu clase" /></label>
                 {/if}
@@ -4036,7 +4036,7 @@ import ITEMS from './items.json';
                 <small>Opciones: {BUILDER_WARLOCK_INVOCATIONS.filter(item=>item.level<=(levelUpEntry?.sheet?Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1:1)).map(item=>item.name+' (nivel '+item.level+')').join(' · ')}</small>
               {/if}
               {#if levelUpSubclass==='MAESTRO DEL COMBATE' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                <label>Habilidad de Estudioso de la guerra<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option>{#each BUILDER_CLASS_SKILLS.Guerrero.options.filter(skill=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Habilidades')).includes(skill)) as skill}<option>{skill}</option>{/each}</select></label>
+                <label>Habilidad de Estudioso de la guerra<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option>{#each BUILDER_CLASS_SKILLS.Guerrero.options.filter(skill=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Skills')).includes(skill)) as skill}<option>{skill}</option>{/each}</select></label>
                 <label>Herramienta de artesano de Estudioso de la guerra<select bind:value={levelUpSubclassTool}><option value="">Elige una herramienta</option>{#each BUILDER_ARTISAN_TOOLS.filter(tool=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Herramientas')).includes(tool)) as tool}<option>{tool}</option>{/each}</select></label>
               {/if}
               {#if levelUpSubclass==='ERRANTE FEÉRICO' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
@@ -4362,7 +4362,7 @@ import ITEMS from './items.json';
           {#if !builderPreview || builderStep < 12}
             <div class="builder-progress"><span style="width:{((builderStep+1)/12)*100}%"></span></div>
             <nav class="builder-step-track" aria-label="Progreso de creación">
-              {#each ['Concepto','Clase','Trasfondo','Especie','Características','Aumentos','Competencias','Equipo','Magia','Idiomas','Detalles','Revisión'] as stage, index}
+              {#each ['Concepto','Clase','Trasfondo','Especie','Características','Aumentos','Competencias','Gear','Magia','Languages','Detalles','Revisión'] as stage, index}
                 <span class:current={index === builderStep} class:complete={index < builderStep} aria-current={index === builderStep ? 'step' : undefined}>
                   <b>{index + 1}</b><small>{stage}</small>
                 </span>
@@ -4633,7 +4633,7 @@ import ITEMS from './items.json';
                   <div class="builder-review-derived">
                     <div><span>Puntos de golpe</span><strong>{BUILDER_HIT_DIE[builderData.className] + builderModifier(builderAdjustedAbilities().Constitución)} <small>PG</small></strong></div>
                     <div><span>Clase de armadura</span><strong>{builderStartingAC()}</strong></div>
-                    <div><span>Iniciativa</span><button type="button" class="inline-roll" title={'Tirar 1d20' + signedBonus(builderModifier(builderAdjustedAbilities().Destreza)) + ' en Dice+'} on:click={() => sendSheetRoll('1d20' + signedBonus(builderModifier(builderAdjustedAbilities().Destreza)), 'Iniciativa')}>{signedBonus(builderModifier(builderAdjustedAbilities().Destreza))}</button></div>
+                    <div><span>Iniciativa</span><button type="button" class="inline-roll" title={'Tirar 1d20' + signedBonus(builderModifier(builderAdjustedAbilities().Destreza)) + ' en Dice+'} on:click={() => sendSheetRoll('1d20' + signedBonus(builderModifier(builderAdjustedAbilities().Destreza)), 'Initiative')}>{signedBonus(builderModifier(builderAdjustedAbilities().Destreza))}</button></div>
                     <div><span>Dado de golpe</span><strong>d{BUILDER_HIT_DIE[builderData.className]}</strong></div>
                   </div>
                 </section>
@@ -4759,12 +4759,12 @@ import ITEMS from './items.json';
             </div>
             <div class="quick-stats-row">
             <div><span>Competencia</span><strong class="proficiency-bonus">{sheetValueByNames(sheet, ['Bonificador por competencia','Bonificador de competencia']) || '—'}</strong></div>
-            <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Velocidad']) || '—'}</strong></div>
+            <div><span>Velocidad</span><strong>{sheetValueByNames(sheet, ['Speed']) || '—'}</strong></div>
             <div><span>Dado de golpe</span><strong>{sheetValueByNames(sheet, ['Dados de golpe','Dado de golpe']) || '—'}</strong></div>
             <div><span>Percepción pasiva</span><strong>{sheetValueByNames(sheet, ['Percepción pasiva']) || '—'}</strong></div>
             <div class="hp-plaque"><span>Puntos de golpe</span><strong>{sheetValueByNames(sheet, ['Puntos de golpe actuales','PG actuales']) || '—'} / {sheetValueByNames(sheet, ['Puntos de golpe máximos','PG máximos']) || '—'}</strong></div>
-            <div><span>Clase de armadura</span><strong>{sheetValueByNames(sheet, ['Clase de armadura','CA']) || '—'}</strong></div>
-            <div><span>Iniciativa</span><strong>{sheetValueByNames(sheet, ['Iniciativa']) || '—'}</strong></div>
+            <div><span>Clase de armadura</span><strong>{sheetValueByNames(sheet, ['Armor Class','CA']) || '—'}</strong></div>
+            <div><span>Iniciativa</span><strong>{sheetValueByNames(sheet, ['Initiative']) || '—'}</strong></div>
             </div>
           </section>
 
@@ -4779,7 +4779,7 @@ import ITEMS from './items.json';
             <section class="nautical-skills">
               {#each playerSidePairs('skills', sheet.sections || []) as pair}
                 <section class="sheet-section skills-section">
-                  <div class="sheet-section-title"><h3>{pair.heading.name || 'Habilidades'}</h3></div>
+                  <div class="sheet-section-title"><h3>{pair.heading.name || 'Skills'}</h3></div>
                   <div class="skill-column-labels"><span>Habilidad</span><span>Valor</span></div>
                   <div class="stats-list">
                     {#each pair.heading.stats || [] as stat, i}
