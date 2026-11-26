@@ -4173,12 +4173,11 @@ import ITEMS from './items.json';
             <label>Modo de tirada
               <select bind:value={combatRollMode}><option value="normal">Normal</option><option value="advantage">Ventaja</option><option value="disadvantage">Desventaja</option></select>
             </label>
-            <label class="combat-sort"><input type="checkbox" bind:checked={combatSort}/> Ordenar por iniciativa</label>
             <button class="secondary" type="button" on:click={()=>combatants=[]}>Vaciar combate</button>
           </div>
           {#if combatants.length}
             <div class="combat-grid">
-              {#each (combatSort?[...combatants].sort((a,b)=>b.initiative-a.initiative):combatants) as c (c.id)}
+              {#each combatants as c (c.id)}
                 <article class:combat-dead={c.hp===0} class="combatant-card">
                   <header class="combatant-header">
                     <input aria-label="Nombre de criatura" class="combatant-name" value={c.name} on:change={(e)=>setCombatantField(c.id,'name',e)}/>
