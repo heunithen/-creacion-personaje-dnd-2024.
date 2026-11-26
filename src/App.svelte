@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
+  import { buildLabel } from '@owlbear-rodeo/sdk';
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
@@ -2197,6 +2198,8 @@ import ITEMS from './items.json';
   let initiativeOrder: InitiativeParticipant[] = [];
   let activeInitiativeIndex = 0;
   let initiativeRound = 1;
+  const INITIATIVE_OVERLAY_KEY = 'com.heunithen.dnd2024-character-builder/initiative-overlay';
+  let initiativeOverlayVisible = false;
   $: if (combatantsStorageReady) {
     try { localStorage.setItem(COMBATANTS_STORAGE_KEY, JSON.stringify(combatants)); } catch (error) { console.warn('No se pudo guardar el combate', error); }
   }
@@ -2237,6 +2240,81 @@ import ITEMS from './items.json';
     const players=roomSheets.map(entry=>({id:'player:'+entry.playerId,name:String(entry.sheet?.name || entry.playerName || 'Personaje'),bonus:playerInitiative(entry),roll:0,total:0}));
     const monsters=combatants.filter(c=>c.participating!==false).map(c=>({id:'monster:'+c.id,name:c.name,bonus:Number(c.initiative)||0,roll:0,total:0}));
     return [...players,...monsters];
+  }
+  function initiativeOverlayText():string {
+    const lines=initiativeOrder.map((participant,index)=>
+      (index===activeInitiativeIndex?'▶ ':'   ')+(index+1)+'. '+participant.name+' · '+participant.total
+    );
+    return 'INICIATIVA · RONDA '+initiativeRound+'\\n'+
+      'Turno actual: '+(initiativeOrder[activeInitiativeIndex]?.name || '—')+'\\n\\n'+lines.join('\\n');
+  }
+  async function findInitiativeOverlay():Promise<any[]> {
+    if(!obrReady || !(await OBR.scene.isReady()))return [];
+    return await OBR.scene.items.getItems(item=>item.metadata?.[INITIATIVE_OVERLAY_KEY]===true);
+  }
+  async function refreshInitiativeOverlay():Promise<void> {
+    if(!initiativeOverlayVisible)return;
+    try {
+      const overlays=await findInitiativeOverlay();
+      if(!overlays.length){initiativeOverlayVisible=false;return;}
+      const text=initiativeOverlayText();
+      await OBR.scene.items.updateItems(overlays,items=>{
+        for(const item of items)if(item.type==='LABEL')item.text.plainText=text;
+      });
+    } catch(error) { console.warn('No se pudo actualizar el mensaje de iniciativa',error); }
+  }
+  async function showInitiativeOverlay():Promise<void> {
+    if(!initiativeOrder.length){notice='Primero debes tirar la iniciativa.';return;}
+    if(!obrReady || !(await OBR.scene.isReady())){notice='Abre una escena de Owlbear Rodeo para mostrar la iniciativa.';return;}
+    try {
+      const existing=await findInitiativeOverlay();
+      if(existing.length){
+        initiativeOverlayVisible=true;
+        await refreshInitiativeOverlay();
+        notice='Mensaje de iniciativa actualizado en la escena.';
+        return;
+      }
+      const width=await OBR.viewport.getWidth();
+      const height=await OBR.viewport.getHeight();
+      const center=await OBR.viewport.inverseTransformPoint({x:width/2,y:height/2});
+      const label=buildLabel()
+        .name('Tracker de iniciativa')
+        .plainText(initiativeOverlayText())
+        .width(380)
+        .height(Math.min(560,110+initiativeOrder.length*30))
+        .padding(16)
+        .fontSize(18)
+        .fontWeight(800)
+        .fillColor('#ffffff')
+        .backgroundColor('#0b171d')
+        .backgroundOpacity(0.96)
+        .strokeColor('#5fe6e0')
+        .strokeWidth(3)
+        .cornerRadius(12)
+        .textAlign('LEFT')
+        .position(center)
+        .layer('NOTE')
+        .locked(true)
+        .metadata({[INITIATIVE_OVERLAY_KEY]:true})
+        .build();
+      await OBR.scene.items.addItems([label]);
+      initiativeOverlayVisible=true;
+      notice='Iniciativa publicada en la escena para todos los jugadores.';
+    } catch(error) {
+      console.error('No se pudo mostrar la iniciativa en la escena',error);
+      notice='No se pudo publicar la iniciativa en la escena.';
+    }
+  }
+  async function hideInitiativeOverlay():Promise<void> {
+    try {
+      const overlays=await findInitiativeOverlay();
+      if(overlays.length)await OBR.scene.items.deleteItems(overlays.map(item=>item.id));
+      initiativeOverlayVisible=false;
+      notice='Mensaje de iniciativa ocultado.';
+    } catch(error) {
+      console.error('No se pudo ocultar el mensaje de iniciativa',error);
+      notice='No se pudo ocultar el mensaje de iniciativa.';
+    }
   }
   function rollInitiativeDie():number { return Math.floor(Math.random()*20)+1; }
   function rollInitiative():void {
@@ -4425,7 +4503,7 @@ import ITEMS from './items.json';
       {:else if masterTab === 'Iniciativa'}
         <section class="panel initiative-panel">
           <div class="section-heading"><h2>Tracker de iniciativa</h2><span class="count">Ronda {initiativeRound}</span></div>
-          <div class="initiative-toolbar"><button class="primary initiative-roll-button" type="button" on:click={rollInitiative}>🎲 Tirar iniciativa · d20</button><span class="muted">Las tiradas se resuelven internamente.</span></div>
+          <div class="initiative-toolbar"><button class="primary initiative-roll-button" type="button" on:click={rollInitiative}>🎲 Tirar iniciativa · d20</button><button class="secondary" type="button" on:click={showInitiativeOverlay} disabled={!initiativeOrder.length}>Mostrar en escena</button>{#if initiativeOverlayVisible}<button class="secondary" type="button" on:click={hideInitiativeOverlay}>Ocultar mensaje</button>{/if}<span class="muted">Las tiradas se resuelven internamente.</span></div>
           {#if initiativeOrder.length}
             <ol class="initiative-list">
               {#each initiativeOrder as participant,i}
