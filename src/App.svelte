@@ -2294,8 +2294,8 @@ import ITEMS from './items.json';
   }
   const INITIATIVE_NOTICE_CHANNEL='com.heunithen.forja/initiative-order-notice';
   async function publishInitiativeOrder(participants:InitiativeParticipant[]):Promise<void> {
-    const lines=participants.map((p,i)=>(i+1)+'. '+p.name+' — '+p.total);
-    const message='Orden de iniciativa\\n'+lines.join('\\n');
+    const lines=participants.map((p,i)=>(i+1)+') '+p.name+' — '+p.total);
+    const message='Orden de iniciativa\n'+lines.join('\n');
     try {
       await OBR.notification.show(message,'INFO');
       await OBR.broadcast.sendMessage(INITIATIVE_NOTICE_CHANNEL,{message},{destination:'REMOTE'});
