@@ -2202,7 +2202,7 @@ import ITEMS from './items.json';
     const original=combatants.find(x=>x.id===id); if(!original)return;
     combatants=[...combatants,{...original,id:String(Date.now())+Math.random().toString(36).slice(2),name:original.name+' 2',hp:original.maxHp,tempHp:0,initiative:0,damageInput:0,dead:false}];
   }
-  function updateCombatant(id:string,patch:Partial<Combatant>) {
+  function setCombatantField(id:string,field:'name'|'ac'|'hp'|'initiative'|'damageInput',event:Event) {\n    const value=(event.target as HTMLInputElement).value;\n    if(field==='name') updateCombatant(id,{name:value});\n    else if(field==='ac') updateCombatant(id,{acMod:Number(value)- (combatants.find(c=>c.id===id)?.ac||0)});\n    else if(field==='hp'){const c=combatants.find(x=>x.id===id);if(c){const hp=Math.min(c.maxHp,Math.max(0,Number(value)||0));updateCombatant(id,{hp,dead:hp===0});}}\n    else if(field==='initiative') updateCombatant(id,{initiative:Number(value)||0});\n    else updateCombatant(id,{damageInput:Number(value)||0});\n  }\n  function updateCombatant(id:string,patch:Partial<Combatant>) {
     combatants=combatants.map(c=>c.id===id?{...c,...patch}:c);
   }
   function adjustCombatHp(id:string,amount:number) {
@@ -4231,20 +4231,20 @@ import ITEMS from './items.json';
               {#each (combatSort?[...combatants].sort((a,b)=>b.initiative-a.initiative):combatants) as c (c.id)}
                 <article class:combat-dead={c.hp===0} class="combatant-card">
                   <header class="combatant-header">
-                    <input aria-label="Nombre de criatura" class="combatant-name" value={c.name} on:change={(e: Event)=>updateCombatant(c.id,{name:(e.currentTarget as HTMLInputElement).value})}/>
+                    <input aria-label="Nombre de criatura" class="combatant-name" value={c.name} on:change={(e)=>setCombatantField(c.id,'name',e)}/>
                     <div class="combatant-tools">
                       <button title="Duplicar" on:click={()=>duplicateCombatant(c.id)}>⧉</button>
                       <button title="Quitar del combate" on:click={()=>combatants=combatants.filter(x=>x.id!==c.id)}>×</button>
                     </div>
                   </header>
                   <div class="combatant-vitals">
-                    <label class="combat-ac">🛡 CA <input type="number" value={c.ac+c.acMod} on:change={(e: Event)=>updateCombatant(c.id,{acMod:Number((e.currentTarget as HTMLInputElement).value)-c.ac})}/></label>
-                    <div class="combat-hp"><span>❤ PG</span><button on:click={()=>adjustCombatHp(c.id,-1)}>−</button><input aria-label="Puntos de golpe actuales" type="number" min="0" max={c.maxHp} value={c.hp} on:change={(e: Event)=>updateCombatant(c.id,{hp:Math.min(c.maxHp,Math.max(0,Number((e.currentTarget as HTMLInputElement).value)||0)),dead:Number((e.currentTarget as HTMLInputElement).value)<=0})}/><button on:click={()=>adjustCombatHp(c.id,1)}>+</button><span>/ {c.maxHp}</span></div>
+                    <label class="combat-ac">🛡 CA <input type="number" value={c.ac+c.acMod} on:change={(e)=>setCombatantField(c.id,'ac',e)}/></label>
+                    <div class="combat-hp"><span>❤ PG</span><button on:click={()=>adjustCombatHp(c.id,-1)}>−</button><input aria-label="Puntos de golpe actuales" type="number" min="0" max={c.maxHp} value={c.hp} on:change={(e)=>setCombatantField(c.id,'hp',e)}/><button on:click={()=>adjustCombatHp(c.id,1)}>+</button><span>/ {c.maxHp}</span></div>
                   </div>
                   <div class="combat-hp-track"><span style="width:{Math.max(0,Math.min(100,c.hp/c.maxHp*100))}%" class:hp-yellow={c.hp/c.maxHp<=.5&&c.hp/c.maxHp>.25} class:hp-red={c.hp/c.maxHp<=.25}></span></div>
                   <div class="combat-temp"><span>✦ PG temporales</span><button on:click={()=>updateCombatant(c.id,{tempHp:Math.max(0,c.tempHp-1)})}>−</button><strong>{c.tempHp}</strong><button on:click={()=>setCombatTempHp(c.id,c.tempHp+1)}>+</button></div>
-                  <div class="combat-damage-tools"><input type="number" min="0" value={c.damageInput} aria-label="Daño o curación" on:input={(e: Event)=>updateCombatant(c.id,{damageInput:Number((e.currentTarget as HTMLInputElement).value)})}/><button class="damage-button" on:click={()=>applyCombatDamage(c.id,'damage')}>Daño</button><button class="heal-button" on:click={()=>applyCombatDamage(c.id,'heal')}>Curar</button></div>
-                  <div class="combat-initiative"><label>Iniciativa <input type="number" value={c.initiative} on:change={(e: Event)=>updateCombatant(c.id,{initiative:Number((e.currentTarget as HTMLInputElement).value)||0})}/></label><button on:click={()=>combatInitiative(c.id)}>🎲 Tirar iniciativa</button></div>
+                  <div class="combat-damage-tools"><input type="number" min="0" value={c.damageInput} aria-label="Daño o curación" on:input={(e)=>setCombatantField(c.id,'damageInput',e)}/><button class="damage-button" on:click={()=>applyCombatDamage(c.id,'damage')}>Daño</button><button class="heal-button" on:click={()=>applyCombatDamage(c.id,'heal')}>Curar</button></div>
+                  <div class="combat-initiative"><label>Iniciativa <input type="number" value={c.initiative} on:change={(e)=>setCombatantField(c.id,'initiative',e)}/></label><button on:click={()=>combatInitiative(c.id)}>🎲 Tirar iniciativa</button></div>
                   <button class="combat-expand" on:click={()=>updateCombatant(c.id,{compact:!c.compact})}>{c.compact?'Mostrar acciones y tiradas':'Ocultar acciones y tiradas'}</button>
                   {#if !c.compact}
                     <div class="combat-actions">
