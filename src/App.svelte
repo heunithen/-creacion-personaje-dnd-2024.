@@ -1825,8 +1825,38 @@
   const BUILDER_PRIMARY: Record<string,string> = {'Bárbaro':'Fuerza','Bardo':'Carisma','Brujo':'Carisma','Clérigo':'Sabiduría','Druida':'Sabiduría','Explorador':'Destreza o Sabiduría','Guerrero':'Fuerza o Destreza','Hechicero':'Carisma','Mago':'Inteligencia','Monje':'Destreza y Sabiduría','Paladín':'Fuerza y Carisma','Pícaro':'Destreza'};
   const BUILDER_STANDARD = [15,14,13,12,10,8];
   const BUILDER_ABILITY_NAMES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+  const BUILDER_STANDARD_PRIORITY: Record<string,string[]> = {
+    'Bárbaro':['Fuerza','Constitución','Destreza','Sabiduría','Carisma','Inteligencia'],
+    'Bardo':['Carisma','Destreza','Constitución','Sabiduría','Inteligencia','Fuerza'],
+    'Brujo':['Carisma','Constitución','Sabiduría','Destreza','Inteligencia','Fuerza'],
+    'Clérigo':['Sabiduría','Constitución','Fuerza','Carisma','Destreza','Inteligencia'],
+    'Druida':['Sabiduría','Constitución','Destreza','Inteligencia','Carisma','Fuerza'],
+    'Explorador':['Destreza','Sabiduría','Constitución','Fuerza','Inteligencia','Carisma'],
+    'Guerrero':['Fuerza','Constitución','Destreza','Sabiduría','Carisma','Inteligencia'],
+    'Hechicero':['Carisma','Constitución','Destreza','Sabiduría','Inteligencia','Fuerza'],
+    'Mago':['Inteligencia','Sabiduría','Constitución','Destreza','Carisma','Fuerza'],
+    'Monje':['Destreza','Sabiduría','Constitución','Fuerza','Inteligencia','Carisma'],
+    'Paladín':['Fuerza','Carisma','Constitución','Sabiduría','Destreza','Inteligencia'],
+    'Pícaro':['Destreza','Inteligencia','Carisma','Constitución','Sabiduría','Fuerza']
+  };
   const BUILDER_POINT_COST: Record<number,number> = {8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9};
   function builderPointCost() { return Object.values(builderData.abilities).reduce((sum,value)=>sum+(BUILDER_POINT_COST[Number(value)] ?? 99),0); }
+  function builderApplyStandardArray() {
+    const priority=BUILDER_STANDARD_PRIORITY[builderData.className]||BUILDER_STANDARD_PRIORITY['Guerrero'];
+    builderData.abilities=Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,BUILDER_STANDARD[priority.indexOf(name)]]));
+  }
+  function builderSetStandardAbility(ability:string,value:number) {
+    const current=Number(builderData.abilities[ability]);
+    const other=BUILDER_ABILITY_NAMES.find(name=>name!==ability&&Number(builderData.abilities[name])===value);
+    if(!other||!BUILDER_STANDARD.includes(value)) return;
+    builderData.abilities={...builderData.abilities,[ability]:value,[other]:current};
+  }
+  function builderAdjustPointBuy(ability:string,delta:number) {
+    const current=Number(builderData.abilities[ability]), next=current+delta;
+    if(next<8||next>15) return;
+    if(delta>0 && builderPointCost()-BUILDER_POINT_COST[current]+BUILDER_POINT_COST[next]>27) return;
+    builderData.abilities={...builderData.abilities,[ability]:next};
+  }
   function builderRollScores() {
     const scores = Array.from({length:6},()=>Array.from({length:4},()=>Math.floor(Math.random()*6)+1).sort((a,b)=>b-a).slice(0,3).reduce((a,b)=>a+b,0)).sort((a,b)=>b-a);
     builderRolledScores = [...scores];
@@ -1835,7 +1865,7 @@
   function builderSetAbilityMethod() {
     if (builderData.method === 'standard') {
       builderRolledScores = [];
-      builderData.abilities = Object.fromEntries(BUILDER_ABILITY_NAMES.map((name,index)=>[name,[15,14,13,12,10,8][index]]));
+      builderApplyStandardArray();
     } else if (builderData.method === 'pointBuy') {
       builderRolledScores = [];
       builderData.abilities = Object.fromEntries(BUILDER_ABILITY_NAMES.map(name=>[name,8]));
@@ -5860,13 +5890,22 @@ import ITEMS from './items.json';
               {/if}
               <div class="builder-ability-grid">
                 {#each BUILDER_ABILITY_NAMES as ability}
-                  <label class="builder-ability-card">{ability}<input type="number" min={builderData.method === 'pointBuy' ? 8 : builderData.method === 'free' ? 1 : 3} max={builderData.method === 'pointBuy' ? 15 : builderData.method === 'free' ? 20 : 18} step="1" bind:value={builderData.abilities[ability]} /><small class="muted">Modificador: {builderModifier(Number(builderData.abilities[ability]) || 10) >= 0 ? '+' : ''}{builderModifier(Number(builderData.abilities[ability]) || 10)}</small></label>
+                  <div class="builder-ability-card"><strong>{ability}</strong>
+                    {#if builderData.method === 'standard'}
+                      <select aria-label={'Puntuación de '+ability} value={builderData.abilities[ability]} on:change={(event)=>builderSetStandardAbility(ability,Number((event.currentTarget as HTMLSelectElement).value))}>{#each BUILDER_STANDARD as score}<option value={score} disabled={BUILDER_ABILITY_NAMES.some(name=>name!==ability&&Number(builderData.abilities[name])===score)}>{score}</option>{/each}</select>
+                    {:else if builderData.method === 'pointBuy'}
+                      <div class="builder-ability-stepper"><button type="button" class="secondary" aria-label={'Bajar '+ability} on:click={()=>builderAdjustPointBuy(ability,-1)} disabled={Number(builderData.abilities[ability])<=8}>−</button><strong>{builderData.abilities[ability]}</strong><button type="button" class="secondary" aria-label={'Subir '+ability} on:click={()=>builderAdjustPointBuy(ability,1)} disabled={Number(builderData.abilities[ability])>=15||builderPointCost()-BUILDER_POINT_COST[Number(builderData.abilities[ability])]+BUILDER_POINT_COST[Number(builderData.abilities[ability])+1]>27}>+</button></div>
+                    {:else}
+                      <input type="number" min={builderData.method === 'free' ? 1 : 3} max={builderData.method === 'free' ? 20 : 18} step="1" bind:value={builderData.abilities[ability]} />
+                    {/if}
+                    <small class="muted">Modificador: {builderModifier(Number(builderData.abilities[ability]) || 10) >= 0 ? '+' : ''}{builderModifier(Number(builderData.abilities[ability]) || 10)}</small>
+                  </div>
                 {/each}
               </div>
               {#if builderData.method === 'pointBuy'}
-                <p class="hint">Puntos utilizados: <strong>{builderPointCost()} / 27</strong>. Cada puntuación debe estar entre 8 y 15.</p>
+                <p class="hint">Puntos utilizados: <strong>{builderPointCost()} / 27</strong>. Cada puntuación debe estar entre 8 y 15. Si agotas los puntos, baja otra característica para recuperar puntos antes de aumentar una distinta.</p>
               {:else if builderData.method === 'standard'}
-                <p class="hint">Distribuye cada valor del arreglo estándar una sola vez: 15, 14, 13, 12, 10 y 8.</p>
+                <p class="hint">Distribución sugerida para {builderData.className}. Asigna cada valor una sola vez; al cambiar uno, el valor anterior pasa a la característica que tenía el valor elegido.</p>
               {:else if builderData.method === 'rolled'}
                 <p class="hint">Debes asignar exactamente los seis resultados obtenidos, sin modificarlos.</p>
               {:else}
