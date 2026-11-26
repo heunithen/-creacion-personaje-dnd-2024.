@@ -2214,67 +2214,6 @@ import ITEMS from './items.json';
       }));
     } catch (error) { console.error('No se pudo guardar el tracker de iniciativa', error); }
   }
-  const INITIATIVE_OVERLAY_CHANNEL = 'com.heunithen.dnd2024-character-builder/initiative-overlay';
-  const INITIATIVE_POPOVER_ID = 'com.heunithen.dnd2024-character-builder/initiative-popover';
-  let initiativePopoverResizeObserver: ResizeObserver | null = null;
-  let initiativeOverlayVisible = false;
-  const isInitiativeOverlay = new URLSearchParams(window.location.search).get('initiativeOverlay') === '1';
-  let initiativeOverlayState:{round:number;activeIndex:number;participants:InitiativeParticipant[]} = {round:1,activeIndex:0,participants:[]};
-  function getInitiativeOverlayState() {
-    return {round:initiativeRound,activeIndex:activeInitiativeIndex,participants:initiativeOrder.map(p=>({...p}))};
-  }
-  function publishInitiativeOverlayState():void {
-    initiativeOverlayState=getInitiativeOverlayState();
-    if(obrReady)void OBR.broadcast.sendMessage(INITIATIVE_OVERLAY_CHANNEL,{type:'update',state:initiativeOverlayState},{destination:'ALL'});
-  }
-  // Mantener el panel flotante sincronizado cada vez que cambia el turno, la ronda o el orden.
-  $: if(obrReady && initiativeOverlayVisible && !isInitiativeOverlay) {
-    const liveState={round:initiativeRound,activeIndex:activeInitiativeIndex,participants:initiativeOrder.map(p=>({...p}))};
-    initiativeOverlayState=liveState;
-    void OBR.broadcast.sendMessage(INITIATIVE_OVERLAY_CHANNEL,{type:'update',state:liveState},{destination:'ALL'});
-  }
-  async function refreshInitiativeOverlay():Promise<void> {
-    if(!initiativeOverlayVisible)return;
-    publishInitiativeOverlayState();
-  }
-  async function showInitiativeOverlay():Promise<void> {
-    if(!initiativeOrder.length){notice='Primero debes tirar la iniciativa.';return;}
-    if(!obrReady || !(await OBR.scene.isReady())){notice='Abre una escena de Owlbear Rodeo para mostrar la iniciativa.';return;}
-    try {
-      const width=await OBR.viewport.getWidth();
-      const height=await OBR.viewport.getHeight();
-      const state=encodeURIComponent(JSON.stringify(getInitiativeOverlayState()));
-      const url=window.location.origin+window.location.pathname+'?initiativeOverlay=1&state='+state;
-      await OBR.popover.open({
-        id:INITIATIVE_POPOVER_ID,
-        url,
-        width:250,
-        height:120,
-        anchorReference:'POSITION',
-        anchorPosition:{left:Math.max(24,width-32),top:Math.max(24,height-16)},
-        anchorOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
-        transformOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
-        disableClickAway:true,
-        marginThreshold:24
-      });
-      initiativeOverlayVisible=true;
-      publishInitiativeOverlayState();
-      notice='Tracker fijado en la esquina inferior derecha de la pantalla.';
-    } catch(error) {
-      console.error('No se pudo mostrar el tracker de iniciativa',error);
-      notice='No se pudo fijar el tracker en la pantalla.';
-    }
-  }
-  async function hideInitiativeOverlay():Promise<void> {
-    try {
-      await OBR.popover.close(INITIATIVE_POPOVER_ID);
-      initiativeOverlayVisible=false;
-      notice='Tracker de iniciativa ocultado.';
-    } catch(error) {
-      console.error('No se pudo ocultar el tracker de iniciativa',error);
-      notice='No se pudo ocultar el tracker.';
-    }
-  }
     let combatRollMode: 'normal'|'advantage'|'disadvantage' = 'normal';
   let combatSort = true;
   function monsterNumber(monster:any,label:string): number {
@@ -4377,29 +4316,6 @@ import ITEMS from './items.json';
       localStorage.removeItem('forja-raw-character');
     }
     if (OBR.isAvailable) OBR.onReady(async () => {
-      if(isInitiativeOverlay) {
-        try {
-          const params=new URLSearchParams(window.location.search);
-          const raw=params.get('state');
-          if(raw)initiativeOverlayState=JSON.parse(raw);
-        } catch { /* Se actualizará con el estado compartido del tracker. */ }
-        OBR.broadcast.onMessage(INITIATIVE_OVERLAY_CHANNEL,(event:any)=>{
-          if(event.data?.type==='update'&&event.data.state)initiativeOverlayState=event.data.state;
-        });
-        // El iframe informa al popover la altura real de la tarjeta, también cuando cambia la lista.
-        requestAnimationFrame(()=>{
-          const overlay=document.querySelector<HTMLElement>('.initiative-screen-overlay');
-          if(!overlay)return;
-          initiativePopoverResizeObserver?.disconnect();
-          initiativePopoverResizeObserver=new ResizeObserver(()=>{
-            const measuredHeight=Math.ceil(overlay.getBoundingClientRect().height);
-            if(measuredHeight>0)void OBR.popover.setHeight(INITIATIVE_POPOVER_ID,measuredHeight);
-          });
-          initiativePopoverResizeObserver.observe(overlay);
-          const initialHeight=Math.ceil(overlay.getBoundingClientRect().height);
-          if(initialHeight>0)void OBR.popover.setHeight(INITIATIVE_POPOVER_ID,initialHeight);
-        });
-      }
       obrReady = true;
       try {
         obrRole = await OBR.player.getRole();
@@ -4434,21 +4350,7 @@ import ITEMS from './items.json';
   });
 </script>
 
-<svelte:head><title>{isInitiativeOverlay ? 'Iniciativa del combate' : 'Forja de Aventureros — D&D 2024'}</title></svelte:head>
-{#if isInitiativeOverlay}
-  <section class="initiative-screen-overlay">
-    <header><strong>INICIATIVA · RONDA {initiativeOverlayState.round}</strong><span>Turno actual: {initiativeOverlayState.participants[initiativeOverlayState.activeIndex]?.name || '—'}</span></header>
-    <ol>
-      {#each initiativeOverlayState.participants as participant,i}
-        <li class:current={i===initiativeOverlayState.activeIndex}>
-          <span class="screen-overlay-index">{i+1}</span>
-          <span class="screen-overlay-name">{participant.name}</span>
-          <strong>{participant.total}</strong>
-        </li>
-      {/each}
-    </ol>
-  </section>
-{:else}
+<svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
 <div class="app-shell">
   <header class="topbar">
     <a class="brand" href="#inicio"><img class="brand-icon" src="/-creacion-personaje-dnd-2024./icono.webp" alt="" /><span><strong>FORJA DE AVENTUREROS</strong><small>D&D · 2024</small></span></a>
@@ -4550,7 +4452,7 @@ import ITEMS from './items.json';
       {:else if masterTab === 'Iniciativa'}
         <section class="panel initiative-panel">
           <div class="section-heading"><h2>Tracker de iniciativa</h2><span class="count">Ronda {initiativeRound}</span></div>
-          <div class="initiative-toolbar"><button class="primary initiative-roll-button" type="button" on:click={rollInitiative}>🎲 Tirar iniciativa · d20</button><button class="secondary" type="button" on:click={showInitiativeOverlay} disabled={!initiativeOrder.length}>Mostrar en escena</button>{#if initiativeOverlayVisible}<button class="secondary" type="button" on:click={hideInitiativeOverlay}>Ocultar mensaje</button>{/if}<span class="muted">Las tiradas se resuelven internamente.</span></div>
+          <div class="initiative-toolbar"><button class="primary initiative-roll-button" type="button" on:click={rollInitiative}>🎲 Tirar iniciativa · d20</button>{#if initiativeOrder.length}<div class="initiative-turn-controls"><button class="secondary" type="button" on:click={()=>moveInitiativeTurn(-1)} aria-label="Turno anterior">←</button><strong>Turno: {initiativeOrder[activeInitiativeIndex]?.name || '—'}</strong><button class="primary" type="button" on:click={()=>moveInitiativeTurn(1)} aria-label="Siguiente turno">→</button></div>{/if}<span class="muted">Las tiradas se resuelven internamente.</span></div>
           {#if initiativeOrder.length}
             <ol class="initiative-list">
               {#each initiativeOrder as participant,i}
@@ -4561,7 +4463,6 @@ import ITEMS from './items.json';
                 </li>
               {/each}
             </ol>
-            <div class="initiative-turn-controls"><button class="secondary" type="button" on:click={()=>moveInitiativeTurn(-1)} aria-label="Turno anterior">← Anterior</button><strong>Turno: {initiativeOrder[activeInitiativeIndex]?.name || '—'}</strong><button class="primary" type="button" on:click={()=>moveInitiativeTurn(1)} aria-label="Siguiente turno">Siguiente →</button></div>
           {:else}
             <p class="muted">Todavía no se ha lanzado la iniciativa.</p>
             <ol class="initiative-roster">
@@ -5754,7 +5655,6 @@ import ITEMS from './items.json';
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
   <footer><span>FORJA DE AVENTUREROS · v1.0.53</span></footer>
 </div>
-{/if}
 
 <style>
   :global(:root){--paper:#13262e;--paper-deep:#1b2a33;--ink:#ffffff;--ink-soft:#b5bec3;--rule:#3a4a52;--red:#3fb8b8;--gold:#5fe6e0}
@@ -8172,23 +8072,13 @@ import ITEMS from './items.json';
   .initiative-list li.initiative-active .initiative-position{background:#e6b83f;color:#17242a}
   .initiative-roster li{grid-template-columns:minmax(0,1fr) auto}
   .initiative-roster strong{font-size:12px;color:#9fe9e5}
-  .initiative-turn-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--gm-border)}
-  .initiative-turn-controls strong{flex:1;text-align:center;color:var(--gm-text)}
-  @media(max-width:520px){.initiative-list li{grid-template-columns:26px minmax(0,1fr)}.initiative-roll{grid-column:2;white-space:normal}.initiative-turn-controls strong{flex-basis:100%;order:-1}}
+  .initiative-turn-controls{display:flex;align-items:center;gap:7px;min-width:0}
+  .initiative-turn-controls button{min-width:34px;min-height:34px;padding:5px 9px;font-size:16px;font-weight:900}
+  .initiative-turn-controls strong{max-width:180px;color:var(--gm-text);font-size:12px;text-align:center;overflow-wrap:anywhere}
+  @media(max-width:520px){.initiative-list li{grid-template-columns:26px minmax(0,1fr)}.initiative-roll{grid-column:2;white-space:normal}.initiative-turn-controls{flex-basis:100%;order:2}.initiative-turn-controls strong{flex:1}}
   @media(max-width:480px){.combatant-vitals{align-items:flex-start;flex-direction:column}.combat-initiative{align-items:flex-start;flex-direction:column}}
 
   :global(html),:global(body),:global(#app){box-sizing:border-box;width:100%;min-width:0;max-width:100vw;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}
-  .initiative-screen-overlay{box-sizing:border-box;display:block;width:100%;max-width:100%;min-width:0;height:fit-content;max-height:calc(100vh - 24px);margin:0;overflow-x:hidden;overflow-y:auto;padding:7px;background:#0b171d;color:#fff;font-family:Arial,sans-serif;border:1px solid #5fe6e0;border-radius:9px;box-shadow:0 5px 18px rgba(0,0,0,.35)}
-  .initiative-screen-overlay header{display:flex;flex-direction:column;gap:3px;min-width:0;padding-bottom:6px;border-bottom:1px solid #3a6870}
-  .initiative-screen-overlay header strong{font-size:12px;line-height:1.2;letter-spacing:.02em;color:#9fe9e5;overflow-wrap:anywhere}
-  .initiative-screen-overlay header span{font-size:10px;line-height:1.25;color:#e6b83f;font-weight:700;overflow-wrap:anywhere}
-  .initiative-screen-overlay ol{display:flex;flex-direction:column;gap:3px;list-style:none;margin:6px 0 0;padding:0;min-width:0}
-  .initiative-screen-overlay li{box-sizing:border-box;display:grid;grid-template-columns:18px minmax(0,1fr) 38px;align-items:center;gap:5px;min-width:0;padding:4px 5px;border:1px solid #29444d;border-radius:6px;background:#13262e}
-  .initiative-screen-overlay li.current{border-color:#e6b83f;background:#493d1d}
-  .screen-overlay-index{display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#263d46;color:#9fe9e5;font-weight:800;font-size:9px}
-  .initiative-screen-overlay li.current .screen-overlay-index{background:#e6b83f;color:#17242a}
-  .screen-overlay-name{min-width:0;font-size:10px;line-height:1.2;font-weight:700;overflow-wrap:anywhere}
-  .initiative-screen-overlay li strong{display:block;width:38px;min-width:38px;text-align:right;white-space:nowrap;font-size:12px;line-height:1;color:#fff}
   /* Bonificadores de habilidades: competencia en amarillo y pericia en rojo. */
   :global(.nautical-skills .sheet-stat.proficient .skill-number),
   :global(.nautical-skills .sheet-stat.proficient .inline-roll){color:#ffd34e!important}
