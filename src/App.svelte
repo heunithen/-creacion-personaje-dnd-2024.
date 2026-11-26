@@ -844,6 +844,7 @@
   let progressionLanguageChoice = '';
   let progressionTraitChoice = '';
   let progressionSubclassChoice = '';
+  $: progressionSubclassChoice = sheet ? (getCharacterStat(sheet,'PERSONAJE','Subclase') || '') : '';
   let progressionBardDieChoice = '';
   let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
   function rollChestLoot() {
