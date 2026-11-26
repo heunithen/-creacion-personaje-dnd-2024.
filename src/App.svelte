@@ -1385,6 +1385,7 @@
     builderBackgroundChosen=true;
     builderData.background=value;
     builderData.classSkillChoices=[];
+    builderData.classExpertise=[];
     builderData.backgroundToolChoice=(BUILDER_BACKGROUND_TOOL_OPTIONS[value]?.length===1?BUILDER_BACKGROUND_TOOL_OPTIONS[value][0]:'');
     builderData.backgroundFeatChoices=[];
     builderData.backgroundMagicCantrips=[];
@@ -1407,6 +1408,8 @@
     builderData.speciesFeatChoices=[];
     builderData.speciesMagicCantrips=[];
     builderData.speciesMagicSpell='';
+    builderData.classSkillChoices=[];
+    builderData.classExpertise=[];
   }
   function builderSpellInfo(name:string):any {
     return (SPELLS as any[]).find(spell=>normalizeLevelText(spell.name)===normalizeLevelText(name)) || null;
@@ -1948,87 +1951,100 @@
     if (magicClass) return cantrips.length===2 && new Set(cantrips).size===2 && cantrips.every(name=>BUILDER_SPELL_LISTS[magicClass].cantrips.includes(name)) && BUILDER_SPELL_LISTS[magicClass].level1.includes(spell);
     return true;
   }
-  function builderMissingFields(): string[] {
-    const missing: string[] = [];
+  function builderStepMissingFields(step:number): string[] {
+    const missing:string[]=[];
     const cls=BUILDER_CLASS_DATA[builderData.className];
-    const backgroundFeat=BUILDER_BACKGROUND_DATA[builderData.background].feat;
+    const background=BUILDER_BACKGROUND_DATA[builderData.background];
+    const backgroundFeat=background.feat;
     const featSkills=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_SKILL_OPTIONS.includes(choice));
-    if(!['A','B'].includes(builderData.backgroundEquipment)) missing.push('Opción de equipo del trasfondo (paso 3).');
-    if(!['A','B',...(builderData.className==='Guerrero'?['C']:[])].includes(builderData.classEquipmentChoice)) missing.push('Opción de equipo de clase (paso 4).');
-    if(!builderData.name.trim()) missing.push('Nombre del personaje (paso 2: pulsa «Generar nombre»).');
-    if(!builderData.alignment) missing.push('Alineamiento (paso 2).');
-    if(BUILDER_SPECIES_CHOICES[builderData.species].length && !BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice)) missing.push('Linaje o variante de especie (paso 2).');
-    if(['Aasimar','Humano','Tiefling'].includes(builderData.species) && !builderData.speciesSize) missing.push('Tamaño de la especie (paso 2).');
-    if(['Elfo','Gnomo','Tiefling'].includes(builderData.species) && !['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility)) missing.push('Aptitud mágica de linaje (paso 2).');
-    if(['Elfo','Humano'].includes(builderData.species) && !builderData.speciesSkill) missing.push('Habilidad adicional de especie (paso 2).');
-    if(builderData.species==='Humano' && !builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell)) missing.push('Elecciones de la dote de origen adicional humana (paso 2).');
-    const toolOptions=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
-    if(toolOptions.length && !toolOptions.includes(builderData.backgroundToolChoice)) missing.push('Competencia con herramienta del trasfondo (paso 3).');
-    if(!builderOriginFeatChoicesOk(backgroundFeat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell)) missing.push('Elecciones de la dote del trasfondo (paso 3).');
-    const bgAbilities=BUILDER_BACKGROUND_DATA[builderData.background].abilities;
-    const increasesOk=builderData.abilityIncreaseMode==='two'?bgAbilities.includes(builderData.abilityIncrease2)&&bgAbilities.includes(builderData.abilityIncrease1)&&builderData.abilityIncrease1!==builderData.abilityIncrease2:bgAbilities.includes(builderData.abilityIncrease1)&&bgAbilities.includes(builderData.abilityIncrease2)&&bgAbilities.includes(builderData.abilityIncrease3)&&new Set([builderData.abilityIncrease1,builderData.abilityIncrease2,builderData.abilityIncrease3]).size===3;
-    if(!increasesOk) missing.push('Distribución de aumentos de característica del trasfondo (paso 3).');
-    if(builderData.classSkillChoices.filter(Boolean).length!==BUILDER_CLASS_SKILLS[builderData.className].count) missing.push('Competencias de habilidad de clase: faltan '+(BUILDER_CLASS_SKILLS[builderData.className].count-builderData.classSkillChoices.filter(Boolean).length)+' (paso 4).');
-    if(cls.weaponCount && builderData.weaponMasteries.length!==cls.weaponCount) missing.push('Maestrías con armas: faltan '+(cls.weaponCount-builderData.weaponMasteries.length)+' (paso 4).');
-    const expectedTools=builderData.className==='Bardo'?3:builderData.className==='Monje'?1:0;
-    if(builderData.classToolsChoices.length!==expectedTools) missing.push('Competencias con herramientas de clase: faltan '+(expectedTools-builderData.classToolsChoices.length)+' (paso 4).');
-    if(cls.specialOptions.length && !cls.specialOptions.includes(builderData.classSpecialChoice)) missing.push((cls.specialLabel||'Elección especial de clase')+' (paso 4).');
-    if(builderData.className==='Pícaro' && builderData.classExpertise.length!==2) missing.push('Pericias de Pícaro: faltan '+(2-builderData.classExpertise.length)+' (paso 4).');
-    const bonusCantrip=(builderData.className==='Clérigo'&&builderData.classSpecialChoice==='Taumaturgo')||(builderData.className==='Druida'&&builderData.classSpecialChoice==='Naturalista')?1:0;
-    const cantripCount=cls.cantrips+bonusCantrip;
-    if(builderData.selectedCantrips.length!==cantripCount) missing.push('Trucos de clase: faltan '+(cantripCount-builderData.selectedCantrips.length)+' (paso 4).');
-    if(builderData.className==='Brujo'&&builderData.classSpecialChoice==='Pacto del grimorio'){
-      if(builderData.warlockTomeCantrips.length!==3) missing.push('Trucos del Pacto del grimorio: faltan '+(3-builderData.warlockTomeCantrips.length)+' (paso 4).');
-      if(builderData.warlockTomeRituals.length!==2) missing.push('Conjuros rituales del Pacto del grimorio: faltan '+(2-builderData.warlockTomeRituals.length)+' (paso 4).');
+    const add=(condition:boolean,message:string)=>{if(condition) missing.push(message);};
+
+    if(step===2) {
+      const toolOptions=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
+      add(toolOptions.length>0&&!toolOptions.includes(builderData.backgroundToolChoice),'Competencia con herramienta del trasfondo.');
+      add(!builderOriginFeatChoicesOk(backgroundFeat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell),'Elecciones de la dote del trasfondo.');
+      const options=builderFeatChoiceOptions(backgroundFeat);
+      add(!builderData.backgroundFeatChoices.every(choice=>options.includes(choice)&&!background.skills.includes(choice)&&choice!==builderData.backgroundToolChoice),'La dote del trasfondo contiene una elección incompatible.');
     }
-    if(builderData.selectedSpells.length!==cls.spells) missing.push('Conjuros de nivel 1: faltan '+(cls.spells-builderData.selectedSpells.length)+' (paso 4).');
-    if(cls.spellbook && builderData.wizardSpellbook.length!==cls.spellbook) missing.push('Libro de conjuros del Mago: faltan '+(cls.spellbook-builderData.wizardSpellbook.length)+' (paso 4).');
-    const values=Object.values(builderData.abilities).map(Number), sorted=[...values].sort((a,b)=>b-a);
-    const abilitiesOk=builderData.method==='standard'?JSON.stringify(sorted)===JSON.stringify([15,14,13,12,10,8]):builderData.method==='pointBuy'?values.every(v=>v>=8&&v<=15)&&builderPointCost()===27:builderData.method==='rolled'?builderRolledScores.length===6&&JSON.stringify(sorted)===JSON.stringify([...builderRolledScores].sort((a,b)=>b-a)):BUILDER_ABILITY_NAMES.every(name=>Number.isInteger(Number(builderData.abilities[name]))&&Number(builderData.abilities[name])>=1&&Number(builderData.abilities[name])<=20);
-    if(!abilitiesOk) missing.push('Puntuaciones de característica: revisa el método elegido y sus seis valores (paso 5).');
-    if(builderData.languages.length!==2) missing.push('Idiomas adicionales: selecciona exactamente 2; actualmente '+builderData.languages.length+' (paso 6).');
-    if(builderData.className==='Pícaro' && !builderData.rogueLanguage) missing.push('Idioma adicional de Pícaro (paso 6).');
-    if(!builderCanFinish() && !missing.length) missing.push('Hay una elección que no coincide con las opciones permitidas. Revisa los pasos 2 a 6.');
+
+    if(step===3) {
+      const speciesChoices=BUILDER_SPECIES_CHOICES[builderData.species]||[];
+      add(!builderData.name.trim(),'Nombre del personaje.');
+      add(speciesChoices.length>0&&!speciesChoices.includes(builderData.speciesChoice),'Linaje o variante de especie.');
+      add(['Aasimar','Humano','Tiefling'].includes(builderData.species)&&!['Pequeño','Mediano'].includes(builderData.speciesSize),'Tamaño de la especie.');
+      add(['Elfo','Gnomo','Tiefling'].includes(builderData.species)&&!['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility),'Aptitud mágica de linaje.');
+      add(['Elfo','Humano'].includes(builderData.species)&&(!BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill)||background.skills.includes(builderData.speciesSkill)),'Habilidad adicional de especie.');
+      if(builderData.species==='Humano') {
+        const options=builderFeatChoiceOptions(builderData.speciesExtraFeat);
+        add(!builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell),'Elecciones de la dote de origen adicional humana.');
+        add(!builderData.speciesFeatChoices.every(choice=>options.includes(choice)&&!background.skills.includes(choice)&&choice!==builderData.speciesSkill&&!builderData.backgroundFeatChoices.includes(choice)),'La dote adicional humana contiene una elección incompatible o repetida.');
+      }
+    }
+
+    if(step===4) {
+      const values=Object.values(builderData.abilities).map(Number);
+      const sorted=[...values].sort((a,b)=>b-a);
+      const ok=builderData.method==='standard'?JSON.stringify(sorted)===JSON.stringify([15,14,13,12,10,8]):builderData.method==='pointBuy'?values.every(value=>value>=8&&value<=15)&&builderPointCost()===27:builderData.method==='rolled'?builderRolledScores.length===6&&JSON.stringify(sorted)===JSON.stringify([...builderRolledScores].sort((a,b)=>b-a)):builderData.method==='free'&&BUILDER_ABILITY_NAMES.every(name=>Number.isInteger(Number(builderData.abilities[name]))&&Number(builderData.abilities[name])>=1&&Number(builderData.abilities[name])<=20);
+      add(!ok,'Puntuaciones de característica: revisa el método elegido y sus seis valores.');
+    }
+
+    if(step===5) {
+      const allowed=background.abilities;
+      const valid=builderData.abilityIncreaseMode==='two'
+        ? allowed.includes(builderData.abilityIncrease2)&&allowed.includes(builderData.abilityIncrease1)&&builderData.abilityIncrease1!==builderData.abilityIncrease2
+        : builderData.abilityIncreaseMode==='three'&&allowed.includes(builderData.abilityIncrease1)&&allowed.includes(builderData.abilityIncrease2)&&allowed.includes(builderData.abilityIncrease3)&&new Set([builderData.abilityIncrease1,builderData.abilityIncrease2,builderData.abilityIncrease3]).size===3;
+      add(!valid,'Distribución de aumentos de característica del trasfondo.');
+      const adjusted=builderAdjustedAbilities();
+      add(!adjusted||BUILDER_ABILITY_NAMES.some(name=>adjusted[name]>20),'Los aumentos del trasfondo no pueden superar 20 en ninguna característica.');
+    }
+
+    if(step===6) {
+      const selected=builderData.classSkillChoices.filter(Boolean);
+      const validSkills=selected.length===BUILDER_CLASS_SKILLS[builderData.className].count&&new Set(selected).size===selected.length&&selected.every(skill=>BUILDER_CLASS_SKILLS[builderData.className].options.includes(skill)&&!background.skills.includes(skill)&&skill!==builderData.speciesSkill&&!featSkills.includes(skill));
+      add(!validSkills,'Competencias de habilidad de clase: revisa la cantidad, las opciones y que no se repitan competencias.');
+      add(cls.weaponCount>0&&(builderData.weaponMasteries.length!==cls.weaponCount||new Set(builderData.weaponMasteries).size!==builderData.weaponMasteries.length||!builderData.weaponMasteries.every(name=>BUILDER_WEAPON_MASTERY_OPTIONS.includes(name))),'Maestrías con armas: revisa la cantidad y elimina opciones repetidas o inválidas.');
+      const expectedTools=builderData.className==='Bardo'?3:builderData.className==='Monje'?1:0;
+      const validTools=builderData.className==='Bardo'?BUILDER_MUSICAL_INSTRUMENTS:builderData.className==='Monje'?[...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS]:[];
+      add(builderData.classToolsChoices.length!==expectedTools||new Set(builderData.classToolsChoices).size!==expectedTools||!builderData.classToolsChoices.every(tool=>validTools.includes(tool)),'Competencias con herramientas de clase: revisa las opciones seleccionadas.');
+      add(cls.specialOptions.length>0&&!cls.specialOptions.includes(builderData.classSpecialChoice),(cls.specialLabel||'Elección especial de clase')+'.');
+      const eligibleExpertise=[...background.skills,...selected,builderData.speciesSkill,...featSkills].filter(Boolean);
+      add(builderData.className==='Pícaro'&&(builderData.classExpertise.length!==2||new Set(builderData.classExpertise).size!==2||!builderData.classExpertise.every(skill=>eligibleExpertise.includes(skill))),'Pericias de Pícaro: elige dos habilidades en las que ya tengas competencia.');
+    }
+
+    if(step===7) {
+      add(!['A','B'].includes(builderData.backgroundEquipment),'Opción de equipo del trasfondo.');
+      add(!['A','B',...(builderData.className==='Guerrero'?['C']:[])].includes(builderData.classEquipmentChoice),'Opción de equipo de clase.');
+    }
+
+    if(step===8) {
+      const bonus=(builderData.className==='Clérigo'&&builderData.classSpecialChoice==='Taumaturgo')||(builderData.className==='Druida'&&builderData.classSpecialChoice==='Naturalista')?1:0;
+      const cantripCount=cls.cantrips+bonus;
+      const cantripOptions=BUILDER_SPELL_LISTS[builderData.className]?.cantrips||[];
+      add(builderData.selectedCantrips.length!==cantripCount||new Set(builderData.selectedCantrips).size!==cantripCount||!builderData.selectedCantrips.every(name=>cantripOptions.includes(name)),'Trucos de clase: revisa la cantidad y las opciones seleccionadas.');
+      const spellOptions=BUILDER_SPELL_LISTS[builderData.className]?.level1||[];
+      add(builderData.selectedSpells.length!==cls.spells||new Set(builderData.selectedSpells).size!==cls.spells||!builderData.selectedSpells.every(name=>spellOptions.includes(name)),'Conjuros de nivel 1: revisa la cantidad y las opciones seleccionadas.');
+      add(cls.spellbook>0&&(builderData.wizardSpellbook.length!==cls.spellbook||new Set(builderData.wizardSpellbook).size!==cls.spellbook||!builderData.wizardSpellbook.every(name=>BUILDER_SPELL_LISTS.Mago.level1.includes(name))||!builderData.selectedSpells.every(name=>builderData.wizardSpellbook.includes(name))),'Libro de conjuros del Mago: debe contener los conjuros preparados y no repetir opciones.');
+      if(builderData.className==='Brujo'&&builderData.classSpecialChoice==='Pacto del grimorio') {
+        add(builderData.warlockTomeCantrips.length!==3||new Set(builderData.warlockTomeCantrips).size!==3||!builderData.warlockTomeCantrips.every(name=>BUILDER_TOME_CANTRIPS.includes(name)&&!builderData.selectedCantrips.includes(name)),'Trucos del Pacto del grimorio: elige tres opciones distintas de tus trucos de clase.');
+        add(builderData.warlockTomeRituals.length!==2||new Set(builderData.warlockTomeRituals).size!==2||!builderData.warlockTomeRituals.every(name=>BUILDER_TOME_RITUALS.includes(name)&&!builderData.selectedSpells.includes(name)),'Conjuros rituales del Pacto del grimorio: elige dos opciones distintas de tus conjuros de clase.');
+      }
+    }
+
+    if(step===9) {
+      add(builderData.languages.length!==2||new Set(builderData.languages).size!==2||!builderData.languages.every(language=>BUILDER_STANDARD_LANGUAGES.includes(language)),'Idiomas adicionales: selecciona exactamente dos idiomas distintos.');
+      add(builderData.className==='Pícaro'&&(!builderData.rogueLanguage||!BUILDER_LANGUAGES.includes(builderData.rogueLanguage)||builderData.rogueLanguage==='Jerga de ladrones'||builderData.languages.includes(builderData.rogueLanguage)),'Idioma adicional de Pícaro: elige un idioma válido que no esté repetido.');
+    }
+
+    if(step===10) add(!['Legal bueno','Neutral bueno','Caótico bueno','Legal neutral','Neutral','Caótico neutral','Legal malvado','Neutral malvado','Caótico malvado'].includes(builderData.alignment),'Alineamiento.');
     return missing;
   }
-  function builderCanFinish() {
-    const cls = BUILDER_CLASS_DATA[builderData.className];
-    const selectedClassSkills=builderData.classSkillChoices.filter(Boolean);
-    const allFeatSkillChoices=[...builderData.backgroundFeatChoices,...builderData.speciesFeatChoices].filter(choice=>BUILDER_SKILL_OPTIONS.includes(choice));
-    const skillsOk = selectedClassSkills.length === BUILDER_CLASS_SKILLS[builderData.className].count && new Set(selectedClassSkills).size===selectedClassSkills.length && selectedClassSkills.every(skill=>BUILDER_CLASS_SKILLS[builderData.className].options.includes(skill) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(skill) && skill!==builderData.speciesSkill && !allFeatSkillChoices.includes(skill));
-    const masteriesOk = builderData.weaponMasteries.length === cls.weaponCount && new Set(builderData.weaponMasteries).size===cls.weaponCount && builderData.weaponMasteries.every(name=>BUILDER_WEAPON_MASTERY_OPTIONS.includes(name));
-    const expectedTools = builderData.className === 'Bardo' ? 3 : builderData.className === 'Monje' ? 1 : 0;
-    const validClassTools=builderData.className==='Bardo'?BUILDER_MUSICAL_INSTRUMENTS:builderData.className==='Monje'?[...BUILDER_ARTISAN_TOOLS,...BUILDER_MUSICAL_INSTRUMENTS]:[];
-    const classToolsOk = builderData.classToolsChoices.length === expectedTools && new Set(builderData.classToolsChoices).size===builderData.classToolsChoices.length && builderData.classToolsChoices.every(tool=>validClassTools.includes(tool));
-    const backgroundToolOptions=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
-    const backgroundToolOk = !backgroundToolOptions.length || backgroundToolOptions.includes(builderData.backgroundToolChoice);
-    const expertiseOk = builderData.className !== 'Pícaro' || (builderData.classExpertise.length === 2 && new Set(builderData.classExpertise).size===2 && builderData.classExpertise.every(skill => [...BUILDER_BACKGROUND_DATA[builderData.background].skills,...builderData.classSkillChoices,builderData.speciesSkill,...builderData.backgroundFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice)),...builderData.speciesFeatChoices.filter(choice => BUILDER_SKILL_OPTIONS.includes(choice))].includes(skill)));
-    const specialOk = cls.specialOptions.length === 0 || cls.specialOptions.includes(builderData.classSpecialChoice);
-    const bonusCantrip = (builderData.className === 'Clérigo' && builderData.classSpecialChoice === 'Taumaturgo') || (builderData.className === 'Druida' && builderData.classSpecialChoice === 'Naturalista') ? 1 : 0;
-    const classCantripOptions=BUILDER_SPELL_LISTS[builderData.className]?.cantrips||[];
-    const cantripsOk = builderData.selectedCantrips.length === cls.cantrips + bonusCantrip && new Set(builderData.selectedCantrips).size===builderData.selectedCantrips.length && builderData.selectedCantrips.every(name=>classCantripOptions.includes(name));
-    const tomeOk = builderData.className !== 'Brujo' || builderData.classSpecialChoice !== 'Pacto del grimorio' || (builderData.warlockTomeCantrips.length===3 && new Set(builderData.warlockTomeCantrips).size===3 && builderData.warlockTomeCantrips.every(name=>BUILDER_TOME_CANTRIPS.includes(name) && !builderData.selectedCantrips.includes(name)) && builderData.warlockTomeRituals.length===2 && new Set(builderData.warlockTomeRituals).size===2 && builderData.warlockTomeRituals.every(name=>BUILDER_TOME_RITUALS.includes(name) && !builderData.selectedSpells.includes(name)));
-    const classLevelOneSpells=BUILDER_SPELL_LISTS[builderData.className]?.level1||[];
-    const spellsOk = builderData.selectedSpells.length === cls.spells && new Set(builderData.selectedSpells).size===builderData.selectedSpells.length && builderData.selectedSpells.every(name=>classLevelOneSpells.includes(name));
-    const bookOk = cls.spellbook===0 || (builderData.wizardSpellbook.length===cls.spellbook && new Set(builderData.wizardSpellbook).size===cls.spellbook && builderData.wizardSpellbook.every(name=>BUILDER_SPELL_LISTS.Mago.level1.includes(name)) && builderData.selectedSpells.every(name=>builderData.wizardSpellbook.includes(name)));
-    const abilityValues = Object.values(builderData.abilities).map(Number);
-    const sortedAbilities = [...abilityValues].sort((a,b)=>b-a);
-    const standardOk = JSON.stringify(sortedAbilities) === JSON.stringify([15,14,13,12,10,8]);
-    const pointBuyOk = abilityValues.every(value=>value>=8 && value<=15) && builderPointCost() === 27;
-    const rolledOk = builderRolledScores.length === 6 && JSON.stringify(sortedAbilities) === JSON.stringify([...builderRolledScores].sort((a,b)=>b-a));
-    const freeOk = BUILDER_ABILITY_NAMES.every(name => Number.isInteger(Number(builderData.abilities[name])) && Number(builderData.abilities[name]) >= 1 && Number(builderData.abilities[name]) <= 20);
-    const abilitiesOk = builderData.method === 'standard' ? standardOk : builderData.method === 'pointBuy' ? pointBuyOk : builderData.method === 'rolled' ? rolledOk : builderData.method === 'free' ? freeOk : false;
-    const speciesChoiceOk = BUILDER_SPECIES_CHOICES[builderData.species].length === 0 || BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice);
-    const speciesSkillOk = !['Elfo','Humano'].includes(builderData.species) || (BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(builderData.speciesSkill) && !builderData.classSkillChoices.includes(builderData.speciesSkill));
-    const speciesMagicAbilityOk = !['Elfo','Gnomo','Tiefling'].includes(builderData.species) || ['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
-    const speciesSizeOk = !['Aasimar','Humano','Tiefling'].includes(builderData.species) || Boolean(builderData.speciesSize);
-    const languagesOk = builderData.languages.length === 2 && new Set(builderData.languages).size===2 && builderData.languages.every(language=>BUILDER_STANDARD_LANGUAGES.includes(language)) && (builderData.className !== 'Pícaro' || (Boolean(builderData.rogueLanguage) && BUILDER_LANGUAGES.includes(builderData.rogueLanguage) && !builderData.languages.includes(builderData.rogueLanguage) && builderData.rogueLanguage!=='Jerga de ladrones'));
-    const backgroundFeatName=BUILDER_BACKGROUND_DATA[builderData.background].feat;
-    const backgroundFeatOptions=builderFeatChoiceOptions(backgroundFeatName);
-    const backgroundFeatOk = builderOriginFeatChoicesOk(backgroundFeatName,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell) && builderData.backgroundFeatChoices.every(choice=>backgroundFeatOptions.includes(choice) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice!==builderData.speciesSkill && choice!==builderData.backgroundToolChoice);
-    const speciesFeatOptions=builderFeatChoiceOptions(builderData.speciesExtraFeat);
-    const speciesFeatOk=builderData.species!=='Humano' || (builderOriginFeatChoicesOk(builderData.speciesExtraFeat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell) && builderData.speciesFeatChoices.every(choice=>speciesFeatOptions.includes(choice) && !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice!==builderData.speciesSkill && choice!==builderData.backgroundToolChoice && !builderData.backgroundFeatChoices.includes(choice)));
-    return Boolean(builderData.name.trim()) && Boolean(builderData.alignment) && skillsOk && masteriesOk && classToolsOk && backgroundToolOk && expertiseOk && specialOk && cantripsOk && tomeOk && spellsOk && bookOk && abilitiesOk && speciesChoiceOk && speciesSkillOk && speciesMagicAbilityOk && speciesSizeOk && backgroundFeatOk && speciesFeatOk && languagesOk;
+
+  function builderMissingFields(): string[] {
+    return [2,3,4,5,6,7,8,9,10].flatMap(step=>builderStepMissingFields(step));
+  }
+
+  function builderCanFinish():boolean {
+    return builderMissingFields().length===0;
   }
   type BuilderChoiceField = 'backgroundFeatChoices'|'backgroundMagicCantrips'|'speciesFeatChoices'|'speciesMagicCantrips'|'languages'|'classExpertise'|'weaponMasteries'|'classToolsChoices'|'classSkillChoices'|'warlockTomeCantrips'|'warlockTomeRituals'|'selectedCantrips'|'wizardSpellbook'|'selectedSpells';
   let builderStepError = '';
@@ -2040,48 +2056,12 @@
     builderStepError='';
   }
   function builderStepCanAdvance():boolean {
-    if(builderStep===0) return true;
-    if(builderStep===1) return true;
-    if(builderStep===2) {
-      if(!builderBackgroundChosen || !builderBackgroundSetup) return false;
-      const options=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
-      const feat=BUILDER_BACKGROUND_DATA[builderData.background].feat;
-      return (!options.length||options.includes(builderData.backgroundToolChoice))&&builderOriginFeatChoicesOk(feat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell);
-    }
-    if(builderStep===3) {
-      if(!builderSpeciesChosen || !builderSpeciesSetup) return false;
-      const choiceOk=BUILDER_SPECIES_CHOICES[builderData.species].length===0||BUILDER_SPECIES_CHOICES[builderData.species].includes(builderData.speciesChoice);
-      const skillOk=!['Elfo','Humano'].includes(builderData.species)||(BUILDER_SKILL_OPTIONS.includes(builderData.speciesSkill)&&!BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(builderData.speciesSkill));
-      const magicOk=!['Elfo','Gnomo','Tiefling'].includes(builderData.species)||['Inteligencia','Sabiduría','Carisma'].includes(builderData.speciesMagicAbility);
-      const sizeOk=!['Aasimar','Humano','Tiefling'].includes(builderData.species)||Boolean(builderData.speciesSize);
-      const feat=builderData.speciesExtraFeat;
-      const featOk=builderData.species!=='Humano'||builderOriginFeatChoicesOk(feat,builderData.speciesFeatChoices,builderData.speciesMagicCantrips,builderData.speciesMagicSpell);
-      return choiceOk&&skillOk&&magicOk&&sizeOk&&featOk;
-    }
-    if(builderStep===4) {
-      const values=Object.values(builderData.abilities).map(Number), sorted=[...values].sort((a,b)=>b-a);
-      return builderData.method==='standard'?JSON.stringify(sorted)===JSON.stringify([15,14,13,12,10,8]):builderData.method==='pointBuy'?values.every(v=>v>=8&&v<=15)&&builderPointCost()===27:builderData.method==='rolled'?builderRolledScores.length===6&&JSON.stringify(sorted)===JSON.stringify([...builderRolledScores].sort((a,b)=>b-a)):BUILDER_ABILITY_NAMES.every(name=>Number.isInteger(Number(builderData.abilities[name]))&&Number(builderData.abilities[name])>=1&&Number(builderData.abilities[name])<=20);
-    }
-    if(builderStep===5) return builderAdjustedAbilities() && BUILDER_ABILITY_NAMES.every(name=>builderAdjustedAbilities()[name]<=20);
-    if(builderStep===6) {
-      const cls=BUILDER_CLASS_DATA[builderData.className];
-      const selected=builderData.classSkillChoices.filter(Boolean);
-      const skillsOk=selected.length===BUILDER_CLASS_SKILLS[builderData.className].count&&new Set(selected).size===selected.length;
-      const masteriesOk=builderData.weaponMasteries.length===cls.weaponCount;
-      const toolsOk=builderData.classToolsChoices.length===(builderData.className==='Bardo'?3:builderData.className==='Monje'?1:0);
-      const expertiseOk=builderData.className!=='Pícaro'||builderData.classExpertise.length===2;
-      const specialOk=cls.specialOptions.length===0||cls.specialOptions.includes(builderData.classSpecialChoice);
-      return skillsOk&&masteriesOk&&toolsOk&&expertiseOk&&specialOk;
-    }
-    if(builderStep===7) return Boolean(builderData.backgroundEquipment)&&Boolean(builderData.classEquipmentChoice);
-    if(builderStep===8) {
-      const cls=BUILDER_CLASS_DATA[builderData.className];
-      const bonus=(builderData.className==='Clérigo'&&builderData.classSpecialChoice==='Taumaturgo')||(builderData.className==='Druida'&&builderData.classSpecialChoice==='Naturalista')?1:0;
-      return builderData.selectedCantrips.length===cls.cantrips+bonus&&builderData.selectedSpells.length===cls.spells&&(cls.spellbook===0||builderData.wizardSpellbook.length===cls.spellbook);
-    }
-    if(builderStep===9) return builderData.languages.length===2&&(builderData.className!=='Pícaro'||Boolean(builderData.rogueLanguage));
-    if(builderStep===10) return true;
-    return builderCanFinish();
+    if(builderStep===0||builderStep===1) return true;
+    if(builderStep===2) return builderBackgroundChosen&&builderBackgroundSetup&&builderStepMissingFields(2).length===0;
+    if(builderStep===3) return builderSpeciesChosen&&builderSpeciesSetup&&builderStepMissingFields(3).length===0;
+    if(builderStep>=4&&builderStep<=10) return builderStepMissingFields(builderStep).length===0;
+    if(builderStep===11) return builderCanFinish();
+    return false;
   }
   function keepBuilderAtTop() {
     requestAnimationFrame(() => document.querySelector('.builder-panel')?.scrollIntoView({ block: 'start', behavior: 'smooth' }));
@@ -2101,7 +2081,7 @@
         builderSpeciesSetup=true; builderStepError=''; keepBuilderAtTop(); return;
       }
       if(!builderStepCanAdvance()) {
-        const stepFields=builderMissingFields().filter(field=>field.includes('(paso '+(builderStep+1)+')'));
+        const stepFields=builderStepMissingFields(builderStep);
         builderStepError=stepFields.length
           ? 'Falta completar lo siguiente para avanzar:\\n• '+stepFields.join('\\n• ')
           : 'Hay una elección obligatoria incompleta en este paso. Revisa los campos visibles y vuelve a intentarlo.';
