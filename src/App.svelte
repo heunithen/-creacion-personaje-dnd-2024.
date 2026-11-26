@@ -1235,7 +1235,17 @@
   let portraitLoading = false;
   let portraitPickerError = '';
   let portraitFileInput: HTMLInputElement;
+  let communityPortraits: string[] = [];
   function chooseBundledPortrait(path:string){builderData={...builderData,portrait:path};portraitPickerOpen=false;}
+
+  async function loadCommunityPortraits() {
+    const response = await fetch(SUPABASE_URL + '/rest/v1/community_portraits?select=object_path&order=created_at.desc', {
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!response.ok) throw new Error('No se pudo cargar la biblioteca comunitaria.');
+    const rows = await response.json();
+    communityPortraits = rows.map((row:any) => SUPABASE_URL + '/storage/v1/object/public/community-portraits/' + row.object_path);
+  }
 
   async function migrateBundledPortraitsToSupabase() {
     if (localStorage.getItem('forja-portraits-migrated-v1') === 'yes') return;
@@ -1266,7 +1276,45 @@
     localStorage.setItem('forja-portraits-migrated-v1', 'yes');
     console.info('Retratos originales migrados a Supabase:', migrated);
   }
-  async function chooseUploadedPortrait(event:Event){const file=(event.currentTarget as HTMLInputElement).files?.[0];if(!file)return;portraitPickerError='';if(!file.type.startsWith('image/')){portraitPickerError='Selecciona un archivo de imagen.';return;}try{const source=await new Promise<HTMLImageElement>((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(new Error('No se pudo leer la imagen.'));image.src=URL.createObjectURL(file);});const canvas=document.createElement('canvas');canvas.width=256;canvas.height=512;const ctx=canvas.getContext('2d');if(!ctx)throw new Error('No se pudo procesar la imagen.');const scale=Math.max(256/source.width,512/source.height),w=source.width*scale,h=source.height*scale;ctx.drawImage(source,(256-w)/2,(512-h)/2,w,h);builderData={...builderData,portrait:canvas.toDataURL('image/webp',0.88)};URL.revokeObjectURL(source.src);portraitPickerOpen=false;}catch(error){portraitPickerError=error instanceof Error?error.message:'No se pudo cargar la imagen.';}finally{(event.currentTarget as HTMLInputElement).value='';}}
+  async function chooseUploadedPortrait(event:Event){
+    const input=event.currentTarget as HTMLInputElement;
+    const file=input.files?.[0];
+    if(!file)return;
+    portraitPickerError='';
+    try {
+      if(!file.type.startsWith('image/')) throw new Error('Selecciona un archivo de imagen.');
+      const source=await new Promise<HTMLImageElement>((resolve,reject)=>{
+        const image=new Image(); image.onload=()=>resolve(image); image.onerror=()=>reject(new Error('No se pudo leer la imagen.'));
+        image.src=URL.createObjectURL(file);
+      });
+      const canvas=document.createElement('canvas'); canvas.width=256; canvas.height=512;
+      const ctx=canvas.getContext('2d'); if(!ctx)throw new Error('No se pudo procesar la imagen.');
+      const scale=Math.max(256/source.width,512/source.height),w=source.width*scale,h=source.height*scale;
+      ctx.drawImage(source,(256-w)/2,(512-h)/2,w,h);
+      URL.revokeObjectURL(source.src);
+      const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('No se pudo generar WebP.')),'image/webp',0.88));
+      if(blob.type!=='image/webp')throw new Error('La imagen resultante no es WebP.');
+      const filename=crypto.randomUUID()+'.webp';
+      const uploaded=await fetch(SUPABASE_URL+'/storage/v1/object/community-portraits/'+filename,{
+        method:'POST',
+        headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'image/webp'},
+        body:blob
+      });
+      if(!uploaded.ok)throw new Error('No se pudo guardar el retrato: '+await uploaded.text());
+      const registered=await fetch(SUPABASE_URL+'/rest/v1/community_portraits',{
+        method:'POST',
+        headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},
+        body:JSON.stringify({object_path:filename})
+      });
+      if(!registered.ok)throw new Error('No se pudo registrar el retrato: '+await registered.text());
+      const portraitUrl=SUPABASE_URL+'/storage/v1/object/public/community-portraits/'+filename;
+      builderData={...builderData,portrait:portraitUrl};
+      await loadCommunityPortraits();
+      portraitPickerOpen=false;
+    } catch(error) {
+      portraitPickerError=error instanceof Error?error.message:'No se pudo cargar la imagen.';
+    } finally { input.value=''; }
+  }
 
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_CLASS_GUIDANCE: Record<string,string> = {
@@ -5105,6 +5153,7 @@ import ITEMS from './items.json';
 
   onMount(() => {
     void migrateBundledPortraitsToSupabase();
+    void loadCommunityPortraits().catch(error => console.error('No se pudo cargar la biblioteca comunitaria', error));
     try {
       const savedCombatants = localStorage.getItem(COMBATANTS_STORAGE_KEY);
       if (savedCombatants) {
@@ -5584,7 +5633,7 @@ import ITEMS from './items.json';
                     <header><div><h3>Elegir retrato</h3><p class="muted">Selecciona uno de los retratos de Neverwinter Nights o sube una imagen propia.</p></div><button type="button" class="secondary" on:click={()=>portraitPickerOpen=false}>Cerrar</button></header>
                     <div class="portrait-upload-row"><button type="button" on:click={()=>portraitFileInput?.click()}>Subir imagen</button><span>Preferentemente 256 × 512 px. Se ajustará al formato vertical.</span><input bind:this={portraitFileInput} type="file" accept="image/*" hidden on:change={chooseUploadedPortrait} /></div>
                     {#if portraitPickerError}<p class="portrait-picker-error">{portraitPickerError}</p>{/if}
-                    {#if portraitLoading}<p class="muted">Cargando retrato…</p>{:else}<div class="portrait-modal-grid">{#each BUILDER_PORTRAITS as portrait}<button type="button" class="portrait-modal-option" on:click={()=>chooseBundledPortrait(portrait)} aria-label="Seleccionar {portrait.split('/').pop()}"><img src={portrait} alt="Retrato disponible" loading="lazy" /><span>{portrait.split('/').pop()?.replace(/\.[^.]+$/,'')}</span></button>{/each}</div>{/if}
+                    {#if portraitLoading}<p class="muted">Cargando retrato…</p>{:else}<div class="portrait-modal-grid">{#each [...communityPortraits, ...BUILDER_PORTRAITS] as portrait}<button type="button" class="portrait-modal-option" on:click={()=>chooseBundledPortrait(portrait)} aria-label="Seleccionar {portrait.split('/').pop()}"><img src={portrait} alt="Retrato disponible" loading="lazy" /><span>{portrait.split('/').pop()?.replace(/\.[^.]+$/,'')}</span></button>{/each}</div>{/if}
                   </section>
                 </div>
               {/if}
