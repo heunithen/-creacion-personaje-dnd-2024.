@@ -3597,17 +3597,17 @@ import ITEMS from './items.json';
   function skillIsProficient(skill: string, target: RawSheet | null = sheet) {
     if (!target) return false;
     const raw = getCharacterStat(target, 'COMPETENCIAS', 'Habilidades');
-    const choices = splitChoiceList(raw.split(/;\\s*Pericia:/i)[0]);
+    const choices = splitChoiceList(raw.split(/;\s*Pericia:/i)[0]);
     return choices.some(choice => normalizeLevelText(choice) === normalizeLevelText(skill));
   }
   function skillIsExpertise(skill: string, target: RawSheet | null = sheet) {
     if (!target) return false;
     const raw = getCharacterStat(target, 'COMPETENCIAS', 'Habilidades');
-    const match = String(raw).match(/pericia\\s*:\\s*([^\\n;]+)/i);
+    const match = String(raw).match(/pericia\s*:\s*([^\n;]+)/i);
     return splitChoiceList(match?.[1] || '').some(choice => normalizeLevelText(choice) === normalizeLevelText(skill));
   }
   function skillBonusNumber(value: unknown): number | null {
-    const match = String(value ?? '').replace(/−/g,'-').match(/[+-]?\\d+/);
+    const match = String(value ?? '').replace(/−/g,'-').match(/[+-]?\d+/);
     return match ? Number(match[0]) : null;
   }
   function savingThrowBonus(ability: string, sections: RawSection[] = sheet?.sections || []) {
@@ -4763,7 +4763,7 @@ import ITEMS from './items.json';
                   <div class="skill-column-labels"><span>Habilidad</span><span>Valor</span></div>
                   <div class="stats-list">
                     {#each pair.heading.stats || [] as stat, i}
-                      <div class="sheet-stat" class:proficient={skillIsProficient(String(stat.name || ''), sheet)} class:expertise={skillIsExpertise(String(stat.name || ''), sheet)}><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value skill-number">{@const skillValue = (displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)).replace(/\\s*[·,]?\\s*(Competente|Pericia)\\b/gi, '').replace(/\\s*\\(Competencia\\)/gi, '')}{@const skillBonus = skillBonusNumber(skillValue)}{#if skillBonus !== null}<button type="button" class="inline-roll" class:proficient={skillIsProficient(String(stat.name || ''), sheet)} class:expertise={skillIsExpertise(String(stat.name || ''), sheet)} title="Tirar 1d20{signedBonus(skillBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(skillBonus), String(stat.name || 'Habilidad'))}>{signedBonus(skillBonus)}</button>{:else}{skillValue}{/if}</div></div>
+                      <div class="sheet-stat" class:proficient={skillIsProficient(String(stat.name || ''), sheet)} class:expertise={skillIsExpertise(String(stat.name || ''), sheet)}><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value skill-number">{@const skillValue = (displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)).replace(/\s*[·,]?\s*(Competente|Pericia)\b/gi, '').replace(/\s*\(Competencia\)/gi, '')}{@const skillBonus = skillBonusNumber(skillValue)}{#if skillBonus !== null}<button type="button" class="inline-roll" class:proficient={skillIsProficient(String(stat.name || ''), sheet)} class:expertise={skillIsExpertise(String(stat.name || ''), sheet)} title="Tirar 1d20{signedBonus(skillBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(skillBonus), String(stat.name || 'Habilidad'))}>{signedBonus(skillBonus)}</button>{:else}{skillValue}{/if}</div></div>
                     {/each}
                   </div>
                 </section>
@@ -6172,6 +6172,7 @@ import ITEMS from './items.json';
 :global(.nautical-sheet .inline-roll.expertise){color:#ff5252!important;border-color:#ff5252!important}
 :global(.nautical-sheet .sheet-stat.expertise .stat-label){color:#ff5252!important}
 :global(.nautical-sheet .sheet-stat.proficient:not(.expertise) .stat-label){color:#ffd54a!important}
+:global(.nautical-sheet .saving-throw-line.proficient .inline-roll){color:#ffd54a!important;border-color:#ffd54a!important}
 :global(.nautical-header){background:linear-gradient(115deg,#13262e,#0f1e26 70%,#1b2a33)!important;border-color:#3a4a52!important}
 :global(.portrait-frame){background:radial-gradient(circle,#1b2a33,#0b171d 70%)!important;border-color:#5fe6e0!important;box-shadow:0 0 0 3px #3a4a52!important;color:#5fe6e0!important}
 :global(.header-actions button){background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
