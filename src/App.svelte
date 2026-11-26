@@ -813,7 +813,6 @@
   let levelUpIncrease2 = '0';
   let levelUpFeat = '';
   let levelUpGeneralFeatAbility = '';
-  let levelUpResilientSave = '';
   let levelUpBarbarianFeatSkill = '';
   let levelUpBarbarianFeatExpertise = '';
   let levelUpBarbarianFeatSpell = '';
@@ -3306,7 +3305,7 @@ import ITEMS from './items.json';
     levelUpSubclassCantrips = getCharacterStat(entry.sheet,'CONJUROS','Trucos de subclase');
     levelUpSubclassSpells = getCharacterStat(entry.sheet,'CONJUROS','Conjuros preparados de subclase');
     levelUpAsiMode = 'asi'; levelUpAbility1 = 'Fuerza'; levelUpAbility2 = 'Destreza';
-    levelUpGeneralFeatAbility = ''; levelUpResilientSave = '';
+    levelUpGeneralFeatAbility = '';
     levelUpBarbarianFeatSkill = '';
     levelUpBarbarianFeatExpertise = '';
     levelUpBarbarianFeatSpell = getCharacterStat(entry.sheet,'CONJUROS','Conjuro elegido de influencia') || '';
