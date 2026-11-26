@@ -3409,7 +3409,8 @@ import ITEMS from './items.json';
     if(needsRangerBeastCompanion && (!Object.hasOwn(BUILDER_RANGER_BEAST_PROFILES,levelUpRangerBeastProfile) || !levelUpRangerBeastAnimal.trim())) { notice='Elige el perfil de tu bestia primigenia e indica qué animal representa.'; return; }
     const barbarianAspectChoice=findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices as LevelUpChoiceDefinition[],'barbarian.wildHeart.aspect');
     const needsBarbarianWildAspect=className==='Bárbaro' && selectedSubclassKey===(barbarianAspectChoice?.subclass || '') && nextLevel===barbarianAspectChoice?.level;
-    if(needsBarbarianWildAspect && !validateSingleLevelUpChoice(barbarianAspectChoice,levelUpBarbarianAspect)) { notice='Elige una opción válida para Aspecto de lo salvaje: '+(barbarianAspectChoice?.options||[]).join(', ')+'.'; return; }    const isBarbarianZealot=className==='Bárbaro' && selectedSubclassKey==='senda del fanatico';
+    if(needsBarbarianWildAspect && !validateSingleLevelUpChoice(barbarianAspectChoice,levelUpBarbarianAspect)) { notice='Elige una opción válida para Aspecto de lo salvaje: '+(barbarianAspectChoice?.options||[]).join(', ')+'.'; return; }    const isBarbarianWildHeart=className==='Bárbaro' && selectedSubclassKey==='senda del corazon salvaje';
+    const isBarbarianZealot=className==='Bárbaro' && selectedSubclassKey==='senda del fanatico';
     const barbarianEpicFeatOptions=BUILDER_EPIC_FEATS.filter(feat=>normalizeLevelText(feat)!=='don del recuerdo de conjuros');
     const isFighter=className==='Guerrero';
     const needsFighterStyle=isFighter;
