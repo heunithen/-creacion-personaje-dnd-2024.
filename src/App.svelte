@@ -6080,7 +6080,7 @@ import ITEMS from './items.json';
                       {#if progression}
                         {@const currentResourceRow=progression.rows.find((row:any)=>row.level===progression.currentLevel)}
                         {#if currentResourceRow?.resources?.['Dado bárdico']}
-                          <div class="progression-manual-select-row"><label>Dado bárdico<select value={progressionResourceText(sheet,'Dado bárdico',currentResourceRow.resources['Dado bárdico'])} on:change={(event)=>setProgressionResourceText('Dado bárdico',(event.currentTarget as HTMLSelectElement).value)}>{#each ['d6','d8','d10','d12'] as die}<option value={die}>{die.toUpperCase()}</option>{/each}</select></label></div>
+                          <div class="progression-manual-select-row"><label>Dado bárdico<select value={progressionResourceText(sheet,'Dado bárdico',currentResourceRow.resources['Dado bárdico'])} on:change={updateProgressionBardDie}>{#each ['d6','d8','d10','d12'] as die}<option value={die}>{die.toUpperCase()}</option>{/each}</select></label></div>
                         {/if}
                         {#each manualProgressionResourceEntries(progression) as [resourceName,resourceBase]}
                           <div class="progression-manual-row"><span>{resourceName}</span><div><button type="button" aria-label={'Disminuir '+resourceName} on:click={()=>adjustProgressionResource(resourceName,-1,resourceBase)}>−</button><strong>{progressionResourceValue(sheet,resourceName,resourceBase)}</strong><button type="button" aria-label={'Aumentar '+resourceName} on:click={()=>adjustProgressionResource(resourceName,1,resourceBase)}>+</button></div></div>
