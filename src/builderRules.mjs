@@ -46,6 +46,7 @@ export function isValidUniqueSelection(selected, allowed, expectedCount, blocked
 }
 
 export function selectDistinctChoices(options, blocked = [], count = 1) {
+  if (count === 0) return [];
   const selected = [];
   for (const option of options) {
     if (blocked.includes(option) || selected.includes(option)) continue;
