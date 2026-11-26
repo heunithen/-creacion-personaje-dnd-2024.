@@ -7363,17 +7363,17 @@ import ITEMS from './items.json';
   :global(.nautical-skills .sheet-stat .skill-number){font-size:1.25rem!important;font-weight:800!important;line-height:1.2!important;text-align:center!important;justify-self:center}
  
   /* Ficha informativa y navegación de clases */
-  .builder-class-flyer{display:flex;flex-direction:column;align-items:center;gap:.85rem;max-width:620px;margin:1rem auto 1.2rem;padding:1rem 1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;text-align:center}
-  .builder-class-emblem{display:block;width:116px;height:166px;object-fit:contain;image-rendering:pixelated}
-  .builder-class-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%;max-width:430px}
+  .builder-class-flyer{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1rem 1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;text-align:center;overflow:hidden}
+  .builder-class-emblem{display:block;flex:0 0 166px;width:116px;height:166px;object-fit:contain;image-rendering:pixelated}
+  .builder-class-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;flex:0 0 44px;width:100%;max-width:430px}
   .builder-class-title-row h4{margin:0;color:#fff;font:700 1.25rem Georgia,serif;text-align:center}
   .builder-class-arrow{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:1px solid #b5bec3;border-radius:7px;background:#13262e;color:#fff;font:400 2rem/1 system-ui,sans-serif;cursor:pointer}
   .builder-class-arrow:hover{border-color:#5fe6e0;color:#5fe6e0}
-  .builder-class-flyer-description{max-width:520px;margin:0;color:#b5bec3;font:.88rem/1.55 system-ui,sans-serif}
-  .builder-class-flyer-detail{display:flex;flex-direction:column;gap:.2rem;width:100%;max-width:520px;padding-top:.6rem;border-top:1px solid #b5bec3;text-align:left}
+  .builder-class-flyer-description{box-sizing:border-box;flex:1 1 auto;width:100%;max-width:520px;min-height:0;margin:0;padding:.15rem 0;color:#b5bec3;font:.88rem/1.55 system-ui,sans-serif;overflow-y:auto}
+  .builder-class-flyer-detail{box-sizing:border-box;display:flex;flex:0 0 76px;flex-direction:column;justify-content:flex-start;gap:.2rem;width:100%;max-width:520px;min-height:76px;padding-top:.6rem;border-top:1px solid #b5bec3;text-align:left}
   .builder-class-flyer-detail span{color:#3fb8b8;font:650 .65rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.05em}
   .builder-class-flyer-detail strong{color:#fff;font:.82rem/1.45 system-ui,sans-serif}
-  @media(max-width:460px){.builder-class-flyer{padding:.8rem}.builder-class-emblem{width:100px;height:145px}.builder-class-title-row{grid-template-columns:40px minmax(0,1fr) 40px;gap:.45rem}.builder-class-arrow{width:36px;height:36px}}
+  @media(max-width:460px){.builder-class-flyer{height:650px;min-height:650px;padding:.8rem}.builder-class-emblem{flex-basis:145px;width:100px;height:145px}.builder-class-title-row{grid-template-columns:40px minmax(0,1fr) 40px;gap:.45rem}.builder-class-arrow{width:36px;height:36px}}
   /* Selector visual de clases del creador */
   .builder-class-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin:.8rem 0 1rem}
   .builder-class-card{display:flex;min-width:0;flex-direction:column;gap:.55rem;padding:.8rem;border:1px solid #3fb8b8;border-radius:9px;background:linear-gradient(150deg,#13262e,#13262e);cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
