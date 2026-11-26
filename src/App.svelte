@@ -3889,6 +3889,14 @@ import ITEMS from './items.json';
       const retainedAlways=alwaysPrepared.filter(spell=>!oldBardDiscoveries.some(old=>normalizeLevelText(old)===normalizeLevelText(spell)));
       setCharacterStat(updated,'CONJUROS','Conjuros de descubrimientos mágicos',bardDiscoveryChoices.join(', '));
       setCharacterStat(updated,'CONJUROS','Conjuros siempre preparados de subclase',[...retainedAlways,...bardDiscoveryChoices].join(', '));
+      const oldDiscoveryCantrips=oldBardDiscoveries.filter(name=>getSpellRecord(name)?.level===0);
+      const newDiscoveryCantrips=bardDiscoveryChoices.filter(name=>getSpellRecord(name)?.level===0);
+      const oldSubclassCantrips=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos de subclase'));
+      const retainedSubclassCantrips=oldSubclassCantrips.filter(name=>!oldDiscoveryCantrips.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+      setCharacterStat(updated,'CONJUROS','Trucos de subclase',[...retainedSubclassCantrips,...newDiscoveryCantrips].join(', '));
+      const allCantrips=splitChoiceList(getCharacterStat(updated,'CONJUROS','Trucos'));
+      const retainedCantrips=allCantrips.filter(name=>!oldDiscoveryCantrips.some(old=>normalizeLevelText(old)===normalizeLevelText(name)) || oldClassCantripNames.some(old=>normalizeLevelText(old)===normalizeLevelText(name)));
+      setCharacterStat(updated,'CONJUROS','Trucos',[...new Map([...retainedCantrips,...newDiscoveryCantrips].map(name=>[normalizeLevelText(name),name])).values()].join(', '));
     }
     if(isBardGlamour && nextLevel===3) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Hechizar persona','Imagen múltiple']);
     if(isBardGlamour && nextLevel===6) mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de subclase',['Orden imperiosa']);
