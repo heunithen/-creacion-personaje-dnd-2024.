@@ -843,6 +843,7 @@
   let progressionWeaponChoice = '';
   let progressionLanguageChoice = '';
   let progressionTraitChoice = '';
+  let progressionBardDieChoice = '';
   let lastChestRoll: { total: number; dice: number[]; lootNumber: number; category: string; name: string; priceLabel: string } | null = null;
   function rollChestLoot() {
     const dice = Array.from({ length: 10 }, () => Math.floor(Math.random() * 10) + 1);
@@ -3120,9 +3121,9 @@ import ITEMS from './items.json';
   }
   function manualProgressionResourceEntries(progression:any):[string,any][] {
     const row=progression?.rows?.find((item:any)=>item.level===progression.currentLevel);
-    return Object.entries(row?.resources||{}).filter(([key,value])=>!/^Espacios nivel/i.test(key)&&!['espacios de conjuro','nivel de los espacios'].includes(normalizeLevelText(key))&&value!=='—'&&/\d/.test(String(value))) as [string,any][];
+    return Object.entries(row?.resources||{}).filter(([key,value])=>!/^Espacios nivel/i.test(key)&&!['espacios de conjuro','nivel de los espacios'].includes(normalizeLevelText(key))&&normalizeLevelText(key)!=='dado bardico'&&value!=='—'&&/\d/.test(String(value))) as [string,any][];
   }
-  function progressionManualResources(target:RawSheet):Record<string,number> {
+  function progressionManualResources(target:RawSheet):Record<string,any> {
     return readJsonRecord(target,'PROGRESIÓN','Recursos manuales');
   }
   function progressionResourceValue(target:RawSheet,key:string,base:any):number {
@@ -3130,6 +3131,17 @@ import ITEMS from './items.json';
     if(Object.prototype.hasOwnProperty.call(overrides,key)) return Math.max(0,Number(overrides[key])||0);
     const match=String(base??'').match(/[+-]?\d+/);
     return match ? Math.max(0,Number(match[0])) : 0;
+  }
+  function progressionResourceText(target:RawSheet,key:string,base:any):string {
+    const overrides=progressionManualResources(target);
+    return String(Object.prototype.hasOwnProperty.call(overrides,key)?overrides[key]:base??'—');
+  }
+  function setProgressionResourceText(key:string,value:string) {
+    if(!sheet||!value) return;
+    const overrides=progressionManualResources(sheet);
+    overrides[key]=value;
+    setCharacterStat(sheet,'PROGRESIÓN','Recursos manuales',JSON.stringify(overrides));
+    sheet={...sheet}; saveSheetMutation();
   }
   function adjustProgressionResource(key:string,delta:number,base:any=0) {
     if(!sheet) return;
@@ -6062,6 +6074,10 @@ import ITEMS from './items.json';
                       {/each}
                       <div class="progression-manual-row"><span>Experiencia (PX)</span><div><button type="button" aria-label="Disminuir experiencia" on:click={()=>adjustProgressionValue('PERSONAJE','Experiencia',-100,0,' PX')}>−</button><strong>{getCharacterStat(sheet,'PERSONAJE','Experiencia') || '0'}</strong><button type="button" aria-label="Aumentar experiencia" on:click={()=>adjustProgressionValue('PERSONAJE','Experiencia',100,0,' PX')}>+</button></div></div>
                       {#if progression}
+                        {@const currentResourceRow=progression.rows.find((row:any)=>row.level===progression.currentLevel)}
+                        {#if currentResourceRow?.resources?.['Dado bárdico']}
+                          <div class="progression-manual-select-row"><label>Dado bárdico<select value={progressionResourceText(sheet,'Dado bárdico',currentResourceRow.resources['Dado bárdico'])} on:change={(event)=>setProgressionResourceText('Dado bárdico',(event.currentTarget as HTMLSelectElement).value)}>{#each ['d6','d8','d10','d12'] as die}<option value={die}>{die.toUpperCase()}</option>{/each}</select></label></div>
+                        {/if}
                         {#each manualProgressionResourceEntries(progression) as [resourceName,resourceBase]}
                           <div class="progression-manual-row"><span>{resourceName}</span><div><button type="button" aria-label={'Disminuir '+resourceName} on:click={()=>adjustProgressionResource(resourceName,-1,resourceBase)}>−</button><strong>{progressionResourceValue(sheet,resourceName,resourceBase)}</strong><button type="button" aria-label={'Aumentar '+resourceName} on:click={()=>adjustProgressionResource(resourceName,1,resourceBase)}>+</button></div></div>
                         {/each}
