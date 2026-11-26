@@ -3672,7 +3672,7 @@ import ITEMS from './items.json';
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Skills','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Botones', 'Inventario', 'Descripción', 'Notas'];
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Compendio de conjuros', 'Glosario de reglas', 'Botones', 'Inventario', 'Descripción', 'Notas'];
   type QuickButton = { name: string; attack: string; damage: string; mode: 'normal'|'advantage'|'disadvantage' };
   type QuickRollResult = { id:number; name:string; attack:string; damage:string; attackResult:string; damageResult:string; mode:string; critical:boolean; fumble:boolean; };
   let editingQuickButton = -1;
@@ -5342,6 +5342,103 @@ import ITEMS from './items.json';
                       <p class="muted nautical-empty">No hay conjuros conocidos registrados.</p>
                     {/if}
                   </section>
+                {:else if playerSheetTab === 'Compendio de conjuros'}
+<section class="sheet-section spells-panel">
+          <div class="sheet-section-title"><h3>Compendio de conjuros</h3><span class="count">{filteredSpells.length} / {SPELLS.length}</span></div>
+          <p class="muted">Catálogo de conjuros del manual. Cada ficha incluye nivel, escuela, clases, tiempo de lanzamiento, alcance, componentes, duración y descripción.</p>
+          <label class="spell-search">Buscar conjuro
+            <input type="search" bind:value={spellSearch} placeholder="Nombre o texto del conjuro..." />
+          </label>
+          <div class="spell-filters">
+            <label>Letra inicial
+              <select bind:value={spellLetterFilter}><option value="">Ninguna</option>{#each ALPHABET as letter}<option value={letter}>{letter}</option>{/each}</select>
+            </label>
+            <label>Nivel
+              <select bind:value={spellLevelFilter}>
+                <option value="">Ninguno</option>
+                <option value="0">Trucos · Nivel 0</option>
+                {#each [1,2,3,4,5,6,7,8,9] as level}
+                  <option value={String(level)}>Nivel {level}</option>
+                {/each}
+              </select>
+            </label>
+            <label>Clase
+              <select bind:value={spellClassFilter}>
+                <option value="">Ninguna</option>
+                {#each SPELL_CLASSES as className}
+                  <option value={className}>{className}</option>
+                {/each}
+              </select>
+            </label>
+            <label>Escuela
+              <select bind:value={spellSchoolFilter}>
+                <option value="">Ninguna</option>
+                {#each SPELL_SCHOOLS as school}
+                  <option value={school}>{school}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <div class="spell-list">
+            {#if filteredSpells.length === 0}<p class="muted">Selecciona un nivel, clase o escuela, o escribe una búsqueda para mostrar conjuros.</p>{:else}
+            {#each filteredSpells as spell}
+              <details class="spell-card">
+                <summary>
+                  <span class="spell-name">{spell.name}</span>
+                  <span class="spell-level">{spell.level === 0 ? 'Truco' : 'Nivel ' + spell.level}</span>
+                  <span class="spell-subtitle">{spell.school} · {spell.classes.map(name => name.charAt(0).toLocaleUpperCase('es') + name.slice(1)).join(', ')}</span>
+                </summary>
+                <div class="spell-details">
+                  <div class="spell-meta">
+                    <p><strong>Tiempo de lanzamiento:</strong> {spell.castingTime || '—'}</p>
+                    <p><strong>Alcance:</strong> {spell.range || '—'}</p>
+                    <p><strong>Componentes:</strong> {spell.components || '—'}</p>
+                    <p><strong>Duración:</strong> {spell.duration || '—'}</p>
+                    {#if spell.special.length}<p><strong>Especial:</strong> {spell.special.join(', ')}</p>{/if}
+                  </div>
+                  <p class="spell-description">{spell.description || 'Descripción no disponible en el texto extraído del manual.'}</p>
+                  <small class="spell-source">Manual del Jugador 2024 · PDF p. {spell.pdfPage ?? '—'} · Impresa p. {spell.printedPage ?? '—'}</small>
+                </div>
+              </details>
+            {/each}
+            {/if}
+          </div>
+        </section>
+                {:else if playerSheetTab === 'Glosario de reglas'}
+<section class="sheet-section rules-panel">
+          <div class="sheet-section-title"><h3>Glosario de reglas</h3><span class="count">{filteredRules.length} / {RULES.length}</span></div>
+          <p class="muted">Glosario del Apéndice C. Fuente: Manual del Jugador 2024 · Las páginas indicadas corresponden a la numeración del PDF.</p>
+          <div class="rules-toolbar">
+            <label class="rules-search">Buscar regla
+              <div class="rules-search-input"><input type="search" bind:value={rulesSearch} placeholder="Escribe al menos dos letras..." /><button type="button" on:click={() => rulesSearch = ''} disabled={!rulesSearch}>Limpiar</button></div>
+            </label>
+            <label class="rules-category-filter">Tipo de regla
+              <select bind:value={rulesCategoryFilter}><option value="">Todos los tipos</option>{#each RULE_CATEGORIES as category}<option value={category}>{category}</option>{/each}</select>
+            </label>
+            <div class="rules-toolbar-actions"><span>{filteredRules.length} resultados</span><button type="button" on:click={() => openRuleName = openRuleName === '*' ? '' : '*'}>{openRuleName === '*' ? 'Cerrar todas' : 'Abrir todas'}</button></div>
+          </div>
+          <div class="rules-navigation"><span>Ir a:</span>{#each ruleLetters as letter}<a href={'#rules-letter-' + letter}>{letter}</a>{/each}</div>
+          <div class="rules-list">
+            {#if filteredRules.length === 0}<p class="muted">No hay reglas que coincidan con los filtros.</p>{:else}
+            {#each groupedRules as group (group.letter)}
+              <h3 class="rules-letter" id={'rules-letter-' + group.letter}>{group.letter}</h3>
+              {#each group.rules as rule (rule.name)}
+                {#if rule.category === 'Abreviatura'}
+                  <div class="rule-abbreviation"><strong>{ruleNameCase(rule.name)}</strong><span class="rule-category category-abreviatura">{rule.category}</span><span class="rule-abbreviation-meaning">→ {ruleTextParagraphs(rule.description).join(' ')}</span><span class="rule-page">p. {rule.pdfPage ?? '—'}</span></div>
+                {:else}
+                  <details class="rule-card" id={'rule-' + encodeURIComponent(rule.name)} open={openRuleName === '*' || openRuleName === rule.name} on:toggle={(event) => handleRuleToggle(event, rule.name)}>
+                    <summary><span class="rule-name">{@html highlightedRuleName(rule.name)}</span><span class={'rule-category category-' + normalizeRuleText(rule.category).replace(/\s+/g,'-')}>{rule.category}</span><span class="rule-page">p. {rule.pdfPage}</span></summary>
+                    <div class="rule-details"><div class="rule-description">{#each ruleTextParagraphs(rule.description) as paragraph}<p>{paragraph}</p>{/each}</div>
+                      {#if ruleRelatedNames(rule).length}<div class="rule-related"><strong>Ver también:</strong>{#each ruleRelatedNames(rule) as related,index}<button type="button" on:click={() => jumpToRule(related)}>{related}</button>{index < ruleRelatedNames(rule).length - 1 ? ' · ' : ''}{/each}</div>{/if}
+                      
+                    </div>
+                  </details>
+                {/if}
+              {/each}
+            {/each}
+            {/if}
+          </div>
+        </section>
                 {:else if playerSheetTab !== 'Conjuros'}
                   {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
                     <section class="sheet-section {sectionClass(pair.heading.name)}">
