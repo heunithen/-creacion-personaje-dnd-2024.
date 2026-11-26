@@ -2246,7 +2246,7 @@ import ITEMS from './items.json';
       }
       if (matched) continue;
       if (/^(Tiny|Small|Medium|Large|Huge|Gargantuan)\b/.test(line)) { info.unshift({label:'Type and Alignment',value:line}); continue; }
-      if (/^CR\s/i.test(line)) { info.push({label:'Challenge Rating',value:line.replace(/^CR\s*/i,''))}); continue; }
+      if (/^CR\s/i.test(line)) { info.push({label:'Challenge Rating',value:line.replace(/^CR\s*/i,'')}); continue; }
       if (current) {
         const split = line.match(/^([^.!?]{2,90})\.\s+(.+)$/);
         if (split) current.entries.push({name:split[1],description:split[2]});
