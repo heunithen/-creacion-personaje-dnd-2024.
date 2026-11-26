@@ -3113,6 +3113,10 @@ import ITEMS from './items.json';
     }
     return result;
   }
+  function manualProgressionResourceEntries(progression:any):[string,any][] {
+    const row=progression?.rows?.find((item:any)=>item.level===progression.currentLevel);
+    return Object.entries(row?.resources||{}).filter(([key,value])=>!/^Espacios nivel/i.test(key)&&value!=='—'&&/\\d/.test(String(value))) as [string,any][];
+  }
   function progressionManualResources(target:RawSheet):Record<string,number> {
     return readJsonRecord(target,'PROGRESIÓN','Recursos manuales');
   }
@@ -6052,10 +6056,8 @@ import ITEMS from './items.json';
                         <div class="progression-manual-row"><span>{ability}</span><div><button type="button" aria-label={'Disminuir '+ability} on:click={()=>adjustProgressionValue('ATRIBUTOS',ability,-1,10)}>−</button><strong>{getCharacterStat(sheet,'ATRIBUTOS',ability) || '—'}</strong><button type="button" aria-label={'Aumentar '+ability} on:click={()=>adjustProgressionValue('ATRIBUTOS',ability,1,10)}>+</button></div></div>
                       {/each}
                       <div class="progression-manual-row"><span>Experiencia (PX)</span><div><button type="button" aria-label="Disminuir experiencia" on:click={()=>adjustProgressionValue('PERSONAJE','Experiencia',-100,0,' PX')}>−</button><strong>{getCharacterStat(sheet,'PERSONAJE','Experiencia') || '0'}</strong><button type="button" aria-label="Aumentar experiencia" on:click={()=>adjustProgressionValue('PERSONAJE','Experiencia',100,0,' PX')}>+</button></div></div>
-                    </div>
-                  </section>                      {#if progression}
-                        {@const currentRow=progression.rows.find((row:any)=>row.level===progression.currentLevel)}
-                        {#each Object.entries(currentRow?.resources||{}).filter(([key,value]:any)=>!/^Espacios nivel/i.test(key)&&value!=='—'&&/\d/.test(String(value))) as [resourceName,resourceBase]}
+                      {#if progression}
+                        {#each manualProgressionResourceEntries(progression) as [resourceName,resourceBase]}
                           <div class="progression-manual-row"><span>{resourceName}</span><div><button type="button" aria-label={'Disminuir '+resourceName} on:click={()=>adjustProgressionResource(resourceName,-1,resourceBase)}>−</button><strong>{progressionResourceValue(sheet,resourceName,resourceBase)}</strong><button type="button" aria-label={'Aumentar '+resourceName} on:click={()=>adjustProgressionResource(resourceName,1,resourceBase)}>+</button></div></div>
                         {/each}
                       {/if}
