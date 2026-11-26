@@ -824,11 +824,11 @@
     applyVisualStyle();
   }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Estilo'];
+  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
 
   function openMasterTab(tab: string) {
     // Cada entrada a un catálogo comienza sin búsquedas ni filtros anteriores.
-    if (tab === 'Monstruos ordenados') {
+    if (tab === 'Monstruos') {
       monsterSearch = '';
       monsterCrFilter = '';
     } else if (tab === 'Objetos') {
@@ -4203,31 +4203,6 @@ import ITEMS from './items.json';
             {/each}
             {/if}
           </div>
-        </section>
-      {:else if masterTab === 'Estilo'}
-        <section class="panel style-panel">
-          <div class="section-heading"><h2>Estilo de la aplicación</h2><span class="count">Configuración global</span></div>
-          <p class="muted">Modifica colores, tamaños y espacios de la interfaz. Los cambios se guardan en este navegador.</p>
-          <div class="style-control-grid">
-            <fieldset><legend>Colores</legend>
-              <label>Fondo general<input type="color" bind:value={visualStyle.background} on:input={applyVisualStyle} /></label>
-              <label>Paneles<input type="color" bind:value={visualStyle.panel} on:input={applyVisualStyle} /></label>
-              <label>Tarjetas y controles<input type="color" bind:value={visualStyle.card} on:input={applyVisualStyle} /></label>
-              <label>Bordes<input type="color" bind:value={visualStyle.border} on:input={applyVisualStyle} /></label>
-              <label>Texto principal<input type="color" bind:value={visualStyle.text} on:input={applyVisualStyle} /></label>
-              <label>Texto secundario<input type="color" bind:value={visualStyle.muted} on:input={applyVisualStyle} /></label>
-              <label>Acento<input type="color" bind:value={visualStyle.accent} on:input={applyVisualStyle} /></label>
-            </fieldset>
-            <fieldset><legend>Tamaños y distribución</legend>
-              <label>Texto: {visualStyle.fontSize}px<input type="range" min="11" max="20" bind:value={visualStyle.fontSize} on:input={applyVisualStyle} /></label>
-              <label>Títulos: {visualStyle.headingSize}px<input type="range" min="14" max="30" bind:value={visualStyle.headingSize} on:input={applyVisualStyle} /></label>
-              <label>Espacio interior: {visualStyle.panelPadding}px<input type="range" min="6" max="28" bind:value={visualStyle.panelPadding} on:input={applyVisualStyle} /></label>
-              <label>Separación: {visualStyle.panelGap}px<input type="range" min="4" max="24" bind:value={visualStyle.panelGap} on:input={applyVisualStyle} /></label>
-              <label>Redondeo: {visualStyle.radius}px<input type="range" min="0" max="20" bind:value={visualStyle.radius} on:input={applyVisualStyle} /></label>
-            </fieldset>
-          </div>
-          <div class="style-preview"><strong>Vista previa</strong><div class="style-preview-card"><h3>Panel de ejemplo</h3><p>Texto principal y descripción secundaria.</p><button class="primary">Botón de ejemplo</button></div></div>
-          <div class="actions"><button class="secondary" on:click={resetVisualStyle}>Restablecer estilo</button></div>
         </section>
       {:else if masterTab === 'Reglas'}
         <section class="panel rules-panel">
