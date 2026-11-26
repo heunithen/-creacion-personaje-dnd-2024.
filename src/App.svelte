@@ -7417,6 +7417,15 @@ import ITEMS from './items.json';
   .builder-background-equipment{flex:0 0 auto;max-height:78px;margin:0;color:#d1dadd;font:.82rem/1.55 system-ui,sans-serif;overflow-y:auto}
   .builder-background-equipment strong{color:#5fe6e0}
   .builder-background-counter{align-self:center;color:#b5bec3;font:.7rem system-ui,sans-serif}
+
+  .builder-species-flyer{box-sizing:border-box;display:flex;flex-direction:column;gap:1rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;overflow:hidden}
+  .builder-species-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%}
+  .builder-species-title-row h4{margin:0;color:#5fe6e0!important;font:700 1.35rem Georgia,serif;text-align:center}
+  .builder-species-description{flex:1 1 auto;min-height:0;margin:0;padding:.15rem .2rem .35rem;color:#e0e7e9;font:400 .98rem/1.7 system-ui,sans-serif;overflow-y:auto}
+  .builder-species-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem 1rem;padding:.75rem 0;border-top:1px solid #668087;border-bottom:1px solid #668087}
+  .builder-species-details .builder-class-flyer-detail{min-width:0;max-width:none;padding:0;border:0}
+  .builder-species-details .builder-class-flyer-detail strong{font-size:.86rem;line-height:1.5;overflow-wrap:anywhere}
+  @media(max-width:460px){.builder-species-flyer{height:650px;min-height:650px;padding:.9rem;gap:.8rem}.builder-species-title-row{grid-template-columns:40px minmax(0,1fr) 40px;gap:.45rem}.builder-species-title-row h4{font-size:1.15rem}.builder-species-description{font-size:.9rem;line-height:1.7}.builder-species-details{gap:.65rem}.builder-species-details .builder-class-flyer-detail strong{font-size:.78rem}}
   @media(max-width:460px){.builder-background-flyer{height:650px;min-height:650px;padding:.9rem;gap:.8rem}.builder-background-title-row{grid-template-columns:40px minmax(0,1fr) 40px;gap:.45rem}.builder-background-title-row h4{font-size:1.15rem}.builder-background-description{font-size:.9rem;line-height:1.7}.builder-background-details{gap:.65rem}.builder-background-details .builder-class-flyer-detail strong{font-size:.78rem}}
   .builder-class-flyer{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1rem 1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;text-align:center;overflow:hidden}
   .builder-class-emblem{display:block;flex:0 0 166px;width:116px;height:166px;object-fit:contain;image-rendering:pixelated}
