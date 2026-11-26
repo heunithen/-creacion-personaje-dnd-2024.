@@ -3435,6 +3435,10 @@ import ITEMS from './items.json';
   });
   $: shopOwnedItems = sheet ? getShopOwnedItems(sheet) : [];
 
+  function setShopQuantity(name:string,event:Event,max=999) {
+    const value=Number((event.currentTarget as HTMLInputElement).value)||1;
+    shopQuantities={...shopQuantities,[name]:Math.max(1,Math.min(max,value))};
+  }
   function shopCurrencyCopper(): number {
     return currencyToCopper({ PC: progressionCurrencyValue('PC'), PP: progressionCurrencyValue('PP'), PE: progressionCurrencyValue('PE'), PO: progressionCurrencyValue('PO'), PPt: progressionCurrencyValue('PPt') });
   }
@@ -6690,7 +6694,7 @@ import ITEMS from './items.json';
                             {:else}
                               <details class="shop-price-edit"><summary>Modificar precio</summary><label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(item.name)} on:input={(event)=>setShopCustomPrice(item.name,event)} placeholder="Opcional" /></label></details>
                             {/if}
-                            <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max="999" value={shopQuantities[item.name]||1} on:input={(event)=>shopQuantities[item.name]=Math.max(1,Number((event.currentTarget as HTMLInputElement).value)||1)} /></label><button type="button" disabled={shopItemPriceCopper(item)===null} on:click={()=>shopBuyItem(item)}>Comprar</button></div>
+                            <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max="999" value={shopQuantities[item.name]||1} on:input={(event)=>setShopQuantity(item.name,event,999)} /></label><button type="button" disabled={shopItemPriceCopper(item)===null} on:click={()=>shopBuyItem(item)}>Comprar</button></div>
                           </article>
                         {/each}
                         {#if !shopFilteredItems.length}<p class="muted">No se encontraron objetos.</p>{/if}
@@ -6706,7 +6710,7 @@ import ITEMS from './items.json';
                             {:else}
                               <details class="shop-price-edit"><summary>Modificar precio</summary><label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(owned.name)} on:input={(event)=>setShopCustomPrice(owned.name,event)} placeholder="Opcional" /></label></details>
                             {/if}
-                            <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max={owned.quantity} value={Math.min(owned.quantity,shopQuantities[owned.name]||1)} on:input={(event)=>shopQuantities[owned.name]=Math.max(1,Math.min(owned.quantity,Number((event.currentTarget as HTMLInputElement).value)||1))} /></label><button type="button" disabled={shopItemPriceCopper(owned.item)===null} on:click={()=>shopSellItem(owned.item,owned.quantity)}>Vender</button></div>
+                            <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max={owned.quantity} value={Math.min(owned.quantity,shopQuantities[owned.name]||1)} on:input={(event)=>setShopQuantity(owned.name,event,owned.quantity)} /></label><button type="button" disabled={shopItemPriceCopper(owned.item)===null} on:click={()=>shopSellItem(owned.item,owned.quantity)}>Vender</button></div>
                             {#if owned.item.type==='Escudo' || typeof owned.item.armorBase==='number'}<button type="button" class="shop-equip-button" on:click={()=>shopToggleEquip(owned.item)}>{shopEquipLabel(owned.item)}</button>{/if}
                           </article>
                         {/each}
