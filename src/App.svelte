@@ -5931,7 +5931,7 @@ import ITEMS from './items.json';
                 {/each}
               </div>
               {#if builderData.method === 'pointBuy'}
-                <p class="hint">Puntos utilizados: <strong>{builderPointCost()} / 27</strong> · Puntos disponibles: <strong>{27-builderPointCost()}</strong>. El total se actualiza al modificar cada característica. Puedes bajar una puntuación para recuperar puntos.</p>
+                <p class="hint">Puntos utilizados: <strong>{builderCurrentPointCost} / 27</strong> · Puntos disponibles: <strong>{27-builderCurrentPointCost}</strong>. El total se actualiza al modificar cada característica. Puedes bajar una puntuación para recuperar puntos.</p>
               {:else if builderData.method === 'standard'}
                 <p class="hint">Distribución sugerida para {builderData.className}. Asigna cada valor una sola vez; al cambiar uno, el valor anterior pasa a la característica que tenía el valor elegido.</p>
               {:else if builderData.method === 'rolled'}
