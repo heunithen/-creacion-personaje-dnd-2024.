@@ -186,3 +186,130 @@ test('el selector de clase no desborda en distintos anchos móviles', async ({ p
     expect(dimensions.flyer?.right ?? width + 1, 'el flyer queda fuera por la derecha a ' + width + 'px').toBeLessThanOrEqual(width + 1);
   }
 });
+
+
+async function reachClassSkillsStep(page: Page, className: string) {
+  await page.goto('./');
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '02. Elige tu clase' })).toBeVisible();
+
+  const title = page.locator('.builder-class-title');
+  for (let i = 0; i < 12 && (await title.innerText()) !== className; i++) {
+    await page.getByRole('button', { name: 'Clase siguiente' }).click();
+  }
+  await expect(title).toHaveText(className);
+  await nextButton(page).click();
+
+  await expect(page.getByRole('heading', { name: '03. Elige tu trasfondo' })).toBeVisible();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '03.1. Elecciones del trasfondo' })).toBeVisible();
+  const backgroundTool = page.getByLabel('Competencia con herramienta del trasfondo');
+  if (await backgroundTool.count()) await backgroundTool.selectOption({ index: 1 });
+  await nextButton(page).click();
+
+  await expect(page.getByRole('heading', { name: '04. Elige tu especie' })).toBeVisible();
+  const speciesTitle = page.locator('.builder-species-title-row h4');
+  for (let i = 0; i < 10 && (await speciesTitle.innerText()) !== 'Enano'; i++) {
+    await page.getByRole('button', { name: 'Especie anterior' }).click();
+  }
+  await expect(speciesTitle).toHaveText('Enano');
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '04.1. Elecciones de especie' })).toBeVisible();
+  await page.getByLabel('Nombre del personaje').fill('Prueba Playwright');
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '05. Distribuye tus características' })).toBeVisible();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '06. Aumentos de características del trasfondo' })).toBeVisible();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '07. Competencias' })).toBeVisible();
+}
+
+test('Mago: valida competencias, equipo, libro de conjuros, preparación, idiomas y revisión', async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  await reachClassSkillsStep(page, 'Mago');
+
+  const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 2 habilidades' }).locator('input[type="checkbox"]');
+  await expect(skills).toHaveCount(7);
+  await skills.nth(0).check();
+  await skills.nth(1).check();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '08. Equipo inicial' })).toBeVisible();
+
+  await page.locator('input[name="background-equipment"][value="B"]').check();
+  await page.locator('input[name="class-equipment"][value="A"]').check();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '09. Magia y conjuros' })).toBeVisible();
+
+  const cantrips = page.locator('.builder-choice-wrapper').filter({ hasText: 'Trucos de clase' }).first().locator('input[type="checkbox"]');
+  await expect(cantrips).toHaveCount(8);
+  await nextButton(page).click();
+  await expect(page.getByRole('alert')).toContainText('Trucos de clase');
+  for (let i = 0; i < 3; i++) await cantrips.nth(i).check();
+
+  const spellbook = page.locator('.builder-choice-wrapper').filter({ hasText: 'Libro de conjuros: elige 6 conjuros de nivel 1' }).locator('input[type="checkbox"]');
+  await expect(spellbook).toHaveCount(30);
+  for (let i = 0; i < 6; i++) await spellbook.nth(i).check();
+
+  const prepared = page.locator('.builder-choice-wrapper').filter({ hasText: 'Conjuros preparados' }).locator('input[type="checkbox"]');
+  await expect(prepared).toHaveCount(6);
+  for (let i = 0; i < 4; i++) await prepared.nth(i).check();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '10. Idiomas' })).toBeVisible();
+
+  const languages = page.locator('.builder-choice-wrapper').filter({ hasText: 'Dos idiomas adicionales' }).locator('input[type="checkbox"]');
+  await languages.nth(0).check();
+  await languages.nth(1).check();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '11. Detalles del personaje' })).toBeVisible();
+
+  await page.getByLabel('Edad').fill('120');
+  await page.getByLabel('Altura').fill('1,35 m');
+  await page.getByLabel('Apariencia').fill('Barba plateada y túnica azul.');
+  await page.getByLabel('Personalidad').fill('Metódico.');
+  await page.getByLabel('Ideales').fill('El conocimiento.');
+  await page.getByLabel('Vínculos').fill('Su antigua biblioteca.');
+  await page.getByLabel('Defectos').fill('Desconfiado.');
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '12. Revisión y creación' })).toBeVisible();
+  await expect(page.locator('.builder-review')).toContainText('Prueba Playwright');
+  await expect(page.locator('.builder-review')).toContainText('Mago');
+  await expect(page.locator('.builder-review')).toContainText('Enano');
+  await expect(pageErrors).toEqual([]);
+});
+
+test('Pícaro: exige cuatro habilidades, dos pericias, dos maestrías y un idioma adicional', async ({ page }) => {
+  await reachClassSkillsStep(page, 'Pícaro');
+
+  const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 4 habilidades' }).locator('input[type="checkbox"]');
+  await expect(skills).toHaveCount(8);
+  for (let i = 0; i < 4; i++) await skills.nth(i).check();
+
+  const expertise = page.locator('.builder-choice-wrapper').filter({ hasText: 'Pericia: elige 2 habilidades' }).locator('input[type="checkbox"]');
+  await expect(expertise.count()).resolves.toBeGreaterThanOrEqual(2);
+  await expertise.nth(0).check();
+  await expertise.nth(1).check();
+
+  const masteries = page.locator('.builder-choice-wrapper').filter({ hasText: 'Maestrías con armas (2)' }).locator('input[type="checkbox"]');
+  await expect(masteries.count()).resolves.toBeGreaterThan(2);
+  await masteries.nth(0).check();
+  await masteries.nth(1).check();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '08. Equipo inicial' })).toBeVisible();
+
+  await page.locator('input[name="background-equipment"][value="A"]').check();
+  await page.locator('input[name="class-equipment"][value="B"]').check();
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '09. Magia y conjuros' })).toBeVisible();
+  await expect(page.locator('.builder-choice-wrapper')).toHaveCount(0);
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '10. Idiomas' })).toBeVisible();
+
+  const languages = page.locator('.builder-choice-wrapper').filter({ hasText: 'Dos idiomas adicionales' }).locator('input[type="checkbox"]');
+  await languages.nth(0).check();
+  await languages.nth(1).check();
+  const rogueLanguage = page.getByLabel(/Idioma adicional de pícaro/);
+  await rogueLanguage.selectOption({ index: 1 });
+  await nextButton(page).click();
+  await expect(page.getByRole('heading', { name: '11. Detalles del personaje' })).toBeVisible();
+});
