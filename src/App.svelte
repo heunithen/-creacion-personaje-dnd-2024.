@@ -766,6 +766,7 @@
   import { findLevelUpChoice, getLevelUpChoiceOptions, validateSingleLevelUpChoice, validateMultipleLevelUpChoice, type LevelUpChoiceDefinition } from './levelUpChoiceEngine';
   function levelUpChoice(id:string):LevelUpChoiceDefinition|undefined { return findLevelUpChoice((LEVEL_UP_CHOICE_DEFINITIONS as any).choices as LevelUpChoiceDefinition[],id); }
   let levelUpEntry: RoomEntry | null = null;
+  let levelUpIsPlayer = false;
   let levelUpDecision = '';
   let levelUpClassCantrips = '';
   let levelUpClassSpells = '';
@@ -2975,6 +2976,18 @@ import ITEMS from './items.json';
     }
   }
 
+  function requestPlayerLevelUp() {
+    if (!sheet) return;
+    const currentLevel = sheetLevel(sheet);
+    if (currentLevel >= 20) {
+      notice = 'El personaje ya alcanzó el nivel 20.';
+      return;
+    }
+    if (!window.confirm('¿Quieres subir de nivel?')) return;
+    levelUpIsPlayer = true;
+    openLevelUp({ playerId: 'local-player', playerName: playerName || 'Jugador', sheet });
+  }
+
   function openLevelUp(entry: RoomEntry) {
     levelUpEntry = entry; levelUpDecision = '';
     levelUpClassCantrips=getCharacterStat(entry.sheet,'CONJUROS','Trucos de clase') || '';
@@ -3013,7 +3026,7 @@ import ITEMS from './items.json';
     levelUpAsiMode = 'asi'; levelUpAbility1 = 'Fuerza'; levelUpAbility2 = 'Destreza';
     levelUpIncrease1 = '2'; levelUpIncrease2 = '0'; levelUpFeat = ''; levelUpHpMode = 'average'; levelUpHpRoll = '';
   }
-  function closeLevelUp() { levelUpEntry = null; }
+  function closeLevelUp() { levelUpEntry = null; levelUpIsPlayer = false; }
   function applyLevelUp() {
     if (!levelUpEntry) return;
     const original = levelUpEntry.sheet;
@@ -3563,10 +3576,18 @@ import ITEMS from './items.json';
       if (tableSummary) setCharacterStat(updated,'PROGRESIÓN','Tablas de subclase · '+formatSubclassName(subclass.key),tableSummary);
     }
     refreshDerivedCharacterSheet(updated);
-    const playerId=levelUpEntry.playerId;
-    receiveLiveCharacter({ ...levelUpEntry, sheet: updated });
-    void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
+    if (levelUpIsPlayer) {
+      sheet = updated;
+      localStorage.setItem('forja-raw-character', JSON.stringify(updated));
+      syncPending = false;
+      syncStatus = 'Ficha guardada localmente en este dispositivo.';
+    } else {
+      const playerId=levelUpEntry.playerId;
+      receiveLiveCharacter({ ...levelUpEntry, sheet: updated });
+      void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
+    }
     levelUpEntry=null;
+    levelUpIsPlayer=false;
     notice='Nivel '+nextLevel+' aplicado a '+updated.name+'. La ficha contiene los datos de clase, subclase, características, puntos de golpe y conjuros del nuevo nivel.';
   }
 
@@ -4279,175 +4300,6 @@ import ITEMS from './items.json';
               </article>
             {/each}
           {/if}
-          {#if levelUpEntry}
-            <section class="level-up-panel">
-              <div class="section-heading"><h2>Subir nivel · {levelUpEntry.sheet.name}</h2><span class="count">Nivel {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1}</span></div>
-              <p><strong>{getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}</strong> · {getNextLevelFeatures(levelUpEntry)}.</p>
-              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).length}
-                <div class="subclass-level-preview"><strong>Rasgos de clase que se incorporarán</strong>{#each getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1) as feature}<div><b>{feature.name}</b><p>{feature.description}</p></div>{/each}</div>
-              {/if}
-              {#if getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).features.length || getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.length}
-                <div class="subclass-level-preview"><strong>Desbloqueo de especie</strong>{#each getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).features as feature}<div><b>{feature.name}</b><p>{feature.description}</p></div>{/each}{#if getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.length}<p>Conjuros que se añadirán automáticamente: {getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.join(', ')}.</p>{/if}</div>
-              {/if}
-              <label>Método de puntos de golpe<select bind:value={levelUpHpMode}><option value="average">Valor fijo del manual</option><option value="roll">Tirar dado de golpe</option></select></label>
-              {#if levelUpHpMode==='roll'}<label>Resultado del dado (1–{LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8})<input type="number" min="1" max={LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8} bind:value={levelUpHpRoll} /></label>{/if}
-              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('subclase de') || (Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))>=3 && !getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))}
-                <label>Subclase · {getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}<select bind:value={levelUpSubclass}><option value="">Selecciona una subclase</option>{#each getSubclassOptions(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')) as option}<option value={option}>{formatSubclassName(option)}</option>{/each}</select></label>
-              {/if}
-              {#if levelUpSubclass && getSubclassFeaturesForNextLevel(levelUpEntry).length}
-                <div class="subclass-level-preview"><strong>Rasgos de subclase que se incorporarán</strong>{#each getSubclassFeaturesForNextLevel(levelUpEntry) as feature}<div><b>Nivel {feature.level}: {feature.name}</b><p>{feature.description}</p></div>{/each}</div>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero'}
-                <label>Estilos de combate conocidos (lista completa; puedes sustituir uno al subir de nivel){#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='campeon' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=7} · Campeón: elige dos{/if}<textarea bind:value={levelUpFighterStyles} rows="2" placeholder="Ej. Defensa, Duelo" /></label>
-                <small>Opciones: {BUILDER_CLASS_DATA['Guerrero'].specialOptions.join(' · ')}</small>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2}
-                <label>Estilo de combate<select bind:value={levelUpRangerStyle}><option value="">Elige una opción</option>{#each BUILDER_CLASS_DATA['Guerrero'].specialOptions as option}<option value={option}>{option}</option>{/each}<option value="Guerrero druídico">Guerrero druídico · aprende dos trucos de Druida</option></select></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && (levelUpRangerStyle || getCharacterStat(levelUpEntry.sheet,'RASGOS Y DOTES','Estilo de combate'))==='Guerrero druídico'}
-                <label>Trucos de Guerrero druídico (elige dos; puedes sustituir uno al subir de nivel)<textarea bind:value={levelUpRangerCantrips} rows="2" placeholder="Ej. Guía, Voluta estelar" /></label>
-                <small>Lista de Druida: {BUILDER_SPELL_LISTS.Druida.cantrips.join(' · ')}</small>
-              {/if}
-              {#if levelUpChoice('barbarian.wildHeart.aspect') && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))===levelUpChoice('barbarian.wildHeart.aspect')?.subclass && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===levelUpChoice('barbarian.wildHeart.aspect')?.level}
-                <label>{levelUpChoice('barbarian.wildHeart.aspect')?.label} — {levelUpChoice('barbarian.wildHeart.aspect')?.description}<select bind:value={levelUpBarbarianAspect}><option value="">Elige una opción</option>{#each levelUpChoice('barbarian.wildHeart.aspect')?.options || [] as option}<option value={option}>{option}</option>{/each}</select></label>
-              {/if}
-              {#if levelUpSubclass && getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass).length>1}
-                <label>Elección de la subclase<select bind:value={levelUpSubclassVariant}><option value="">Selecciona una opción</option>{#each getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) as table}<option value={table.name}>{formatSubclassName(table.name)}</option>{/each}</select></label>
-              {/if}
-              {#if levelUpSubclass && getSubclassCastingTable(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) && (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Pícaro')}
-                <p class="muted">La subclase usa la lista de mago. Registra la lista completa de trucos y conjuros que conoces según la tabla.</p>
-                <label>Trucos de la subclase (lista completa)<textarea bind:value={levelUpSubclassCantrips} rows="2" placeholder="Ej. Agarre electrizante, Rayo de escarcha" /></label>
-                <label>Conjuros de la subclase (lista completa)<textarea bind:value={levelUpSubclassSpells} rows="2" placeholder="Ej. Escudo, Manos ardientes, Salto" /></label>
-              {/if}
-              {#if levelUpSubclass && getSubclassCastingTable(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) && (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida')}
-                <p class="muted">Los conjuros de dominio o círculo se incorporarán automáticamente desde la tabla de la subclase del manual.</p>
-              {/if}
-              {#if BUILDER_MAGIC_ABILITY[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Trucos']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Trucos máximos',0))}
-                  <label>Trucos de clase conocidos (lista completa){#if ['Brujo','Clérigo','Druida'].includes(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'))} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos los trucos de clase conocidos, separados por comas" /></label>
-                {/if}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Conjuros preparados']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Conjuros preparados máximos',0))}
-                  <label>Conjuros de clase preparados/conocidos (lista completa){#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo'} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassSpells} rows="2" placeholder="Escribe la lista completa de conjuros de clase" /></label>
-                {/if}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago'}
-                  <label>Dos conjuros nuevos para el libro del mago<input bind:value={levelUpWizardBookAdditions} placeholder="Dos conjuros separados por comas" /></label>
-                  {#if levelUpSubclass && [3,5,7,9,11,13,15,17].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
-                    <label>Conjuros de escuela (lista completa)<textarea bind:value={levelUpWizardSchoolSpells} rows="3" placeholder="Registra todos los conjuros de tu escuela; al nivel 3 son tres y después se añade uno al desbloquear cada nuevo nivel de espacios." /></label>
-                    <small>Escuela: {({ABJURADOR:'Abjuración',ADIVINO:'Adivinación',EVOCADOR:'Evocación',ILUSIONISTA:'Ilusionismo'})[levelUpSubclass] || levelUpSubclass}. Conserva los anteriores y añade los nuevos.</small>
-                  {/if}
-                  {#if normalizeLevelText(levelUpSubclass)==='ilusionista' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                    {#if ([...splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos')),...splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos de clase'))]).some(name=>normalizeLevelText(name)==='ilusionmenor')}
-                      <label>Truco adicional de Ilusionista (porque ya conoces Ilusión menor)<input bind:value={levelUpWizardIllusionCantrip} placeholder="Otro truco de mago que aún no conozcas" /></label>
-                    {:else}
-                      <p class="muted">Ilusión menor se añadirá automáticamente como truco adicional de la subclase; no cuenta para tu límite de trucos.</p>
-                    {/if}
-                  {/if}
-                {/if}
-              {/if}
-              {#if (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'] || 0) > splitChoiceList(getCharacterStat(levelUpEntry.sheet,'ATAQUES','Maestrías con armas')).length) || getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(feature.description)))}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero'}
-                  <div class="builder-choice-wrapper"><strong>Maestrías con armas: conserva las anteriores y añade las nuevas</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Armas sencillas o marciales</strong><span>{splitChoiceList(levelUpWeaponMasteries).length}/{Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])}</span></div><div class="builder-checkbox-grid">{#each BUILDER_WEAPON_MASTERY_OPTIONS as weapon}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon))} on:change={(event)=>toggleLevelUpWeaponMastery(weapon,event,Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']))} disabled={!splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon)) && splitChoiceList(levelUpWeaponMasteries).length>=Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])} /><span>{weapon}</span></label>{/each}</div></div></div>
-                {:else if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
-                  {@const primalSkillChoice=levelUpChoice('barbarian.primalKnowledge.skill')}
-                  <label>{primalSkillChoice?.label}<select bind:value={levelUpNewSkill}><option value="">Elige una habilidad nueva</option>{#each getLevelUpChoiceOptions(primalSkillChoice,splitChoiceList(getCharacterStat(levelUpEntry.sheet,'COMPETENCIAS','Skills'))) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
-                {:else}
-                  <label>Nueva competencia en habilidad<input bind:value={levelUpNewSkill} placeholder="Elige una habilidad de la lista de tu clase" /></label>
-                {/if}
-              {/if}
-              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia') || /ganas pericia/.test(normalizeLevelText(feature.description))) }
-                <label>Habilidades que obtienen Pericia (elige {getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia'))?'dos':'una'})<input bind:value={levelUpExpertise} placeholder="Habilidades en las que ya tienes competencia" /></label>
-              {/if}
-              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/idiomas conoces dos idiomas/.test(normalizeLevelText(feature.description)))}
-                <label>Dos idiomas nuevos<input bind:value={levelUpLanguages} placeholder="Ej. Dracónico, Gigante" /></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=11}
-                <label>Arcanum místico (conjuros de niveles 6, 7, 8 y 9, en ese orden)<textarea bind:value={levelUpMysticArcanum} rows="2" placeholder="Ej. Conjuro de nivel 6, Conjuro de nivel 7, ..." /></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
-                <label>Invocaciones sobrenaturales (lista completa; repite las que lo permitan con una elección después de dos puntos)<textarea bind:value={levelUpInvocations} rows="3" placeholder="Ej. Pacto de la cadena, Mente sobrenatural, Descarga agónica: Descarga sobrenatural" /></label>
-                <small>Opciones: {BUILDER_WARLOCK_INVOCATIONS.filter(item=>item.level<=(levelUpEntry?.sheet?Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1:1)).map(item=>item.name+' (nivel '+item.level+')').join(' · ')}</small>
-              {/if}
-              {#if levelUpSubclass==='MAESTRO DEL COMBATE' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                <label>Habilidad de Estudioso de la guerra<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option>{#each BUILDER_CLASS_SKILLS.Guerrero.options.filter(skill=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Skills')).includes(skill)) as skill}<option>{skill}</option>{/each}</select></label>
-                <label>Herramienta de artesano de Estudioso de la guerra<select bind:value={levelUpSubclassTool}><option value="">Elige una herramienta</option>{#each BUILDER_ARTISAN_TOOLS.filter(tool=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Herramientas')).includes(tool)) as tool}<option>{tool}</option>{/each}</select></label>
-              {/if}
-              {#if levelUpSubclass==='ERRANTE FEÉRICO' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                <label>Habilidad de Glamur sobrenatural<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option><option>Engaño</option><option>Interpretación</option><option>Persuasión</option></select></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='cazador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                <label>El cazador y la presa<select bind:value={levelUpRangerHunterPrey}><option value="">Elige una opción</option><option>Azote de colosos</option><option>Destructor de hordas</option></select></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='cazador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
-                <label>Tácticas defensivas<select bind:value={levelUpRangerHunterDefense}><option value="">Elige una opción</option><option>Defensa contra ataques múltiples</option><option>Escapar de la horda</option></select></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='errantefeerico' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                <label>Bendición feérica<select bind:value={levelUpRangerFeyGift}><option value="">Elige una dádiva</option>{#each BUILDER_RANGER_FEY_GIFTS as gift}<option value={gift}>{gift}</option>{/each}</select></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='senordelasbestias' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                <label>Perfil de compañero primigenio<select bind:value={levelUpRangerBeastProfile}><option value="">Elige un perfil</option>{#each Object.keys(BUILDER_RANGER_BEAST_PROFILES) as profile}<option value={profile}>{profile}</option>{/each}</select></label>
-                <label>Animal que representa a tu compañero<input bind:value={levelUpRangerBeastAnimal} placeholder="Ej. lobo, oso, águila, tiburón…" /></label>
-                {#if levelUpRangerBeastProfile}<div class="builder-info"><strong>Estadísticas del perfil</strong><p>{BUILDER_RANGER_BEAST_PROFILES[levelUpRangerBeastProfile]}</p></div>{/if}
-              {/if}
-              {#if normalizeLevelText(levelUpSubclass)==='colegio del conocimiento' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
-                <label>Competencias adicionales del Colegio del Conocimiento (elige tres habilidades nuevas)<textarea bind:value={levelUpSubclassSkills} rows="2" placeholder="Tres habilidades distintas, separadas por comas" /></label>
-              {/if}
-              {#if levelUpSubclass==='MAESTRO DEL COMBATE' && [3,7,10,15].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
-                <label>Maniobras de Maestro del combate (lista completa)<textarea bind:value={levelUpManeuvers} rows="3" placeholder="Ej. Arremetida, Ataque preciso, Contraataque" /></label>
-                <small>Opciones: {BUILDER_BATTLE_MANEUVER_OPTIONS.join(' · ')}</small>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Paladín' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
-                <label>Estilo de combate del paladín<select bind:value={levelUpPaladinStyle}><option value="">Conservar el estilo actual / elegir en nivel 2</option>{#each BUILDER_CLASS_DATA['Guerrero'].specialOptions as style}<option value={style}>{style}</option>{/each}</select></label>
-                <small>En nivel 2 debes elegir uno. En niveles posteriores puedes conservarlo o sustituirlo por otro estilo.</small>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
-                <label>Furia elemental<select bind:value={levelUpElementalFury}><option value="">Elige una opción</option><option>Golpe primordial</option><option>Lanzamiento potente</option></select></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
-                <label>Golpes benditos<select bind:value={levelUpBlessedStrikes}><option value="">Elige una opción</option><option>Golpe divino</option><option>Lanzamiento potente</option></select></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===18}
-                <label>Maestría sobre conjuros: conjuro de nivel 1 del libro<input bind:value={levelUpWizardMastery1} placeholder="Conjuro de nivel 1 con lanzamiento de una acción" /></label>
-                <label>Maestría sobre conjuros: conjuro de nivel 2 del libro<input bind:value={levelUpWizardMastery2} placeholder="Conjuro de nivel 2 con lanzamiento de una acción" /></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===20}
-                <label>Conjuros característicos (dos conjuros de nivel 3 de tu libro)<input bind:value={levelUpWizardSignatureSpells} placeholder="Conjuro 1, Conjuro 2" /></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero'}
-                <label>Trucos de hechicero conocidos (lista completa; puedes sustituir uno en cada subida)<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos tus trucos de hechicero, separados por comas" /></label>
-                <label>Conjuros de hechicero preparados (lista completa; puedes sustituir uno en cada subida)<textarea bind:value={levelUpClassSpells} rows="3" placeholder="Escribe todos tus conjuros preparados, separados por comas" /></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
-                <label>Opciones de metamagia (lista completa; puedes sustituir una al subir de nivel)<input bind:value={levelUpMetamagic} placeholder="Ej. Conjuro cuidadoso, Conjuro sutil" /></label>
-              {/if}
-              {#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='hechiceria draconica' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===6}
-                <label>Afinidad elemental dracónica<select bind:value={levelUpSorcererAffinity}><option value="">Elige un tipo de daño</option>{#each ['Ácido','Frío','Fuego','Relámpago','Veneno'] as damage}<option>{damage}</option>{/each}</select></label>
-              {/if}
-              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && [2,4,8].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
-                <label>{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?4:Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?6:8} formas de bestia conocidas (VD {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?'1/4':Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?'1/2':'1'} o inferior{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===8?', se permite vuelo':', sin vuelo'})<textarea bind:value={levelUpWildShapeForms} rows="2" placeholder="Introduce la lista completa de formas conocidas, separadas por comas" /></label>
-              {/if}
-              {#if Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']) > splitChoiceList(getCharacterStat(levelUpEntry.sheet,'ATAQUES','Maestrías con armas')).length}
-                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
-                  <div class="builder-choice-wrapper"><strong>Maestrías con armas: conserva las anteriores y añade las nuevas</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Armas cuerpo a cuerpo sencillas o marciales</strong><span>{splitChoiceList(levelUpWeaponMasteries).length}/{Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])}</span></div><div class="builder-checkbox-grid">{#each getLevelUpChoiceOptions(levelUpChoice('barbarian.weaponMastery')) as weapon}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon))} on:change={(event)=>toggleLevelUpWeaponMastery(weapon,event,Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']))} disabled={!splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon)) && splitChoiceList(levelUpWeaponMasteries).length>=Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])} /><span>{weapon}</span></label>{/each}</div></div></div>
-                {:else}
-                  <label>Maestrías con armas (lista completa)<input bind:value={levelUpWeaponMasteries} placeholder="Escribe todas las maestrías, separadas por comas" /></label>
-                {/if}
-              {/if}
-              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('mejora de característica')}
-                <label>Tipo de mejora<select bind:value={levelUpAsiMode}><option value="asi">Aumentar características</option><option value="feat">Elegir una dote</option></select></label>
-                {#if levelUpAsiMode==='asi'}
-                  <div class="level-up-choice-grid"><label>Primera característica<select bind:value={levelUpAbility1}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease1}><option value="2">+2</option><option value="1">+1</option></select></label></div>
-                  <div class="level-up-choice-grid"><label>Segunda característica<select bind:value={levelUpAbility2}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease2}><option value="0">No aplicar</option><option value="1">+1</option></select></label></div>
-                {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
-              {/if}
-              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('don épico')}
-                <label>Don épico<select bind:value={levelUpFeat}><option value="">Elige un Don épico</option>{#each BUILDER_EPIC_FEATS as feat}<option value={feat}>{feat}</option>{/each}</select></label>
-                <label>Característica que aumenta +1<select bind:value={levelUpEpicFeatAbility}>{#each builderEpicFeatAbilities(levelUpFeat) as ability}<option value={ability}>{ability}</option>{/each}</select></label>
-              {/if}
-              <label>Otras decisiones del rasgo (pericia, invocaciones, estilo de combate, conjuros, etc.)<textarea bind:value={levelUpDecision} rows="2" placeholder="Registra las elecciones realizadas para este nivel…" /></label>
-              <p class="muted">Se conservarán los datos existentes. Los rasgos, recursos, elecciones de clase y desbloqueos de especie quedarán registrados en la ficha.</p>
-              <div class="actions"><button class="secondary" on:click={closeLevelUp}>Cancelar</button><button class="primary" on:click={applyLevelUp}>Aplicar subida de nivel</button></div>
-            </section>
-          {/if}
         </section>
       {:else if masterTab === 'Combate'}
         <section class="panel combat-panel">
@@ -5086,7 +4938,7 @@ import ITEMS from './items.json';
               <span class="sheet-kicker">D&D · 2024</span>
               <h1 class="character-name">{sheet.name || 'Personaje'}</h1>
               <div class="sheet-banner-meta">
-                <span>{sheetClassName(sheet) || 'Clase sin definir'} · Nivel {sheetLevel(sheet)}</span>
+                <button type="button" class="level-up-trigger" title="Haz doble clic para subir de nivel" on:dblclick={requestPlayerLevelUp}>{sheetClassName(sheet) || 'Clase sin definir'} · Nivel {sheetLevel(sheet)}</button>
                 <span>{sheetValueByNames(sheet, ['Especie','Raza']) || 'Especie sin definir'}</span>
                 <span>{sheetValueByNames(sheet, ['Trasfondo','Antecedente']) || 'Trasfondo sin definir'}</span>
                 <span>{sheetValueByNames(sheet, ['Nombre del jugador','Jugador']) || playerName || 'Jugador'}</span>
@@ -5503,6 +5355,178 @@ import ITEMS from './items.json';
     {/if}
   </main>
 
+  {#if levelUpEntry}
+  <div class="level-up-overlay">
+    <section class="level-up-panel">
+              <div class="section-heading"><h2>Subir nivel · {levelUpEntry.sheet.name}</h2><span class="count">Nivel {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1}</span></div>
+              <p><strong>{getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}</strong> · {getNextLevelFeatures(levelUpEntry)}.</p>
+              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).length}
+                <div class="subclass-level-preview"><strong>Rasgos de clase que se incorporarán</strong>{#each getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1) as feature}<div><b>{feature.name}</b><p>{feature.description}</p></div>{/each}</div>
+              {/if}
+              {#if getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).features.length || getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.length}
+                <div class="subclass-level-preview"><strong>Desbloqueo de especie</strong>{#each getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).features as feature}<div><b>{feature.name}</b><p>{feature.description}</p></div>{/each}{#if getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.length}<p>Conjuros que se añadirán automáticamente: {getSpeciesLevelUnlock(levelUpEntry.sheet,Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).spells.join(', ')}.</p>{/if}</div>
+              {/if}
+              <label>Método de puntos de golpe<select bind:value={levelUpHpMode}><option value="average">Valor fijo del manual</option><option value="roll">Tirar dado de golpe</option></select></label>
+              {#if levelUpHpMode==='roll'}<label>Resultado del dado (1–{LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8})<input type="number" min="1" max={LEVEL_HIT_DIE[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')] || 8} bind:value={levelUpHpRoll} /></label>{/if}
+              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('subclase de') || (Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))>=3 && !getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))}
+                <label>Subclase · {getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')}<select bind:value={levelUpSubclass}><option value="">Selecciona una subclase</option>{#each getSubclassOptions(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')) as option}<option value={option}>{formatSubclassName(option)}</option>{/each}</select></label>
+              {/if}
+              {#if levelUpSubclass && getSubclassFeaturesForNextLevel(levelUpEntry).length}
+                <div class="subclass-level-preview"><strong>Rasgos de subclase que se incorporarán</strong>{#each getSubclassFeaturesForNextLevel(levelUpEntry) as feature}<div><b>Nivel {feature.level}: {feature.name}</b><p>{feature.description}</p></div>{/each}</div>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero'}
+                <label>Estilos de combate conocidos (lista completa; puedes sustituir uno al subir de nivel){#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='campeon' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=7} · Campeón: elige dos{/if}<textarea bind:value={levelUpFighterStyles} rows="2" placeholder="Ej. Defensa, Duelo" /></label>
+                <small>Opciones: {BUILDER_CLASS_DATA['Guerrero'].specialOptions.join(' · ')}</small>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2}
+                <label>Estilo de combate<select bind:value={levelUpRangerStyle}><option value="">Elige una opción</option>{#each BUILDER_CLASS_DATA['Guerrero'].specialOptions as option}<option value={option}>{option}</option>{/each}<option value="Guerrero druídico">Guerrero druídico · aprende dos trucos de Druida</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && (levelUpRangerStyle || getCharacterStat(levelUpEntry.sheet,'RASGOS Y DOTES','Estilo de combate'))==='Guerrero druídico'}
+                <label>Trucos de Guerrero druídico (elige dos; puedes sustituir uno al subir de nivel)<textarea bind:value={levelUpRangerCantrips} rows="2" placeholder="Ej. Guía, Voluta estelar" /></label>
+                <small>Lista de Druida: {BUILDER_SPELL_LISTS.Druida.cantrips.join(' · ')}</small>
+              {/if}
+              {#if levelUpChoice('barbarian.wildHeart.aspect') && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))===levelUpChoice('barbarian.wildHeart.aspect')?.subclass && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===levelUpChoice('barbarian.wildHeart.aspect')?.level}
+                <label>{levelUpChoice('barbarian.wildHeart.aspect')?.label} — {levelUpChoice('barbarian.wildHeart.aspect')?.description}<select bind:value={levelUpBarbarianAspect}><option value="">Elige una opción</option>{#each levelUpChoice('barbarian.wildHeart.aspect')?.options || [] as option}<option value={option}>{option}</option>{/each}</select></label>
+              {/if}
+              {#if levelUpSubclass && getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass).length>1}
+                <label>Elección de la subclase<select bind:value={levelUpSubclassVariant}><option value="">Selecciona una opción</option>{#each getSubclassSpellTables(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) as table}<option value={table.name}>{formatSubclassName(table.name)}</option>{/each}</select></label>
+              {/if}
+              {#if levelUpSubclass && getSubclassCastingTable(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) && (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Pícaro')}
+                <p class="muted">La subclase usa la lista de mago. Registra la lista completa de trucos y conjuros que conoces según la tabla.</p>
+                <label>Trucos de la subclase (lista completa)<textarea bind:value={levelUpSubclassCantrips} rows="2" placeholder="Ej. Agarre electrizante, Rayo de escarcha" /></label>
+                <label>Conjuros de la subclase (lista completa)<textarea bind:value={levelUpSubclassSpells} rows="2" placeholder="Ej. Escudo, Manos ardientes, Salto" /></label>
+              {/if}
+              {#if levelUpSubclass && getSubclassCastingTable(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),levelUpSubclass) && (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida')}
+                <p class="muted">Los conjuros de dominio o círculo se incorporarán automáticamente desde la tabla de la subclase del manual.</p>
+              {/if}
+              {#if BUILDER_MAGIC_ABILITY[getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')]}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Trucos']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Trucos máximos',0))}
+                  <label>Trucos de clase conocidos (lista completa){#if ['Brujo','Clérigo','Druida'].includes(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'))} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos los trucos de clase conocidos, separados por comas" /></label>
+                {/if}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' || (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')!=='Hechicero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Conjuros preparados']) > getCharacterNumber(levelUpEntry.sheet,'CONJUROS','Conjuros preparados máximos',0))}
+                  <label>Conjuros de clase preparados/conocidos (lista completa){#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo'} · puedes sustituir uno al subir de nivel{/if}<textarea bind:value={levelUpClassSpells} rows="2" placeholder="Escribe la lista completa de conjuros de clase" /></label>
+                {/if}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago'}
+                  <label>Dos conjuros nuevos para el libro del mago<input bind:value={levelUpWizardBookAdditions} placeholder="Dos conjuros separados por comas" /></label>
+                  {#if levelUpSubclass && [3,5,7,9,11,13,15,17].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
+                    <label>Conjuros de escuela (lista completa)<textarea bind:value={levelUpWizardSchoolSpells} rows="3" placeholder="Registra todos los conjuros de tu escuela; al nivel 3 son tres y después se añade uno al desbloquear cada nuevo nivel de espacios." /></label>
+                    <small>Escuela: {({ABJURADOR:'Abjuración',ADIVINO:'Adivinación',EVOCADOR:'Evocación',ILUSIONISTA:'Ilusionismo'})[levelUpSubclass] || levelUpSubclass}. Conserva los anteriores y añade los nuevos.</small>
+                  {/if}
+                  {#if normalizeLevelText(levelUpSubclass)==='ilusionista' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                    {#if ([...splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos')),...splitChoiceList(getCharacterStat(levelUpEntry.sheet,'CONJUROS','Trucos de clase'))]).some(name=>normalizeLevelText(name)==='ilusionmenor')}
+                      <label>Truco adicional de Ilusionista (porque ya conoces Ilusión menor)<input bind:value={levelUpWizardIllusionCantrip} placeholder="Otro truco de mago que aún no conozcas" /></label>
+                    {:else}
+                      <p class="muted">Ilusión menor se añadirá automáticamente como truco adicional de la subclase; no cuenta para tu límite de trucos.</p>
+                    {/if}
+                  {/if}
+                {/if}
+              {/if}
+              {#if (getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero' && Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'] || 0) > splitChoiceList(getCharacterStat(levelUpEntry.sheet,'ATAQUES','Maestrías con armas')).length) || getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/ganas competencia en otra habilidad|ganas competencia en una habilidad|obtienes competencia en una habilidad/.test(normalizeLevelText(feature.description)))}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Guerrero'}
+                  <div class="builder-choice-wrapper"><strong>Maestrías con armas: conserva las anteriores y añade las nuevas</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Armas sencillas o marciales</strong><span>{splitChoiceList(levelUpWeaponMasteries).length}/{Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])}</span></div><div class="builder-checkbox-grid">{#each BUILDER_WEAPON_MASTERY_OPTIONS as weapon}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon))} on:change={(event)=>toggleLevelUpWeaponMastery(weapon,event,Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']))} disabled={!splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon)) && splitChoiceList(levelUpWeaponMasteries).length>=Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])} /><span>{weapon}</span></label>{/each}</div></div></div>
+                {:else if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
+                  {@const primalSkillChoice=levelUpChoice('barbarian.primalKnowledge.skill')}
+                  <label>{primalSkillChoice?.label}<select bind:value={levelUpNewSkill}><option value="">Elige una habilidad nueva</option>{#each getLevelUpChoiceOptions(primalSkillChoice,splitChoiceList(getCharacterStat(levelUpEntry.sheet,'COMPETENCIAS','Skills'))) as skill}<option value={skill}>{skill}</option>{/each}</select></label>
+                {:else}
+                  <label>Nueva competencia en habilidad<input bind:value={levelUpNewSkill} placeholder="Elige una habilidad de la lista de tu clase" /></label>
+                {/if}
+              {/if}
+              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia') || /ganas pericia/.test(normalizeLevelText(feature.description))) }
+                <label>Habilidades que obtienen Pericia (elige {getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>normalizeLevelText(feature.name).includes('pericia'))?'dos':'una'})<input bind:value={levelUpExpertise} placeholder="Habilidades en las que ya tienes competencia" /></label>
+              {/if}
+              {#if getClassFeaturesAtLevel(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase'),Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1).some((feature)=>/idiomas conoces dos idiomas/.test(normalizeLevelText(feature.description)))}
+                <label>Dos idiomas nuevos<input bind:value={levelUpLanguages} placeholder="Ej. Dracónico, Gigante" /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=11}
+                <label>Arcanum místico (conjuros de niveles 6, 7, 8 y 9, en ese orden)<textarea bind:value={levelUpMysticArcanum} rows="2" placeholder="Ej. Conjuro de nivel 6, Conjuro de nivel 7, ..." /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Brujo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
+                <label>Invocaciones sobrenaturales (lista completa; repite las que lo permitan con una elección después de dos puntos)<textarea bind:value={levelUpInvocations} rows="3" placeholder="Ej. Pacto de la cadena, Mente sobrenatural, Descarga agónica: Descarga sobrenatural" /></label>
+                <small>Opciones: {BUILDER_WARLOCK_INVOCATIONS.filter(item=>item.level<=(levelUpEntry?.sheet?Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1:1)).map(item=>item.name+' (nivel '+item.level+')').join(' · ')}</small>
+              {/if}
+              {#if levelUpSubclass==='MAESTRO DEL COMBATE' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Habilidad de Estudioso de la guerra<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option>{#each BUILDER_CLASS_SKILLS.Guerrero.options.filter(skill=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Skills')).includes(skill)) as skill}<option>{skill}</option>{/each}</select></label>
+                <label>Herramienta de artesano de Estudioso de la guerra<select bind:value={levelUpSubclassTool}><option value="">Elige una herramienta</option>{#each BUILDER_ARTISAN_TOOLS.filter(tool=>!splitChoiceList(getCharacterStat(levelUpEntry?.sheet||{},'COMPETENCIAS','Herramientas')).includes(tool)) as tool}<option>{tool}</option>{/each}</select></label>
+              {/if}
+              {#if levelUpSubclass==='ERRANTE FEÉRICO' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Habilidad de Glamur sobrenatural<select bind:value={levelUpSubclassSkill}><option value="">Elige una habilidad</option><option>Engaño</option><option>Interpretación</option><option>Persuasión</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='cazador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>El cazador y la presa<select bind:value={levelUpRangerHunterPrey}><option value="">Elige una opción</option><option>Azote de colosos</option><option>Destructor de hordas</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='cazador' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
+                <label>Tácticas defensivas<select bind:value={levelUpRangerHunterDefense}><option value="">Elige una opción</option><option>Defensa contra ataques múltiples</option><option>Escapar de la horda</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='errantefeerico' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Bendición feérica<select bind:value={levelUpRangerFeyGift}><option value="">Elige una dádiva</option>{#each BUILDER_RANGER_FEY_GIFTS as gift}<option value={gift}>{gift}</option>{/each}</select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Explorador' && normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase')).replace(/[\s_-]/g,'')==='senordelasbestias' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Perfil de compañero primigenio<select bind:value={levelUpRangerBeastProfile}><option value="">Elige un perfil</option>{#each Object.keys(BUILDER_RANGER_BEAST_PROFILES) as profile}<option value={profile}>{profile}</option>{/each}</select></label>
+                <label>Animal que representa a tu compañero<input bind:value={levelUpRangerBeastAnimal} placeholder="Ej. lobo, oso, águila, tiburón…" /></label>
+                {#if levelUpRangerBeastProfile}<div class="builder-info"><strong>Estadísticas del perfil</strong><p>{BUILDER_RANGER_BEAST_PROFILES[levelUpRangerBeastProfile]}</p></div>{/if}
+              {/if}
+              {#if normalizeLevelText(levelUpSubclass)==='colegio del conocimiento' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===3}
+                <label>Competencias adicionales del Colegio del Conocimiento (elige tres habilidades nuevas)<textarea bind:value={levelUpSubclassSkills} rows="2" placeholder="Tres habilidades distintas, separadas por comas" /></label>
+              {/if}
+              {#if levelUpSubclass==='MAESTRO DEL COMBATE' && [3,7,10,15].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
+                <label>Maniobras de Maestro del combate (lista completa)<textarea bind:value={levelUpManeuvers} rows="3" placeholder="Ej. Arremetida, Ataque preciso, Contraataque" /></label>
+                <small>Opciones: {BUILDER_BATTLE_MANEUVER_OPTIONS.join(' · ')}</small>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Paladín' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
+                <label>Estilo de combate del paladín<select bind:value={levelUpPaladinStyle}><option value="">Conservar el estilo actual / elegir en nivel 2</option>{#each BUILDER_CLASS_DATA['Guerrero'].specialOptions as style}<option value={style}>{style}</option>{/each}</select></label>
+                <small>En nivel 2 debes elegir uno. En niveles posteriores puedes conservarlo o sustituirlo por otro estilo.</small>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
+                <label>Furia elemental<select bind:value={levelUpElementalFury}><option value="">Elige una opción</option><option>Golpe primordial</option><option>Lanzamiento potente</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Clérigo' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===7}
+                <label>Golpes benditos<select bind:value={levelUpBlessedStrikes}><option value="">Elige una opción</option><option>Golpe divino</option><option>Lanzamiento potente</option></select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===18}
+                <label>Maestría sobre conjuros: conjuro de nivel 1 del libro<input bind:value={levelUpWizardMastery1} placeholder="Conjuro de nivel 1 con lanzamiento de una acción" /></label>
+                <label>Maestría sobre conjuros: conjuro de nivel 2 del libro<input bind:value={levelUpWizardMastery2} placeholder="Conjuro de nivel 2 con lanzamiento de una acción" /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Mago' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===20}
+                <label>Conjuros característicos (dos conjuros de nivel 3 de tu libro)<input bind:value={levelUpWizardSignatureSpells} placeholder="Conjuro 1, Conjuro 2" /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero'}
+                <label>Trucos de hechicero conocidos (lista completa; puedes sustituir uno en cada subida)<textarea bind:value={levelUpClassCantrips} rows="2" placeholder="Escribe todos tus trucos de hechicero, separados por comas" /></label>
+                <label>Conjuros de hechicero preparados (lista completa; puedes sustituir uno en cada subida)<textarea bind:value={levelUpClassSpells} rows="3" placeholder="Escribe todos tus conjuros preparados, separados por comas" /></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Hechicero' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1>=2}
+                <label>Opciones de metamagia (lista completa; puedes sustituir una al subir de nivel)<input bind:value={levelUpMetamagic} placeholder="Ej. Conjuro cuidadoso, Conjuro sutil" /></label>
+              {/if}
+              {#if normalizeLevelText(levelUpSubclass || getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Subclase'))==='hechiceria draconica' && Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===6}
+                <label>Afinidad elemental dracónica<select bind:value={levelUpSorcererAffinity}><option value="">Elige un tipo de daño</option>{#each ['Ácido','Frío','Fuego','Relámpago','Veneno'] as damage}<option>{damage}</option>{/each}</select></label>
+              {/if}
+              {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Druida' && [2,4,8].includes(Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1)}
+                <label>{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?4:Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?6:8} formas de bestia conocidas (VD {Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===2?'1/4':Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===4?'1/2':'1'} o inferior{Number(getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Nivel'))+1===8?', se permite vuelo':', sin vuelo'})<textarea bind:value={levelUpWildShapeForms} rows="2" placeholder="Introduce la lista completa de formas conocidas, separadas por comas" /></label>
+              {/if}
+              {#if Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']) > splitChoiceList(getCharacterStat(levelUpEntry.sheet,'ATAQUES','Maestrías con armas')).length}
+                {#if getCharacterStat(levelUpEntry.sheet,'PERSONAJE','Clase')==='Bárbaro'}
+                  <div class="builder-choice-wrapper"><strong>Maestrías con armas: conserva las anteriores y añade las nuevas</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Armas cuerpo a cuerpo sencillas o marciales</strong><span>{splitChoiceList(levelUpWeaponMasteries).length}/{Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])}</span></div><div class="builder-checkbox-grid">{#each getLevelUpChoiceOptions(levelUpChoice('barbarian.weaponMastery')) as weapon}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon))} on:change={(event)=>toggleLevelUpWeaponMastery(weapon,event,Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas']))} disabled={!splitChoiceList(levelUpWeaponMasteries).some(value=>normalizeLevelText(value)===normalizeLevelText(weapon)) && splitChoiceList(levelUpWeaponMasteries).length>=Number(getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestría con armas'] || getNextLevelRowSafe(levelUpEntry)?.resources?.['Maestrías con armas'])} /><span>{weapon}</span></label>{/each}</div></div></div>
+                {:else}
+                  <label>Maestrías con armas (lista completa)<input bind:value={levelUpWeaponMasteries} placeholder="Escribe todas las maestrías, separadas por comas" /></label>
+                {/if}
+              {/if}
+              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('mejora de característica')}
+                <label>Tipo de mejora<select bind:value={levelUpAsiMode}><option value="asi">Aumentar características</option><option value="feat">Elegir una dote</option></select></label>
+                {#if levelUpAsiMode==='asi'}
+                  <div class="level-up-choice-grid"><label>Primera característica<select bind:value={levelUpAbility1}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease1}><option value="2">+2</option><option value="1">+1</option></select></label></div>
+                  <div class="level-up-choice-grid"><label>Segunda característica<select bind:value={levelUpAbility2}>{#each LEVEL_ABILITY_NAMES as ability}<option>{ability}</option>{/each}</select></label><label>Aumento<select bind:value={levelUpIncrease2}><option value="0">No aplicar</option><option value="1">+1</option></select></label></div>
+                {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
+              {/if}
+              {#if String(getNextLevelFeatures(levelUpEntry)).toLowerCase().includes('don épico')}
+                <label>Don épico<select bind:value={levelUpFeat}><option value="">Elige un Don épico</option>{#each BUILDER_EPIC_FEATS as feat}<option value={feat}>{feat}</option>{/each}</select></label>
+                <label>Característica que aumenta +1<select bind:value={levelUpEpicFeatAbility}>{#each builderEpicFeatAbilities(levelUpFeat) as ability}<option value={ability}>{ability}</option>{/each}</select></label>
+              {/if}
+              <label>Otras decisiones del rasgo (pericia, invocaciones, estilo de combate, conjuros, etc.)<textarea bind:value={levelUpDecision} rows="2" placeholder="Registra las elecciones realizadas para este nivel…" /></label>
+              <p class="muted">Se conservarán los datos existentes. Los rasgos, recursos, elecciones de clase y desbloqueos de especie quedarán registrados en la ficha.</p>
+              <div class="actions"><button class="secondary" on:click={closeLevelUp}>Cancelar</button><button class="primary" on:click={applyLevelUp}>Aplicar subida de nivel</button></div>
+    </section>
+  </div>
+{/if}
+
   {#if notice}<button class="toast" on:click={() => notice = ''}>{notice}<span>×</span></button>{/if}
   <footer><span>FORJA DE AVENTUREROS · v1.0.53</span></footer>
 </div>
@@ -5513,7 +5537,7 @@ import ITEMS from './items.json';
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
+  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.level-up-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:1rem;box-sizing:border-box;background:rgba(0,0,0,.76);overflow:auto}.level-up-overlay .level-up-panel{width:min(900px,100%);max-height:calc(100vh - 2rem);overflow:auto;box-sizing:border-box;margin:0}.level-up-trigger{padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:default}.level-up-trigger:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
 .spells-panel{margin-top:.5rem}
   .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
   .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:var(--ink);font:500 .82rem system-ui,sans-serif}
