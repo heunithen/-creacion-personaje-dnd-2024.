@@ -6390,6 +6390,7 @@ import ITEMS from './items.json';
                       <p class="muted nautical-empty">No hay conjuros conocidos registrados.</p>
                     {/if}
                   </section>
+                  {:else}
 <section class="sheet-section spells-panel">
           <div class="sheet-section-title"><h3>Compendio de conjuros</h3><span class="count">{filteredSpells.length} / {SPELLS.length}</span></div>
           <p class="muted">Catálogo de conjuros del manual. Cada ficha incluye nivel, escuela, clases, tiempo de lanzamiento, alcance, componentes, duración y descripción.</p>
