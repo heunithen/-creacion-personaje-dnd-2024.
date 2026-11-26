@@ -2192,12 +2192,28 @@ import ITEMS from './items.json';
   type Combatant = { id:string; monster:any; name:string; ac:number; hp:number; maxHp:number; tempHp:number; initiative:number; damageInput:number; compact:boolean; dead:boolean; acMod:number; participating:boolean };
   type InitiativeParticipant = { id:string; name:string; bonus:number; roll:number; total:number; tieRoll?:number };
   const COMBATANTS_STORAGE_KEY = 'forja-combatants-v1';
+  const INITIATIVE_STORAGE_KEY = 'forja-initiative-v1';
   let combatants: Combatant[] = [];
   let combatantsStorageReady = false;
+  let initiativeStorageReady = false;
   let showAllCombatants = false;
   let initiativeOrder: InitiativeParticipant[] = [];
   let activeInitiativeIndex = 0;
   let initiativeRound = 1;
+
+  // Persistir los encuentros y la ronda en este dispositivo entre recargas.
+  $: if (combatantsStorageReady) {
+    try { localStorage.setItem(COMBATANTS_STORAGE_KEY, JSON.stringify(combatants)); } catch (error) { console.error('No se pudieron guardar los monstruos del combate', error); }
+  }
+  $: if (initiativeStorageReady) {
+    try {
+      localStorage.setItem(INITIATIVE_STORAGE_KEY, JSON.stringify({
+        order: initiativeOrder,
+        activeIndex: activeInitiativeIndex,
+        round: initiativeRound
+      }));
+    } catch (error) { console.error('No se pudo guardar el tracker de iniciativa', error); }
+  }
   const INITIATIVE_OVERLAY_CHANNEL = 'com.heunithen.dnd2024-character-builder/initiative-overlay';
   const INITIATIVE_POPOVER_ID = 'com.heunithen.dnd2024-character-builder/initiative-popover';
   let initiativeOverlayVisible = false;
@@ -4331,6 +4347,18 @@ import ITEMS from './items.json';
       }
     } catch { localStorage.removeItem(COMBATANTS_STORAGE_KEY); }
     combatantsStorageReady = true;
+    try {
+      const savedInitiative = localStorage.getItem(INITIATIVE_STORAGE_KEY);
+      if (savedInitiative) {
+        const parsedInitiative = JSON.parse(savedInitiative);
+        if (parsedInitiative && Array.isArray(parsedInitiative.order)) {
+          initiativeOrder = parsedInitiative.order;
+          activeInitiativeIndex = Math.max(0, Math.min(Number(parsedInitiative.activeIndex) || 0, Math.max(0, initiativeOrder.length - 1)));
+          initiativeRound = Math.max(1, Number(parsedInitiative.round) || 1);
+        }
+      }
+    } catch (error) { console.error('No se pudo recuperar el tracker de iniciativa', error); }
+    initiativeStorageReady = true;
     try { const savedVisualStyle=localStorage.getItem('forja-visual-style'); if(savedVisualStyle) visualStyle={...visualStyle,...JSON.parse(savedVisualStyle)}; applyVisualStyle(); } catch { applyVisualStyle(); }
     try {
       const params = new URLSearchParams(window.location.search);
