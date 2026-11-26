@@ -2340,10 +2340,10 @@ import ITEMS from './items.json';
   }
 
   function monsterQuickLabel(label: string): string {
-    return ({'Armor Class':'CA','Hit Points':'PG','Speed':'VEL','Initiative':'INIC'} as Record<string,string>)[label] || label;
+    return ({'Armor Class':'AC','Hit Points':'HP','Speed':'Speed','Initiative':'Init'} as Record<string,string>)[label] || label;
   }
   function monsterAbilityLabel(label: string): string {
-    return ({'Strength':'FUE','Dexterity':'DES','Constitution':'CON','Intelligence':'INT','Wisdom':'SAB','Charisma':'CAR'} as Record<string,string>)[label] || label;
+    return ({'Strength':'STR','Dexterity':'DEX','Constitution':'CON','Intelligence':'INT','Wisdom':'WIS','Charisma':'CHA'} as Record<string,string>)[label] || label;
   }
   function translateMonsterLabel(label: string): string {
     return ({'Skills':'Habilidades','Resistances':'Resistencias','Immunities':'Inmunidades','Condition Immunities':'Inmunidades a condiciones','Vulnerabilities':'Vulnerabilidades','Gear':'Equipo','Senses':'Sentidos','Languages':'Idiomas','Challenge Rating':'VD','Other Details':'Otros datos'} as Record<string,string>)[label] || label;
@@ -4483,13 +4483,13 @@ import ITEMS from './items.json';
                     {#if monster.description}<p class="monster-description">{monster.description}</p>{/if}
                     <div class="monster-quick-stats">
                       {#each profile.info.filter(x => ['Armor Class','Hit Points','Speed','Initiative'].includes(x.label)) as item}
-                        <div><small>{({'Armor Class':'AC','Hit Points':'HP','Speed':'Speed','Initiative':'Init'} as Record<string,string>)[item.label] || item.label}</small><strong>{item.value}</strong></div>
+                        <div><small>{monsterQuickLabel(item.label)}</small><strong>{item.value}</strong></div>
                       {/each}
                     </div>
                     <div class="monster-ability-table">
                       <div class="monster-ability-row monster-ability-head"><span>Ability</span><span>Score</span><span>Mod.</span><span>Save</span></div>
                       {#each profile.info.filter(x => ['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'].includes(x.label)) as ability}
-                        <div class="monster-ability-row"><strong>{({'Strength':'STR','Dexterity':'DEX','Constitution':'CON','Intelligence':'INT','Wisdom':'WIS','Charisma':'CHA'} as Record<string,string>)[ability.label] || ability.label}</strong><span>{ability.value.match(/^\d+/)?.[0] || '—'}</span><span>{ability.value.match(/\([+-]?\d+\)/)?.[0] || '—'}</span><span>{ability.value.match(/Save\s*([+-]?\d+)/i)?.[1] || '—'}</span></div>
+                        <div class="monster-ability-row"><strong>{monsterAbilityLabel(ability.label)}</strong><span>{ability.value.match(/^\d+/)?.[0] || '—'}</span><span>{ability.value.match(/\([+-]?\d+\)/)?.[0] || '—'}</span><span>{ability.value.match(/Save\s*([+-]?\d+)/i)?.[1] || '—'}</span></div>
                       {/each}
                     </div>
                     <div class="monster-details-list">
