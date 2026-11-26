@@ -3536,7 +3536,7 @@ import ITEMS from './items.json';
   let playerSheetTab = 'Acciones';
   const playerSheetTabs = ['Acciones', 'Conjuros', 'Botones', 'Inventario', 'Descripción', 'Notas'];
   type QuickButton = { name: string; attack: string; damage: string; mode: 'normal'|'advantage'|'disadvantage' };
-  type QuickRollResult = { id:number; name:string; attack:string; damage:string; mode:string; critical:boolean; fumble:boolean; };
+  type QuickRollResult = { id:number; name:string; attack:string; damage:string; attackResult:string; damageResult:string; mode:string; critical:boolean; fumble:boolean; };
   let editingQuickButton = -1;
   let quickRollHistory: QuickRollResult[] = [];
   const emptyQuickButton = (): QuickButton => ({ name:'Vacío', attack:'1d20', damage:'', mode:'normal' });
@@ -3590,25 +3590,85 @@ import ITEMS from './items.json';
     return {detail:details.join(' '),total};
   }
   function quickFormulaForDicePlus(formula:string, mode:'normal'|'advantage'|'disadvantage'='normal', critical=false): string {
-    let notation=formula.replace(/\\s+/g,'').replace(/−/g,'-');
-    if (!/^(?:[+-]?(?:\\d+)?d(?:4|6|8|10|12|20|100)|[+-]?\\d+)(?:(?:[+-])(?:(?:\\d+)?d(?:4|6|8|10|12|20|100)|\\d+))*$/i.test(notation)) throw new Error('Fórmula no válida: '+formula);
-    if (critical) notation=notation.replace(/(\\d*)d(4|6|8|10|12|20|100)/gi,(_,count,sides)=>(Number(count||1)*2)+'d'+sides);
+    let notation=formula.replace(/\s+/g,'').replace(/−/g,'-');
+    if (!/^(?:[+-]?(?:\d+)?d(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\d+)?|[+-]?\d+)(?:(?:[+-])(?:(?:\d+)?d(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\d+)?|\d+))*$/i.test(notation)) {
+      throw new Error('Fórmula no válida: '+formula);
+    }
+    if (critical) notation=notation.replace(/(\d*)d(4|6|8|10|12|20|100)/gi,(_,count,sides)=>(Number(count||1)*2)+'d'+sides);
     if (mode!=='normal') {
-      if (!/^(?:\\d*)d20/i.test(notation)) throw new Error('Ventaja y desventaja requieren un d20 en el ataque.');
-      notation=notation.replace(/^(\\d*)d20/i, '2d20'+(mode==='advantage'?'kh1':'kl1'));
+      if (!/^\d*d20/i.test(notation)) throw new Error('Ventaja y desventaja requieren un d20 en el ataque.');
+      notation=notation.replace(/^\d*d20/i, '2d20'+(mode==='advantage'?'kh1':'kl1'));
     }
     return notation;
   }
+
+  async function rollQuickDicePlus(notation:string,label:string): Promise<string> {
+    if (!obrReady || (obrRole!=='PLAYER' && obrRole!=='GM')) throw new Error('Las tiradas solo pueden enviarse desde Owlbear Rodeo.');
+    const valid=/^[+-]?(?:\d+)?d(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\d+)?(?:(?:[+-])(?:(?:\d+)?d(?:4|6|8|10|12|20|100)(?:(?:kh|kl)\d+)?|\d+))*$/i.test(notation);
+    if (!valid) throw new Error('Notación no válida para Dice+: '+notation);
+    if (!(await checkDicePlusReady())) throw new Error('Dice+ no está disponible en esta sala. Activa la extensión Dice+.');
+    const playerId=await OBR.player.getId();
+    const playerName=await OBR.player.getName();
+    const rollId='forja_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);
+    lastRollId=rollId;
+    return await new Promise<string>(async(resolve,reject)=>{
+      let settled=false;
+      let unsubResult:()=>void=()=>{};
+      let unsubError:()=>void=()=>{};
+      const finish=(error:Error|null,value='')=>{
+        if(settled)return;
+        settled=true;
+        clearTimeout(timer);
+        unsubResult();
+        unsubError();
+        if(error)reject(error);else resolve(value);
+      };
+      const timer=setTimeout(()=>finish(new Error('Dice+ no respondió con el resultado de la tirada.')),12000);
+      const resultChannel=`${DICE_PLUS_SOURCE}/roll-result`;
+      const errorChannel=`${DICE_PLUS_SOURCE}/roll-error`;
+      unsubResult=OBR.broadcast.onMessage(resultChannel,(event:any)=>{
+        const payload=event?.data??event;
+        if(payload?.rollId!==rollId)return;
+        const result=payload.result??payload;
+        const total=result?.totalValue;
+        const summary=result?.rollSummary;
+        const textResult=typeof summary==='string'&&summary.trim()?summary.trim():
+          total!==undefined&&total!==null?'Total: '+total:
+          result?.groups?JSON.stringify(result.groups):'Resultado recibido de Dice+';
+        finish(null,textResult);
+      });
+      unsubError=OBR.broadcast.onMessage(errorChannel,(event:any)=>{
+        const payload=event?.data??event;
+        if(payload?.rollId!==rollId)return;
+        finish(new Error('Dice+ rechazó la tirada: '+String(payload.error||payload.notation||'error desconocido')));
+      });
+      try {
+        const cleanLabel=label.replace(/[#+\-*/(),\r\n]/g,' ').replace(/\s+/g,' ').trim();
+        await OBR.broadcast.sendMessage('dice-plus/roll-request',{
+          rollId,playerId,playerName,rollTarget:'everyone',
+          diceNotation:notation+(cleanLabel?'#'+cleanLabel:''),
+          showResults:true,timestamp:Date.now(),source:DICE_PLUS_SOURCE
+        },{destination:'ALL'});
+      } catch(error) {
+        finish(error instanceof Error?error:new Error('No se pudo enviar la tirada a Dice+.'));
+      }
+    });
+  }
+
   async function rollQuickButton(index:number) {
     if (!sheet) return;
     const button=getQuickButtons(sheet)[index];
     try {
       const attackNotation=quickFormulaForDicePlus(button.attack,button.mode);
-      const attackHasD20=/\\d*d20/i.test(button.attack);
       const damageNotation=button.damage.trim()?quickFormulaForDicePlus(button.damage):'';
-      await sendSheetRoll(attackNotation,button.name+' · Ataque');
-      if (damageNotation) await sendSheetRoll(damageNotation,button.name+' · Daño');
-      quickRollHistory=[{id:Date.now(),name:button.name || 'Tirada',attack:attackNotation,damage:damageNotation,mode:button.mode,critical:false,fumble:false},...quickRollHistory].slice(0,10);
+      notice='Esperando resultado de Dice+…';
+      const attackResult=await rollQuickDicePlus(attackNotation,(button.name||'Tirada')+' · Ataque');
+      const damageResult=damageNotation?await rollQuickDicePlus(damageNotation,(button.name||'Tirada')+' · Daño'):'';
+      quickRollHistory=[{
+        id:Date.now(),name:button.name||'Tirada',attack:attackNotation,damage:damageNotation,
+        attackResult,damageResult,mode:button.mode,critical:false,fumble:false
+      },...quickRollHistory].slice(0,10);
+      notice='Resultado recibido de Dice+ y guardado en el registro.';
     } catch (error) {
       notice=error instanceof Error?error.message:'No se pudo realizar la tirada.';
     }
@@ -5035,8 +5095,8 @@ import ITEMS from './items.json';
                       {#each quickRollHistory as result (result.id)}
                           <article class="quick-roll-result">
                             <strong>{result.name}</strong>
-                            <p><b>Ataque</b> {#if result.critical}<em class="quick-critical">¡Crítico!</em>{:else if result.fumble}<em class="quick-fumble">¡Pifia!</em>{/if} {#if result.mode==='advantage'}<span class="quick-mode-label">Ventaja</span>{:else if result.mode==='disadvantage'}<span class="quick-mode-label">Desventaja</span>{/if}<br />{result.attack}</p>
-                            {#if result.damage}<p><b>Daño</b> {#if result.critical}<span class="quick-critical">Dados dobles</span> {/if}{result.damage}</p>{/if}
+                            <p><b>Ataque</b> {#if result.mode==='advantage'}<span class="quick-mode-label">Ventaja</span>{:else if result.mode==='disadvantage'}<span class="quick-mode-label">Desventaja</span>{/if}<br />{result.attack}<br /><strong class="quick-result-value">{result.attackResult}</strong></p>
+                            {#if result.damage}<p><b>Daño</b><br />{result.damage}<br /><strong class="quick-result-value">{result.damageResult}</strong></p>{/if}
                           </article>
                       {/each}
                     </div>
@@ -7395,7 +7455,7 @@ import ITEMS from './items.json';
   .quick-roll-clear:disabled{opacity:.4}
 
   .quick-roll-result{padding:9px;border:1px solid #3a6870;border-radius:7px;background:#0f1e26}
-  .quick-roll-result strong{color:#fff}
+  .quick-roll-result strong{color:#fff}\n  .quick-result-value{display:block;margin-top:4px;color:#8de5a8!important;font-size:13px}
   .quick-roll-result p{margin:6px 0 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
   .quick-critical{color:#ffd166;font-style:normal;font-weight:900}
   .quick-fumble{color:#ff8585;font-style:normal;font-weight:900}
