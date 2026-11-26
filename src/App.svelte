@@ -5716,7 +5716,7 @@ import ITEMS from './items.json';
                 <img class="builder-class-emblem" src={'/-creacion-personaje-dnd-2024./images/character-creation/classes/individual/class-emblem-'+BUILDER_CLASS_EMBLEMS[builderDisplayedClass]+'.webp'} alt={'Emblema de '+builderDisplayedClass} />
                 <div class="builder-class-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Clase anterior" on:click={()=>builderMoveClass(-1)}>‹</button>
-                  <h4 style={`color:${BUILDER_CLASS_COLORS[builderDisplayedClass]} !important`}>{builderDisplayedClass}</h4>
+                  <h4 style={`--builder-title-color:${BUILDER_CLASS_COLORS[builderDisplayedClass]}`} class="builder-class-title">{builderDisplayedClass}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Clase siguiente" on:click={()=>builderMoveClass(1)}>›</button>
                 </div>
                 <p class="builder-class-flyer-description">{BUILDER_CLASS_GUIDANCE[builderDisplayedClass]}</p>
@@ -5732,7 +5732,7 @@ import ITEMS from './items.json';
                           
             {:else if builderStep===2}
               <h3>{builderBackgroundSetup ? '03.1. Elecciones del trasfondo' : '03. Elige tu trasfondo'}</h3>
-              <p class="muted">{builderBackgroundSetup ? 'Completa las elecciones que corresponden a '+builderData.background+'.' : 'Tu vida antes de convertirte en aventurero determina competencias, dote de origen y equipo.'}</p>
+              {#if !builderBackgroundSetup}<p class="muted">Tu vida antes de convertirte en aventurero determina competencias, dote de origen y equipo.</p>{/if}
               
 
               
@@ -5740,7 +5740,7 @@ import ITEMS from './items.json';
               <section class="builder-background-flyer" aria-label={'Información del trasfondo '+BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}>
                 <div class="builder-background-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Trasfondo anterior" on:click={()=>builderMoveBackground(-1)}>‹</button>
-                  <h4 style={`color:${BUILDER_BACKGROUND_COLORS[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]} !important`}>{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
+                  <h4 style={`--builder-title-color:${BUILDER_BACKGROUND_COLORS[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}`} class="builder-background-title">{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Trasfondo siguiente" on:click={()=>builderMoveBackground(1)}>›</button>
                 </div>
                 <p class="builder-background-description">{BUILDER_BACKGROUND_GUIDANCE[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}</p>
@@ -5763,7 +5763,6 @@ import ITEMS from './items.json';
                 <div class="builder-choice-wrapper"><strong>Dos trucos de la dote</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Trucos de Iniciado en la magia</strong><span>{builderData.backgroundMagicCantrips.length}/{2}</span></div><div class="builder-checkbox-grid">{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)].cantrips as spell}<label class="builder-checkbox"><input type="checkbox" checked={builderData.backgroundMagicCantrips.includes(spell)} on:change={(event) => builderToggleChoice('backgroundMagicCantrips',spell,2,event)} disabled={!builderData.backgroundMagicCantrips.includes(spell) && builderData.backgroundMagicCantrips.length >= (2)} /><span>{spell}</span><small class="builder-option-description">{builderSpellInfo(spell)?.level === 0 ? 'Truco' : 'Nivel ' + (builderSpellInfo(spell)?.level ?? '—')} · {builderSpellInfo(spell)?.school || 'Conjuro'}</small><small class="builder-option-description">{builderSpellInfo(spell)?.description || 'Descripción no disponible.'}</small></label>{/each}</div></div></div>
                 <label>Un conjuro de nivel 1 de la dote<select bind:value={builderData.backgroundMagicSpell}><option value="">Elige un conjuro</option>{#each BUILDER_SPELL_LISTS[builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)].level1 as spell}<option>{spell}</option>{/each}</select></label>
               {/if}
-              <div class="builder-info"><strong>Beneficios automáticos del trasfondo</strong><p>Características: {BUILDER_BACKGROUND_DATA[builderData.background].abilities.join(', ')}</p><p>Dote: {BUILDER_BACKGROUND_DATA[builderData.background].feat}</p><p>Habilidades: {BUILDER_BACKGROUND_DATA[builderData.background].skills.join(' y ')}</p><p>Herramienta: {BUILDER_BACKGROUND_DATA[builderData.background].tool}</p><p>Equipo A: {BUILDER_BACKGROUND_DATA[builderData.background].equipmentA}</p></div>
               {#if BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]}
                 <label>Competencia con herramienta del trasfondo<select bind:value={builderData.backgroundToolChoice}><option value="">Elige una opción</option>{#each BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background] as tool}<option>{tool}</option>{/each}</select></label>
               {/if}
@@ -7402,7 +7401,7 @@ import ITEMS from './items.json';
   /* Ficha informativa y navegación de clases */
   .builder-background-flyer{box-sizing:border-box;display:flex;flex-direction:column;gap:1rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;overflow:hidden}
   .builder-background-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%}
-  .builder-background-title-row h4{margin:0;color:#fff;font:700 1.35rem Georgia,serif;text-align:center}
+  .builder-background-title-row h4{margin:0;color:var(--builder-title-color)!important;font:700 1.35rem Georgia,serif;text-align:center}
   .builder-background-description{flex:0 0 auto;min-height:0;max-height:190px;margin:0;padding:.15rem .2rem .35rem;color:#e0e7e9;font:400 .98rem/1.7 system-ui,sans-serif;line-height:1.7;overflow-y:auto}
   .builder-background-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem 1rem;padding:.55rem 0;border-top:1px solid #668087;border-bottom:1px solid #668087}
   .builder-background-details .builder-class-flyer-detail{min-width:0;max-width:none;padding:0;border:0}
@@ -7414,7 +7413,7 @@ import ITEMS from './items.json';
   .builder-class-flyer{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1rem 1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;text-align:center;overflow:hidden}
   .builder-class-emblem{display:block;flex:0 0 166px;width:116px;height:166px;object-fit:contain;image-rendering:pixelated}
   .builder-class-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;flex:0 0 44px;width:100%;max-width:430px}
-  .builder-class-title-row h4{margin:0;color:#fff;font:700 1.25rem Georgia,serif;text-align:center}
+  .builder-class-title-row h4{margin:0;color:var(--builder-title-color)!important;font:700 1.25rem Georgia,serif;text-align:center}
   .builder-class-arrow{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:1px solid #b5bec3;border-radius:7px;background:#13262e;color:#fff;font:400 2rem/1 system-ui,sans-serif;cursor:pointer}
   .builder-class-arrow:hover{border-color:#5fe6e0;color:#5fe6e0}
   .builder-class-flyer-description{box-sizing:border-box;flex:1 1 auto;width:100%;max-width:520px;min-height:0;margin:0;padding:.15rem 0;color:#b5bec3;font:.88rem/1.55 system-ui,sans-serif;overflow-y:auto}
