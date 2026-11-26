@@ -144,12 +144,15 @@ test('compra de puntos actualiza el gasto y permite recuperar puntos; creación 
 
   const method = page.getByLabel('Método para determinar las puntuaciones');
   await method.selectOption('pointBuy');
-  await expect(page.getByText(/Puntos utilizados:\s*0 \/ 27/)).toBeVisible();
-  await page.getByRole('button', { name: 'Subir Fuerza' }).click();
-  await expect(page.getByText(/Puntos utilizados:\s*1 \/ 27/)).toBeVisible();
+  const pointsStatus = page.locator('.builder-panel p.hint').filter({ hasText: 'Puntos utilizados:' });
+  await expect(pointsStatus).toContainText('0 / 27');
+  const raiseStrength = page.getByRole('button', { name: 'Subir Fuerza' });
+  await expect(raiseStrength).toBeEnabled();
+  await raiseStrength.click();
   await expect(page.locator('.builder-ability-card').filter({ hasText: 'Fuerza' }).locator('.builder-ability-stepper strong')).toHaveText('9');
+  await expect(pointsStatus).toContainText('1 / 27');
   await page.getByRole('button', { name: 'Bajar Fuerza' }).click();
-  await expect(page.getByText(/Puntos utilizados:\s*0 \/ 27/)).toBeVisible();
+  await expect(pointsStatus).toContainText('0 / 27');
   await expect(page.locator('.builder-ability-card').filter({ hasText: 'Fuerza' }).locator('.builder-ability-stepper strong')).toHaveText('8');
 
   await method.selectOption('free');
