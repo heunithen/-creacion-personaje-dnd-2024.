@@ -2247,10 +2247,10 @@ import ITEMS from './items.json';
       await OBR.popover.open({
         id:INITIATIVE_POPOVER_ID,
         url,
-        width:250,
+        width:300,
         height:Math.min(620,180+initiativeOrder.length*34),
         anchorReference:'POSITION',
-        anchorPosition:{left:Math.max(12,width-360),top:Math.max(12,height-16)},
+        anchorPosition:{left:Math.max(12,width-76),top:Math.max(12,height-16)},
         anchorOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
         transformOrigin:{horizontal:'RIGHT',vertical:'BOTTOM'},
         disableClickAway:true,
