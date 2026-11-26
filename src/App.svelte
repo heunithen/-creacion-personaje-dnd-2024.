@@ -1321,23 +1321,23 @@
 
   const BUILDER_CLASSES = ['Bárbaro','Bardo','Brujo','Clérigo','Druida','Explorador','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro'];
   const BUILDER_CLASS_GUIDANCE: Record<string,string> = {
-    'Bárbaro':'Combatiente resistente que canaliza la furia para dominar el combate cuerpo a cuerpo.',
-    'Bardo':'Artista versátil que combina habilidades, apoyo al grupo y magia.',
-    'Brujo':'Lanzador de conjuros cuyo poder procede de un pacto con una entidad sobrenatural.',
-    'Clérigo':'Campeón de una fuerza divina que combina magia y capacidades de apoyo o combate.',
-    'Druida':'Guardián de la naturaleza que utiliza magia natural y puede adoptar formas animales.',
-    'Explorador':'Viajero y cazador experto en supervivencia, exploración y combate.',
-    'Guerrero':'Especialista en armas y armaduras con gran versatilidad marcial.',
-    'Hechicero':'Lanzador de conjuros cuya magia nace de un poder innato.',
-    'Mago':'Estudioso de la magia que aprende y amplía su repertorio mediante el estudio.',
-    'Monje':'Combatiente disciplinado que domina su cuerpo y canaliza su energía interior.',
-    'Paladín':'Combatiente juramentado que une destreza marcial con poder sagrado.',
-    'Pícaro':'Especialista ágil en sigilo, precisión, pericia y aprovechar oportunidades.'
+    'Bárbaro':'Guerrero feroz que recurre a una furia primitiva para superar sus límites. Combate en primera línea, soporta castigos que derribarían a otros aventureros y convierte su fuerza y resistencia en sus mayores ventajas. Es ideal para quien quiere enfrentarse directamente a los peligros y proteger al grupo mediante pura determinación.',
+    'Bardo':'Artista, narrador y portador de magia que encuentra poder en las palabras, la música y la creatividad. Puede inspirar a sus aliados, confundir a sus enemigos y adaptarse a muchas situaciones gracias a una combinación de conjuros, conocimientos y habilidades. Es una clase versátil, especialmente útil cuando el grupo necesita soluciones distintas al combate.',
+    'Brujo':'Ha obtenido poderes mágicos mediante un pacto con una entidad sobrenatural, aunque la naturaleza de ese vínculo y sus condiciones pueden variar. Sus dones le permiten lanzar magia singular y desarrollar capacidades vinculadas a su patrón. Es una clase para quien busca un personaje marcado por un acuerdo misterioso y poderes que tienen un origen extraordinario.',
+    'Clérigo':'Sirve a una deidad, filosofía o fuerza divina y canaliza ese vínculo en forma de magia sagrada. Puede sanar heridas, proteger a sus compañeros y enfrentarse a sus enemigos con energía divina, además de desempeñar distintos papeles según sus elecciones. Es mucho más que un sanador: puede convertirse en un defensor resistente o en una poderosa figura ofensiva.',
+    'Druida':'Guardián de los ciclos naturales que obtiene su magia de la conexión con la naturaleza. Puede invocar fuerzas elementales, controlar el terreno, sanar y, mediante su vínculo con el mundo vivo, adoptar formas animales. Su repertorio le permite adaptarse a los desafíos y actuar como protector, explorador o lanzador de conjuros.',
+    'Explorador':'Rastreador y viajero acostumbrado a sobrevivir en territorios salvajes y peligrosos. Combina conocimiento del entorno, percepción, sigilo y técnicas de combate para perseguir amenazas y mantener a salvo a sus compañeros. Puede especializarse en luchar a distancia o cuerpo a cuerpo, y destaca cuando el grupo necesita orientación, vigilancia y supervivencia.',
+    'Guerrero':'Combatiente entrenado para dominar una amplia variedad de armas, armaduras y técnicas de combate. Su preparación le permite mantenerse firme en primera línea, proteger espacios importantes y responder con eficacia a distintos enemigos. Es una de las clases más adaptables en batalla y puede orientarse hacia la defensa, la fuerza bruta o la precisión marcial.',
+    'Hechicero':'La magia forma parte de su propio ser: puede proceder de un linaje extraordinario, una influencia sobrenatural o un acontecimiento que transformó su esencia. No depende del estudio ni de un pacto para conjurar; aprende a controlar un poder innato que puede alterar y potenciar mediante su talento mágico. Es ideal para quien quiere interpretar a un lanzador de conjuros cuyo poder nace de su interior.',
+    'Mago':'Estudioso de los secretos arcanos que obtiene su poder mediante años de investigación, práctica y aprendizaje. Su libro de conjuros le permite reunir una gran variedad de opciones y prepararse para afrontar amenazas muy diferentes. Aunque suele depender del conocimiento y la planificación más que de la resistencia física, su dominio de la magia le ofrece respuestas para casi cualquier desafío.',
+    'Monje':'Combatiente ascético que entrena cuerpo y mente hasta convertirlos en instrumentos extraordinarios. Su disciplina le permite moverse con rapidez, golpear con técnicas marciales y canalizar una energía interior para superar sus límites. Destaca por su movilidad y capacidad para entrar y salir del peligro, controlando el ritmo del enfrentamiento.',
+    'Paladín':'Guerrero que ha asumido un juramento sagrado y obtiene de él la fuerza para defender sus ideales. Une habilidad con armas y armaduras, resistencia y magia divina, pudiendo proteger a sus aliados y castigar a quienes considera una amenaza. Sus decisiones y su juramento definen tanto sus poderes como el compromiso que guía al personaje.',
+    'Pícaro':'Especialista en sigilo, precisión y aprovechamiento de cualquier ventaja. Confía en su astucia, reflejos y amplio repertorio de habilidades para infiltrarse, descubrir secretos, desactivar peligros y atacar en el momento oportuno. No necesita imponerse por fuerza: observa, prepara el terreno y convierte una pequeña oportunidad en un golpe decisivo.'
   };
   // Correspondencia de los emblemas recortados con las doce clases del set Pinfinity.
   const BUILDER_CLASS_EMBLEMS: Record<string,string> = {
-    'Bárbaro':'06','Bardo':'03','Brujo':'02','Clérigo':'07','Druida':'08','Explorador':'05',
-    'Guerrero':'09','Hechicero':'01','Mago':'04','Monje':'10','Paladín':'11','Pícaro':'12'
+    'Bárbaro':'06','Bardo':'03','Brujo':'02','Clérigo':'07','Druida':'08','Explorador':'12',
+    'Guerrero':'09','Hechicero':'01','Mago':'04','Monje':'10','Paladín':'11','Pícaro':'05'
   };
   const BUILDER_CLASS_PLAYSTYLE: Record<string,string> = {
     'Bárbaro':'Fuerza bruta · Resistencia · Combate cuerpo a cuerpo',
