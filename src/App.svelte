@@ -2119,7 +2119,19 @@
       builderSaving = false;
     }
   }
-  function startBuilder() { if (demoPreview) sheet = null; demoPreview = false; resetBuilder(); playerCreating = true; }
+  function startBuilder() {
+    if (sheet && !demoPreview) {
+      const confirmed = window.confirm('¿Crear un personaje nuevo? La ficha actual se eliminará permanentemente de este dispositivo y no se podrá recuperar. Exporta una copia antes si deseas conservarla.');
+      if (!confirmed) return;
+      sheet = null;
+      localStorage.removeItem('forja-raw-character');
+    }
+    if (demoPreview) sheet = null;
+    demoPreview = false;
+    importOpen = false;
+    resetBuilder();
+    playerCreating = true;
+  }
   function openDemoPreview() {
     const sample = createInitialBuilderData();
     sample.name = 'Aldric Valdemar';
@@ -3801,9 +3813,12 @@ import ITEMS from './items.json';
   }
 
   async function deleteSheet() {
+    if (!window.confirm('¿Eliminar este personaje? La ficha se borrará permanentemente de este dispositivo y no se podrá recuperar. Exporta una copia antes si deseas conservarla.')) return;
     sheet = null;
     localStorage.removeItem('forja-raw-character');
-    // El borrado también es exclusivamente local; no deja marcadores en la sala.    notice = 'Ficha eliminada.';
+    importOpen = false;
+    // El borrado también es exclusivamente local; no deja marcadores en la sala.
+    notice = 'Ficha eliminada permanentemente.';
   }
 
   onMount(() => {
@@ -4679,7 +4694,6 @@ import ITEMS from './items.json';
               {#if demoPreview}
                 <button type="button" on:click={closeDemoPreview}>Salir de vista previa</button>
               {:else}
-                <button type="button" on:click={() => importOpen = !importOpen}>Gestionar</button>
                 <button type="button" on:click={exportSheet}>Exportar</button>
               {/if}
             </div>
