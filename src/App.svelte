@@ -821,7 +821,7 @@
     applyVisualStyle();
   }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Personajes guardados', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Estilo'];
+  const masterTabs = ['Personajes', 'Tiradas', 'Cofres', 'Objetos', 'Monstruos ordenados', 'Conjuros', 'Reglas', 'Estilo'];
 
   function openMasterTab(tab: string) {
     // Cada entrada a un catálogo comienza sin búsquedas ni filtros anteriores.
@@ -4021,38 +4021,6 @@ import ITEMS from './items.json';
               <div class="actions"><button class="secondary" on:click={closeLevelUp}>Cancelar</button><button class="primary" on:click={applyLevelUp}>Aplicar subida de nivel</button></div>
             </section>
           {/if}
-        </section>
-      {:else if masterTab === 'Personajes guardados'}
-        <section class="panel roster-panel">
-          <div class="section-heading"><h2>Personajes guardados</h2><span class="count">GitHub</span></div>
-          <p class="muted">Las hojas se guardan automáticamente en el repositorio y permanecen disponibles aunque los jugadores se desconecten o borren la caché de su navegador.</p>
-          <div class="builder-panel github-config-panel">
-            <h3>Conexión compartida</h3>
-            <p class="muted">Token personal de GitHub con permiso de lectura y escritura de contenidos únicamente para este repositorio. Se comparte en los metadatos de la sala OBR; todos los participantes de confianza podrán acceder a él.</p>
-            <label>Token de GitHub<input type="password" bind:value={githubTokenDraft} placeholder={githubConfig ? 'Token configurado (vacío para conservarlo)' : 'Pega aquí el token de GitHub'} /></label>
-            <label>Propietario del repositorio<input bind:value={githubOwnerDraft} /></label>
-            <label>Nombre del repositorio<input bind:value={githubRepoDraft} /></label>
-            <label>Rama<input bind:value={githubBranchDraft} /></label>
-            <div class="actions"><button class="primary" on:click={saveGithubRoomConfig}>Guardar conexión</button><button class="secondary" on:click={refreshGithubCharacters} disabled={!githubStore || cloudLoading}>Actualizar lista</button></div>
-          </div>
-          <div class="builder-panel">
-            <div class="section-heading"><h3>Hojas guardadas</h3><span class="count">{cloudRecords.length}</span></div>
-            {#if cloudLoading}<p class="muted">Consultando GitHub…</p>
-            {:else if !cloudRecords.length}<p class="muted">No hay personajes guardados en el repositorio.</p>
-            {:else}
-              <div class="github-character-list">
-                {#each cloudRecords as record (record.playerId)}
-                  <article class="github-character-row">
-                    <div><strong>{record.name}</strong><small>Jugador: {record.playerName}</small></div>
-                    <div class="github-character-actions">
-                      <button class="danger-text" on:click={() => deleteGithubCharacter(record)}>Eliminar</button>
-                    </div>
-                  </article>
-                {/each}
-              </div>
-            {/if}
-          </div>
-          <p class="muted github-status" role="status" aria-live="polite">{cloudStatus}</p>
         </section>
       {:else if masterTab === 'Tiradas'}
         <section class="panel gm-rolls-panel">
