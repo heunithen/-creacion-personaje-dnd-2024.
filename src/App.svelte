@@ -3554,7 +3554,7 @@ import ITEMS from './items.json';
       const damageBonus = abilityMod===0 ? '' : (abilityMod>0?'+':'')+abilityMod;
       const rangeMatch = profile.properties.match(/(?:Munición|Arrojadiza)\s*\(([^)]+)\)/i);
       const range = rangeMatch ? rangeMatch[1] : /alcance/i.test(profile.properties) ? '3 m' : '1,5 m';
-      return {name, attackBonus:abilityMod+(proficient?proficiency:0) as number|null, damage:profile.damage+damageBonus, damageType:profile.damageType, range};
+      return {name, attackBonus:abilityMod+(proficient?proficiency:0) as number|null, proficient, damage:profile.damage+damageBonus, damageType:profile.damageType, range};
     });
   }
 
@@ -3599,6 +3599,16 @@ import ITEMS from './items.json';
     const raw = getCharacterStat(target, 'COMPETENCIAS', 'Habilidades');
     const choices = splitChoiceList(raw.split(/;\\s*Pericia:/i)[0]);
     return choices.some(choice => normalizeLevelText(choice) === normalizeLevelText(skill));
+  }
+  function skillIsExpertise(skill: string, target: RawSheet | null = sheet) {
+    if (!target) return false;
+    const raw = getCharacterStat(target, 'COMPETENCIAS', 'Habilidades');
+    const match = String(raw).match(/pericia\\s*:\\s*([^\\n;]+)/i);
+    return splitChoiceList(match?.[1] || '').some(choice => normalizeLevelText(choice) === normalizeLevelText(skill));
+  }
+  function skillBonusNumber(value: unknown): number | null {
+    const match = String(value ?? '').replace(/−/g,'-').match(/[+-]?\\d+/);
+    return match ? Number(match[0]) : null;
   }
   function savingThrowBonus(ability: string, sections: RawSection[] = sheet?.sections || []) {
     return savingThrowRaw(ability, sections).replace(/\s*·\s*Competente/i, '').trim() || '—';
@@ -4603,7 +4613,7 @@ import ITEMS from './items.json';
                   <div class="builder-review-derived">
                     <div><span>Puntos de golpe</span><strong>{BUILDER_HIT_DIE[builderData.className] + builderModifier(builderAdjustedAbilities().Constitución)} <small>PG</small></strong></div>
                     <div><span>Clase de armadura</span><strong>{builderStartingAC()}</strong></div>
-                    <div><span>Iniciativa</span><strong>{builderModifier(builderAdjustedAbilities().Destreza)>=0?'+':''}{builderModifier(builderAdjustedAbilities().Destreza)}</strong></div>
+             <div><span>Iniciativa</span>{@const initiativeBonus = skillBonusNumber(sheetValueByNames(sheet, ['Iniciativa']))}{#if initiativeBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(initiativeBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(initiativeBonus), 'Iniciativa')}>{signedBonus(initiativeBonus)}</button>{:else}<strong>—</strong>{/if}</div>
                     <div><span>Dado de golpe</span><strong>d{BUILDER_HIT_DIE[builderData.className]}</strong></div>
                   </div>
                 </section>
@@ -4753,7 +4763,7 @@ import ITEMS from './items.json';
                   <div class="skill-column-labels"><span>Habilidad</span><span>Valor</span></div>
                   <div class="stats-list">
                     {#each pair.heading.stats || [] as stat, i}
-                      <div class="sheet-stat" class:proficient={skillIsProficient(String(stat.name || ''), sheet)}><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value skill-number">{(displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)).replace(/\s*[·,]?\s*Competente\b/gi, '').replace(/\s*\(Competencia\)/gi, '')}</div></div>
+                      <div class="sheet-stat" class:proficient={skillIsProficient(String(stat.name || ''), sheet)} class:expertise={skillIsExpertise(String(stat.name || ''), sheet)}><span class="stat-label">{stat.name || ''}</span><div class="stat-value sheet-readonly-value skill-number">{@const skillValue = (displayValue(pair.values?.stats?.[i]?.value) || displayValue(stat.value)).replace(/\\s*[·,]?\\s*(Competente|Pericia)\\b/gi, '').replace(/\\s*\\(Competencia\\)/gi, '')}{@const skillBonus = skillBonusNumber(skillValue)}{#if skillBonus !== null}<button type="button" class="inline-roll" class:proficient={skillIsProficient(String(stat.name || ''), sheet)} class:expertise={skillIsExpertise(String(stat.name || ''), sheet)} title="Tirar 1d20{signedBonus(skillBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(skillBonus), String(stat.name || 'Habilidad'))}>{signedBonus(skillBonus)}</button>{:else}{skillValue}{/if}</div></div>
                     {/each}
                   </div>
                 </section>
@@ -4807,7 +4817,7 @@ import ITEMS from './items.json';
                   <article class="weapon-attack-card">
                   <h4>{weapon.name}</h4>
                   <div class="weapon-attack-values">
-                  <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
+                  <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" class:proficient={weapon.proficient} title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
                   <div><span>Daño</span><button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button></div>
                   <div><span>Alcance</span><strong>{weapon.range}</strong></div>
                   <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
@@ -4822,7 +4832,7 @@ import ITEMS from './items.json';
                     <div class="spellcasting-summary-grid">
                       <div><span>Aptitud mágica</span><strong>{sheetValueByNames(sheet, ['Aptitud mágica']) || '—'}</strong></div>
                       <div><span>CD de salvación</span><strong>{sheetValueByNames(sheet, ['CD de salvación']) || '—'}</strong></div>
-                      <div><span>Ataque de conjuro</span><strong>{sheetValueByNames(sheet, ['Ataque de conjuro']) || '—'}</strong></div>
+                       <div><span>Ataque de conjuro</span>{@const spellAttackBonus = skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro']))}{#if spellAttackBonus !== null}<button type="button" class="inline-roll proficient" title="Tirar 1d20{signedBonus(spellAttackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(spellAttackBonus), 'Ataque de conjuro')}>{signedBonus(spellAttackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
                       <div class="spell-slot-summary"><span>Espacios de conjuros</span>
                         <strong>{#if Object.values(sheetSpellSlots).some(value => Number(value) > 0)}
                           {#each Object.entries(sheetSpellSlots).filter(([level,value]) => Number(value) > 0) as [level,maximum]}
@@ -6158,6 +6168,10 @@ import ITEMS from './items.json';
 
 /* Componentes náuticos específicos: superficies y estados */
 :global(.nautical-sheet){background:#0f1e26!important;border-color:#3a6870!important;color:#ffffff!important}
+:global(.nautical-sheet .inline-roll.proficient){color:#ffd54a!important;border-color:#ffd54a!important}
+:global(.nautical-sheet .inline-roll.expertise){color:#ff5252!important;border-color:#ff5252!important}
+:global(.nautical-sheet .sheet-stat.expertise .stat-label){color:#ff5252!important}
+:global(.nautical-sheet .sheet-stat.proficient:not(.expertise) .stat-label){color:#ffd54a!important}
 :global(.nautical-header){background:linear-gradient(115deg,#13262e,#0f1e26 70%,#1b2a33)!important;border-color:#3a4a52!important}
 :global(.portrait-frame){background:radial-gradient(circle,#1b2a33,#0b171d 70%)!important;border-color:#5fe6e0!important;box-shadow:0 0 0 3px #3a4a52!important;color:#5fe6e0!important}
 :global(.header-actions button){background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
