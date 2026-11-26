@@ -1227,7 +1227,9 @@
   let portraitPickerOpen = false;
   let portraitLoading = false;
   let portraitPickerError = '';
+  let portraitPreviews: Record<string,string> = {};
   let portraitFileInput: HTMLInputElement;
+  async function openPortraitPicker(){portraitPickerOpen=true;portraitPickerError='';const pending=BUILDER_PORTRAITS.filter(path=>!portraitPreviews[path]);for(let i=0;i<pending.length;i+=6){const batch=pending.slice(i,i+6);const results=await Promise.all(batch.map(async path=>{try{return [path,await decodeTgaPortrait(path)] as const;}catch{return [path,''] as const;}}));portraitPreviews={...portraitPreviews,...Object.fromEntries(results)};}}
   async function decodeTgaPortrait(url:string):Promise<string> {
     const response=await fetch(url);
     if(!response.ok) throw new Error('No se pudo cargar el retrato.');
@@ -5459,7 +5461,7 @@ import ITEMS from './items.json';
               <p class="muted">Primero identifica a tu aventurero. Estos datos no modifican sus capacidades.</p>
               <div class="builder-info"><strong>Jugador</strong><p>{playerName || 'Nombre disponible al abrir la Forja desde Owlbear Rodeo'}</p></div>
               <section class="builder-portrait-picker" aria-label="Retrato del personaje">
-                <div class="builder-portrait-heading"><strong>Retrato del personaje</strong><div class="builder-portrait-actions"><button type="button" on:click={() => portraitPickerOpen = true}>Elegir retrato</button><button type="button" class:active={!builderData.portrait} on:click={() => builderData = {...builderData,portrait:''}}>Sin retrato</button></div></div>
+                <div class="builder-portrait-heading"><strong>Retrato del personaje</strong><div class="builder-portrait-actions"><button type="button" on:click={openPortraitPicker}>Elegir retrato</button><button type="button" class:active={!builderData.portrait} on:click={() => builderData = {...builderData,portrait:''}}>Sin retrato</button></div></div>
                 {#if builderData.portrait}<div class="builder-portrait-current"><img src={builderData.portrait} alt="Retrato seleccionado" /><span>Retrato seleccionado</span></div>{:else}<p class="muted">No has seleccionado un retrato.</p>{/if}
               </section>
               {#if portraitPickerOpen}
@@ -5468,7 +5470,7 @@ import ITEMS from './items.json';
                     <header><div><h3>Elegir retrato</h3><p class="muted">Selecciona uno de los retratos de Neverwinter Nights o sube una imagen propia.</p></div><button type="button" class="secondary" on:click={()=>portraitPickerOpen=false}>Cerrar</button></header>
                     <div class="portrait-upload-row"><button type="button" on:click={()=>portraitFileInput?.click()}>Subir imagen</button><span>Preferentemente 256 × 512 px. Se ajustará al formato vertical.</span><input bind:this={portraitFileInput} type="file" accept="image/*" hidden on:change={chooseUploadedPortrait} /></div>
                     {#if portraitPickerError}<p class="portrait-picker-error">{portraitPickerError}</p>{/if}
-                    {#if portraitLoading}<p class="muted">Cargando retrato…</p>{:else}<div class="portrait-modal-grid">{#each BUILDER_PORTRAITS as portrait}<button type="button" class="portrait-modal-option" on:click={()=>chooseBundledPortrait(portrait)} aria-label="Seleccionar {portrait.split('/').pop()}"><span>{portrait.split('/').pop()?.replace(/\.[^.]+$/,'')}</span></button>{/each}</div>{/if}
+                    {#if portraitLoading}<p class="muted">Cargando retrato…</p>{:else}<div class="portrait-modal-grid">{#each BUILDER_PORTRAITS as portrait}<button type="button" class="portrait-modal-option" on:click={()=>chooseBundledPortrait(portrait)} aria-label="Seleccionar {portrait.split('/').pop()}">{#if portraitPreviews[portrait]}<img src={portraitPreviews[portrait]} alt="Retrato disponible" loading="lazy" />{:else}<span>Cargando…</span>{/if}<span>{portrait.split('/').pop()?.replace(/\.[^.]+$/,'')}</span></button>{/each}</div>{/if}
                   </section>
                 </div>
               {/if}
