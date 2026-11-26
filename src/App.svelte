@@ -2819,7 +2819,7 @@ import ITEMS from './items.json';
     return ['Destreza','Inteligencia','Sabiduría','Carisma'].filter(ability=>!existing.some(old=>normalizeLevelText(old)===normalizeLevelText(ability)));
   }
   function getBarbarianFeatWeaponMasteryOptions(target:RawSheet):string[] {
-    const existing=[...splitChoiceList(getCharacterStat(target,'ATAQUES','Maestrías con armas')),...splitChoiceList(getCharacterStat(target,'ATAQUES','Maestría adicional por dote'))].map(normalizeLevelText);
+    const existing=[...splitChoiceList(getCharacterStat(target,'ATAQUES','Maestrías con armas')),...splitChoiceList(levelUpWeaponMasteries),...splitChoiceList(getCharacterStat(target,'ATAQUES','Maestría adicional por dote'))].map(normalizeLevelText);
     return BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>!existing.includes(normalizeLevelText(weapon)));
   }
   function mergeBarbarianFeatField(target:RawSheet,section:string,field:string,values:string[]) {
@@ -3593,7 +3593,7 @@ import ITEMS from './items.json';
       if(!getBarbarianFeatExpertiseOptions(original,levelUpBarbarianFeatSkill).some(skill=>normalizeLevelText(skill)===normalizeLevelText(levelUpBarbarianFeatExpertise))) { notice='Elige para Pericia una habilidad competente que todavía no tenga Pericia.'; return; }
     }
     if(acquiringBarbarianFeat && ['influencia feerica','influencia sombria'].includes(barbarianFeatKey) && !getBarbarianFeatSpellOptions(levelUpFeat).some(spell=>normalizeLevelText(spell)===normalizeLevelText(levelUpBarbarianFeatSpell))) { notice='Elige un conjuro de nivel 1 de la escuela permitida por la dote.'; return; }
-    if(acquiringBarbarianFeat && barbarianFeatKey==='maestro de armas' && !getBarbarianFeatWeaponMasteryOptions(original).some(weapon=>normalizeLevelText(weapon)===normalizeLevelText(levelUpBarbarianFeatWeaponMastery))) { notice='Elige un arma sencilla o marcial para la maestría adicional.'; return; }
+    if(acquiringBarbarianFeat && barbarianFeatKey==='maestro de armas' && (!getBarbarianFeatWeaponMasteryOptions(original).some(weapon=>normalizeLevelText(weapon)===normalizeLevelText(levelUpBarbarianFeatWeaponMastery)) || masteryChoices.some(weapon=>normalizeLevelText(weapon)===normalizeLevelText(levelUpBarbarianFeatWeaponMastery)))) { notice='Elige un arma sencilla o marcial para la maestría adicional.'; return; }
     if(hasBarbarianRitualFeat && (barbarianRitualChoices.length!==barbarianRitualTarget || new Set(barbarianRitualChoices.map(name=>normalizeLevelText(name))).size!==barbarianRitualTarget || barbarianRitualChoices.some(name=>!getBarbarianRitualSpellOptions().some(option=>normalizeLevelText(option)===normalizeLevelText(name))) || oldBarbarianRituals.some(name=>!barbarianRitualChoices.some(choice=>normalizeLevelText(choice)===normalizeLevelText(name))))) { notice='Lanzador ritual requiere '+barbarianRitualTarget+' conjuros rituales de nivel 1. Conserva los que ya conoces y añade los que falten.'; return; }
     if(className==='Bárbaro' && needsASI && levelUpAsiMode==='feat') {
       const featAbilities=getBarbarianFeatAbilityOptions(levelUpFeat);
