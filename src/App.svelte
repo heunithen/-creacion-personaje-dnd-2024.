@@ -6591,9 +6591,6 @@ import ITEMS from './items.json';
               </div>
             </section>
           </div>
-          <section class="sheet-section player-portrait-footer" aria-label="Retrato del personaje">
-            {#if sheet.portrait}<div class="builder-portrait-frame"><img src={String(sheet.portrait)} alt="Retrato de {sheet.name || 'personaje'}" /></div>{:else}<p class="muted">Este personaje no tiene retrato.</p>{/if}
-          </section>
         </article>
 
         {#if sheetPortraitPickerOpen}
