@@ -66,7 +66,7 @@ test('recorre clase, trasfondo y especie; completa sus pasos internos y llega a 
     .filter({ hasText: 'Opciones de la dote adicional humana' })
     .locator('input[type="checkbox"]');
   expect(await humanFeatChoices.count()).toBeGreaterThan(2);
-  await humanFeatChoices.nth(0).check({ force: true });
+  await humanFeatChoices.nth(0).click();
   await humanFeatChoices.nth(1).check({ force: true });
   await humanFeatChoices.nth(2).check({ force: true });
 
@@ -230,7 +230,7 @@ test('Mago: valida competencias, equipo, libro de conjuros, preparación, idioma
   page.on('pageerror', error => pageErrors.push(error.message));
   await reachClassSkillsStep(page, 'Mago');
 
-  const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 2 habilidades' }).locator('input[type="checkbox"]');
+  const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 2 habilidades' }).locator('label.builder-checkbox');
   await expect(skills).toHaveCount(7);
   await skills.nth(0).check({ force: true });
   await skills.nth(1).check({ force: true });
@@ -242,17 +242,17 @@ test('Mago: valida competencias, equipo, libro de conjuros, preparación, idioma
   await nextButton(page).click();
   await expect(page.getByRole('heading', { name: '09. Magia y conjuros' })).toBeVisible();
 
-  const cantrips = page.locator('.builder-choice-wrapper').filter({ hasText: 'Trucos de clase' }).first().locator('input[type="checkbox"]');
-  await expect(cantrips).toHaveCount(8);
+  const cantrips = page.locator('.builder-choice-wrapper').filter({ hasText: 'Trucos de clase' }).first().locator('label.builder-checkbox');
+  await expect(cantrips).toHaveCount(20);
   await nextButton(page).click();
   await expect(page.getByRole('alert')).toContainText('Trucos de clase');
   for (let i = 0; i < 3; i++) await cantrips.nth(i).check({ force: true });
 
-  const spellbook = page.locator('.builder-choice-wrapper').filter({ hasText: 'Libro de conjuros: elige 6 conjuros de nivel 1' }).locator('input[type="checkbox"]');
+  const spellbook = page.locator('.builder-choice-wrapper').filter({ hasText: 'Libro de conjuros: elige 6 conjuros de nivel 1' }).locator('label.builder-checkbox');
   await expect(spellbook).toHaveCount(30);
   for (let i = 0; i < 6; i++) await spellbook.nth(i).check({ force: true });
 
-  const prepared = page.locator('.builder-choice-wrapper').filter({ hasText: 'Conjuros preparados' }).locator('input[type="checkbox"]');
+  const prepared = page.locator('.builder-choice-wrapper').filter({ hasText: 'Conjuros preparados' }).locator('label.builder-checkbox');
   await expect(prepared).toHaveCount(6);
   for (let i = 0; i < 4; i++) await prepared.nth(i).check({ force: true });
   await nextButton(page).click();
@@ -283,16 +283,16 @@ test('Pícaro: exige cuatro habilidades, dos pericias, dos maestrías y un idiom
   test.setTimeout(120000);
   await reachClassSkillsStep(page, 'Pícaro');
 
-  const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 4 habilidades' }).locator('input[type="checkbox"]');
+  const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 4 habilidades' }).locator('label.builder-checkbox');
   await expect(skills).toHaveCount(8);
   for (let i = 0; i < 4; i++) await skills.nth(i).check({ force: true });
 
-  const expertise = page.locator('.builder-choice-wrapper').filter({ hasText: 'Pericia: elige 2 habilidades' }).locator('input[type="checkbox"]');
+  const expertise = page.locator('.builder-choice-wrapper').filter({ hasText: 'Pericia: elige 2 habilidades' }).locator('label.builder-checkbox');
   await expect(expertise.count()).resolves.toBeGreaterThanOrEqual(2);
   await expertise.nth(0).check({ force: true });
   await expertise.nth(1).check({ force: true });
 
-  const masteries = page.locator('.builder-choice-wrapper').filter({ hasText: 'Maestrías con armas (2)' }).locator('input[type="checkbox"]');
+  const masteries = page.locator('.builder-choice-wrapper').filter({ hasText: 'Maestrías con armas (2)' }).locator('label.builder-checkbox');
   await expect(masteries.count()).resolves.toBeGreaterThan(2);
   await masteries.nth(0).check({ force: true });
   await masteries.nth(1).check({ force: true });
