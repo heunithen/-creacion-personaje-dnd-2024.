@@ -40,6 +40,15 @@
   let spellLevelFilter = '';
   let spellClassFilter = '';
   let spellSchoolFilter = '';
+  let spellChangeOpen = false;
+  let spellChangeStage: 'prompt' | 'select' = 'prompt';
+  let spellChangeMode: 'long-rest' | 'level-up' = 'long-rest';
+  let spellChangeRule = '';
+  let spellChangeLimit = 0;
+  let spellChangeSearch = '';
+  let spellChangeSelected: string[] = [];
+  let spellChangeOriginal: string[] = [];
+
 
   let syncStatus = 'Owlbear Rodeo no está conectado.';
   let autoSyncTimer: ReturnType<typeof setTimeout>;
@@ -2696,6 +2705,99 @@ import ITEMS from './items.json';
     setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Estados de conjuros', JSON.stringify(states));
     saveSheetMutation();
   }
+
+  function spellChangeRuleFor(target: RawSheet) {
+    const className = sheetClassName(target);
+    const key = normalizeLevelText(className);
+    if (key === 'brujo') return {
+      mode: 'level-up' as const,
+      text: 'Como brujo, puedes reemplazar un conjuro de tu lista de conjuros conocidos cuando subes un nivel de brujo. Este cambio no se realiza durante un descanso.'
+    };
+    const preparedClasses = ['bardo','clerigo','druida','explorador','paladin','hechicero','mago'];
+    if (preparedClasses.includes(key)) return {
+      mode: 'long-rest' as const,
+      text: 'Tu clase prepara una lista de conjuros. Puedes cambiar toda esa lista al completar un descanso largo.'
+    };
+    return null;
+  }
+  function classSpellOptions(target: RawSheet) {
+    const classKey = spellClassKey(target);
+    const maxLevel = spellMaxLevel(target);
+    return SPELLS.filter((spell: any) =>
+      Array.isArray(spell.classes) &&
+      spell.classes.some((name: string) => normalizeLevelText(name) === classKey) &&
+      Number(spell.level) <= maxLevel
+    ).sort((a: any,b: any) => Number(a.level)-Number(b.level) || String(a.name).localeCompare(String(b.name),'es'));
+  }
+  function openSpellChange() {
+    if (!sheet) return;
+    const rule = spellChangeRuleFor(sheet);
+    if (!rule) {
+      notice = 'Esta clase no tiene un procedimiento de cambio de conjuros configurado.';
+      return;
+    }
+    spellChangeMode = rule.mode;
+    spellChangeRule = rule.text;
+    const options = classSpellOptions(sheet);
+    const current = options.filter((spell: any) => spellIsKnown(sheet, spell) || spellIsPrepared(sheet, spell))
+      .map((spell: any) => normalizeLevelText(spell.name));
+    spellChangeOriginal = current;
+    spellChangeSelected = [...current];
+    const className = sheetClassName(sheet);
+    const level = sheetLevel(sheet);
+    const row = ((LEVEL_PROGRESSION as any).classes?.[className]?.rows || []).find((item: any) => Number(item.level) === level);
+    const preparedCount = Number(row?.resources?.['Conjuros preparados'] || 0);
+    spellChangeLimit = rule.mode === 'level-up' ? current.length : (preparedCount || current.length);
+    spellChangeSearch = '';
+    spellChangeStage = 'prompt';
+    spellChangeOpen = true;
+  }
+  function confirmSpellChangeCondition(confirmed: boolean) {
+    if (!confirmed) { spellChangeOpen = false; return; }
+    spellChangeStage = 'select';
+  }
+  function toggleSpellChangeSelection(spell: any) {
+    const key = normalizeLevelText(spell.name);
+    const exists = spellChangeSelected.includes(key);
+    const next = exists ? spellChangeSelected.filter(item => item !== key) : [...spellChangeSelected, key];
+    if (spellChangeMode === 'long-rest' && next.length > spellChangeLimit) return;
+    if (spellChangeMode === 'level-up') {
+      const removed = spellChangeOriginal.filter(item => !next.includes(item)).length;
+      const added = next.filter(item => !spellChangeOriginal.includes(item)).length;
+      if (removed > 1 || added > 1 || next.length !== spellChangeOriginal.length) return;
+    }
+    spellChangeSelected = next;
+  }
+  function canApplySpellChange() {
+    if (spellChangeMode === 'long-rest') return spellChangeSelected.length === spellChangeLimit;
+    const removed = spellChangeOriginal.filter(item => !spellChangeSelected.includes(item)).length;
+    const added = spellChangeSelected.filter(item => !spellChangeOriginal.includes(item)).length;
+    return removed === 1 && added === 1;
+  }
+  function applySpellChange() {
+    if (!sheet || !canApplySpellChange()) return;
+    const states = spellStates(sheet);
+    const options = classSpellOptions(sheet);
+    for (const spell of options as any[]) {
+      const key = normalizeLevelText(spell.name);
+      const current = { ...(states[key] || {}) };
+      const selected = spellChangeSelected.includes(key);
+      if (spellChangeMode === 'long-rest') {
+        current.known = selected;
+        current.prepared = selected;
+      } else {
+        current.known = selected;
+        current.prepared = false;
+      }
+      states[key] = current;
+    }
+    setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Estados de conjuros', JSON.stringify(states));
+    saveSheetMutation();
+    spellChangeOpen = false;
+    notice = spellChangeMode === 'long-rest'
+      ? 'Lista de conjuros preparados actualizada.'
+      : 'Conjuro reemplazado. El cambio de tu lista de brujo quedó registrado.';
+  }
   function changeSlotUsage(level: string, delta: number) {
     if (!sheet) return;
     const usage = slotUsage(sheet);
@@ -5119,6 +5221,43 @@ import ITEMS from './items.json';
                       </div>
                     </div>
                   </section>
+
+                    <div class="spell-change-actions">
+                      <button type="button" class="primary" on:click={openSpellChange}>Cambiar conjuros</button>
+                    </div>
+
+                  {#if spellChangeOpen}
+                    <section class="sheet-section spell-change-panel">
+                      <div class="sheet-section-title"><h3>Cambiar conjuros</h3></div>
+                      {#if spellChangeStage === 'prompt'}
+                        <p>{spellChangeRule}</p>
+                        <p>{spellChangeMode === 'long-rest' ? '¿Ya completaste un descanso largo?' : '¿Ya subiste un nivel en esta clase?'}</p>
+                        <div class="spell-change-actions">
+                          <button type="button" class="primary" on:click={() => confirmSpellChangeCondition(true)}>Sí, continuar</button>
+                          <button type="button" on:click={() => confirmSpellChangeCondition(false)}>Todavía no</button>
+                        </div>
+                      {:else}
+                        <p>{spellChangeMode === 'long-rest'
+                          ? 'Selecciona la lista completa de conjuros que prepararás. Debes elegir exactamente ' + spellChangeLimit + '.'
+                          : 'Selecciona un conjuro conocido para retirar y otro para incorporar. Solo puedes reemplazar uno.'}</p>
+                        <input class="spell-change-search" type="search" placeholder="Buscar conjuro..." bind:value={spellChangeSearch} />
+                        <div class="spell-change-count">{spellChangeSelected.length} seleccionados {#if spellChangeMode === 'long-rest'} / {spellChangeLimit}{:else} (debes reemplazar exactamente uno){/if}</div>
+                        <div class="spell-change-options">
+                          {#each classSpellOptions(sheet).filter((spell: any) => !spellChangeSearch || normalizeLevelText(spell.name).includes(normalizeLevelText(spellChangeSearch))) as spell (spell.name)}
+                            <label class:selected={spellChangeSelected.includes(normalizeLevelText(spell.name))}>
+                              <input type="checkbox" checked={spellChangeSelected.includes(normalizeLevelText(spell.name))} on:change={() => toggleSpellChangeSelection(spell)} />
+                              <span>{spell.name}</span>
+                              <small>{spell.level === 0 ? 'Truco' : 'Nivel ' + spell.level}</small>
+                            </label>
+                          {/each}
+                        </div>
+                        <div class="spell-change-actions">
+                          <button type="button" class="primary" disabled={!canApplySpellChange()} on:click={applySpellChange}>Confirmar cambios</button>
+                          <button type="button" on:click={() => spellChangeOpen = false}>Cancelar</button>
+                        </div>
+                      {/if}
+                    </section>
+                  {/if}
                   <section class="sheet-section player-spell-list-section">
                     <div class="sheet-section-title"><h3>Conjuros</h3></div>
                     {#if playerKnownSpellCards(sheet).length}
@@ -5684,6 +5823,20 @@ import ITEMS from './items.json';
   :global(.spellcasting-summary-grid .spell-slot-summary){grid-column:1/-1}
   :global(.spell-slot-summary>strong){display:flex;flex-wrap:wrap;gap:.35rem .8rem}
   :global(.spell-slot-value){font-size:.82rem}
+
+  :global(.spell-change-actions){display:flex;gap:.5rem;flex-wrap:wrap;margin:.65rem 0}
+  :global(.spell-change-actions button){padding:.55rem .8rem;border:1px solid #3fb8b8;border-radius:6px}
+  :global(.spell-change-panel p){line-height:1.5}
+  :global(.spell-change-search){box-sizing:border-box;width:100%;margin:.5rem 0;padding:.6rem;border:1px solid #3a6870;border-radius:6px}
+  :global(.spell-change-count){margin:.4rem 0;color:#5fe6e0;font-weight:800}
+  :global(.spell-change-options){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;max-height:340px;overflow:auto;padding:.25rem}
+  :global(.spell-change-options label){display:flex;align-items:center;gap:.4rem;min-width:0;padding:.45rem;border:1px solid #3a6870;border-radius:5px;background:#0b171d}
+  :global(.spell-change-options label.selected){border-color:#5fe6e0;background:#17343a}
+  :global(.spell-change-options label span){min-width:0;flex:1;overflow-wrap:anywhere}
+  :global(.spell-change-options label small){flex:0 0 auto;color:#b5bec3;font-size:.65rem}
+  :global(.spell-change-options input){width:1rem;height:1rem;flex:0 0 auto}
+  :global(.spell-change-actions button:disabled){opacity:.4}
+  @media(max-width:520px){:global(.spell-change-options){grid-template-columns:1fr}}
   :global(.player-spell-list){display:flex;flex-direction:column;gap:.5rem}
   :global(.player-spell-card){display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.65rem;align-items:center;padding:.55rem .65rem;border:1px solid #3fb8b8;border-left:3px solid #3fb8b8;border-radius:6px;background:#0b171d}
   :global(.player-spell-card details){min-width:0}
