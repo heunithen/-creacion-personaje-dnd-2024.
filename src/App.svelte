@@ -2206,8 +2206,9 @@ import ITEMS from './items.json';
   let sharedActiveInitiativeIndex = 0;
   let sharedInitiativeRound = 1;
 
-  // El director publica el tracker completo para que los jugadores solo puedan consultarlo.
-  $: if (obrReady && obrRole === 'GM') {
+  // Publicar el estado completo del tracker para las fichas de los jugadores.
+  function broadcastInitiativeState(): void {
+    if (!obrReady || obrRole !== 'GM') return;
     const sharedState = {
       order: initiativeOrder.map(participant => ({...participant})),
       activeIndex: activeInitiativeIndex,
@@ -2215,6 +2216,12 @@ import ITEMS from './items.json';
     };
     void OBR.broadcast.sendMessage(INITIATIVE_STATE_CHANNEL, sharedState, {destination:'REMOTE'})
       .catch(error => console.error('No se pudo sincronizar la iniciativa con los jugadores', error));
+  }
+  $: if (obrReady && obrRole === 'GM') {
+    initiativeOrder;
+    activeInitiativeIndex;
+    initiativeRound;
+    broadcastInitiativeState();
   }
 
   // Persistir los encuentros y la ronda en este dispositivo entre recargas.
@@ -2298,6 +2305,7 @@ import ITEMS from './items.json';
     activeInitiativeIndex=0;
     initiativeRound=1;
     void publishInitiativeOrder(participants);
+    broadcastInitiativeState();
   }
   function startInitiativeAtZero():void {
     const participants=getInitiativeParticipants();
@@ -2307,6 +2315,7 @@ import ITEMS from './items.json';
     activeInitiativeIndex=0;
     initiativeRound=1;
     notice='Tracker iniciado con todos los participantes en iniciativa 0.';
+    broadcastInitiativeState();
   }
   const INITIATIVE_NOTICE_CHANNEL='com.heunithen.forja/initiative-order-notice';
   async function publishInitiativeOrder(participants:InitiativeParticipant[]):Promise<void> {
@@ -2323,6 +2332,7 @@ import ITEMS from './items.json';
     if(next>=initiativeOrder.length){activeInitiativeIndex=0;initiativeRound++;}
     else if(next<0){activeInitiativeIndex=initiativeOrder.length-1;initiativeRound=Math.max(1,initiativeRound-1);}
     else activeInitiativeIndex=next;
+    broadcastInitiativeState();
   }
   function toggleCombatantParticipation(id:string,event:Event):void {
     const checked=(event.currentTarget as HTMLInputElement).checked;
@@ -4380,7 +4390,13 @@ import ITEMS from './items.json';
           }, {destination:'REMOTE'}).catch(error=>console.error('No se pudo enviar el tracker actual',error));
         });
         if(obrRole!=='GM') {
-          void OBR.broadcast.sendMessage(INITIATIVE_STATE_REQUEST_CHANNEL, {request:true}, {destination:'ALL'});
+          // Reintentar la solicitud para cubrir el caso en que el director aún esté conectando.
+          const requestInitiativeState = () => OBR.broadcast.sendMessage(
+            INITIATIVE_STATE_REQUEST_CHANNEL, {request:true, timestamp:Date.now()}, {destination:'REMOTE'}
+          ).catch(error => console.error('No se pudo solicitar el tracker de iniciativa', error));
+          void requestInitiativeState();
+          window.setTimeout(() => { if (!sharedInitiativeOrder.length) void requestInitiativeState(); }, 1000);
+          window.setTimeout(() => { if (!sharedInitiativeOrder.length) void requestInitiativeState(); }, 3000);
         }
         OBR.broadcast.onMessage(`${DICE_PLUS_SOURCE}/roll-error`, (event: any) => {
           const failure = event.data;
