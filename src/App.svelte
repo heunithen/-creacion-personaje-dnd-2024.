@@ -5111,7 +5111,7 @@ import ITEMS from './items.json';
         playerName = await OBR.player.getName();
         supabasePlayerId = await OBR.player.getId();
         supabasePlayerName = playerName;
-        supabaseRoomId = await OBR.room.getId();
+        supabaseRoomId = OBR.room.id;
         builderData.player = playerName;
         if (obrRole === 'GM') { loadMasterCopies(); await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
