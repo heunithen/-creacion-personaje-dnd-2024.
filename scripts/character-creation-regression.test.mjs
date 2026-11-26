@@ -19,7 +19,7 @@ function extractConstant(name) {
     const char = app[i];
     if (quote) {
       if (escaped) escaped = false;
-      else if (char === '\\\\') escaped = true;
+      else if (char === '\\') escaped = true;
       else if (char === quote) quote = '';
       continue;
     }
@@ -110,8 +110,9 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
       const backgroundTool = bgToolOptions[0] || '';
       const backgroundFeat = background.feat;
       const backgroundFeatOptions = optionsForFeat(backgroundFeat);
+      const backgroundFeatCandidates = backgroundFeat === 'Habilidoso' ? [...featTools,...skillOptions] : backgroundFeatOptions;
       const backgroundFeatChoices = ['Habilidoso','Fabricante','Músico'].includes(backgroundFeat)
-        ? selectDistinctChoices(backgroundFeatOptions.filter(choice => !background.skills.includes(choice)), [backgroundTool], 3)
+        ? selectDistinctChoices(backgroundFeatCandidates.filter(choice => !background.skills.includes(choice)), [backgroundTool], 3)
         : [];
       assert.ok(backgroundFeatChoices, 'Dote del trasfondo no permite tres elecciones: ' + backgroundName);
 
@@ -119,7 +120,7 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
         let speciesSkill = '';
         if (speciesName === 'Elfo' || speciesName === 'Humano') {
           const allowedSpeciesSkills = speciesName === 'Elfo' ? ELF_BONUS_SKILLS : skillOptions;
-          speciesSkill = selectDistinctChoices(allowedSpeciesSkills, background.skills, 1)?.[0] || '';
+          speciesSkill = selectDistinctChoices(allowedSpeciesSkills, [...background.skills,...backgroundFeatChoices.filter(choice=>skillOptions.includes(choice))], 1)?.[0] || '';
           assert.ok(speciesSkill, speciesName + ' sin habilidad disponible para ' + backgroundName);
         }
 
