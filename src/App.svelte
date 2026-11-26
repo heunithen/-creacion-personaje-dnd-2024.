@@ -1211,6 +1211,7 @@
   let builderStep = 0;
   let builderClassSlideIndex = 0;
   let builderBackgroundSlideIndex = 14;
+  let builderBackgroundSetup = false;
   let builderClassChosen = false;
   let builderSpeciesChosen = false;
   let builderBackgroundChosen = false;
@@ -1230,7 +1231,7 @@
   function resetBuilder() {
     builderData = createInitialBuilderData();
     builderData.player = playerName || '';
-    builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
+    builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderBackgroundSetup = false; builderRolledScores = []; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
   const BUILDER_PORTRAITS: string[] = ["https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Dusty_F_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Irieni_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_annis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dabuus_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_fell_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_glamis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_gn_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_grnhag_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_508_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_513_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_516_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_522_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_529_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_512_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_520_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_521_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_523_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_524_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_525_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_528_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_529_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_530_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_532_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_506_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_orcwar_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_sormen_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead504_h.webp"];
   let portraitPickerOpen = false;
@@ -1971,14 +1972,10 @@
     if(builderStep===0) return true;
     if(builderStep===1) return true;
     if(builderStep===2) {
-      if(!builderBackgroundChosen) return false;
+      if(!builderBackgroundChosen || !builderBackgroundSetup) return false;
       const options=BUILDER_BACKGROUND_TOOL_OPTIONS[builderData.background]||[];
       const feat=BUILDER_BACKGROUND_DATA[builderData.background].feat;
-      const abilities=BUILDER_BACKGROUND_DATA[builderData.background].abilities;
-      const increasesOk=builderData.abilityIncreaseMode==='two'
-        ? abilities.includes(builderData.abilityIncrease2)&&abilities.includes(builderData.abilityIncrease1)&&builderData.abilityIncrease1!==builderData.abilityIncrease2
-        : abilities.includes(builderData.abilityIncrease1)&&abilities.includes(builderData.abilityIncrease2)&&abilities.includes(builderData.abilityIncrease3)&&new Set([builderData.abilityIncrease1,builderData.abilityIncrease2,builderData.abilityIncrease3]).size===3;
-      return (!options.length||options.includes(builderData.backgroundToolChoice))&&builderOriginFeatChoicesOk(feat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell)&&increasesOk;
+      return (!options.length||options.includes(builderData.backgroundToolChoice))&&builderOriginFeatChoicesOk(feat,builderData.backgroundFeatChoices,builderData.backgroundMagicCantrips,builderData.backgroundMagicSpell);
     }
     if(builderStep===3) {
       if(!builderSpeciesChosen) return false;
@@ -2024,8 +2021,9 @@
         builderSelectClass(builderDisplayedClass);
         builderClassChosen=true;
       }
-      if(builderStep===2 && builderData.background!==BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]) {
-        builderChooseBackground(BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]);
+      if(builderStep===2 && !builderBackgroundSetup) {
+        if(!builderBackgroundChosen || builderData.background!==BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]) builderChooseBackground(BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]);
+        builderBackgroundSetup=true; builderStepError=''; keepBuilderAtTop(); return;
       }
       if(!builderStepCanAdvance()) {
         const stepFields=builderMissingFields().filter(field=>field.includes('(paso '+(builderStep+1)+')'));
@@ -2038,7 +2036,7 @@
       builderStepError=''; builderStep+=1; keepBuilderAtTop();
     }
   }
-  function builderBack() { if(builderStep>0){if(builderStep===2&&builderClassChosen){builderClassSlideIndex=Math.max(0,BUILDER_CLASSES.indexOf(builderData.className));}if(builderStep===3&&builderBackgroundChosen){builderBackgroundSlideIndex=Math.max(0,BUILDER_BACKGROUNDS.indexOf(builderData.background));}builderStep-=1;builderStepError='';keepBuilderAtTop();} }
+  function builderBack() { if(builderStep===2&&builderBackgroundSetup){builderBackgroundSetup=false;builderStepError='';keepBuilderAtTop();return;} if(builderStep>0){if(builderStep===2&&builderClassChosen){builderClassSlideIndex=Math.max(0,BUILDER_CLASSES.indexOf(builderData.className));}if(builderStep===3&&builderBackgroundChosen){builderBackgroundSlideIndex=Math.max(0,BUILDER_BACKGROUNDS.indexOf(builderData.background));}builderStep-=1;builderStepError='';keepBuilderAtTop();} }
   const WEAPON_PROFILES: Record<string,{damage:string;damageType:string;category:'simple'|'martial';ability:'strength'|'dexterity'|'finesse';properties:string}> = {
     'Garrote':{damage:'1d4',damageType:'contundente',category:'simple',ability:'strength',properties:'Ligera'},
     'Daga':{damage:'1d4',damageType:'perforante',category:'simple',ability:'finesse',properties:'Sutil, ligera, arrojadiza (6/18 m)'},
@@ -5718,7 +5716,7 @@ import ITEMS from './items.json';
                 <img class="builder-class-emblem" src={'/-creacion-personaje-dnd-2024./images/character-creation/classes/individual/class-emblem-'+BUILDER_CLASS_EMBLEMS[builderDisplayedClass]+'.webp'} alt={'Emblema de '+builderDisplayedClass} />
                 <div class="builder-class-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Clase anterior" on:click={()=>builderMoveClass(-1)}>‹</button>
-                  <h4 style={`color:${BUILDER_CLASS_COLORS[builderDisplayedClass]}`}>{builderDisplayedClass}</h4>
+                  <h4 style={`color:${BUILDER_CLASS_COLORS[builderDisplayedClass]} !important`}>{builderDisplayedClass}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Clase siguiente" on:click={()=>builderMoveClass(1)}>›</button>
                 </div>
                 <p class="builder-class-flyer-description">{BUILDER_CLASS_GUIDANCE[builderDisplayedClass]}</p>
@@ -5733,15 +5731,16 @@ import ITEMS from './items.json';
               </section>
                           
             {:else if builderStep===2}
-              <h3>03. Elige tu trasfondo</h3>
-              <p class="muted">Tu vida antes de convertirte en aventurero determina competencias, dote de origen y equipo.</p>
+              <h3>{builderBackgroundSetup ? '03.1. Elecciones del trasfondo' : '03. Elige tu trasfondo'}</h3>
+              <p class="muted">{builderBackgroundSetup ? 'Completa las elecciones que corresponden a '+builderData.background+'.' : 'Tu vida antes de convertirte en aventurero determina competencias, dote de origen y equipo.'}</p>
               
 
               
+              {#if !builderBackgroundSetup}
               <section class="builder-background-flyer" aria-label={'Información del trasfondo '+BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}>
                 <div class="builder-background-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Trasfondo anterior" on:click={()=>builderMoveBackground(-1)}>‹</button>
-                  <h4 style={`color:${BUILDER_BACKGROUND_COLORS[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}`}>{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
+                  <h4 style={`color:${BUILDER_BACKGROUND_COLORS[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]} !important`}>{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Trasfondo siguiente" on:click={()=>builderMoveBackground(1)}>›</button>
                 </div>
                 <p class="builder-background-description">{BUILDER_BACKGROUND_GUIDANCE[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}</p>
@@ -5754,7 +5753,8 @@ import ITEMS from './items.json';
                 <p class="builder-background-equipment"><strong>Equipo inicial:</strong> {BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].equipmentA}</p>
                 <span class="builder-background-counter">{builderBackgroundSlideIndex+1} de {BUILDER_BACKGROUNDS.length}</span>
               </section>
-              {#if builderBackgroundChosen}
+              {/if}
+              {#if builderBackgroundSetup && builderBackgroundChosen}
               {#if ['Habilidoso','Fabricante','Músico'].includes(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
                 <div class="builder-choice-wrapper"><strong>Elecciones de la dote {BUILDER_BACKGROUND_DATA[builderData.background].feat}</strong><div class="builder-choice-field"><div class="builder-choice-heading"><strong>Opciones de la dote del trasfondo</strong><span>{builderData.backgroundFeatChoices.length}/{3}</span></div><div class="builder-checkbox-grid">{#each builderFeatChoiceOptions(BUILDER_BACKGROUND_DATA[builderData.background].feat).filter(choice => !BUILDER_BACKGROUND_DATA[builderData.background].skills.includes(choice) && choice !== builderData.speciesSkill && choice !== builderData.backgroundToolChoice) as choice}<label class="builder-checkbox"><input type="checkbox" checked={builderData.backgroundFeatChoices.includes(choice)} on:change={(event) => builderToggleChoice('backgroundFeatChoices',choice,3,event)} disabled={!builderData.backgroundFeatChoices.includes(choice) && builderData.backgroundFeatChoices.length >= (3)} /><span>{choice}</span>{#if builderSkillDescription(choice)}<small class="builder-skill-description">{builderSkillDescription(choice)}</small>{/if}</label>{/each}</div></div></div>
               {:else if builderMagicInitiateClass(BUILDER_BACKGROUND_DATA[builderData.background].feat)}
