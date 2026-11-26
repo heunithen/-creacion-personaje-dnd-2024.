@@ -5449,8 +5449,8 @@ import ITEMS from './items.json';
                 {:else if playerSheetTab === 'Subir nivel'}
                   <section class="sheet-section class-progression-panel">
                     <div class="sheet-section-title"><h3>Progresión de clase</h3></div>
-                    {#if getPlayerClassProgression(sheet)}
-                      {@const progression = getPlayerClassProgression(sheet)}
+                    {@const progression = getPlayerClassProgression(sheet)}
+                    {#if progression}
                       <p class="muted class-progression-caption">{progression.className} · Tabla de progresión del Manual del Jugador 2024. El nivel actual está resaltado.</p>
                       <div class="class-progression-scroll">
                         <table class="class-progression-table">
