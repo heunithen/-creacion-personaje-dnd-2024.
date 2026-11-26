@@ -5892,7 +5892,7 @@ import ITEMS from './items.json';
                 {#each BUILDER_ABILITY_NAMES as ability}
                   <div class="builder-ability-card"><strong>{ability}</strong>
                     {#if builderData.method === 'standard'}
-                      <select aria-label={'Puntuación de '+ability} value={builderData.abilities[ability]} on:change={(event)=>builderSetStandardAbility(ability,Number((event.currentTarget as HTMLSelectElement).value))}>{#each BUILDER_STANDARD as score}<option value={score} disabled={BUILDER_ABILITY_NAMES.some(name=>name!==ability&&Number(builderData.abilities[name])===score)}>{score}</option>{/each}</select>
+                      <select aria-label={'Puntuación de '+ability} value={builderData.abilities[ability]} on:change={(event)=>builderSetStandardAbility(ability,Number(event.currentTarget.value))}>{#each BUILDER_STANDARD as score}<option value={score} disabled={BUILDER_ABILITY_NAMES.some(name=>name!==ability&&Number(builderData.abilities[name])===score)}>{score}</option>{/each}</select>
                     {:else if builderData.method === 'pointBuy'}
                       <div class="builder-ability-stepper"><button type="button" class="secondary" aria-label={'Bajar '+ability} on:click={()=>builderAdjustPointBuy(ability,-1)} disabled={Number(builderData.abilities[ability])<=8}>−</button><strong>{builderData.abilities[ability]}</strong><button type="button" class="secondary" aria-label={'Subir '+ability} on:click={()=>builderAdjustPointBuy(ability,1)} disabled={Number(builderData.abilities[ability])>=15||builderPointCost()-BUILDER_POINT_COST[Number(builderData.abilities[ability])]+BUILDER_POINT_COST[Number(builderData.abilities[ability])+1]>27}>+</button></div>
                     {:else}
