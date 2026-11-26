@@ -3120,6 +3120,9 @@ import ITEMS from './items.json';
     }
     return result;
   }
+  function getManualProgressionCurrentRow(progression:any):any {
+    return progression?.rows?.find((row:any)=>row.level===progression.currentLevel) || null;
+  }
   function manualProgressionResourceEntries(progression:any):[string,any][] {
     const row=progression?.rows?.find((item:any)=>item.level===progression.currentLevel);
     return Object.entries(row?.resources||{}).filter(([key,value])=>!/^Espacios nivel/i.test(key)&&!['espacios de conjuro','nivel de los espacios'].includes(normalizeLevelText(key))&&normalizeLevelText(key)!=='dado bardico'&&value!=='—'&&/\d/.test(String(value))) as [string,any][];
@@ -6090,7 +6093,7 @@ import ITEMS from './items.json';
                       {/each}
                       <div class="progression-manual-row"><span>Experiencia (PX)</span><div><button type="button" aria-label="Disminuir experiencia" on:click={()=>adjustProgressionValue('PERSONAJE','Experiencia',-100,0,' PX')}>−</button><strong>{getCharacterStat(sheet,'PERSONAJE','Experiencia') || '0'}</strong><button type="button" aria-label="Aumentar experiencia" on:click={()=>adjustProgressionValue('PERSONAJE','Experiencia',100,0,' PX')}>+</button></div></div>
                       {#if progression}
-                        {@const currentResourceRow=progression.rows.find(row=>row.level===progression.currentLevel)}
+                        {@const currentResourceRow=getManualProgressionCurrentRow(progression)}
                         {#if currentResourceRow?.resources?.['Dado bárdico']}
                           <div class="progression-manual-select-row"><label>Dado bárdico<select value={progressionResourceText(sheet,'Dado bárdico',currentResourceRow.resources['Dado bárdico'])} on:change={updateProgressionBardDie}>{#each ['d6','d8','d10','d12'] as die}<option value={die}>{die.toUpperCase()}</option>{/each}</select></label></div>
                         {/if}
