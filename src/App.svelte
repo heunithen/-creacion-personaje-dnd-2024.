@@ -2723,10 +2723,13 @@ import ITEMS from './items.json';
   function classSpellOptions(target: RawSheet) {
     const classKey = spellClassKey(target);
     const maxLevel = spellMaxLevel(target);
+    const isWizard = classKey === 'mago';
+    const spellbook = spellKnownNames(target);
     return SPELLS.filter((spell: any) =>
       Array.isArray(spell.classes) &&
       spell.classes.some((name: string) => normalizeLevelText(name) === classKey) &&
-      Number(spell.level) <= maxLevel
+      Number(spell.level) <= maxLevel &&
+      (!isWizard || spellbook.has(normalizeLevelText(spell.name)) || spellIsPrepared(target, spell))
     ).sort((a: any,b: any) => Number(a.level)-Number(b.level) || String(a.name).localeCompare(String(b.name),'es'));
   }
   function openSpellChange() {
@@ -2739,7 +2742,10 @@ import ITEMS from './items.json';
     spellChangeMode = rule.mode;
     spellChangeRule = rule.text;
     const options = classSpellOptions(sheet);
-    const current = options.filter((spell: any) => spellIsKnown(sheet, spell) || spellIsPrepared(sheet, spell))
+    const isWizard = spellClassKey(sheet) === 'mago';
+    const current = options.filter((spell: any) => isWizard
+      ? spellIsPrepared(sheet, spell)
+      : (spellIsKnown(sheet, spell) || spellIsPrepared(sheet, spell)))
       .map((spell: any) => normalizeLevelText(spell.name));
     spellChangeOriginal = current;
     spellChangeSelected = [...current];
@@ -2747,7 +2753,10 @@ import ITEMS from './items.json';
     const level = sheetLevel(sheet);
     const row = ((LEVEL_PROGRESSION as any).classes?.[className]?.rows || []).find((item: any) => Number(item.level) === level);
     const preparedCount = Number(row?.resources?.['Conjuros preparados'] || 0);
-    spellChangeLimit = rule.mode === 'level-up' ? current.length : (preparedCount || current.length);
+    const intelligenceModifier = abilityModifier(getCharacterNumber(sheet, 'ATRIBUTOS', 'Inteligencia', 10)) ?? 0;
+    spellChangeLimit = rule.mode === 'level-up' ? current.length
+      : isWizard ? Math.max(1, level + intelligenceModifier)
+      : (preparedCount || current.length);
     spellChangeSearch = '';
     spellChangeStage = 'prompt';
     spellChangeOpen = true;
@@ -2783,7 +2792,7 @@ import ITEMS from './items.json';
       const current = { ...(states[key] || {}) };
       const selected = spellChangeSelected.includes(key);
       if (spellChangeMode === 'long-rest') {
-        current.known = selected;
+        if (spellClassKey(sheet) !== 'mago') current.known = selected;
         current.prepared = selected;
       } else {
         current.known = selected;
@@ -5238,10 +5247,12 @@ import ITEMS from './items.json';
                         </div>
                       {:else}
                         <p>{spellChangeMode === 'long-rest'
-                          ? 'Selecciona la lista completa de conjuros que prepararás. Debes elegir exactamente ' + spellChangeLimit + '.'
+                          ? (spellClassKey(sheet) === 'mago'
+                            ? 'Tu libro de conjuros contiene ' + classSpellOptions(sheet).length + ' conjuros. Puedes preparar ' + spellChangeLimit + '. Marca exactamente esa cantidad. Los conjuros que no marques permanecen en tu libro; no se eliminan.'
+                            : 'Selecciona los conjuros que prepararás. Debes elegir exactamente ' + spellChangeLimit + '.')
                           : 'Selecciona un conjuro conocido para retirar y otro para incorporar. Solo puedes reemplazar uno.'}</p>
                         <input class="spell-change-search" type="search" placeholder="Buscar conjuro..." bind:value={spellChangeSearch} />
-                        <div class="spell-change-count">{spellChangeSelected.length} seleccionados {#if spellChangeMode === 'long-rest'} / {spellChangeLimit}{:else} (debes reemplazar exactamente uno){/if}</div>
+                        <div class="spell-change-count">{spellChangeSelected.length} de {spellChangeLimit} {#if spellChangeMode === 'long-rest'}conjuros preparados{:else}seleccionados (debes reemplazar exactamente uno){/if}</div>
                         <div class="spell-change-options">
                           {#each classSpellOptions(sheet).filter((spell) => !spellChangeSearch || normalizeLevelText(spell.name).includes(normalizeLevelText(spellChangeSearch))) as spell (spell.name)}
                             <label class:selected={spellChangeSelected.includes(normalizeLevelText(spell.name))}>
