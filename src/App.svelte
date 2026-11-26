@@ -3085,11 +3085,11 @@ import ITEMS from './items.json';
     const stored=getCharacterStat(sheet as RawSheet,'ECONOMÍA',key);
     if(stored!=='') return Math.max(0,Number(stored)||0);
     const legacy=getCharacterStat(sheet as RawSheet,'EQUIPO','Monedas');
-    const matches=String(legacy||'').match(/[0-9][0-9.,]*\\s*(?:PPt|PC|PP|PE|PO)/gi)||[];
-    const found=matches.find(value=>value.toUpperCase().replace(/\\s/g,'').endsWith(key.toUpperCase()));
+    const matches=String(legacy||'').match(/[0-9][0-9.,]*\s*(?:PPt|PC|PP|PE|PO)/gi)||[];
+    const found=matches.find(value=>value.match(/(PPt|PC|PP|PE|PO)$/i)?.[1].toUpperCase()===key.toUpperCase());
     if(!found) return 0;
     const amount=found.match(/[0-9][0-9.,]*/)?.[0]||'0';
-    return Math.max(0,Number(amount.replace(/\\./g,'').replace(',','.'))||0);
+    return Math.max(0,Number(amount.replace(/\./g,'').replace(',','.'))||0);
   }
   function adjustProgressionCurrency(key:string,delta:number) {
     if(!sheet) return;
@@ -3103,15 +3103,15 @@ import ITEMS from './items.json';
     if(!sheet) return;
     const quantity=Math.max(1,Math.min(999,Number(progressionRewardQuantity)||1));
     const before=captureProgressionSections();
-    const existing=String(getCharacterStat(sheet,'INVENTARIO','Equipo adicional')||'').split(/\\n/).map(value=>value.trim()).filter(Boolean);
+    const existing=String(getCharacterStat(sheet,'INVENTARIO','Equipo adicional')||'').split(/\n/).map(value=>value.trim()).filter(Boolean);
     const label=quantity===1?item.name:item.name+' ×'+quantity;
-    const existingIndex=existing.findIndex(value=>normalizeLevelText(value.replace(/\\s*[×x]\\d+$/i,''))===normalizeLevelText(item.name));
+    const existingIndex=existing.findIndex(value=>normalizeLevelText(value.replace(/\s*[×x]\d+$/i,''))===normalizeLevelText(item.name));
     if(existingIndex>=0) {
-      const match=existing[existingIndex].match(/[×x](\\d+)$/i);
+      const match=existing[existingIndex].match(/[×x](\d+)$/i);
       const total=(match?Number(match[1]):1)+quantity;
       existing[existingIndex]=total===1?item.name:item.name+' ×'+total;
     } else existing.push(label);
-    setCharacterStat(sheet,'INVENTARIO','Equipo adicional',existing.join('\\n'));
+    setCharacterStat(sheet,'INVENTARIO','Equipo adicional',existing.join('\n'));
     if(item.type==='Arma' && WEAPON_PROFILES[item.name]) {
       const weapons=splitChoiceList(getCharacterStat(sheet,'ATAQUES','Armas incluidas en el equipo'));
       if(!weapons.some(value=>normalizeLevelText(value)===normalizeLevelText(item.name))) weapons.push(item.name);
@@ -6223,6 +6223,43 @@ import ITEMS from './items.json';
                       {#if selected.length}<div class="progression-manual-chips"><strong>{group.label}</strong>{#each selected as item}<span>{item}<button type="button" aria-label={'Quitar '+item} on:click={()=>removeManualProgressionChoice('RASGOS Y DOTES',group.field,item)}>×</button></span>{/each}</div>{/if}
                     {/each}
                   </section>
+                  <section class="sheet-section progression-manual-panel progression-economy-panel">
+                    <div class="sheet-section-title"><h3>Monedas</h3></div>
+                    <label class="progression-quantity">Cantidad por movimiento <input type="number" min="1" max="999999" bind:value={progressionCurrencyAmount}/></label>
+                    <div class="progression-manual-list">
+                      {#each PROGRESSION_CURRENCIES as currency}
+                        <div class="progression-manual-row"><span>{currency.label} ({currency.key})</span><div><button type="button" aria-label={'Restar '+currency.label} on:click={()=>adjustProgressionCurrency(currency.key,-Math.max(1,Number(progressionCurrencyAmount)||1))}>−</button><strong>{progressionCurrencyValue(currency.key).toLocaleString('es-CL')}</strong><button type="button" aria-label={'Sumar '+currency.label} on:click={()=>adjustProgressionCurrency(currency.key,Math.max(1,Number(progressionCurrencyAmount)||1))}>+</button></div></div>
+                      {/each}
+                    </div>
+                  </section>
+                  <section class="sheet-section progression-manual-panel progression-rewards-panel">
+                    <div class="sheet-section-title"><h3>Añadir recompensas</h3><span class="count">{ITEMS.length} objetos</span></div>
+                    <p class="muted">Busca un objeto del catálogo y añádelo directamente al inventario. Las armas reconocidas también se incorporan a tus ataques.</p>
+                    <div class="progression-reward-toolbar">
+                      <label>Buscar objeto<input type="search" bind:value={progressionRewardSearch} placeholder="Nombre del objeto..."/></label>
+                      <label>Tipo<select bind:value={progressionRewardType}><option value="">Todos</option>{#each itemTypes.filter(type=>type!=='Todos') as type}<option value={type}>{type}</option>{/each}</select></label>
+                      <label>Cantidad<input type="number" min="1" max="999" bind:value={progressionRewardQuantity}/></label>
+                    </div>
+                    <div class="progression-reward-results">
+                      {#each progressionRewardItems as item (item.name+' '+item.source)}
+                        <article><div><strong>{item.name}</strong><small>{item.type} · {item.price} · {item.weight}</small></div><button type="button" on:click={()=>addProgressionReward(item)}>Añadir</button></article>
+                      {/each}
+                      {#if progressionRewardItems.length===0}<p class="muted">No se encontraron objetos.</p>{/if}
+                    </div>
+                    {#if progressionRewardItems.length===24}<small class="muted">Se muestran los primeros 24 resultados. Escribe para afinar la búsqueda.</small>{/if}
+                  </section>
+                  <section class="sheet-section progression-manual-panel progression-history-panel">
+                    <div class="sheet-section-title"><h3>Registro de cambios</h3>{#if progressionChangeHistory().length}<button type="button" class="progression-undo-button" on:click={undoLastProgressionChange}>↶ Deshacer último</button>{/if}</div>
+                    {#if progressionChangeHistory().length}
+                      <div class="progression-history-list">
+                        {#each progressionChangeHistory().slice(0,8) as entry}
+                          <div><span>{entry.label}</span><small>{new Date(entry.at).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</small></div>
+                        {/each}
+                      </div>
+                    {:else}
+                      <p class="muted">Los cambios realizados desde este apartado aparecerán aquí.</p>
+                    {/if}
+                  </section>
                 {:else if playerSheetTab !== 'Conjuros'}
                   {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
                     <section class="sheet-section {sectionClass(pair.heading.name)}">
@@ -6490,7 +6527,23 @@ import ITEMS from './items.json';
   .master-tabs{display:flex;gap:.4rem;overflow-x:auto;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.progression-manual-select-row{display:flex;align-items:end;gap:.55rem;margin:.55rem 0}.progression-manual-select-row label{display:grid;gap:.25rem;flex:1;min-width:0;color:var(--ink-soft);font-size:.78rem}.progression-manual-select-row select{width:100%;min-width:0;padding:.42rem .5rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--ink);font:inherit}.progression-manual-select-row>button{padding:.45rem .7rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font:inherit;cursor:pointer}.progression-manual-select-row>button:disabled{opacity:.4;cursor:not-allowed}.progression-manual-chips{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.65rem 0;padding-top:.5rem;border-top:1px solid var(--rule)}.progression-manual-chips>strong{width:100%;font-size:.78rem;color:var(--ink-soft)}.progression-manual-chips>span{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .4rem;border:1px solid var(--rule);border-radius:4px;font-size:.75rem}.progression-manual-chips button{border:0;background:transparent;color:var(--gold);font-size:1rem;line-height:1;cursor:pointer}.progression-manual-list{display:grid;gap:0}.progression-manual-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.48rem .1rem;border-bottom:1px solid var(--rule);font:.82rem system-ui,sans-serif}.progression-manual-row>span{color:var(--ink-soft)}.progression-manual-row>div{display:flex;align-items:center;gap:.55rem}.progression-manual-row strong{min-width:3.4rem;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}.progression-manual-row button{width:1.8rem;height:1.8rem;padding:0;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font-size:1rem;font-weight:700;cursor:pointer}.progression-manual-row button:hover{border-color:var(--gold);background:rgba(95,230,224,.12)}@media(max-width:480px){.progression-manual-row{font-size:.75rem}.progression-manual-row>div{gap:.3rem}.progression-manual-row strong{min-width:2.8rem}} .level-up-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:1rem;box-sizing:border-box;background:rgba(0,0,0,.76);overflow:auto}.level-up-overlay .level-up-panel{width:min(900px,100%);max-height:calc(100vh - 2rem);overflow:auto;box-sizing:border-box;margin:0}.level-up-trigger{padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:default}.progression-level-trigger{min-width:2rem;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;background:rgba(255,211,78,.14);color:var(--gold);font:700 .85rem system-ui,sans-serif;cursor:pointer}.progression-level-trigger:hover,.progression-level-trigger:focus-visible{background:var(--gold);color:var(--paper);outline:2px solid var(--gold);outline-offset:2px}.level-up-trigger:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
+  .subclass-level-preview{padding:.7rem;border:1px solid var(--rule);border-radius:4px;background:rgba(0,0,0,.04);display:grid;gap:.5rem}.subclass-level-preview p{white-space:pre-wrap;margin:.25rem 0;font-size:.82rem;line-height:1.4}.progression-manual-select-row{display:flex;align-items:end;gap:.55rem;margin:.55rem 0}.progression-manual-select-row label{display:grid;gap:.25rem;flex:1;min-width:0;color:var(--ink-soft);font-size:.78rem}.progression-manual-select-row select{width:100%;min-width:0;padding:.42rem .5rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--ink);font:inherit}.progression-manual-select-row>button{padding:.45rem .7rem;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font:inherit;cursor:pointer}.progression-manual-select-row>button:disabled{opacity:.4;cursor:not-allowed}.progression-manual-chips{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin:.65rem 0;padding-top:.5rem;border-top:1px solid var(--rule)}.progression-manual-chips>strong{width:100%;font-size:.78rem;color:var(--ink-soft)}.progression-manual-chips>span{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .4rem;border:1px solid var(--rule);border-radius:4px;font-size:.75rem}.progression-manual-chips button{border:0;background:transparent;color:var(--gold);font-size:1rem;line-height:1;cursor:pointer}.progression-manual-list{display:grid;gap:0}.progression-manual-row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.48rem .1rem;border-bottom:1px solid var(--rule);font:.82rem system-ui,sans-serif}.progression-manual-row>span{color:var(--ink-soft)}.progression-manual-row>div{display:flex;align-items:center;gap:.55rem}.progression-manual-row strong{min-width:3.4rem;text-align:center;color:var(--ink);font-variant-numeric:tabular-nums}.progression-manual-row button{width:1.8rem;height:1.8rem;padding:0;border:1px solid var(--rule);border-radius:4px;background:var(--paper-deep);color:var(--gold);font-size:1rem;font-weight:700;cursor:pointer}.progression-manual-row button:hover{border-color:var(--gold);background:rgba(95,230,224,.12)}
+  .progression-quantity{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;color:var(--ink-soft);font-size:12px}
+  .progression-quantity input,.progression-reward-toolbar input,.progression-reward-toolbar select{min-width:0;box-sizing:border-box;padding:7px;border:1px solid var(--rule);border-radius:5px;background:var(--paper-deep);color:var(--ink)}
+  .progression-quantity input{width:100px}
+  .progression-reward-toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,.5fr) 85px;gap:8px;margin:10px 0}
+  .progression-reward-toolbar label{display:grid;gap:4px;color:var(--ink-soft);font-size:11px}
+  .progression-reward-results{display:grid;gap:5px;max-height:340px;overflow:auto}
+  .progression-reward-results article{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px;border-bottom:1px solid var(--rule)}
+  .progression-reward-results article>div{display:grid;gap:2px;min-width:0}
+  .progression-reward-results strong{font-size:12px;color:var(--ink)}
+  .progression-reward-results small,.progression-history-list small{font-size:10px;color:var(--ink-soft)}
+  .progression-reward-results button,.progression-undo-button{padding:6px 9px;border:1px solid var(--gold);border-radius:5px;background:var(--paper-deep);color:var(--gold);font-size:11px;font-weight:800;white-space:nowrap}
+  .progression-history-list{display:grid;gap:0}
+  .progression-history-list>div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--rule);font-size:12px;color:var(--ink-soft)}
+  .progression-history-list small{white-space:nowrap}
+  @media(max-width:480px){.progression-reward-toolbar{grid-template-columns:1fr 1fr}.progression-reward-toolbar label:first-child{grid-column:1/-1}.progression-history-list>div{align-items:flex-start;flex-direction:column}
+  .progression-manual-row{font-size:.75rem}.progression-manual-row>div{gap:.3rem}.progression-manual-row strong{min-width:2.8rem}} .level-up-overlay{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:1rem;box-sizing:border-box;background:rgba(0,0,0,.76);overflow:auto}.level-up-overlay .level-up-panel{width:min(900px,100%);max-height:calc(100vh - 2rem);overflow:auto;box-sizing:border-box;margin:0}.level-up-trigger{padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:default}.progression-level-trigger{min-width:2rem;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;background:rgba(255,211,78,.14);color:var(--gold);font:700 .85rem system-ui,sans-serif;cursor:pointer}.progression-level-trigger:hover,.progression-level-trigger:focus-visible{background:var(--gold);color:var(--paper);outline:2px solid var(--gold);outline-offset:2px}.level-up-trigger:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.level-up-panel{margin-top:1rem;padding:1rem;border:1px solid var(--red);border-radius:6px;background:var(--paper-deep);display:grid;gap:.65rem}.level-up-panel label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.level-up-panel input,.level-up-panel select,.level-up-panel textarea{box-sizing:border-box;width:100%;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.level-up-choice-grid{display:grid;grid-template-columns:2fr 1fr;gap:.5rem}.level-up-action{margin:.35rem 0 .6rem}  .items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
 .spells-panel{margin-top:.5rem}
   .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
   .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:var(--ink);font:500 .82rem system-ui,sans-serif}
