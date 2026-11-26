@@ -3136,6 +3136,10 @@ import ITEMS from './items.json';
     const overrides=progressionManualResources(target);
     return String(Object.prototype.hasOwnProperty.call(overrides,key)?overrides[key]:base??'—');
   }
+  function updateProgressionBardDie(event:Event) {
+    const input=event.currentTarget as HTMLSelectElement;
+    setProgressionResourceText('Dado bárdico',input.value);
+  }
   function setProgressionResourceText(key:string,value:string) {
     if(!sheet||!value) return;
     const overrides=progressionManualResources(sheet);
