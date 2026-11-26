@@ -2200,6 +2200,21 @@ import ITEMS from './items.json';
   let initiativeOrder: InitiativeParticipant[] = [];
   let activeInitiativeIndex = 0;
   let initiativeRound = 1;
+  const INITIATIVE_STATE_CHANNEL = 'com.heunithen.forja/initiative-state';
+  let sharedInitiativeOrder: InitiativeParticipant[] = [];
+  let sharedActiveInitiativeIndex = 0;
+  let sharedInitiativeRound = 1;
+
+  // El director publica el tracker completo para que los jugadores solo puedan consultarlo.
+  $: if (obrReady && obrRole === 'GM') {
+    const sharedState = {
+      order: initiativeOrder.map(participant => ({...participant})),
+      activeIndex: activeInitiativeIndex,
+      round: initiativeRound
+    };
+    void OBR.broadcast.sendMessage(INITIATIVE_STATE_CHANNEL, sharedState, {destination:'REMOTE'})
+      .catch(error => console.error('No se pudo sincronizar la iniciativa con los jugadores', error));
+  }
 
   // Persistir los encuentros y la ronda en este dispositivo entre recargas.
   $: if (combatantsStorageReady) {
@@ -3804,7 +3819,7 @@ import ITEMS from './items.json';
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Skills','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Compendio de conjuros', 'Reglas', 'Botones', 'Inventario', 'Descripción', 'Subir nivel'];
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Compendio de conjuros', 'Reglas', 'Botones', 'Inventario', 'Iniciativa', 'Subir nivel'];
   type QuickButton = { name: string; attack: string; damage: string; mode: 'normal'|'advantage'|'disadvantage' };
   type QuickRollResult = { id:number; name:string; attack:string; damage:string; attackResult:string; damageResult:string; mode:string; critical:boolean; fumble:boolean; };
   let editingQuickButton = -1;
@@ -4000,7 +4015,6 @@ import ITEMS from './items.json';
       if (tab === 'Conjuros') return category === 'Conjuros';
       if (tab === 'Inventario') return category === 'Inventario';
       if (tab === 'Rasgos y competencias') return category === 'Rasgos y competencias' || category === 'Rasgos y características' || category === 'Extras';
-      if (tab === 'Descripción') return category === 'Trasfondo';
       if (tab === 'Notas') return category === 'Notas';
       return false;
     });
@@ -4348,6 +4362,13 @@ import ITEMS from './items.json';
         OBR.broadcast.onMessage(INITIATIVE_NOTICE_CHANNEL, (event: any) => {
           const message=String(event.data?.message||'').trim();
           if(message) void OBR.notification.show(message,'INFO').catch(()=>{});
+        });
+        OBR.broadcast.onMessage(INITIATIVE_STATE_CHANNEL, (event: any) => {
+          const state=event.data;
+          if(!state || !Array.isArray(state.order)) return;
+          sharedInitiativeOrder=state.order.map((participant:any)=>({...participant}));
+          sharedActiveInitiativeIndex=Math.max(0,Math.min(Number(state.activeIndex)||0,Math.max(0,sharedInitiativeOrder.length-1)));
+          sharedInitiativeRound=Math.max(1,Number(state.round)||1);
         });
         OBR.broadcast.onMessage(`${DICE_PLUS_SOURCE}/roll-error`, (event: any) => {
           const failure = event.data;
@@ -5257,6 +5278,24 @@ import ITEMS from './items.json';
                           </article>
                       {/each}
                     </div>
+                  </section>
+                {:else if playerSheetTab === 'Iniciativa'}
+                  <section class="sheet-section player-initiative-section">
+                    <div class="sheet-section-title"><h3>Iniciativa del combate</h3><span class="count">Ronda {sharedInitiativeRound}</span></div>
+                    {#if sharedInitiativeOrder.length}
+                      <ol class="initiative-list">
+                        {#each sharedInitiativeOrder as participant, i}
+                          <li class:initiative-active={i === sharedActiveInitiativeIndex}>
+                            <span class="initiative-position">{i+1}</span>
+                            <span class="initiative-name">{participant.name}{#if i === sharedActiveInitiativeIndex}<small class="player-current-turn"> · Turno actual</small>{/if}</span>
+                            <span class="initiative-roll"><strong>{participant.total}</strong></span>
+                          </li>
+                        {/each}
+                      </ol>
+                    {:else}
+                      <p class="muted">El director todavía no ha iniciado el tracker de iniciativa.</p>
+                    {/if}
+                    <p class="muted">Esta lista es de solo lectura. El orden y el turno actual se actualizan desde el tracker del director.</p>
                   </section>
                 {:else if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
@@ -8094,6 +8133,7 @@ import ITEMS from './items.json';
   .initiative-roll{font-size:12px;color:var(--gm-muted);white-space:nowrap}.initiative-roll strong{color:var(--gm-text);font-size:15px}.initiative-roll small{color:#e6b83f}
   .initiative-list li.initiative-active{border:2px solid #e6b83f;background:rgba(230,184,63,.13)}
   .initiative-list li.initiative-active .initiative-position{background:#e6b83f;color:#17242a}
+  .player-current-turn{color:#e6b83f;font-size:11px;font-weight:800}
   .initiative-roster li{grid-template-columns:minmax(0,1fr) auto}
   .initiative-roster strong{font-size:12px;color:#9fe9e5}
   .initiative-turn-controls{display:flex;align-items:center;gap:7px;min-width:0}
