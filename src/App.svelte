@@ -2839,7 +2839,6 @@ import ITEMS from './items.json';
     }
   }
   function addBarbarianFeatSkill(target:RawSheet,skill:string,grantExpertise:boolean) {
-    const raw=getCharacterStat(target,'COMPETENCIAS','Skills') || '';
     const data=getBarbarianFeatSkillData(target);
     const skills=[...data.proficient];
     if(!skills.some(old=>normalizeLevelText(old)===normalizeLevelText(skill))) skills.push(skill);
@@ -3726,6 +3725,7 @@ import ITEMS from './items.json';
     }
     if(hasBarbarianRitualFeat) {
       setCharacterStat(updated,'CONJUROS','Conjuros rituales de dote',barbarianRitualChoices.join(', '));
+      mergeBarbarianFeatField(updated,'CONJUROS','Conjuros siempre preparados de dotes',barbarianRitualChoices);
       if(acquiringBarbarianFeat) mergeBarbarianFeatField(updated,'CONJUROS','Aptitudes mágicas de dotes',['Lanzador ritual: '+levelUpGeneralFeatAbility]);
     }
     if(needsBarbarianWildAspect) setCharacterStat(updated,'RASGOS Y DOTES','Aspecto de lo salvaje',levelUpBarbarianAspect);
@@ -5994,13 +5994,12 @@ import ITEMS from './items.json';
                       {#if normalizeLevelText(levelUpFeat)==='maestro de armas'}
                         <label>Arma para la maestría adicional<select bind:value={levelUpBarbarianFeatWeaponMastery}><option value="">Elige un arma</option>{#each getBarbarianFeatWeaponMasteryOptions(levelUpEntry.sheet) as weapon}<option value={weapon}>{weapon}</option>{/each}</select></label>
                       {/if}
-                      {#if (normalizeLevelText(levelUpFeat)==='lanzador ritual' && levelUpAsiMode==='feat') || splitChoiceList(getCharacterStat(levelUpEntry.sheet,'RASGOS Y DOTES','Dotes adicionales')).some(feat=>normalizeLevelText(feat)==='lanzador ritual')}
-                        <div class="builder-choice-wrapper"><strong>Conjuros rituales (elige {Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+',''))})</strong><div class="builder-checkbox-grid">{#each getBarbarianRitualSpellOptions() as spell}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpBarbarianFeatRituals).some(value=>normalizeLevelText(value)===normalizeLevelText(spell))} on:change={(event)=>toggleBarbarianFeatRitualSpell(spell,event,Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+','')))} disabled={!splitChoiceList(levelUpBarbarianFeatRituals).some(value=>normalizeLevelText(value)===normalizeLevelText(spell)) && splitChoiceList(levelUpBarbarianFeatRituals).length>=Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+',''))} /><span>{spell}</span></label>{/each}</div></div>
-                      {/if}
                       {#if normalizeLevelText(levelUpFeat)==='resiliente'}
                         <label>Tirada de salvación que obtienes<select bind:value={levelUpResilientSave}><option value="">Elige una característica</option>{#each getBarbarianResilientSaveOptions(levelUpEntry.sheet) as ability}<option value={ability}>{ability}</option>{/each}</select></label>
                       {/if}
-                    {/if}
+                    {/if}\n                      {#if (normalizeLevelText(levelUpFeat)==='lanzador ritual' && levelUpAsiMode==='feat') || splitChoiceList(getCharacterStat(levelUpEntry.sheet,'RASGOS Y DOTES','Dotes adicionales')).some(feat=>normalizeLevelText(feat)==='lanzador ritual')}
+                        <div class="builder-choice-wrapper"><strong>Conjuros rituales (elige {Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+',''))})</strong><div class="builder-checkbox-grid">{#each getBarbarianRitualSpellOptions() as spell}<label class="builder-checkbox"><input type="checkbox" checked={splitChoiceList(levelUpBarbarianFeatRituals).some(value=>normalizeLevelText(value)===normalizeLevelText(spell))} on:change={(event)=>toggleBarbarianFeatRitualSpell(spell,event,Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+','')))} disabled={!splitChoiceList(levelUpBarbarianFeatRituals).some(value=>normalizeLevelText(value)===normalizeLevelText(spell)) && splitChoiceList(levelUpBarbarianFeatRituals).length>=Number(String(getNextLevelRowSafe(levelUpEntry)?.proficiency||'+2').replace('+',''))} /><span>{spell}</span></label>{/each}</div></div>
+                      {/if}
                   {:else}<label>Dote elegida<input bind:value={levelUpFeat} placeholder="Nombre de la dote" /></label>{/if}
 
                 {/if}
