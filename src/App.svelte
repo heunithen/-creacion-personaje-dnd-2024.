@@ -3672,7 +3672,7 @@ import ITEMS from './items.json';
   let builderPreviewTab = 'Características y salvaciones';
   const builderPreviewTabs = ['Características y salvaciones','Velocidad y defensas','Skills','Acciones','Inventario','Conjuros','Rasgos y competencias','Trasfondo','Notas','Extras'];
   let playerSheetTab = 'Acciones';
-  const playerSheetTabs = ['Acciones', 'Conjuros', 'Compendio de conjuros', 'Glosario de reglas', 'Botones', 'Inventario', 'Descripción', 'Notas'];
+  const playerSheetTabs = ['Acciones', 'Conjuros', 'Compendio de conjuros', 'Reglas', 'Botones', 'Inventario', 'Descripción', 'Subir nivel'];
   type QuickButton = { name: string; attack: string; damage: string; mode: 'normal'|'advantage'|'disadvantage' };
   type QuickRollResult = { id:number; name:string; attack:string; damage:string; attackResult:string; damageResult:string; mode:string; critical:boolean; fumble:boolean; };
   let editingQuickButton = -1;
@@ -5404,9 +5404,9 @@ import ITEMS from './items.json';
             {/if}
           </div>
         </section>
-                {:else if playerSheetTab === 'Glosario de reglas'}
+                {:else if playerSheetTab === 'Reglas'}
 <section class="sheet-section rules-panel">
-          <div class="sheet-section-title"><h3>Glosario de reglas</h3><span class="count">{filteredRules.length} / {RULES.length}</span></div>
+          <div class="sheet-section-title"><h3>Reglas</h3><span class="count">{filteredRules.length} / {RULES.length}</span></div>
           <p class="muted">Glosario del Apéndice C. Fuente: Manual del Jugador 2024 · Las páginas indicadas corresponden a la numeración del PDF.</p>
           <div class="rules-toolbar">
             <label class="rules-search">Buscar regla
@@ -5439,6 +5439,10 @@ import ITEMS from './items.json';
             {/if}
           </div>
         </section>
+                {:else if playerSheetTab === 'Subir nivel'}
+                  <section class="sheet-section">
+                    <div class="sheet-section-title"><h3>Subir nivel</h3></div>
+                  </section>
                 {:else if playerSheetTab !== 'Conjuros'}
                   {#each playerSheetPairs(playerSheetTab, sheet.sections || []) as pair}
                     <section class="sheet-section {sectionClass(pair.heading.name)}">
@@ -5455,9 +5459,6 @@ import ITEMS from './items.json';
                       </div>
                     </section>
                   {/each}
-                {/if}
-                {#if playerSheetTab === 'Notas' && sheet.notes}
-                  <section class="sheet-section notes-section"><div class="sheet-section-title"><h3>Notas</h3></div><div class="sheet-notes-content">{sheet.notes}</div></section>
                 {/if}
               </div>
             </section>
