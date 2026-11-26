@@ -2257,6 +2257,26 @@ import ITEMS from './items.json';
     return {info,sections};
   }
 
+  function translateMonsterLabel(label: string): string {
+    return ({'Skills':'Habilidades','Resistances':'Resistencias','Immunities':'Inmunidades','Condition Immunities':'Inmunidades a condiciones','Vulnerabilities':'Vulnerabilidades','Gear':'Equipo','Senses':'Sentidos','Languages':'Idiomas','Challenge Rating':'VD','Other Details':'Otros datos'} as Record<string,string>)[label] || label;
+  }
+  function translateMonsterSection(title: string): string {
+    return ({'Traits':'RASGOS','Actions':'ACCIONES','Bonus Actions':'ACCIONES ADICIONALES','Reactions':'REACCIONES','Legendary Actions':'ACCIONES LEGENDARIAS','Mythic Actions':'ACCIONES MÍTICAS','Lair Actions':'ACCIONES DE GUARIDA'} as Record<string,string>)[title] || title.toUpperCase();
+  }
+  function itemDescription(item: any): string {
+    if (item.description || item.effect) return String(item.description || item.effect);
+    const name = String(item.name || '');
+    const type = String(item.type || '');
+    if (type === 'Arma') return 'Arma para realizar ataques. Sus propiedades y el daño dependen de su ficha de equipo.';
+    if (type === 'Armadura' || type === 'Escudo') return 'Equipo defensivo que modifica la Clase de Armadura según sus reglas.';
+    if (type === 'Herramienta') return 'Herramienta utilizada para realizar pruebas de característica y tareas relacionadas con su oficio.';
+    if (type === 'Montura') return 'Criatura entrenada para transportar a una o más criaturas.';
+    if (type === 'Vehículo y transporte') return 'Medio de transporte; su uso depende del terreno y de las reglas del vehículo.';
+    if (type === 'Equipo' && /poción de curación/i.test(name)) return 'Al beberla, recuperas 2d4 + 2 puntos de golpe.';
+    if (type === 'Equipo') return 'Equipo de aventura utilizado para la actividad indicada por su nombre.';
+    return 'Objeto mágico. Su nombre identifica el efecto principal; consulta la descripción completa de este objeto en la Guía del Dungeon Master. El catálogo todavía no contiene el texto de sus propiedades.';
+  }
+
   const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   function startsWithLetter(name: string, letter: string) {
     const initial = String(letter || '').trim().toLocaleUpperCase('en');
@@ -4171,11 +4191,11 @@ import ITEMS from './items.json';
               <span>{lastChestRoll.category} · {lastChestRoll.priceLabel}</span>
             </div>
           {/if}
-          <div class="chest-table-wrap"><table class="chest-table"><thead><tr><th>#</th><th>Objeto</th><th>Categoría</th><th>Precio</th></tr></thead><tbody>
-            {#each CHEST_LOOT as item}
-              <tr class:chest-selected={lastChestRoll?.lootNumber === item.number}><td>{item.number}</td><td>{item.name}</td><td>{item.category}</td><td>{item.priceLabel}</td></tr>
-            {/each}
-          </tbody></table></div>
+          {#if lastChestRoll}
+            <p class="chest-opened-note">Contenido encontrado en este cofre:</p>
+          {:else}
+            <p class="muted chest-empty">El contenido se mostrará aquí al abrir el cofre.</p>
+          {/if}
         </section>
       {:else if masterTab === 'Objetos'}
         <section class="panel items-panel">
@@ -4197,11 +4217,15 @@ import ITEMS from './items.json';
             <fieldset><legend>Precio (po)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemPriceMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemPriceMax} placeholder="Sin máximo" /></label></fieldset>
             <fieldset><legend>Peso (kg)</legend><label>Mínimo<input type="text" inputmode="decimal" bind:value={itemWeightMin} placeholder="Sin mínimo" /></label><label>Máximo<input type="text" inputmode="decimal" bind:value={itemWeightMax} placeholder="Sin máximo" /></label></fieldset>
           </div>
-          <div class="items-table-wrap">{#if filteredItems.length === 0}<p class="muted">Selecciona un tipo, introduce un rango de precio o peso, o escribe una búsqueda para mostrar objetos.</p>{:else}<table class="items-table"><thead><tr><th>Nombre</th><th>Tipo</th><th>Precio</th><th>Peso</th><th>Manual</th></tr></thead><tbody>
+          <div class="item-card-list">{#if filteredItems.length === 0}<p class="muted">Selecciona un tipo, introduce un rango de precio o peso, o escribe una búsqueda para mostrar objetos.</p>{:else}
             {#each filteredItems as item (item.name + item.source)}
-              <tr><td>{item.name}</td><td>{item.type}</td><td>{item.price}</td><td>{item.weight}</td><td>{item.source}</td></tr>
+              <article class="catalog-item-card">
+                <header><h3>{item.name}</h3><span class="catalog-item-type">{item.type}</span></header>
+                <p class="catalog-item-description">{itemDescription(item)}</p>
+                <footer><span>Precio: {item.price}</span><span>Peso: {item.weight}</span><small>{item.source}</small></footer>
+              </article>
             {/each}
-          </tbody></table>{/if}</div>
+          {/if}</div>
         </section>
       {:else if masterTab === 'Conjuros'}
         <section class="panel spells-panel">
@@ -4282,7 +4306,7 @@ import ITEMS from './items.json';
             {#each filteredRules as rule (rule.name)}
               <details class="rule-card">
                 <summary><span class="rule-name">{rule.name}</span><span class="rule-category">{rule.category}</span><span class="rule-page">PDF {rule.pdfPage}</span></summary>
-                <div class="rule-details"><pre class="rule-description">{rule.description}</pre><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
+                <div class="rule-details"><div class="rule-description">{#each rule.description.split(/\n+/).map(line => line.trim()).filter(Boolean) as line}<p>{line}</p>{/each}</div><small class="rule-source">Manual del Jugador 2024 · PDF p. {rule.pdfPage} · Impresa p. {rule.printedPage}</small></div>
               </details>
             {/each}
             {/if}
@@ -4316,25 +4340,39 @@ import ITEMS from './items.json';
                   <span class="monster-cr">VD {monster.cr.split(' ')[0] || '—'}</span>
                 </summary>
                 <div class="monster-statblock">
-                  {#if monster.description}<p class="monster-description">{monster.description}</p>{/if}
                   {#each [parseMonsterProfile(monster)] as profile}
-                  <div class="monster-info-grid">
-                    {#each profile.info as item}
-                      <div class="monster-info-item"><small>{item.label}</small><strong>{item.value}</strong></div>
-                    {/each}
-                  </div>
-                  {#each profile.sections as section}
-                    <section class="monster-content-section">
-                      <h4>{section.title}</h4>
-                      {#each section.entries as entry}
-                        <article class="monster-entry">
-                          {#if entry.name}<strong>{entry.name}</strong>{/if}
-                          <p>{entry.description}</p>
-                        </article>
+                    <div class="monster-block-heading">
+                      <h3>{monster.name}</h3>
+                      <p>{profile.info.find(x => x.label === 'Type and Alignment')?.value || monster.group || 'Criatura'} · VD {monster.cr}</p>
+                    </div>
+                    {#if monster.description}<p class="monster-description">{monster.description}</p>{/if}
+                    <div class="monster-quick-stats">
+                      {#each profile.info.filter(x => ['Armor Class','Hit Points','Speed','Initiative'].includes(x.label)) as item}
+                        <div><small>{({ 'Armor Class':'CA','Hit Points':'PG','Speed':'VEL','Initiative':'INIC' } as Record<string,string>)[item.label]}</small><strong>{item.value}</strong></div>
                       {/each}
-                    </section>
-                  {/each}
-                  {/each}
+                    </div>
+                    <div class="monster-ability-table">
+                      <div class="monster-ability-row monster-ability-head"><span>Característica</span><span>Valor</span><span>Mod.</span><span>Salv.</span></div>
+                      {#each profile.info.filter(x => ['Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'].includes(x.label)) as ability}
+                        <div class="monster-ability-row"><strong>{{Strength:'FUE',Dexterity:'DES',Constitution:'CON',Intelligence:'INT',Wisdom:'SAB',Charisma:'CAR'}[ability.label]}</strong><span>{ability.value.match(/^\d+/)?.[0] || '—'}</span><span>{ability.value.match(/\([+-]?\d+\)/)?.[0] || '—'}</span><span>{ability.value.match(/Save\s*([+-]?\d+)/i)?.[1] || '—'}</span></div>
+                      {/each}
+                    </div>
+                    <div class="monster-details-list">
+                      {#each profile.info.filter(x => !['Type and Alignment','Armor Class','Hit Points','Speed','Initiative','Strength','Dexterity','Constitution','Intelligence','Wisdom','Charisma'].includes(x.label)) as item}
+                        <p><strong>{translateMonsterLabel(item.label)}:</strong> {translateMonsterText(item.value)}</p>
+                      {/each}
+                    </div>
+                    {#each profile.sections as section}
+                      <section class="monster-content-section">
+                        <h4>{translateMonsterSection(section.title)}</h4>
+                        {#each section.entries as entry}
+                          <article class="monster-entry">
+                            {#if entry.name}<strong>{translateMonsterText(entry.name)}</strong>{/if}
+                            <p>{translateMonsterText(entry.description)}</p>
+                          </article>
+                        {/each}
+                      </section>
+                    {/each}
                   <small class="monster-source">Manual de Monstruos 2024 · PDF p. {monster.pdfPage ?? '—'} · Página impresa {monster.printedPage ?? '—'}</small>
                 </div>
               </details>
@@ -7182,5 +7220,43 @@ import ITEMS from './items.json';
     :global(.nautical-tabs button){padding:8px 10px!important;font-size:11px!important}
     :global(.nautical-columns .stat-label){font-size:12px!important}
   }
+
+
+  .catalog-item-card{border:1px solid var(--gm-border);background:var(--gm-card);border-radius:10px;padding:12px;margin:8px 0}
+  .catalog-item-card header,.catalog-item-card footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .catalog-item-card h3{margin:0;font-size:15px;color:var(--gm-text)}
+  .catalog-item-type{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--gm-accent)}
+  .catalog-item-description{margin:10px 0;color:var(--gm-text);line-height:1.55}
+  .catalog-item-card footer{border-top:1px solid var(--gm-border);padding-top:8px;font-size:12px;color:var(--gm-muted)}
+  .catalog-item-card footer small{flex-basis:100%;color:var(--gm-muted)}
+  .rule-description{white-space:normal;line-height:1.6}
+  .rule-description p{margin:0 0 8px}
+  .rule-description p:last-child{margin-bottom:0}
+  .rule-details{padding:12px 14px}
+  .monster-statblock{background:#f8f5e9;color:#24231f;border:1px solid #c8b98e;border-radius:8px;padding:14px;font-family:Georgia,serif;line-height:1.45}
+  .monster-block-heading{text-align:center;border-top:3px double #8d2525;border-bottom:3px double #8d2525;padding:8px 4px;margin-bottom:10px}
+  .monster-block-heading h3{margin:0;color:#8d2525;font-size:20px;text-transform:uppercase;letter-spacing:.04em}
+  .monster-block-heading p{margin:3px 0 0;font-style:italic;font-size:13px}
+  .monster-description{font-style:italic;color:#4b473d}
+  .monster-quick-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;border-bottom:1px solid #b9a77d;padding-bottom:10px;margin-bottom:10px}
+  .monster-quick-stats>div{display:flex;gap:8px;align-items:baseline}
+  .monster-quick-stats small{font-weight:900;color:#8d2525;min-width:42px}
+  .monster-quick-stats strong{font-size:13px}
+  .monster-ability-table{border-top:1px solid #b9a77d;border-bottom:1px solid #b9a77d;margin:10px 0;padding:5px 0}
+  .monster-ability-row{display:grid;grid-template-columns:1.4fr repeat(3,.8fr);gap:6px;padding:4px 3px;text-align:center;font-size:13px}
+  .monster-ability-row>*:first-child{text-align:left}
+  .monster-ability-head{font-weight:900;color:#8d2525;border-bottom:1px solid #b9a77d}
+  .monster-details-list{padding:4px 0}
+  .monster-details-list p{margin:5px 0;font-size:13px}
+  .monster-details-list strong{color:#8d2525}
+  .monster-content-section{border-top:2px solid #8d2525;margin-top:12px;padding-top:7px}
+  .monster-content-section h4{margin:0 0 8px;color:#8d2525;text-align:center;font-size:15px;letter-spacing:.08em}
+  .monster-entry{margin:8px 0}
+  .monster-entry strong{font-weight:800}
+  .monster-entry p{display:inline;margin:0;line-height:1.5}
+  .monster-source{display:block;border-top:1px solid #b9a77d;padding-top:8px;margin-top:12px;color:#696252}
+  .chest-opened-note{font-weight:700;color:var(--gm-accent);margin:16px 0 5px}
+  .chest-empty{margin-top:16px}
+  @media(max-width:520px){.monster-quick-stats{grid-template-columns:1fr}.monster-statblock{padding:10px}.monster-ability-row{font-size:12px}}
 
 </style>
