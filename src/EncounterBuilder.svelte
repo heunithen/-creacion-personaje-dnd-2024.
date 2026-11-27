@@ -13,7 +13,7 @@
   };
   type Selection = { monster: Monster; quantity: number };
   type TemplateId = 'solo'|'boss_minions'|'duo'|'trio'|'horde';
-  type GeneratedEncounter = { items: Selection[]; spent: number; creatures: number; key: string; template: TemplateId };
+  type GeneratedEncounter = { items: Selection[]; spent: number; creatures: number; key: string; template: TemplateId; budgetUse?: number; targetReached?: boolean };
 
   export let onAddToCombat: (selection: Selection[]) => void = () => {};
 
@@ -249,7 +249,7 @@
       <div><small>Criaturas</small><strong>{totalCreatures}</strong></div>
     </div>
     {#if remaining>0}
-      <p class="budget-note">Quedan {formatXp(remaining)} disponibles. No es necesario gastar cada punto.</p>
+      <p class="budget-note">Quedan {formatXp(remaining)} disponibles. La generación automática intenta gastar todo el presupuesto o alcanzar al menos el 80 %; la compra manual sigue siendo libre.</p>
     {:else}
       <p class="budget-note">Has utilizado exactamente el presupuesto disponible.</p>
     {/if}
@@ -259,7 +259,7 @@
 <section class="random-generator">
     <div class="random-generator-copy">
       <div><span class="eyebrow">COMPRA AUTOMÁTICA</span><h3>Generación aleatoria</h3></div>
-      <p>Genera tres alternativas aleatorias siguiendo una plantilla de composición. Cada plantilla cambia la cantidad y la relación entre enemigos; ninguna supera el presupuesto.</p>
+      <p>Genera tres alternativas aleatorias siguiendo una plantilla de composición. Cada alternativa intenta utilizar entre el 80 % y el 100 % del presupuesto sin excederlo, respetando la estructura de la plantilla.</p>
     </div>
     <div class="template-controls">
       <label for="enc-template">Plantilla de composición</label>
@@ -288,6 +288,11 @@
               {/each}
             </div>
             <div class="generated-total"><span>{formatXp(encounter.spent)} / {formatXp(budget)}</span><strong>{(encounter.spent / budget * 100).toFixed(1)} %</strong></div>
+            {#if encounter.spent / budget < 0.8}
+              <p class="generated-template-description">No fue posible alcanzar el 80 % manteniendo esta plantilla y sin superar el presupuesto. Se muestra la mejor composición disponible.</p>
+            {:else}
+              <p class="generated-template-description budget-target-met">Objetivo de gasto alcanzado.</p>
+            {/if}
             <button type="button" class="use-generated" on:click={()=>useGeneratedEncounter(encounter)}>Usar este encuentro</button>
           </article>
         {/each}
@@ -396,6 +401,7 @@
   .template-controls select{width:100%;padding:.55rem;border:1px solid var(--rule,#3a4a52);border-radius:4px;background:#1b2a33;color:var(--ink,#fff);font:inherit}
   .template-controls small,.generated-template-description{margin:0;color:var(--ink-soft,#b5bec3);font-size:.66rem;line-height:1.45}
   .generated-creature-count{color:var(--gold,#5fe6e0);font-size:.68rem;font-weight:800}
+  .budget-target-met{color:#83d6a3!important}
   .generation-message{margin:0;color:var(--ink-soft,#b5bec3);font-size:.72rem}
   .generated-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem}
   .live-generated{border-color:var(--gold,#5fe6e0)}
