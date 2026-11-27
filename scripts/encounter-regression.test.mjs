@@ -161,7 +161,8 @@ test('las plantillas de composición generan estructuras diferentes sin superar 
     {monster:{name:'Jefe',cr:'3'},xp:700}
   ];
   const expectedCounts = {solo:[1,1],boss_minions:[3,5],duo:[2,2],trio:[3,3],horde:[6,8]};
-  for (const template of Object.keys(ENCOUNTER_TEMPLATES)) {
+  const templateIds = ['solo','boss_minions','duo','trio','horde'];
+  for (const template of templateIds) {
     const generated = createEncounterFromTemplate(available,1000,template,()=>0.3);
     assert.ok(generated.encounter, 'Expected a valid '+template+' encounter');
     assert.ok(generated.encounter.spent <= 1000);
@@ -182,7 +183,7 @@ test('las plantillas dúo y trío priorizan enemigos distintos', () => {
     const generated = createEncounterFromTemplate(available,500,template,()=>0.4);
     assert.ok(generated.encounter);
     assert.equal(generated.encounter.items.length,template==='duo'?2:3);
-    assert.ok(generated.encounter.items.every(item=>item.quantity===1));
+    assert.ok(generated.encounter.items.every((item:any)=>item.quantity===1));
   }
 });
 
@@ -195,6 +196,6 @@ test('la plantilla jefe con secuaces reserva una amenaza principal y añade enem
   const generated = createEncounterFromTemplate(available,700,'boss_minions',()=>0.2);
   assert.ok(generated.encounter);
   assert.equal(generated.encounter.creatures,3);
-  assert.ok(generated.encounter.items.some(item=>item.monster.name==='Jefe'));
-  assert.ok(generated.encounter.items.some(item=>item.monster.name!=='Jefe'));
+  assert.ok(generated.encounter.items.some((item:any)=>item.monster.name==='Jefe'));
+  assert.ok(generated.encounter.items.some((item:any)=>item.monster.name!=='Jefe'));
 });
