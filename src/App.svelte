@@ -6090,7 +6090,7 @@ import ITEMS from './items.json';
 
   function exportCharacterSummary(target: RawSheet, playerLabel = '') {
     const safeName = (target.name || 'personaje')
-      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+      .normalize('NFD').replace(/[u0300-\u036f]/g, '')
       .replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'personaje';
     const escapeHtml = (value: unknown) => String(value ?? '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -6104,7 +6104,7 @@ import ITEMS from './items.json';
       return text;
     };
     const excludedSection = /^(combate|ataques?|armas?|valores|configuracion|configuraci[oó]n|metadata|datos internos)$/i;
-    const excludedField = /^(id|skills|formula de clase de armadura|ataque cd ?\\d+)$/i;
+    const excludedField = /^(id|skills|formula de clase de armadura|ataque cd ?\d+)$/i;
     const sections = sectionPairs(target.sections || []).flatMap(pair => {
       const title = String(pair.heading.name || '').trim();
       if (!title || excludedSection.test(title)) return [];
@@ -6125,7 +6125,7 @@ import ITEMS from './items.json';
     const sectionsHtml = sections.map(section =>
       '<section class="summary-section"><h2>' + escapeHtml(section.title) + '</h2>' +
       section.fields.map(field => '<p><strong>' + escapeHtml(field.label) + ':</strong> ' +
-        escapeHtml(field.value).replace(/\\n/g, '<br>') + '</p>').join('') + '</section>'
+        escapeHtml(field.value).replace(/\n/g, '<br>') + '</p>').join('') + '</section>'
     ).join('');
     const popup = window.open('', '_blank');
     if (!popup) {
