@@ -894,7 +894,7 @@
     applyVisualStyle();
   }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Layers', 'Combate', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
+  const masterTabs = ['Personajes', 'Layers', 'Combate', 'Encuentros', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
   const OWLBEAR_LAYERS = [
     { id: 'MAP', label: 'Mapas' }, { id: 'GRID', label: 'Cuadrícula' },
     { id: 'DRAWING', label: 'Dibujos' }, { id: 'PROP', label: 'Objetos' },
@@ -2959,6 +2959,7 @@
   }
 
   import MONSTERS from './monsters.json';
+  import EncounterBuilder from './EncounterBuilder.svelte';
   import RULES from './rules.json';
 import SPELLS from './spells.json';
 import ITEMS from './items.json';
@@ -3037,6 +3038,14 @@ import ITEMS from './items.json';
     masterTab='Combate';
     showAllCombatants=false;
     notice=monster.name+' añadido y marcado como participante.';
+  }
+  function addEncounterToCombat(selection:any[]) {
+    for (const item of selection) {
+      for (let index=0; index<item.quantity; index++) addCombatant(item.monster);
+    }
+    masterTab='Combate';
+    showAllCombatants=false;
+    notice='Encuentro añadido al combate: '+selection.reduce((sum,item)=>sum+item.quantity,0)+' monstruos.';
   }
   function duplicateCombatant(id:string) {
     const original=combatants.find(x=>x.id===id); if(!original)return;
@@ -6733,6 +6742,10 @@ import ITEMS from './items.json';
           {:else}<p class="muted">Añade criaturas desde la pestaña Monstruos para preparar el combate.</p>{/if}
         </section>
         {#if notice}<p class="muted" role="status">{notice}</p>{/if}
+      {:else if masterTab === 'Encuentros'}
+        <section class="panel encounter-tab-panel">
+          <EncounterBuilder onAddToCombat={addEncounterToCombat} />
+        </section>
       {:else if masterTab === 'Iniciativa'}
         <section class="panel initiative-panel">
           <div class="section-heading"><h2>Tracker de iniciativa</h2><span class="count">Ronda {initiativeRound}</span></div>
