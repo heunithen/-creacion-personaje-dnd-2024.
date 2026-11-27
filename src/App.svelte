@@ -6302,14 +6302,14 @@ import ITEMS from './items.json';
       setByAliases(['bonus de proficiencia','bonus de competencia','bonificador por competencia','proficiency bonus'], prof);
       setByAliases(['inspiracao','inspiration'], firstValue([['PERSONAJE','Inspiración']]));
       const combatAliases: Array<[string[],unknown]> = [
-        [['classe de armadura','armadura','armor class','ca'], value('COMBATE','Clase de armadura')],
-        [['iniciativa','initiative'], value('COMBATE','Iniciativa')],
-        [['velocidade','deslocamento','speed'], value('COMBATE','Velocidad')],
-        [['pontos de vida atuais','pv atuais','current hit points','hp current'], value('COMBATE','Puntos de golpe actuales')],
-        [['pontos de vida maximos','pv maximos','maximum hit points','hp maximum'], value('COMBATE','Puntos de golpe máximos')],
+        [['classe de armadura','armadura','armor class','ca'], firstValue([['COMBATE','Armor Class'],['COMBATE','Clase de armadura']])],
+        [['iniciativa','initiative'], firstValue([['COMBATE','Initiative'],['COMBATE','Iniciativa']])],
+        [['velocidade','deslocamento','speed'], firstValue([['COMBATE','Speed'],['COMBATE','Velocidad']])],
+        [['pontos de vida atuais','pv atuais','current hit points','hp current'], firstValue([['COMBATE','Puntos de golpe actuales'],['COMBATE','Hit Points: current']])],
+        [['pontos de vida maximos','pv maximos','maximum hit points','hp maximum'], firstValue([['COMBATE','Puntos de golpe máximos'],['COMBATE','Hit Points: max']])],
         [['pontos de vida temporarios','pv temporarios','temporary hit points'], value('COMBATE','Puntos de golpe temporales')],
         
-        [['percepcao passiva','passive perception'], value('COMBATE','Percepción pasiva')]
+        [['percepcao passiva','passive perception'], firstValue([['COMBATE','Percepción pasiva'],['COMBATE','Passive Perception']])]
       ];
       combatAliases.forEach(([aliases,item]) => setByAliases(aliases as string[],item));
 
@@ -6361,7 +6361,11 @@ import ITEMS from './items.json';
         else setField(entry,row.name);
       }
 
-      setByAliases(['aptidao magica','habilidade magica','spellcasting ability'],value('CONJUROS','Aptitud mágica'));
+      const rawSpellAbility=value('CONJUROS','Aptitud mágica');
+      const spellAbility=/no tiene|no obtiene|no disponible|^—$|^-$|^$/i.test(rawSpellAbility.trim())?'':rawSpellAbility;
+      const spellAbilityScore=spellAbility?abilityScoreNumber(value('ATRIBUTOS',spellAbility)):null;
+      const spellAbilityModifier=spellAbilityScore===null?'':signedBonus(Math.floor((spellAbilityScore-10)/2));
+      setByAliases(['aptidao magica','habilidade magica','spellcasting ability'],spellAbility);
       setByAliases(['cd de salvacao','dificuldade de salvacao','spell save dc'],value('CONJUROS','CD de salvación'));
       setByAliases(['ataque de conjuro','bonus de ataque magico','spell attack bonus'],value('CONJUROS','Ataque de conjuro'));
       const spellSlotText = value('CONJUROS','Espacios por nivel') || value('CONJUROS','Espacios de conjuro');
@@ -6408,7 +6412,7 @@ import ITEMS from './items.json';
         if (entry) setField(entry,item);
       };
       // Encabezado de lanzamiento y espacios: el ataque está en el campo 61.
-      setNumbered(56,value('CONJUROS','Aptitud mágica'));
+      setNumbered(56,spellAbilityModifier);
       setNumbered(57,value('CONJUROS','CD de salvación'));
       setNumbered(61,value('CONJUROS','Ataque de conjuro'));
       const slotFieldNumbers = [58,62,65,59,63,66,60,64,67];
