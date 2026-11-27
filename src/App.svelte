@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { expandEncounterForCombat } from './encounterRules';
+  import { expandEncounterForCombat } from './encounterRules.mjs';
 import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
   
