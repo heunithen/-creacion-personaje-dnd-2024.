@@ -5819,29 +5819,28 @@ import ITEMS from './items.json';
     const classFeatures = ((CLASS_FEATURES as any).classes?.[className] || [])
       .filter((feature:any) => Number(feature.level) <= level)
       .map((feature:any) => ({ name: feature.name, description: feature.description || '', source: 'Clase', level: Number(feature.level) }));
-    const species = getCharacterStat(target,'PERSONAJE','Especie');
-    const speciesText = BUILDER_SPECIES_TRAITS[species] || '';
-    const speciesFeatures:{name:string;description:string;source:string;level?:number}[] = [];
-    const speciesPattern = /([A-ZÁÉÍÓÚÜÑ][^.:]{1,45}):\s*([\s\S]*?)(?=(?:\.\s+[A-ZÁÉÍÓÚÜÑ][^.:]{1,45}:)|$)/g;
-    let match:RegExpExecArray|null;
-    while ((match = speciesPattern.exec(speciesText)) !== null) {
-      const name = match[1].trim();
-      const description = match[2].replace(/[.]\s*$/,'').trim();
-      if (normalizeLevelText(name) === 'tipo de criatura' || !description) continue;
-      if (!/(accion|competencia|conjuro|truco|ventaja|resistencia|vision|vuelo|ataque|daño|velocidad|tamaño|salvacion|hechizado|asustado|agarrado|inspiracion|descanso|curas|cura|habilidad|magia|linaje)/i.test(description)) continue;
-      speciesFeatures.push({ name, description, source: 'Especie' });
+    if (/bárbaro|barbarian/i.test(className) && !classFeatures.some((feature:any)=>/furia|rage/i.test(String(feature.name)))) {
+      const uses=level>=17?6:level>=12?5:level>=6?4:2;
+      const damage=level>=16?'+4':level>=9?'+3':'+2';
+      classFeatures.push({name:'Furia',description:'Usos: '+uses+' por descanso largo. Bonificación al daño: '+damage+'. Mientras dura, tienes resistencia al daño contundente, perforante y cortante, ventaja en pruebas y salvaciones de Fuerza y bonificación al daño de ataques cuerpo a cuerpo usando Fuerza. Se activa como acción adicional y dura hasta 10 minutos, salvo que termine antes.',source:'Clase',level:1});
     }
+    const species = getCharacterStat(target,'PERSONAJE','Especie');
+    const speciesText = String(BUILDER_SPECIES_TRAITS[species] || '').trim();
+    const speciesFeatures:{name:string;description:string;source:string;level?:number}[] = [];
+    if (speciesText) speciesFeatures.push({name:'Rasgos de '+species,description:speciesText,source:'Especie'});
     for (let n=1;n<=level;n++) {
       const unlock = getSpeciesLevelUnlock(target,n);
       unlock.features.forEach(feature => speciesFeatures.push({ ...feature, source: 'Especie', level:n }));
     }
-    const savedSpecies = getCharacterStat(target,'RASGOS Y DOTES','Rasgos de especie');
+    const savedSpecies = getCharacterStat(target,'RASGOS Y DOTES','Rasgos de especie') || getCharacterStat(target,'DETALLES DE ESPECIE','Rasgos de especie');
     const savedSpeciesBlocks = String(savedSpecies || '').split(/\n\s*\n/).map(block=>block.trim()).filter(Boolean);
     savedSpeciesBlocks.forEach(block => {
       const parsed = block.match(/^(?:Nivel\s+(\d+)\s*·\s*)?([^\n]+)\n([\s\S]+)$/i);
       if (parsed && (!parsed[1] || Number(parsed[1]) <= level)) {
         const name = parsed[2].trim();
         if (!speciesFeatures.some(item=>normalizeLevelText(item.name)===normalizeLevelText(name))) speciesFeatures.push({name,description:parsed[3].trim(),source:'Especie',level:parsed[1]?Number(parsed[1]):undefined});
+      } else if (!speciesFeatures.some(item=>normalizeLevelText(item.name)===normalizeLevelText(species))) {
+        speciesFeatures.push({name:'Rasgos de '+species,description:block,source:'Especie'});
       }
     });
     const featNames = [
@@ -5851,10 +5850,8 @@ import ITEMS from './items.json';
       ...splitChoiceList(getCharacterStat(target,'DETALLES DEL TRASFONDO','Dote de origen'))
     ].filter(name => name && !/^[-—]+$/.test(name));
     const feats = [...new Map(featNames.map(name=>[normalizeLevelText(name),{name,description:'Dote obtenida por el personaje. Sus elecciones y beneficios registrados se muestran en las competencias, conjuros y otros rasgos de la ficha.',source:'Dote'}])).values()];
-    return {
-      traits:[...classFeatures,...speciesFeatures].filter((item,index,list)=>list.findIndex(other=>normalizeLevelText(other.name)===normalizeLevelText(item.name))===index),
-      feats
-    };
+    const unique = (items:any[]) => items.filter((item,index,list)=>list.findIndex(other=>normalizeLevelText(other.name)===normalizeLevelText(item.name))===index);
+    return { traits:unique([...classFeatures,...speciesFeatures]), feats };
   }
 
   function playerSheetPairs(tab: string, sections: RawSection[] = sheet?.sections || []) {
@@ -6236,9 +6233,9 @@ import ITEMS from './items.json';
       const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
       const pdf = await PDFDocument.create();
       const W = 595.28, H = 841.89, M = 32;
-      const ink = rgb(0.10,0.10,0.10), muted = rgb(0.34,0.34,0.34);
-      const line = rgb(0.58,0.55,0.51), pale = rgb(0.985,0.978,0.96);
-      const accent = rgb(0.43,0.13,0.15), white = rgb(1,1,1);
+      const ink = rgb(0.05,0.05,0.05), muted = rgb(0.30,0.30,0.30);
+      const line = rgb(0.12,0.12,0.12), pale = rgb(0.93,0.93,0.93);
+      const accent = rgb(0.12,0.12,0.12), white = rgb(1,1,1);
       const regular = await pdf.embedFont(StandardFonts.Helvetica);
       const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
       const italic = await pdf.embedFont(StandardFonts.HelveticaOblique);
@@ -6303,7 +6300,9 @@ import ITEMS from './items.json';
       });
       const featureGroups=playerFeatureGroups(target);
       const traits=[...(featureGroups.traits||[]),...(featureGroups.feats||[])];
-      const inventory=sectionStats(['EQUIPO','INVENTARIO']).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value);
+      const ownedInventory=getShopOwnedItems(target).map((entry:any)=>({name:String(entry.name||''),value:entry.quantity>1?'× '+entry.quantity:'× 1'})).filter((item:any)=>item.name);
+      const legacyEquipment=first([['EQUIPO','Equipo inicial']]);
+      const inventory=ownedInventory.length?ownedInventory:(legacyEquipment?legacyEquipment.split(/[;\n]+/).map((name:string)=>name.trim()).filter(Boolean).map((name:string)=>({name,value:''})):sectionStats(['INVENTARIO']).filter(item=>/equipo|objeto/i.test(String(item.name||''))).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value));
       const spellRows=sectionStats(['DETALLE DE CONJUROS','DETALLES DE CONJUROS','CONJUROS']).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value);
       const proficiencies=sectionStats(['COMPETENCIAS']).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value);
       const isBarbarian=/bárbaro|barbarian/i.test(className);
@@ -6372,21 +6371,7 @@ import ITEMS from './items.json';
       const profText=proficiencies.map(v=>[v.name,v.value].filter(Boolean).join(': ')).join(' · ') ||
         first([['COMPETENCIAS','Skills'],['COMPETENCIAS','Competencias'],['COMPETENCIAS','Armas y armaduras'],['COMPETENCIAS','Idiomas']]);
       wrapped(page1,'COMPETENCIAS: '+(profText||'—'),M+7,145,W-2*M-14,6.2,2);
-      if(isBarbarian){
-        panel(page1,M,49,W-2*M,76,'FURIA');
-        text(page1,'USOS',M+10,98,6,bold,muted);
-        const uses=level>=17?6:level>=12?5:level>=6?4:2;
-        for(let i=0;i<uses;i++) page1.drawCircle({x:M+18+i*13,y:80,size:4.5,borderColor:accent,borderWidth:0.8,color:white});
-        text(page1,'DAÑO',M+110,98,6,bold,muted);
-        text(page1,level>=16?'+4':level>=9?'+3':'+2',M+110,78,12,bold,accent);
-        text(page1,'RESISTENCIAS',M+164,98,6,bold,muted);
-        text(page1,'Contundente · Perforante · Cortante',M+164,82,7,bold,ink,180);
-        text(page1,'Activa como acción adicional; dura hasta 10 minutos, si no termina antes.',M+365,98,6,regular,muted,160);
-        text(page1,'Mientras dura: ventaja en pruebas y salvaciones de Fuerza; bonificación al daño cuerpo a cuerpo con Fuerza.',M+365,84,5.6,regular,ink,160);
-      } else if(furyFeature){
-        panel(page1,M,49,W-2*M,76,'RASGO DESTACADO');
-        wrapped(page1,furyFeature.name+': '+furyText,M+10,98,W-2*M-20,6.5,3);
-      }
+      // Los rasgos de clase, incluida Furia, se presentan juntos en la página siguiente.
       footer(page1,1);
 
       const page2=pdf.addPage([W,H]);
@@ -6408,14 +6393,14 @@ import ITEMS from './items.json';
       for(const feature of traits){
         const title=String(feature.name||'Rasgo');
         const desc=String(feature.description||'');
-        if(/furia|rage/i.test(title) && isBarbarian) continue;
+        
         text(page2,title+(feature.source?' · '+feature.source:''),M+10,fy,7.5,bold,accent,W-2*M-20);
         fy-=12;
         fy=wrapped(page2,desc,M+16,fy,W-2*M-32,6.5,3)-5;
         if(fy<445) break;
       }
       panel(page2,M,225,260,185,'EQUIPO E INVENTARIO');
-      inventory.slice(0,13).forEach((item,i)=>{
+      inventory.slice(0,14).forEach((item,i)=>{
         const y=378-i*12;
         page2.drawRectangle({x:M+10,y:y-1,width:6,height:6,borderColor:line,borderWidth:0.65});
         text(page2,item.name,M+22,y,6.5,regular,ink,145);
