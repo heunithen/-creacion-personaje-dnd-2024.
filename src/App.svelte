@@ -5679,7 +5679,7 @@ import ITEMS from './items.json';
 <div class="app-shell">
   <header class="topbar">
     <a class="brand" href="#inicio"><img class="brand-icon" src="/-creacion-personaje-dnd-2024./icono.webp" alt="" /><span><strong>FORJA DE AVENTUREROS</strong><small>D&D · 2024</small></span></a>
-    {#if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{playerName || 'Jugador'}</span></nav>{/if}
+    {#if obrRole === 'GM' && masterViewingEntry}<nav><span>{masterViewingEntry.playerName || 'Jugador'}</span><button type="button" class="primary" on:click={closeMasterCharacter}>Salir de hoja del jugador</button></nav>{:else if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{playerName || 'Jugador'}</span></nav>{/if}
   </header>
 
   <main class="main" class:gm-layout={obrRole === 'GM' && !masterViewingEntry}>
@@ -5699,26 +5699,7 @@ import ITEMS from './items.json';
               <article class="character-card">
                 <div class="card-symbol">✧</div>
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · Registro oficial en Supabase</p></div>
-                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Visualizar hoja</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
-                <details class="gm-sheet-details">
-                  <summary>Ver ficha</summary>
-                  <div class="actions level-up-action"><button class="primary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button></div>
-                  <div class="character-sheet gm-character-sheet">
-                    <div class="sheet-banner"><h2>{entry.sheet?.name || 'Personaje'}</h2></div>
-                    <div class="sheet-grid">
-                      {#each sectionPairs(entry.sheet?.sections || []) as pair}
-                        <section class="sheet-section {sectionClass(pair.heading.name)}">
-                          <div class="sheet-section-title"><h3>{pair.heading.name || 'Sección'}</h3></div>
-                          <div class="stats-list">
-                            {#each pair.heading.stats || [] as stat, i}
-                              <div class="sheet-stat"><span>{stat.name || '—'}</span><strong>{displayValue(pair.values?.stats?.[i]?.value ?? stat.value) || '—'}</strong></div>
-                            {/each}
-                          </div>
-                        </section>
-                      {/each}
-                    </div>
-                  </div>
-                </details>
+                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
               </article>
             {/each}
           {/if}
@@ -6422,8 +6403,7 @@ import ITEMS from './items.json';
               </div>
             </div>
             <div class="header-actions">
-              {#if obrRole === 'GM' && masterViewingEntry}<button type="button" class="primary" on:click={closeMasterCharacter}>Salir de hoja del jugador</button>{/if}
-              {#if demoPreview}
+remove exit from sheet header              {#if demoPreview}
                 <button type="button" on:click={closeDemoPreview}>Salir de vista previa</button>
               {:else}
                 <button type="button" on:click={exportSheet}>Exportar</button>
