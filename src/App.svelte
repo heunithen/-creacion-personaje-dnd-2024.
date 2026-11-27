@@ -893,6 +893,7 @@
   const masterTabs = ['Personajes', 'Combate', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
 
   const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
+  const MONSTER_TOKEN_METADATA_KEY = 'com.heunithen.forja/monster-token';
 
 
   const STAT_BUBBLES_METADATA_KEY = 'com.owlbear-rodeo-bubbles-extension/metadata';
@@ -1053,6 +1054,60 @@
         syncSheetStatsFromStatBubbles(String(tokenData.characterId), String(tokenData.playerName || ''), bubbleStats);
       }
     });
+  }
+
+  async function assignMonsterToken(combatant: Combatant) {
+    try {
+      if (obrRole !== 'GM') throw new Error('Solo el director puede asignar tokens.');
+      if (!(await OBR.scene.isReady())) throw new Error('Abre una escena de Owlbear Rodeo antes de asignar un token.');
+
+      const selectedIds = await OBR.player.getSelection();
+      if (!selectedIds || selectedIds.length === 0) {
+        throw new Error('Selecciona primero un único token en el tablero de Owlbear.');
+      }
+      if (selectedIds.length !== 1) {
+        throw new Error('Selecciona solamente un token.');
+      }
+
+      const selectedItems = await OBR.scene.items.getItems(selectedIds);
+      const token = selectedItems[0];
+      if (!token) throw new Error('No se pudo encontrar el elemento seleccionado en la escena.');
+      if (token.layer !== 'CHARACTER') {
+        throw new Error('El elemento seleccionado no está en la capa Personajes. Mueve el token a esa capa e inténtalo nuevamente.');
+      }
+
+      const previousMonster = (token.metadata as any)?.[MONSTER_TOKEN_METADATA_KEY];
+      const previousCharacter = (token.metadata as any)?.[TOKEN_METADATA_KEY];
+      if (previousCharacter?.characterId || (previousMonster?.monsterId && previousMonster.monsterId !== combatant.id)) {
+        const previousName = previousCharacter?.characterName || previousMonster?.monsterName || 'otro elemento';
+        if (!window.confirm('Este token ya está vinculado a ' + previousName + '. ¿Quieres asignarlo a ' + combatant.name + '?')) return;
+      }
+
+      await OBR.scene.items.updateItems(selectedIds, (items: any[]) => {
+        for (const item of items) {
+          item.name = combatant.name;
+          item.metadata[MONSTER_TOKEN_METADATA_KEY] = {
+            version: 1,
+            monsterId: combatant.id,
+            monsterName: combatant.name
+          };
+          item.metadata[STAT_BUBBLES_METADATA_KEY] = {
+            ...(item.metadata[STAT_BUBBLES_METADATA_KEY] || {}),
+            health: Math.max(0, Number(combatant.hp) || 0),
+            'max health': Math.max(1, Number(combatant.maxHp) || 1),
+            'temporary health': Math.max(0, Number(combatant.tempHp) || 0),
+            'armor class': Math.max(0, Number(combatant.ac + combatant.acMod) || 0)
+          };
+          if (previousCharacter?.characterId) delete item.metadata[TOKEN_METADATA_KEY];
+        }
+      });
+
+      notice = 'Token asignado a ' + combatant.name + '. Ya puedes usar los controles de Stat Bubbles sobre el token.';
+    } catch (error) {
+      console.error('Error al asignar token de monstruo:', error);
+      const detail = error instanceof Error ? error.message : String(error);
+      notice = 'No se pudo asignar el token del monstruo: ' + detail;
+    }
   }
 
   async function assignSelectedToken(entry: RoomEntry) {
@@ -6027,6 +6082,7 @@ import ITEMS from './items.json';
                   <header class="combatant-header">
                     <input aria-label="Nombre de criatura" class="combatant-name" value={c.name} on:change={(e)=>setCombatantField(c.id,'name',e)}/>
                     <div class="combatant-tools">
+                      <button type="button" class="secondary" title="Selecciona un token en Owlbear y asígnalo a este monstruo" on:click={()=>assignMonsterToken(c)}>Asignar token</button>
                       <button title="Duplicar" on:click={()=>duplicateCombatant(c.id)}>⧉</button>
                       <button title="Eliminar" aria-label="Eliminar monstruo" class="combatant-delete" on:click={()=>removeCombatant(c.id)}>×</button>
                     </div>
