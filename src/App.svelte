@@ -7189,7 +7189,7 @@ import ITEMS from './items.json';
                   </aside>
                   <div class="builder-species-information">
                     <section class="builder-species-info-section">
-                      <span>LIN AJE O VARIANTE</span><h5>¿Qué opciones tienes?</h5>
+                      <span>LINAJE O VARIANTE</span><h5>¿Qué opciones tienes?</h5>
                       <strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].join(' · ') : 'No requiere elección de linaje'}</strong>
                     </section>
                     <section class="builder-species-info-section">
