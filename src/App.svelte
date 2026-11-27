@@ -2952,7 +2952,7 @@ import ITEMS from './items.json';
 
 
   type Combatant = { id:string; monster:any; name:string; ac:number; hp:number; maxHp:number; tempHp:number; initiative:number; damageInput:number; compact:boolean; dead:boolean; acMod:number; participating:boolean };
-  type InitiativeParticipant = { id:string; name:string; bonus:number; roll:number; total:number; tieRoll?:number };
+  type InitiativeParticipant = { id:string; name:string; bonus:number; roll:number; total:number; surprised?:boolean; discardedRoll?:number; tieRoll?:number; tieDiscardedRoll?:number };
   const COMBATANTS_STORAGE_KEY = 'forja-combatants-v1';
   const INITIATIVE_STORAGE_KEY = 'forja-initiative-v1';
   let combatants: Combatant[] = [];
@@ -2960,6 +2960,7 @@ import ITEMS from './items.json';
   let initiativeStorageReady = false;
   let showAllCombatants = false;
   let initiativeOrder: InitiativeParticipant[] = [];
+  let surprisedParticipantIds: string[] = [];
   let activeInitiativeIndex = 0;
   let initiativeRound = 1;
   const INITIATIVE_STATE_CHANNEL = 'com.heunithen.forja/initiative-state';
@@ -2994,6 +2995,7 @@ import ITEMS from './items.json';
     try {
       localStorage.setItem(INITIATIVE_STORAGE_KEY, JSON.stringify({
         order: initiativeOrder,
+        surprisedIds: surprisedParticipantIds,
         activeIndex: activeInitiativeIndex,
         round: initiativeRound
       }));
@@ -3038,16 +3040,54 @@ import ITEMS from './items.json';
   function getInitiativeParticipants():InitiativeParticipant[] {
     // La lista del director ya combina personajes conectados y fichas guardadas en esta sala.
     // Se incluyen todos los personajes del roster, sin exigir que tengan el indicador live activo.
-    const players=roomSheets.map(entry=>({id:'player:'+entry.playerId,name:String(entry.sheet?.name || entry.playerName || 'Personaje'),bonus:playerInitiative(entry),roll:0,total:0}));
-    const monsters=combatants.filter(c=>c.participating!==false).map(c=>({id:'monster:'+c.id,name:c.name,bonus:Number(c.initiative)||0,roll:0,total:0}));
+    const players=roomSheets.map(entry=>({id:'player:'+entry.playerId,name:String(entry.sheet?.name || entry.playerName || 'Personaje'),bonus:playerInitiative(entry),roll:0,total:0,surprised:surprisedParticipantIds.includes('player:'+entry.playerId)}));
+    const monsters=combatants.filter(c=>c.participating!==false).map(c=>({id:'monster:'+c.id,name:c.name,bonus:Number(c.initiative)||0,roll:0,total:0,surprised:surprisedParticipantIds.includes('monster:'+c.id)}));
     return [...players,...monsters];
   }
 
   function rollInitiativeDie():number { return Math.floor(Math.random()*20)+1; }
+  function rollParticipantInitiative(participant: InitiativeParticipant): void {
+    const first = rollInitiativeDie();
+    if (participant.surprised) {
+      const second = rollInitiativeDie();
+      participant.roll = Math.min(first, second);
+      participant.discardedRoll = Math.max(first, second);
+    } else {
+      participant.roll = first;
+      delete participant.discardedRoll;
+    }
+    participant.total = participant.roll + participant.bonus;
+    delete participant.tieRoll;
+    delete participant.tieDiscardedRoll;
+  }
+  function isParticipantSurprised(id: string): boolean {
+    return surprisedParticipantIds.includes(id);
+  }
+  function toggleParticipantSurprised(id: string, event: Event): void {
+    const checked = (event.currentTarget as HTMLInputElement).checked;
+    surprisedParticipantIds = checked
+      ? [...new Set([...surprisedParticipantIds, id])]
+      : surprisedParticipantIds.filter(value => value !== id);
+    initiativeOrder = initiativeOrder.map(participant => {
+      if (participant.id !== id) return participant;
+      const updated = {...participant, surprised: checked};
+      if (checked && participant.discardedRoll === undefined && participant.roll > 0) {
+        const other = rollInitiativeDie();
+        updated.discardedRoll = Math.max(participant.roll, other);
+        updated.roll = Math.min(participant.roll, other);
+        updated.total = updated.roll + updated.bonus;
+      } else if (!checked) {
+        delete updated.discardedRoll;
+      }
+      return updated;
+    });
+    if (initiativeOrder.length) initiativeOrder = [...initiativeOrder].sort((a,b)=>b.total-a.total);
+    broadcastInitiativeState();
+  }
   function rollInitiative():void {
     const participants=getInitiativeParticipants();
     if(!participants.length){initiativeOrder=[];notice='No hay participantes en el combate.';return;}
-    participants.forEach(p=>{p.roll=rollInitiativeDie();p.total=p.roll+p.bonus;delete p.tieRoll;});
+    participants.forEach(p=>rollParticipantInitiative(p));
     participants.sort((a,b)=>b.total-a.total);
     let start=0;
     while(start<participants.length){
@@ -3058,7 +3098,11 @@ import ITEMS from './items.json';
         let attempts=0;
         while(tied.length>1&&attempts<100){
           attempts++;
-          tied.forEach(p=>{p.tieRoll=rollInitiativeDie()+p.bonus;});
+          tied.forEach(p=>{
+            const first=rollInitiativeDie();
+            if(p.surprised){const second=rollInitiativeDie();p.tieRoll=Math.min(first,second)+p.bonus;p.tieDiscardedRoll=Math.max(first,second)+p.bonus;}
+            else {p.tieRoll=first+p.bonus;delete p.tieDiscardedRoll;}
+          });
           tied.sort((a,b)=>(b.tieRoll||0)-(a.tieRoll||0));
           for(let i=tied.length-1;i>0;i--)if(tied[i].tieRoll===tied[i-1].tieRoll){tied.splice(i-1,2,...tied.slice(i-1,i+1));}
           const unique=tied.every((p,i)=>i===0||p.tieRoll!==tied[i-1].tieRoll);
@@ -6095,6 +6139,8 @@ import ITEMS from './items.json';
         const parsedInitiative = JSON.parse(savedInitiative);
         if (parsedInitiative && Array.isArray(parsedInitiative.order)) {
           initiativeOrder = parsedInitiative.order;
+          if (Array.isArray(parsedInitiative.surprisedIds)) surprisedParticipantIds = parsedInitiative.surprisedIds.map(String);
+          else surprisedParticipantIds = initiativeOrder.filter((participant:any) => participant.surprised).map((participant:any) => String(participant.id));
           activeInitiativeIndex = Math.max(0, Math.min(Number(parsedInitiative.activeIndex) || 0, Math.max(0, initiativeOrder.length - 1)));
           initiativeRound = Math.max(1, Number(parsedInitiative.round) || 1);
         }
@@ -6302,8 +6348,8 @@ import ITEMS from './items.json';
               {#each initiativeOrder as participant,i}
                 <li class:initiative-active={i===activeInitiativeIndex}>
                   <span class="initiative-position">{i+1}</span>
-                  <span class="initiative-name">{participant.name}</span>
-                  <span class="initiative-roll">{participant.roll}{participant.bonus>=0?' + ':' − '}{Math.abs(participant.bonus)} = <strong>{participant.total}</strong>{#if participant.tieRoll!==undefined}<small> · desempate {participant.tieRoll}</small>{/if}</span>
+                  <span class="initiative-name">{participant.name}<label class="initiative-surprised"><input type="checkbox" checked={isParticipantSurprised(participant.id)} on:change={(event)=>toggleParticipantSurprised(participant.id,event)}/> Sorprendido</label></span>
+                  <span class="initiative-roll">{#if participant.discardedRoll!==undefined}<small class="initiative-disadvantage-dice">{participant.roll}/{participant.discardedRoll} (desventaja) </small>{:else}{participant.roll}{/if}{participant.bonus>=0?' + ':' − '}{Math.abs(participant.bonus)} = <strong>{participant.total}</strong>{#if participant.tieRoll!==undefined}<small> · desempate {participant.tieRoll}{#if participant.tieDiscardedRoll!==undefined} / {participant.tieDiscardedRoll} (desventaja){/if}</small>{/if}</span>
                 </li>
               {/each}
             </ol>
@@ -6311,7 +6357,7 @@ import ITEMS from './items.json';
             <p class="muted">Todavía no se ha lanzado la iniciativa.</p>
             <ol class="initiative-roster">
               {#each getInitiativeParticipants() as participant}
-                <li><span>{participant.name}</span><strong>Modificador {participant.bonus>=0?'+':''}{participant.bonus}</strong></li>
+                <li><span class="initiative-name">{participant.name}<label class="initiative-surprised"><input type="checkbox" checked={isParticipantSurprised(participant.id)} on:change={(event)=>toggleParticipantSurprised(participant.id,event)}/> Sorprendido</label></span><strong>Modificador {participant.bonus>=0?'+':''}{participant.bonus}</strong></li>
               {/each}
             </ol>
             {#if !getInitiativeParticipants().length}<p class="muted">No hay personajes conectados ni monstruos marcados como participantes.</p>{/if}
@@ -10246,6 +10292,9 @@ remove exit from sheet header              {#if demoPreview}
   .initiative-list li,.initiative-roster li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px;border:1px solid var(--gm-border);border-radius:7px;background:var(--gm-card);color:var(--gm-text)}
   .initiative-position{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#263d46;color:#9fe9e5;font-weight:900}
   .initiative-name{font-weight:800;overflow-wrap:anywhere}
+  .initiative-surprised{display:inline-flex;align-items:center;gap:5px;margin-left:10px;color:#e6b83f;font-size:11px;font-weight:700;white-space:nowrap;cursor:pointer}
+  .initiative-surprised input{width:14px;height:14px;margin:0;accent-color:#e6b83f;cursor:pointer}
+  .initiative-disadvantage-dice{color:#e87979!important;font-weight:800}
   .initiative-roll{font-size:12px;color:var(--gm-muted);white-space:nowrap}.initiative-roll strong{color:var(--gm-text);font-size:15px}.initiative-roll small{color:#e6b83f}
   .initiative-list li.initiative-active{border:2px solid #e6b83f;background:rgba(230,184,63,.13)}
   .initiative-list li.initiative-active .initiative-position{background:#e6b83f;color:#17242a}
