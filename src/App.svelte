@@ -5579,6 +5579,32 @@ import ITEMS from './items.json';
     roomSheets = [...liveRoomSheets].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
   }
 
+  async function adjustRoomCharacterStat(entry: RoomEntry, statName: string, delta: number) {
+    const updated = JSON.parse(JSON.stringify(entry.sheet)) as RawSheet;
+    const current = getCharacterNumber(updated, 'COMBATE', statName,
+      statName === 'Armor Class' ? 10 : 0);
+    const nextValue = Math.max(0, current + delta);
+    setCharacterStat(updated, 'COMBATE', statName, nextValue);
+
+    liveRoomSheets = liveRoomSheets.map(item =>
+      item.playerId === entry.playerId ? { ...item, sheet: updated } : item
+    );
+    refreshRoomSheetList();
+    if (masterViewingEntry?.playerId === entry.playerId) {
+      masterViewingEntry = { ...masterViewingEntry, sheet: updated };
+      if (!document.querySelector('.nautical-sheet')?.contains(document.activeElement)) {
+        sheet = JSON.parse(JSON.stringify(updated)) as RawSheet;
+      }
+    }
+
+    try {
+      await saveCharacterToSupabase(updated, entry.playerId, entry.playerName);
+    } catch (error) {
+      syncStatus = 'No se pudo guardar el cambio: ' + (error instanceof Error ? error.message : String(error));
+      await loadSupabaseRoomCharacters();
+    }
+  }
+
   function openMasterCharacter(entry: RoomEntry) {
     if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
     masterViewingEntry = { ...entry, sheet: JSON.parse(JSON.stringify(entry.sheet)) as RawSheet };
@@ -5874,9 +5900,29 @@ import ITEMS from './items.json';
           {#if !roomSheets.length}<p class="muted">No hay personajes registrados en la base de datos para esta sala.</p>
           {:else}
             {#each roomSheets as entry}
-              <article class="character-card">
+              <article class="character-card roster-character-card">
                 <div class="card-symbol">✧</div>
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · Registro oficial en Supabase</p></div>
+                <div class="roster-stat-controls">
+                  <div class="roster-stat-control">
+                    <span>CA</span>
+                    <button type="button" aria-label="Reducir CA" on:click={() => adjustRoomCharacterStat(entry, 'Armor Class', -1)}>−</button>
+                    <strong>{getCharacterNumber(entry.sheet, 'COMBATE', 'Armor Class', 10)}</strong>
+                    <button type="button" aria-label="Aumentar CA" on:click={() => adjustRoomCharacterStat(entry, 'Armor Class', 1)}>+</button>
+                  </div>
+                  <div class="roster-stat-control">
+                    <span>PG</span>
+                    <button type="button" aria-label="Reducir puntos de golpe" on:click={() => adjustRoomCharacterStat(entry, 'Puntos de golpe actuales', -1)}>−</button>
+                    <strong>{getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe actuales', 0)}<small> / {getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe máximos', 0)}</small></strong>
+                    <button type="button" aria-label="Aumentar puntos de golpe" on:click={() => adjustRoomCharacterStat(entry, 'Puntos de golpe actuales', 1)}>+</button>
+                  </div>
+                  <div class="roster-stat-control">
+                    <span>PG temporales</span>
+                    <button type="button" aria-label="Reducir puntos de golpe temporales" on:click={() => adjustRoomCharacterStat(entry, 'Puntos de golpe temporales', -1)}>−</button>
+                    <strong>{getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe temporales', 0)}</strong>
+                    <button type="button" aria-label="Aumentar puntos de golpe temporales" on:click={() => adjustRoomCharacterStat(entry, 'Puntos de golpe temporales', 1)}>+</button>
+                  </div>
+                </div>
                 <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
               </article>
             {/each}
@@ -7508,6 +7554,14 @@ remove exit from sheet header              {#if demoPreview}
   .roster-panel{width:100%;min-width:0}
   .roster-panel .character-card{grid-template-columns:30px minmax(0,1fr);align-items:start}
   .roster-panel .card-identity{min-width:0}
+  .roster-panel .roster-character-card{grid-template-columns:30px minmax(150px,1fr);gap:.65rem}
+  .roster-stat-controls{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+  .roster-stat-control{display:flex;align-items:center;gap:.4rem;padding:.35rem .5rem;border:1px solid var(--line);border-radius:7px;background:var(--panel-soft,rgba(0,0,0,.12))}
+  .roster-stat-control>span{font-size:.72rem;font-weight:700;color:var(--ink-soft);margin-right:.15rem}
+  .roster-stat-control>strong{min-width:2.2rem;text-align:center;font-variant-numeric:tabular-nums}
+  .roster-stat-control small{font-size:.72rem;color:var(--ink-soft);font-weight:500}
+  .roster-stat-control button{width:1.65rem;height:1.65rem;padding:0;border:1px solid var(--line);border-radius:5px;background:var(--card);color:var(--ink);font-weight:800;line-height:1;cursor:pointer}
+  .roster-character-card>.actions{grid-column:2/-1;flex-wrap:wrap}
 
   .gm-character-sheet{margin-top:.8rem;padding:1rem;box-shadow:none}
   .gm-character-sheet .sheet-grid{grid-template-columns:minmax(0,1fr);gap:1rem}
