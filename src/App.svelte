@@ -2500,7 +2500,7 @@
   }
   function startBuilder() {
     if (sheet && !demoPreview) {
-      const confirmed = window.confirm('¿Crear un personaje nuevo? La ficha actual se eliminará permanentemente de este dispositivo y no se podrá recuperar. Exporta una copia antes si deseas conservarla.');
+      const confirmed = window.confirm('¿Crear un personaje nuevo? Al guardarlo, reemplazará el personaje actual de este jugador en la base de datos de la sala.');
       if (!confirmed) return;
       sheet = null;
     }
@@ -3065,14 +3065,14 @@ import ITEMS from './items.json';
       if (!imported || typeof imported !== 'object' || !Array.isArray(imported.sections)) {
         throw new Error('Formato de ficha no válido');
       }
+      await saveCharacterToSupabase(imported);
       sheet = imported;
       playerCreating = false;
-      await saveCharacterToSupabase(sheet);
       importOpen = false;
-      notice = 'Ficha importada y guardada localmente en este dispositivo.';
+      notice = 'Ficha importada y guardada en la base de datos.';
       input.value = '';
-    }).catch(() => {
-      notice = 'No se pudo leer el archivo JSON.';
+    }).catch((error) => {
+      notice = 'No se pudo importar la ficha: ' + (error instanceof Error ? error.message : String(error));
       input.value = '';
     });
   }
@@ -3326,7 +3326,8 @@ import ITEMS from './items.json';
     catch { return {}; }
   }
   async function saveCharacterToSupabase(snapshot: RawSheet, playerId = supabasePlayerId, playerNameValue = supabasePlayerName) {
-    if (!supabaseRoomId || !playerId || demoPreview) return;
+    if (demoPreview) return;
+    if (!supabaseRoomId || !playerId) throw new Error('La ficha solo puede guardarse cuando el jugador está conectado a una sala de Owlbear con identidad disponible.');
     const response = await fetch(SUPABASE_URL + '/rest/v1/characters?on_conflict=room_id,player_id', {
       method: 'POST',
       headers: {
@@ -4969,13 +4970,10 @@ import ITEMS from './items.json';
     if (levelUpIsPlayer) {
       sheet = updated;
       syncPending = false;
-      void saveCharacterToSupabase(updated).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); });
-      syncStatus = 'Ficha guardada en Supabase.';
+      void saveCharacterToSupabase(updated).then(() => { syncStatus = 'Ficha guardada en Supabase.'; }).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); });
     } else {
       const playerId=levelUpEntry.playerId;
-      void saveCharacterToSupabase(updated, playerId, levelUpEntry.playerName).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); });
-      receiveLiveCharacter({ ...levelUpEntry, sheet: updated });
-      void OBR.broadcast.sendMessage(CHANNEL,{type:'character-level-up',playerId,playerName:levelUpEntry.playerName,character:updated},{destination:'ALL'}).catch(()=>{});
+      void saveCharacterToSupabase(updated, playerId, levelUpEntry.playerName).then(() => loadSupabaseRoomCharacters()).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); notice = 'No se pudo guardar el cambio de nivel en la base de datos.'; });
     }
     levelUpEntry=null;
     levelUpIsPlayer=false;
@@ -5416,8 +5414,8 @@ import ITEMS from './items.json';
     if (obrRole === 'GM') void loadSupabaseRoomCharacters();
   }
 
-  function readPlayers(_players: any[]) {
-    const rosterIds=new Set(roomSheets.map(entry=>'player:'+entry.playerId));
+  function readPlayers(players: any[]) {
+    const rosterIds=new Set(players.map((player:any)=>'player:'+player.id));
     initiativeOrder=initiativeOrder.filter(entry=>!entry.id.startsWith('player:')||rosterIds.has(entry.id));
     if(activeInitiativeIndex>=initiativeOrder.length)activeInitiativeIndex=Math.max(0,initiativeOrder.length-1);
   }
@@ -5663,7 +5661,7 @@ import ITEMS from './items.json';
       {#if masterTab === 'Personajes'}
         <section class="panel roster-panel">
           <div class="section-heading"><h2>Personajes de la sala</h2><span class="count">{roomSheets.length}</span></div>
-          <div class="actions"><button class="secondary" on:click={refreshPlayers}>Actualizar</button></div>
+          <div class="actions"><button class="secondary" on:click={refreshPlayers}>Actualizar desde Supabase</button></div>
           {#if !roomSheets.length}<p class="muted">No hay personajes registrados en la base de datos para esta sala.</p>
           {:else}
             {#each roomSheets as entry}
