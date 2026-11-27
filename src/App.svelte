@@ -7181,6 +7181,14 @@ import ITEMS from './items.json';
                   <aside class="builder-species-learn">
                     <span>CONOCE LA ESPECIE</span>
                     <h5>Acerca de los {BUILDER_SPECIES[builderSpeciesSlideIndex]}</h5>
+                    {#if ['Elfo','Humano','Tiefling'].includes(BUILDER_SPECIES[builderSpeciesSlideIndex])}
+                      <img
+                        class="builder-species-art"
+                        src={BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Elfo' ? '/images/character-creation/elfos.webp' : BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Humano' ? '/images/character-creation/humanos.webp' : '/images/character-creation/tieflings.webp'}
+                        alt={'Ilustración de '+BUILDER_SPECIES[builderSpeciesSlideIndex]}
+                        loading="lazy"
+                      />
+                    {/if}
                     <p class="builder-species-description">{BUILDER_SPECIES_TRAITS[BUILDER_SPECIES[builderSpeciesSlideIndex]]}</p>
                     <div class="builder-species-lore">
                       <h5>ORIGEN Y CULTURA</h5>
@@ -10826,6 +10834,7 @@ import ITEMS from './items.json';
   .builder-species-flyer{width:100%;max-width:920px;min-width:0;min-height:650px;padding:2rem 2.15rem;gap:.75rem}
   .builder-species-content{width:100%;grid-template-columns:minmax(0,.9fr) minmax(0,1.45fr);gap:1.6rem;align-items:stretch}
   .builder-species-learn{box-sizing:border-box;min-width:0;height:100%;padding:1rem 1.15rem;overflow-wrap:anywhere}
+  .builder-species-art{display:block;width:100%;max-width:100%;max-height:220px;margin:.7rem auto .9rem;object-fit:contain;object-position:center;border:1px solid rgba(143,196,226,.28);background:rgba(4,13,19,.2)}
   .builder-species-description,.builder-species-lore p{font-size:.8rem;line-height:1.6}
   .builder-species-lore{border-top-color:rgba(57,125,169,.42)}
   .builder-species-information{min-width:0;padding-top:.15rem}
