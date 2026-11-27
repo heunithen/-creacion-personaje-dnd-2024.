@@ -237,9 +237,12 @@ test('inventario unificado y gestión manual de conjuros', () => {
   assert.match(app, /Se eliminará definitivamente este conjuro de tu lista/);
 });
 
-test('el equipo sin armas no genera una tarjeta ficticia en Acciones', () => {
-  assert.match(app, /put\(attacksIndex,0,weaponNames\.join\(', '\)\);/);
-  assert.match(app, /normalizeLevelText\(name\)!==normalizeLevelText\('No se identificaron armas individuales en el paquete seleccionado\.'\)/);
+test('Acciones muestra solo armas que siguen en inventario y la eliminación acepta objetos agrupados', () => {
+  assert.match(app, /getShopOwnedItems\(target\)\.filter\(\(entry:any\)=>entry\.item\.type==='Arma'\)/);
+  assert.match(app, /const catalogItem=item\?\.item \|\| item/);
+  assert.match(app, /if \(catalogItem\?\.type!=='Arma' \|\| !itemName\) return/);
+  assert.match(app, /if \(remove && !hasMore\)[\s\S]*?names\.splice\(index,1\)/);
+  assert.match(app, /shopUpdateWeaponList\(item,true\)/);
 });
 
 test('el retrato de la hoja se reserva para la cabecera y no aparece en el contenido inferior', () => {
