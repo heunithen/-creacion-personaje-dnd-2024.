@@ -238,7 +238,7 @@ test('inventario unificado y gestión manual de conjuros', () => {
 });
 
 test('Acciones muestra solo armas que siguen en inventario y la eliminación acepta objetos agrupados', () => {
-  assert.match(app, /getShopOwnedItems\(target\)\.filter\(\(entry:any\)=>entry\.item\.type==='Arma'\)/);
+  assert.match(app, /getShopOwnedItems\(target\)\.filter\(\(entry:any\)=>\{ const type=normalizeLevelText\(entry\.item\?\.type \|\| entry\.item\?\.category \|\| ''\); return type==='arma' \|\| type==='armas' \|\| Boolean\(WEAPON_PROFILES\[entry\.name\] \|\| WEAPON_PROFILES\[shopWeaponBase\(entry\.name\)\]\); \}\)/);
   assert.match(app, /const catalogItem=item\?\.item \|\| item/);
   assert.match(app, /if \(catalogItem\?\.type!=='Arma' \|\| !itemName\) return/);
   assert.match(app, /if \(remove && !hasMore\)[\s\S]*?names\.splice\(index,1\)/);
