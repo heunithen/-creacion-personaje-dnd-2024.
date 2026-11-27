@@ -7181,14 +7181,6 @@ import ITEMS from './items.json';
                   <aside class="builder-species-learn">
                     <span>CONOCE LA ESPECIE</span>
                     <h5>Acerca de los {BUILDER_SPECIES[builderSpeciesSlideIndex]}</h5>
-                    {#if BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Orco'}
-                      <img
-                        class="builder-species-art"
-                        src="/images/character-creation/portraits/po_orcwar_h.webp"
-                        alt="Ilustración de un orco"
-                        loading="lazy"
-                      />
-                    {/if}
                     <p class="builder-species-description">{BUILDER_SPECIES_TRAITS[BUILDER_SPECIES[builderSpeciesSlideIndex]]}</p>
                     <div class="builder-species-lore">
                       <h5>ORIGEN Y CULTURA</h5>
@@ -7204,6 +7196,14 @@ import ITEMS from './items.json';
                       <span>RASGOS Y CAPACIDADES</span><h5>¿Qué te distingue?</h5>
                       <strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? 'Incluye una elección propia de especie' : 'Capacidades propias de la especie'}</strong>
                     </section>
+                    {#if BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Orco'}
+                      <img
+                        class="builder-species-art"
+                        src={import.meta.env.BASE_URL + 'images/character-creation/portraits/po_orcwar_h.webp'}
+                        alt="Ilustración de un orco"
+                        loading="eager"
+                      />
+                    {/if}
                   </div>
                 </div>
                 <span class="builder-background-counter">{builderSpeciesSlideIndex+1} de {BUILDER_SPECIES.length}</span>
@@ -10834,7 +10834,7 @@ import ITEMS from './items.json';
   .builder-species-flyer{width:100%;max-width:920px;min-width:0;min-height:650px;padding:2rem 2.15rem;gap:.75rem}
   .builder-species-content{width:100%;grid-template-columns:minmax(0,.9fr) minmax(0,1.45fr);gap:1.6rem;align-items:stretch}
   .builder-species-learn{box-sizing:border-box;min-width:0;height:100%;padding:1rem 1.15rem;overflow-wrap:anywhere}
-  .builder-species-art{display:block;width:100%;max-width:100%;max-height:220px;margin:.7rem auto .9rem;object-fit:contain;object-position:center;border:1px solid rgba(143,196,226,.28);background:rgba(4,13,19,.2)}
+  .builder-species-art{display:block;width:100%;max-width:100%;height:auto;max-height:290px;margin:1rem auto .15rem;object-fit:contain;object-position:center;border:1px solid rgba(143,196,226,.28);background:rgba(4,13,19,.2);position:relative;z-index:1}
   .builder-species-description,.builder-species-lore p{font-size:.8rem;line-height:1.6}
   .builder-species-lore{border-top-color:rgba(57,125,169,.42)}
   .builder-species-information{min-width:0;padding-top:.15rem}
