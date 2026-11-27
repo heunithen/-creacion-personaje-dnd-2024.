@@ -5628,8 +5628,8 @@ import ITEMS from './items.json';
     roomSheets = [...liveRoomSheets].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
   }
 
-  const roomStatPending = new Map<string, RawSheet>();
-  const roomStatSending = new Set<string>();
+  let roomStatPending = new Map<string, RawSheet>();
+  let roomStatSending = new Set<string>();
 
   function adjustRoomCharacterStat(entry: RoomEntry, statName: string, delta: number) {
     // Los botones solo modifican el borrador local; no escriben ni sincronizan con Owlbear.
@@ -5644,6 +5644,7 @@ import ITEMS from './items.json';
     );
     refreshRoomSheetList();
     roomStatPending.set(entry.playerId, updated);
+    roomStatPending = new Map(roomStatPending);
     if (masterViewingEntry?.playerId === entry.playerId) {
       masterViewingEntry = { ...masterViewingEntry, sheet: updated };
       if (!document.querySelector('.nautical-sheet')?.contains(document.activeElement)) {
@@ -5656,14 +5657,19 @@ import ITEMS from './items.json';
     const pending = roomStatPending.get(entry.playerId);
     if (!pending || roomStatSending.has(entry.playerId)) return;
     roomStatSending.add(entry.playerId);
+    roomStatSending = new Set(roomStatSending);
     try {
       await saveCharacterToSupabase(pending, entry.playerId, entry.playerName);
-      if (roomStatPending.get(entry.playerId) === pending) roomStatPending.delete(entry.playerId);
+      if (roomStatPending.get(entry.playerId) === pending) {
+        roomStatPending.delete(entry.playerId);
+        roomStatPending = new Map(roomStatPending);
+      }
       syncStatus = 'Cambios de ' + (pending.name || entry.playerName) + ' enviados.';
     } catch (error) {
       syncStatus = 'No se pudieron enviar los cambios: ' + (error instanceof Error ? error.message : String(error));
     } finally {
       roomStatSending.delete(entry.playerId);
+      roomStatSending = new Set(roomStatSending);
     }
   }
 
