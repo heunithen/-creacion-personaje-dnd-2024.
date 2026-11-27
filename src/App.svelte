@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
-  import { buildLabel, buildShape } from '@owlbear-rodeo/sdk';
+  import { buildImage, buildLabel, buildShape } from '@owlbear-rodeo/sdk';
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
   import { ELF_BONUS_SKILLS, getAllowedWeaponMasteries, getStandardArrayAssignments, isOriginFeatDistinct, isSpeciesSkillAllowed, isValidAbilityIncreases, isValidUniqueSelection } from './builderRules.mjs';
 
@@ -909,6 +909,48 @@
     return dpi * 5 / feetPerGridCell;
   }
 
+  async function createCircularPortraitDataUrl(sourceUrl: string): Promise<string> {
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.src = sourceUrl;
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error('No se pudo cargar el retrato del personaje.'));
+    });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('No se pudo preparar la imagen del token.');
+
+    const diameter = 488;
+    const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
+    const sourceX = (image.naturalWidth - sourceSize) / 2;
+    const sourceY = (image.naturalHeight - sourceSize) / 2;
+
+    context.clearRect(0, 0, 512, 512);
+    context.save();
+    context.beginPath();
+    context.arc(256, 256, diameter / 2 - 8, 0, Math.PI * 2);
+    context.clip();
+    context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 12, 12, diameter, diameter);
+    context.restore();
+
+    context.beginPath();
+    context.arc(256, 256, 248, 0, Math.PI * 2);
+    context.strokeStyle = '#bd9138';
+    context.lineWidth = 16;
+    context.stroke();
+    context.beginPath();
+    context.arc(256, 256, 238, 0, Math.PI * 2);
+    context.strokeStyle = '#f4d88b';
+    context.lineWidth = 3;
+    context.stroke();
+
+    return canvas.toDataURL('image/png');
+  }
+
   async function createCharacterToken(entry: RoomEntry) {
     try {
       if (obrRole !== 'GM') throw new Error('Solo el director puede crear tokens desde esta pantalla.');
@@ -921,40 +963,64 @@
       ]);
       const size = tokenSizeInPixels(dpi, gridScale?.parsed);
       const characterName = String(entry.sheet?.name || entry.playerName || 'Personaje');
+      const portraitUrl = String(entry.sheet?.portrait || '').trim();
       const currentHp = getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe actuales', 0);
       const maxHp = getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe máximos', currentHp);
       const armorClass = getCharacterNumber(entry.sheet, 'COMBATE', 'Armor Class', 10);
+      const metadata = {
+        [TOKEN_METADATA_KEY]: {
+          version: 1,
+          characterId: entry.playerId,
+          playerName: entry.playerName,
+          characterName,
+          appearance: { type: portraitUrl ? 'portrait-circle' : 'circle', imageUrl: portraitUrl || null },
+          sizeFeet: 5,
+          hitPoints: { current: currentHp, maximum: maxHp },
+          armorClass,
+          sheetSync: true
+        }
+      };
 
-      const token = buildShape()
-        .name(characterName)
-        .description('Token de personaje vinculado a la ficha de ' + characterName + '.')
-        .shapeType('CIRCLE')
-        .width(size)
-        .height(size)
-        .fillColor('#bd9138')
-        .fillOpacity(1)
-        .strokeColor('#f4d88b')
-        .strokeOpacity(1)
-        .strokeWidth(5)
-        .position(position)
-        .layer('CHARACTER')
-        .metadata({
-          [TOKEN_METADATA_KEY]: {
-            version: 1,
-            characterId: entry.playerId,
-            playerName: entry.playerName,
-            characterName,
-            appearance: { type: 'circle', imageUrl: null },
-            sizeFeet: 5,
-            hitPoints: { current: currentHp, maximum: maxHp },
-            armorClass,
-            sheetSync: true
-          }
-        })
-        .build();
+      let token: any;
+      if (portraitUrl) {
+        try {
+          const circularImageUrl = await createCircularPortraitDataUrl(portraitUrl);
+          token = buildImage(
+            { url: circularImageUrl, mime: 'image/png', width: 512, height: 512 },
+            { dpi: 512, offset: { x: 256, y: 256 } }
+          )
+            .name(characterName)
+            .description('Token circular con el retrato de ' + characterName + ', vinculado a su ficha.')
+            .scale({ x: size / 512, y: size / 512 })
+            .position(position)
+            .layer('CHARACTER')
+            .metadata(metadata)
+            .build();
+        } catch (portraitError) {
+          console.warn('No se pudo aplicar el retrato al token; se usará el círculo dorado.', portraitError);
+        }
+      }
+
+      if (!token) {
+        token = buildShape()
+          .name(characterName)
+          .description('Token circular dorado de ' + characterName + '.')
+          .shapeType('CIRCLE')
+          .width(size)
+          .height(size)
+          .fillColor('#bd9138')
+          .fillOpacity(1)
+          .strokeColor('#f4d88b')
+          .strokeOpacity(1)
+          .strokeWidth(5)
+          .position(position)
+          .layer('CHARACTER')
+          .metadata(metadata)
+          .build();
+      }
 
       await OBR.scene.items.addItems([token]);
-      notice = 'Token dorado de ' + characterName + ' creado en la escena (5 pies × 5 pies).';
+      notice = (portraitUrl && token.type === 'IMAGE' ? 'Token con retrato de ' : 'Token dorado de ') + characterName + ' creado en la escena (5 pies × 5 pies).';
     } catch (error) {
       notice = error instanceof Error ? error.message : 'No se pudo crear el token.';
     }
