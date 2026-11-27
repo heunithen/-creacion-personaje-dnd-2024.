@@ -58,3 +58,39 @@ export function expandEncounterForCombat(selection) {
 }
 
 export function withinBudget(spent, budget) { return Number.isFinite(spent) && Number.isFinite(budget) && spent >= 0 && budget >= 0 && spent <= budget; }
+
+export function encounterSignature(items) {
+  return items.map(item => item.monster.name + ':' + item.quantity).sort().join('|');
+}
+export function createRandomEncounter(available, budget, random = Math.random, targetCount = 3 + Math.floor(random() * 3), stopChance = 0.22) {
+  const items = [];
+  const steps = [];
+  let spent = 0;
+  let creatures = 0;
+  while (creatures < targetCount) {
+    const chosen = chooseMonsterForPurchase(available, budget - spent, targetCount - creatures, random);
+    if (!chosen) break;
+    const existing = items.find(item => item.monster.name === chosen.monster.name);
+    if (existing) existing.quantity += 1;
+    else items.push({monster:chosen.monster,quantity:1});
+    spent += chosen.xp;
+    creatures += 1;
+    steps.push({items:items.map(item=>({...item})),spent,creatures,target:targetCount});
+    if (creatures >= 3 && random() < stopChance) break;
+  }
+  if (creatures < 3) return {steps,encounter:null};
+  const normalized=items.map(item=>({...item})).sort((a,b)=>a.monster.name.localeCompare(b.monster.name,'es'));
+  return {
+    steps,
+    encounter:{
+      items:normalized,
+      spent,
+      creatures,
+      key:encounterSignature(normalized)
+    }
+  };
+}
+export function areDistinctEncounters(encounters) {
+  const keys=encounters.map(encounter=>encounter.key || encounterSignature(encounter.items));
+  return new Set(keys).size===keys.length;
+}
