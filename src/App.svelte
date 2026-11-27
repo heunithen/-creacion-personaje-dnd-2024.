@@ -6290,6 +6290,7 @@ async function exportCharacterSummary(target: RawSheet | null, playerLabel = '')
       const featureGroups=playerFeatureGroups(target);
       const traits=[...(featureGroups.traits||[]),...(featureGroups.feats||[])];
       const inventory=sectionStats(['EQUIPO','INVENTARIO']).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value);
+      const spellRows=sectionStats(['DETALLE DE CONJUROS','DETALLES DE CONJUROS','CONJUROS']).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value);
       const proficiencies=sectionStats(['COMPETENCIAS']).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value);
       const isBarbarian=/bárbaro|barbarian/i.test(className);
       const furyFeature=traits.find(f=>/furia|rage/i.test(String(f.name||'')));
