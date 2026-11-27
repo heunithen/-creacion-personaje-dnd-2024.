@@ -267,12 +267,13 @@ test('el retrato de la hoja se reserva para la cabecera y no aparece en el conte
   assert.match(styles, /nautical-sheet \.nautical-header \.portrait-frame/);
 });
 
-test('el Máster puede abrir y editar la misma ficha compartida del jugador', () => {
-  assert.match(app, /on:click=\{\(\) => openMasterCharacter\(entry\)\}>Visualizar hoja/);
+test('el Máster abre Ver ficha en la interfaz completa del jugador y edita el registro compartido', () => {
+  assert.match(app, /on:click=\{\(\) => openMasterCharacter\(entry\)\}>Ver ficha/);
+  assert.doesNotMatch(app, /<details class="gm-sheet-details">/);
   assert.match(app, /function openMasterCharacter\(entry: RoomEntry\)/);
   assert.match(app, /function closeMasterCharacter\(\)/);
   assert.match(app, /\{#if obrRole === 'GM' && !masterViewingEntry\}/);
-  assert.match(app, /on:click=\{closeMasterCharacter\}>Salir de hoja del jugador/);
+  assert.match(app, /masterViewingEntry\.playerName \|\| 'Jugador'[\s\S]*?Salir de hoja del jugador/);
   assert.match(app, /playerId = masterViewingEntry\?\.playerId \|\| supabasePlayerId/);
   assert.match(app, /playerNameValue = masterViewingEntry\?\.playerName \|\| supabasePlayerName/);
   assert.match(app, /if \(latest && !syncPending && !supabaseSaving && !editingMasterSheet\)/);
