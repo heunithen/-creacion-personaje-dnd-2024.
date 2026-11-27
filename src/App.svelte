@@ -6363,13 +6363,16 @@ import ITEMS from './items.json';
         text(page1,(raw.replace(/\s*[·|].*$/,'')||'—'),M+119,y,7,bold,accent,45);
       });
       panel(page1,215,285,348,198,'HABILIDADES');
+      const skillRowFill=rgb(0.975,0.975,0.975), skillDivider=rgb(0.78,0.78,0.78);
       skills.forEach((name,i)=>{
         const col=i<9?0:1,row=i%9,x=224+col*168,y=448-row*20;
+        if(row%2===1) page1.drawRectangle({x:x-3,y:y-5,width:163,height:15,color:skillRowFill});
         const raw=stat('HABILIDADES',name), proficient=/competente|pericia|proficient|expertise/i.test(raw);
         page1.drawCircle({x:x+3,y:y+2,size:3,borderColor:proficient?accent:line,borderWidth:0.8,color:proficient?accent:white});
         text(page1,name,x+11,y,6.3,proficient?bold:regular,ink,105);
         text(page1,raw.replace(/\s*[·|].*$/,'')||'—',x+119,y,6.5,bold,proficient?accent:muted,38);
       });
+      page1.drawLine({start:{x:389,y:291},end:{x:389,y:462},thickness:0.35,color:skillDivider});
       panel(page1,M,145,W-2*M,125,'ATAQUES');
       text(page1,'ARMA',M+9,252,6,bold,muted);
       text(page1,'BONO',M+205,252,6,bold,muted);
@@ -6405,14 +6408,27 @@ import ITEMS from './items.json';
         wrapped(page2,item[1]||' ',x,y-12,248,7,2);
       });
       panel(page2,M,430,W-2*M,215,'RASGOS Y DOTES');
-      let fy=612;
+      let fy=612, featureIndex=0;
       for(const feature of traits){
         const title=String(feature.name||'Rasgo');
         const desc=String(feature.description||'');
-        
+        const descWidth=W-2*M-32, descSize=6.5;
+        let previewLine='', previewCount=0;
+        for(const word of desc.split(/\s+/).filter(Boolean)){
+          const next=previewLine?previewLine+' '+word:word;
+          if(previewLine && regular.widthOfTextAtSize(next,descSize)>descWidth){
+            previewCount++; previewLine=word;
+            if(previewCount>=3) break;
+          } else previewLine=next;
+        }
+        if(previewLine && previewCount<3) previewCount++;
+        const rowHeight=12+Math.max(1,previewCount)*(descSize+2)+5;
+        const rowBottom=fy-rowHeight+3;
+        if(featureIndex%2===1) page2.drawRectangle({x:M+5,y:rowBottom,width:W-2*M-10,height:rowHeight,color:skillRowFill});
         text(page2,title+(feature.source?' · '+feature.source:''),M+10,fy,7.5,bold,accent,W-2*M-20);
         fy-=12;
-        fy=wrapped(page2,desc,M+16,fy,W-2*M-32,6.5,3)-5;
+        fy=wrapped(page2,desc,M+16,fy,descWidth,descSize,3)-5;
+        featureIndex++;
         if(fy<445) break;
       }
       panel(page2,M,225,260,185,'EQUIPO E INVENTARIO');
