@@ -3523,14 +3523,19 @@ import ITEMS from './items.json';
     return name.replace(/\s*\+\d+$/,'').trim();
   }
   function shopUpdateWeaponList(item:any,remove=false) {
-    if (!sheet || item.type!=='Arma') return;
+    if (!sheet) return;
+    // El inventario unificado entrega {name,item,quantity}; la tienda entrega directamente el objeto del catálogo.
+    const catalogItem=item?.item || item;
+    const itemName=String(item?.name || catalogItem?.name || '').trim();
+    if (catalogItem?.type!=='Arma' || !itemName) return;
     const names=splitChoiceList(getCharacterStat(sheet,'ATAQUES','Armas incluidas en el equipo'));
-    const hasMore=shopOwnedQuantity(item.name)>0;
-    const exists=names.some(value=>normalizeLevelText(value)===normalizeLevelText(item.name));
-    if (!remove && !exists) names.push(item.name);
+    const hasMore=shopOwnedQuantity(itemName)>0;
+    const exists=names.some(value=>normalizeLevelText(value)===normalizeLevelText(itemName));
+    if (!remove && !exists) names.push(itemName);
     if (remove && !hasMore) {
-      const index=names.findIndex(value=>normalizeLevelText(value)===normalizeLevelText(item.name));
-      if(index>=0) names.splice(index,1);
+      for(let index=names.length-1;index>=0;index--) {
+        if(normalizeLevelText(names[index])===normalizeLevelText(itemName)) names.splice(index,1);
+      }
     }
     setCharacterStat(sheet,'ATAQUES','Armas incluidas en el equipo',names.join(', '));
     refreshDerivedCharacterSheet(sheet);
@@ -6785,7 +6790,7 @@ import ITEMS from './items.json';
                 {:else if playerSheetTab === 'Tiendita'}
                   <section class="sheet-section player-shop-section">
                     <div class="shopkeeper-banner">
-                      <img src="/-creacion-personaje-dnd-2024./images/character-creation/portraits/vendedor.png" alt="Vendedor de la tienda" />
+                      <img src={new URL("images/character-creation/portraits/vendedor.png", document.baseURI).href} alt="Vendedor de la tienda" />
                       <div><h3>La Tiendita</h3><p>Compra equipo para tus aventuras o vende lo que ya no necesites. Los objetos mágicos siguen los valores de rareza de la Guía del Dungeon Master 2024.</p></div>
                     </div>
                     <div class="shop-balance">
