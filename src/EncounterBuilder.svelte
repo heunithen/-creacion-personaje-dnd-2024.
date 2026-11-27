@@ -70,6 +70,8 @@
   let budgetMessage = '';
   let generatedEncounters: GeneratedEncounter[] = [];
   let generationMessage = '';
+  let generationRunning = false;
+  let liveGeneration: { index: number; target: number; items: Selection[]; spent: number; creatures: number } | null = null;
 
   $: budgetPerCharacter = BUDGETS[groupLevel][difficulty];
   $: budget = budgetPerCharacter * partySize;
@@ -167,18 +169,23 @@
     }
     return warnings;
   }
-  function randomEncounter(): GeneratedEncounter | null {
-    const available = allMonsters.filter(item => item.xp > 0 && item.xp <= budget);
+  function pause(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  async function buildRandomEncounter(index: number, generationBudget: number): Promise<GeneratedEncounter | null> {
+    const available = allMonsters.filter(item => item.xp > 0 && item.xp <= generationBudget);
     if (!available.length) return null;
     const targetCount = 3 + Math.floor(Math.random() * 3);
     const items: Selection[] = [];
     let total = 0;
     let creatures = 0;
+    liveGeneration = { index, target: targetCount, items: [], spent: 0, creatures: 0 };
+    await pause(220);
     while (creatures < targetCount) {
-      const affordable = available.filter(item => item.xp <= budget - total);
+      const affordable = available.filter(item => item.xp <= generationBudget - total);
       if (!affordable.length) break;
       const remainingSlots = targetCount - creatures;
-      const candidates = affordable.filter(item => item.xp <= Math.max(1, (budget - total) / Math.max(1, remainingSlots - 0.35)));
+      const candidates = affordable.filter(item => item.xp <= Math.max(1, (generationBudget - total) / Math.max(1, remainingSlots - 0.35)));
       const pool = candidates.length ? candidates : affordable;
       const chosen = pool[Math.floor(Math.random() * pool.length)];
       const existing = items.find(entry => entry.monster.name === chosen.monster.name);
@@ -186,6 +193,14 @@
       else items.push({ monster: chosen.monster, quantity: 1 });
       total += chosen.xp;
       creatures += 1;
+      liveGeneration = {
+        index,
+        target: targetCount,
+        items: items.map(item => ({...item})),
+        spent: total,
+        creatures
+      };
+      await pause(420);
       if (creatures >= 3 && Math.random() < 0.22) break;
     }
     if (creatures < 3) return null;
@@ -197,20 +212,38 @@
       key: normalized.map(item => item.monster.name + ':' + item.quantity).join('|')
     };
   }
-  function generateThreeEncounters() {
+  async function generateThreeEncounters() {
+    if (generationRunning) return;
+    generationRunning = true;
+    generatedEncounters = [];
+    liveGeneration = null;
+    generationMessage = 'Preparando la compra aleatoria...';
+    const generationBudget = budget;
     const results: GeneratedEncounter[] = [];
     const seen = new Set<string>();
-    for (let attempt = 0; attempt < 300 && results.length < 3; attempt += 1) {
-      const encounter = randomEncounter();
-      if (encounter && !seen.has(encounter.key)) {
-        seen.add(encounter.key);
-        results.push(encounter);
+    let attempts = 0;
+    try {
+      while (results.length < 3 && attempts < 45) {
+        attempts += 1;
+        const encounter = await buildRandomEncounter(results.length + 1, generationBudget);
+        if (encounter && !seen.has(encounter.key)) {
+          seen.add(encounter.key);
+          results = [...results, encounter];
+          generatedEncounters = [...results];
+          liveGeneration = null;
+          generationMessage = 'Encuentro ' + results.length + ' de 3 completado.';
+          await pause(550);
+        } else {
+          liveGeneration = null;
+        }
       }
+      generationMessage = results.length
+        ? 'Se generaron ' + results.length + ' alternativas aleatorias dentro del presupuesto.'
+        : 'No se encontraron combinaciones válidas con al menos 3 monstruos para este presupuesto.';
+    } finally {
+      liveGeneration = null;
+      generationRunning = false;
     }
-    generatedEncounters = results;
-    generationMessage = results.length
-      ? 'Se generaron ' + results.length + ' alternativas aleatorias dentro del presupuesto.'
-      : 'No se encontraron combinaciones válidas con al menos 3 monstruos para este presupuesto.';
   }
   function useGeneratedEncounter(encounter: GeneratedEncounter) {
     const cost = encounter.items.reduce((sum, item) => sum + monsterXp(item.monster) * item.quantity, 0);
@@ -240,17 +273,17 @@
   <section class="encounter-config">
     <div class="config-field">
       <label for="enc-level">Nivel del grupo</label>
-      <select id="enc-level" value={groupLevel} on:change={(event)=>changeGroupLevel(Number(event.currentTarget.value))}>
+      <select id="enc-level" disabled={generationRunning} value={groupLevel} on:change={(event)=>changeGroupLevel(Number(event.currentTarget.value))}>
         {#each Array.from({length:20},(_,i)=>i+1) as level}<option value={level}>Nivel {level}</option>{/each}
       </select>
     </div>
     <div class="config-field">
       <label for="enc-party">Cantidad de personajes</label>
-      <input id="enc-party" type="number" min="1" step="1" value={partySize} on:change={(event)=>changePartySize(Number(event.currentTarget.value))} />
+      <input id="enc-party" type="number" min="1" step="1" disabled={generationRunning} value={partySize} on:change={(event)=>changePartySize(Number(event.currentTarget.value))} />
     </div>
     <div class="config-field">
       <label for="enc-difficulty">Dificultad objetivo</label>
-      <select id="enc-difficulty" value={difficulty} on:change={(event)=>changeDifficultyFromInput(event.currentTarget.value)}>
+      <select id="enc-difficulty" disabled={generationRunning} value={difficulty} on:change={(event)=>changeDifficultyFromInput(event.currentTarget.value)}>
         <option value="easy">Fácil</option><option value="normal">Normal</option><option value="hard">Difícil</option>
       </select>
       <small>{difficulty==='easy'?'Hipótesis experimental: 85 %':difficulty==='normal'?'Hipótesis experimental: 70 %':'Hipótesis experimental: 50 %'} de probabilidad de victoria.</small>
@@ -284,7 +317,7 @@
       <div><span class="eyebrow">COMPRA AUTOMÁTICA</span><h3>Generación aleatoria</h3></div>
       <p>Genera tres alternativas de 3 a 5 monstruos. La selección es aleatoria, permite repeticiones y nunca supera el presupuesto disponible.</p>
     </div>
-    <button type="button" class="generate-random" on:click={generateThreeEncounters}>Generar 3 encuentros aleatorios</button>
+    <button type="button" class="generate-random" disabled={generationRunning} on:click={generateThreeEncounters}>{generationRunning ? "Comprando monstruos..." : "Generar 3 encuentros aleatorios"}</button>
     {#if generationMessage}<p class="generation-message" role="status">{generationMessage}</p>{/if}
     {#if generatedEncounters.length}
       <div class="generated-grid">
@@ -402,6 +435,10 @@
   .generate-random{justify-self:start}
   .generation-message{margin:0;color:var(--ink-soft,#b5bec3);font-size:.72rem}
   .generated-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem}
+  .live-generated{border-color:var(--gold,#5fe6e0)}
+  .live-progress{height:6px;overflow:hidden;border-radius:6px;background:#0d1b21}
+  .live-progress span{display:block;height:100%;background:var(--gold,#5fe6e0);transition:width .2s}
+  .generate-random:disabled{opacity:.55;cursor:wait}
   .generated-card{display:grid;align-content:start;gap:.55rem;padding:.7rem;border:1px solid var(--rule,#3a4a52);border-radius:5px;background:#13262e;min-width:0}
   .generated-card-heading,.generated-total{display:flex;justify-content:space-between;align-items:center;gap:.4rem}
   .generated-card-heading strong{color:var(--gold,#5fe6e0);font:700 .9rem Georgia,serif}
