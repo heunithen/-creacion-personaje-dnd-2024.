@@ -10978,4 +10978,92 @@ import ITEMS from './items.json';
     :global(.actions){gap:.4rem}
   }
 
+
+  /* 1. Lenguaje visual común para superficies generales; conserva los marcos temáticos */
+  :global(:root){
+    --surface-base:#091920;
+    --surface-panel:#10242d;
+    --surface-raised:#142c35;
+    --surface-border:rgba(111,180,183,.28);
+    --surface-accent:#63d8d0;
+    --surface-muted:#91a9af;
+    --surface-text:#e8f0f1;
+  }
+  :global(.panel),
+  :global(.builder-panel),
+  :global(.import-character-panel),
+  :global(.character-card),
+  :global(.monster-card),
+  :global(.trait-editor),
+  :global(.import-box),
+  :global(.rolls-panel),
+  :global(.roll-history),
+  :global(.ddb-content-panel),
+  :global(.sheet-section),
+  :global(.nautical-columns .sheet-section){
+    background:linear-gradient(145deg,var(--surface-panel),#0d1e26)!important;
+    border:1px solid var(--surface-border)!important;
+    border-radius:10px!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.025)!important;
+    color:var(--surface-text)!important;
+  }
+  :global(.section-heading),
+  :global(.sheet-section-title),
+  :global(.nautical-columns .sheet-section-title){
+    border-color:rgba(99,216,208,.34)!important;
+  }
+  :global(.section-heading h2),
+  :global(.panel h2),
+  :global(.builder-panel h3),
+  :global(.builder-panel h4),
+  :global(.character-card h3),
+  :global(.monster-card h3),
+  :global(.sheet-section-title h3),
+  :global(.nautical-columns .sheet-section-title h3){
+    color:#f2f6f5!important;
+    font-family:Georgia,'Times New Roman',serif!important;
+  }
+  :global(.builder-info),
+  :global(.builder-choice-wrapper),
+  :global(.builder-choice-field),
+  :global(.builder-name-block),
+  :global(.builder-checkbox),
+  :global(.builder-class-card),
+  :global(.builder-skill-card),
+  :global(.builder-option-card),
+  :global(.spell-card),
+  :global(.player-spell-card),
+  :global(.player-feature-card),
+  :global(.weapon-attack-card),
+  :global(.trait-view),
+  :global(.roll-entry){
+    background:#102832!important;
+    border-color:rgba(99,216,208,.25)!important;
+    color:var(--surface-text)!important;
+    box-shadow:none!important;
+  }
+  :global(.builder-info),
+  :global(.builder-choice-wrapper),
+  :global(.builder-choice-field),
+  :global(.builder-name-block){
+    border-left:3px solid rgba(99,216,208,.72)!important;
+  }
+  :global(.builder-class-card.selected),
+  :global(.builder-checkbox:has(input:checked)){
+    border-color:#63d8d0!important;
+    background:#15333b!important;
+    box-shadow:inset 0 0 0 1px rgba(99,216,208,.12)!important;
+  }
+  :global(.builder-class-card:hover),
+  :global(.builder-checkbox:hover),
+  :global(.builder-option-card:hover){
+    border-color:rgba(99,216,208,.7)!important;
+  }
+  :global(.builder-class-flyer),
+  :global(.builder-background-flyer),
+  :global(.builder-species-flyer){
+    /* No se altera su marco: verde, dorado y azul respectivamente. */
+    border-radius:0!important;
+  }
+
 </style>
