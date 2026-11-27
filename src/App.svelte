@@ -4349,7 +4349,14 @@ import ITEMS from './items.json';
     return readJsonRecord(target, 'GESTIÓN DE FICHA', 'Estados de conjuros');
   }
   function slotUsage(target: RawSheet) {
-    return readJsonRecord(target, 'GESTIÓN DE FICHA', 'Espacios gastados');
+    const stored = readJsonRecord(target, 'GESTIÓN DE FICHA', 'Espacios gastados');
+    const result: Record<string, number[]> = {};
+    for (const [level, value] of Object.entries(stored)) {
+      result[level] = Array.isArray(value)
+        ? value.map(Number).filter(index => Number.isInteger(index) && index >= 0)
+        : Array.from({ length: Math.max(0, Math.min(9, Number(value) || 0)) }, (_, index) => index);
+    }
+    return result;
   }
   function spellIsKnown(target: RawSheet | null, spell: any) {
     if (!target) return false;
@@ -4496,19 +4503,14 @@ import ITEMS from './items.json';
       : 'Conjuro reemplazado. El cambio de tu lista de brujo quedó registrado.';
   }
   const SPELL_SLOT_TRACKER_COUNTS: Record<string, number> = { '1': 4, '2': 2, '3': 3, '4': 3, '5': 3, '6': 2, '7': 2, '8': 1, '9': 1 };
-  function changeSlotUsage(level: string, delta: number) {
-    if (!sheet) return;
-    const usage = slotUsage(sheet);
-    const maximum = SPELL_SLOT_TRACKER_COUNTS[level] || 0;
-    usage[level] = Math.max(0, Math.min(maximum, Number(usage[level] || 0) + delta));
-    setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Espacios gastados', JSON.stringify(usage));
-    saveSheetMutation();
-  }
   function setSpellSlotCheckbox(level: string, index: number, checked: boolean) {
     if (!sheet) return;
-    const current = Number(slotUsage(sheet)[level] || 0);
-    const desired = checked ? index + 1 : index;
-    if (desired !== current) changeSlotUsage(level, desired - current);
+    const usage = slotUsage(sheet);
+    const marked = new Set(usage[level] || []);
+    if (checked) marked.add(index); else marked.delete(index);
+    usage[level] = [...marked].sort((a, b) => a - b);
+    setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Espacios gastados', JSON.stringify(usage));
+    saveSheetMutation();
   }
   function resetSpellUseStates() {
     if (!sheet) return;
@@ -7228,7 +7230,7 @@ remove exit from sheet header              {#if demoPreview}
                               <div class="spell-slot-boxes">
                                 {#each Array.from({length: maximum}) as _,index}
                                   <label title={'Espacio de nivel ' + level + ' · ' + (index + 1)}>
-                                    <input type="checkbox" checked={index < Number(sheetSpellUsage[level] || 0)} on:change={(event) => setSpellSlotCheckbox(level,index,(event.currentTarget as HTMLInputElement).checked)} aria-label={'Marcar espacio de conjuro nivel ' + level + ', casilla ' + (index + 1)} />
+                                    <input type="checkbox" checked={(sheetSpellUsage[level] || []).includes(index)} on:change={(event) => setSpellSlotCheckbox(level,index,(event.currentTarget as HTMLInputElement).checked)} aria-label={'Marcar espacio de conjuro nivel ' + level + ', casilla ' + (index + 1)} />
                                   </label>
                                 {/each}
                               </div>
