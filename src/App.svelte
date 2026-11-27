@@ -6088,7 +6088,8 @@ import ITEMS from './items.json';
   }
 
 
-  function exportCharacterSummary(target: RawSheet, playerLabel = '') {
+  function exportCharacterSummary(target: RawSheet | null, playerLabel = '') {
+    if (!target) return;
     const escapeHtml = (value: unknown) => String(value ?? '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -7102,7 +7103,7 @@ import ITEMS from './items.json';
 remove exit from sheet header              {#if demoPreview}
                 <button type="button" on:click={closeDemoPreview}>Salir de vista previa</button>
               {:else}
-                <button type="button" on:click={() => exportCharacterSummary(sheet!, playerName)}>Exportar PDF</button><button type="button" on:click={exportSheet}>Exportar JSON</button>
+                <button type="button" on:click={() => exportCharacterSummary(sheet, playerName)}>Exportar PDF</button><button type="button" on:click={exportSheet}>Exportar JSON</button>
               {/if}
             </div>
           </header>
