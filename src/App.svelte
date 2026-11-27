@@ -7189,7 +7189,7 @@ import ITEMS from './items.json';
                   </aside>
                   <div class="builder-species-information">
                     <section class="builder-species-info-section">
-                      <span>LINaje O VARIANTE</span><h5>¿Qué opciones tienes?</h5>
+                      <span>LIN AJE O VARIANTE</span><h5>¿Qué opciones tienes?</h5>
                       <strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].join(' · ') : 'No requiere elección de linaje'}</strong>
                     </section>
                     <section class="builder-species-info-section">
@@ -8889,7 +8889,7 @@ import ITEMS from './items.json';
   .builder-species-learn{border-color:#397da9}
   .builder-species-learn>span,.builder-species-info-section>span{color:#8fc4e2}
   .builder-species-info-section{border-bottom-color:rgba(57,125,169,.3)}
-  .builder-species-lore{margin-top:1rem;padding:.8rem 0 0;border-top:1px solid rgba(169,67,67,.3)}
+  .builder-species-lore{margin-top:1rem;padding:.8rem 0 0;border-top:1px solid rgba(57,125,169,.42)}
   .builder-species-lore h5{margin:0 0 .35rem;color:#8fc4e2;font:700 .62rem/1.3 system-ui,sans-serif;letter-spacing:.1em}
   .builder-species-lore p{margin:0;color:#c4d0d3;font:400 .74rem/1.5 system-ui,sans-serif}
   .builder-background-counter{align-self:center;color:#d7b65e;font:600 .58rem system-ui,sans-serif}
@@ -10821,4 +10821,27 @@ import ITEMS from './items.json';
   @media(max-width:620px){.layer-item{flex-wrap:wrap}.layer-item-info{flex-basis:55%}.layer-item-actions{width:100%;justify-content:flex-end}.layers-toolbar{align-items:stretch}.layers-toolbar label{min-width:0;flex:1}.spell-slot-tracker{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:380px){.spell-slot-tracker{grid-template-columns:1fr}}
 
+
+  /* Ajustes finales exclusivos de la tarjeta de especies */
+  .builder-species-flyer{width:100%;max-width:920px;min-width:0;min-height:650px;padding:2rem 2.15rem;gap:.75rem}
+  .builder-species-content{width:100%;grid-template-columns:minmax(0,.9fr) minmax(0,1.45fr);gap:1.6rem;align-items:stretch}
+  .builder-species-learn{box-sizing:border-box;min-width:0;height:100%;padding:1rem 1.15rem;overflow-wrap:anywhere}
+  .builder-species-description,.builder-species-lore p{font-size:.8rem;line-height:1.6}
+  .builder-species-lore{border-top-color:rgba(57,125,169,.42)}
+  .builder-species-information{min-width:0;padding-top:.15rem}
+  .builder-species-info-section{padding:.35rem 0 .9rem;margin-bottom:.8rem}
+  .builder-species-info-section>span{font-size:.58rem;letter-spacing:.11em}
+  .builder-species-info-section h5{font-size:1.12rem;line-height:1.25}
+  .builder-species-info-section strong{font-size:.88rem;line-height:1.6}
+  .builder-species-title-row .builder-class-arrow{border-color:#397da9;background:rgba(9,20,24,.62);color:#9bcce7}
+  .builder-species-title-row .builder-class-arrow:hover{border-color:#8fc4e2;color:#fff}
+  .builder-species-flyer>.builder-background-counter{color:#8fc4e2}
+  @media(max-width:620px){
+    .builder-species-flyer{min-height:0;padding:1.35rem 1rem}
+    .builder-species-content{grid-template-columns:minmax(0,1fr);gap:1rem}
+    .builder-species-learn{height:auto;padding:.9rem}
+    .builder-species-description,.builder-species-lore p{font-size:.78rem}
+    .builder-species-info-section h5{font-size:1rem}
+    .builder-species-info-section strong{font-size:.8rem}
+  }
 </style>
