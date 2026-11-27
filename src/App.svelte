@@ -5414,8 +5414,9 @@ import ITEMS from './items.json';
   }
 
   async function closeMasterCharacter() {
-    if (syncPending) await flushAutoSync();
     if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
+    while (supabaseSaving) await new Promise(resolve => setTimeout(resolve, 50));
+    if (syncPending) await flushAutoSync();
     masterViewingEntry = null;
     sheet = null;
     playerCreating = false;
