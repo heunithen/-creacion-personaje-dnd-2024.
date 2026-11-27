@@ -6090,9 +6090,6 @@ import ITEMS from './items.json';
 
   function exportCharacterSummary(target: RawSheet | null, playerLabel = '') {
     if (!target) return;
-    const escapeHtml = (value: unknown) => String(value ?? '')
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     const cleanValue = (value: unknown) => {
       const text = displayValue(value).trim();
       if (!text || text === '—' || text === '-') return '';
@@ -6102,7 +6099,7 @@ import ITEMS from './items.json';
       return text;
     };
     const excludedSection = /^(combate|ataques?|armas?|valores|configuracion|configuraci[oó]n|metadata|datos internos)$/i;
-    const excludedField = /^(id|skills|formula de clase de armadura|ataque cd ?\d+)$/i;
+    const excludedField = /^(id|skills|formula de clase de armadura|ataque cd ?\\d+)$/i;
     const sections = sectionPairs(target.sections || []).flatMap(pair => {
       const title = String(pair.heading.name || '').trim();
       if (!title || excludedSection.test(title)) return [];
@@ -6120,34 +6117,56 @@ import ITEMS from './items.json';
       sheetValueByNames(target, ['Trasfondo','Antecedente']),
       sheetValueByNames(target, ['Nombre del jugador','Jugador']) || playerLabel
     ].filter(Boolean);
-    const sectionsHtml = sections.map(section =>
-      '<section class="summary-section"><h2>' + escapeHtml(section.title) + '</h2>' +
-      section.fields.map(field => '<p><strong>' + escapeHtml(field.label) + ':</strong> ' +
-        escapeHtml(field.value).replaceAll(String.fromCharCode(10), '<br>') + '</p>').join('') + '</section>'
-    ).join('');
     const popup = window.open('', '_blank');
     if (!popup) {
       notice = 'El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para exportar el PDF.';
       return;
     }
-    popup.document.open();
-    popup.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>' +
-      escapeHtml(target.name || 'Personaje') + '</title><style>' +
-      '@page{size:A4;margin:18mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#20242a;font-size:10.5pt;line-height:1.48;margin:0}' +
-      'header{border-bottom:2px solid #343b46;padding-bottom:12px;margin-bottom:22px}h1{font-size:25pt;line-height:1.15;margin:0 0 8px;font-weight:700}' +
-      '.meta{font-size:10pt;color:#59616c;margin:0}h2{font-size:13pt;margin:20px 0 8px;padding-bottom:4px;border-bottom:1px solid #cbd0d6;color:#26313d}' +
-      '.summary-section{margin:0 0 15px;break-inside:auto}.summary-section p{margin:5px 0;white-space:normal;overflow-wrap:anywhere;break-inside:avoid}' +
-      'strong{font-weight:700;color:#303944}@media print{a{color:inherit;text-decoration:none}}' +
-      '</style></head><body><header><h1>' + escapeHtml(target.name || 'Personaje') +
-      '</h1><p class="meta">' + escapeHtml(identity.join(' · ')) + '</p></header>' +
-      (sectionsHtml || '<p>Esta ficha todavía no contiene información para resumir.</p>') +
-      '</body></html>');
-    popup.document.close();
+    const doc = popup.document;
+    doc.open();
+    doc.write('<!doctype html><html lang="es"><head><meta charset="utf-8"></head><body></body></html>');
+    doc.close();
+    doc.title = target.name || 'Personaje';
+    const style = doc.createElement('style');
+    style.textContent = '@page{size:A4;margin:18mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#20242a;font-size:10.5pt;line-height:1.48;margin:0}header{border-bottom:2px solid #343b46;padding-bottom:12px;margin-bottom:22px}h1{font-size:25pt;line-height:1.15;margin:0 0 8px;font-weight:700}.meta{font-size:10pt;color:#59616c;margin:0}h2{font-size:13pt;margin:20px 0 8px;padding-bottom:4px;border-bottom:1px solid #cbd0d6;color:#26313d}.summary-section{margin:0 0 15px;break-inside:auto}.summary-section p{margin:5px 0;overflow-wrap:anywhere;break-inside:avoid}strong{font-weight:700;color:#303944}';
+    doc.head.appendChild(style);
+    const header = doc.createElement('header');
+    const heading = doc.createElement('h1');
+    heading.textContent = target.name || 'Personaje';
+    header.appendChild(heading);
+    const meta = doc.createElement('p');
+    meta.className = 'meta';
+    meta.textContent = identity.join(' · ');
+    header.appendChild(meta);
+    doc.body.appendChild(header);
+    sections.forEach(section => {
+      const sectionElement = doc.createElement('section');
+      sectionElement.className = 'summary-section';
+      const title = doc.createElement('h2');
+      title.textContent = section.title;
+      sectionElement.appendChild(title);
+      section.fields.forEach(field => {
+        const paragraph = doc.createElement('p');
+        const label = doc.createElement('strong');
+        label.textContent = field.label + ': ';
+        paragraph.appendChild(label);
+        String(field.value).split(String.fromCharCode(10)).forEach((line, index) => {
+          if (index) paragraph.appendChild(doc.createElement('br'));
+          paragraph.appendChild(doc.createTextNode(line));
+        });
+        sectionElement.appendChild(paragraph);
+      });
+      doc.body.appendChild(sectionElement);
+    });
+    if (!sections.length) {
+      const empty = doc.createElement('p');
+      empty.textContent = 'Esta ficha todavía no contiene información para resumir.';
+      doc.body.appendChild(empty);
+    }
     window.setTimeout(() => {
       try { popup.focus(); popup.print(); } catch (error) { console.error('No se pudo abrir la impresión del resumen', error); }
     }, 300);
     notice = 'Resumen preparado. En el diálogo de impresión, selecciona «Guardar como PDF».';
-
   }
 
   async function exportSheet() {
