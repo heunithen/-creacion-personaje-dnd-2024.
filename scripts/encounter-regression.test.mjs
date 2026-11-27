@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ENCOUNTER_BUDGETS, XP_BY_CR, crValue, numericCr, monsterXp, encounterBudget, canPurchase, withinBudget, chooseMonsterForPurchase, expandEncounterForCombat } from '../src/encounterRules.mjs';
+import { ENCOUNTER_BUDGETS, XP_BY_CR, crValue, numericCr, monsterXp, encounterBudget, canPurchase, withinBudget, chooseMonsterForPurchase, createRandomEncounter, encounterSignature, areDistinctEncounters, expandEncounterForCombat } from '../src/encounterRules.mjs';
 
 test('la tabla de presupuesto contiene los 20 niveles y tres dificultades', () => {
   assert.equal(Object.keys(ENCOUNTER_BUDGETS).length, 20);
@@ -92,4 +92,59 @@ test('transferencia expande cantidades a una criatura por entrada de combate', (
   assert.equal(expanded.length,4);
   assert.throws(()=>expandEncounterForCombat([{monster:a,quantity:0}]),RangeError);
   assert.throws(()=>expandEncounterForCombat([{monster:a,quantity:1.5}]),RangeError);
+});
+
+test('cada encuentro generado contiene entre 3 y 5 criaturas y nunca supera el presupuesto', () => {
+  const available=[
+    {monster:{name:'Goblin'},xp:50},
+    {monster:{name:'Kobold'},xp:50}
+  ];
+  for (const target of [3,4,5]) {
+    const generated=createRandomEncounter(available,250,()=>0.5,target,0);
+    assert.ok(generated.encounter);
+    assert.ok(generated.encounter.creatures>=3 && generated.encounter.creatures<=5);
+    assert.ok(generated.encounter.spent<=250);
+    assert.equal(generated.encounter.creatures,target);
+    assert.equal(generated.steps.length,target);
+  }
+});
+
+test('el generador agrupa copias del mismo monstruo sin perder el total de criaturas', () => {
+  const available=[{monster:{name:'Goblin'},xp:25}];
+  const generated=createRandomEncounter(available,125,()=>0.5,5,0);
+  assert.ok(generated.encounter);
+  assert.deepEqual(generated.encounter.items,[{monster:{name:'Goblin'},quantity:5}]);
+  assert.equal(generated.encounter.creatures,5);
+  assert.equal(generated.encounter.spent,125);
+});
+
+test('el generador devuelve pasos progresivos con gasto y saldo acumulado coherentes', () => {
+  const available=[{monster:{name:'Goblin'},xp:25},{monster:{name:'Kobold'},xp:50}];
+  const generated=createRandomEncounter(available,200,()=>0.5,4,0);
+  assert.equal(generated.steps.length,4);
+  let previous=0;
+  for (const step of generated.steps) {
+    assert.ok(step.spent>previous);
+    assert.ok(step.spent<=200);
+    assert.equal(step.creatures,generated.steps.indexOf(step)+1);
+    previous=step.spent;
+  }
+  assert.equal(previous,generated.encounter.spent);
+});
+
+test('el generador rechaza presupuestos que no permiten reunir al menos tres monstruos', () => {
+  const available=[{monster:{name:'Ogro'},xp:100}];
+  const generated=createRandomEncounter(available,200,()=>0.5,4,0);
+  assert.equal(generated.encounter,null);
+  assert.equal(generated.steps.length,2);
+});
+
+test('la firma distingue composiciones diferentes y reconoce duplicados exactos', () => {
+  const a={items:[{monster:{name:'Goblin'},quantity:2},{monster:{name:'Kobold'},quantity:1}]};
+  const b={items:[{monster:{name:'Kobold'},quantity:1},{monster:{name:'Goblin'},quantity:2}]};
+  const c={items:[{monster:{name:'Goblin'},quantity:1},{monster:{name:'Kobold'},quantity:2}]};
+  assert.equal(encounterSignature(a.items),encounterSignature(b.items));
+  assert.notEqual(encounterSignature(a.items),encounterSignature(c.items));
+  assert.equal(areDistinctEncounters([{...a,key:encounterSignature(a.items)},{...c,key:encounterSignature(c.items)}]),true);
+  assert.equal(areDistinctEncounters([{...a,key:encounterSignature(a.items)},{...b,key:encounterSignature(b.items)}]),false);
 });
