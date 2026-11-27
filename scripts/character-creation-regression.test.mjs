@@ -266,3 +266,15 @@ test('el retrato de la hoja se reserva para la cabecera y no aparece en el conte
   assert.match(styles, /nautical-sheet \.portrait-frame/);
   assert.match(styles, /nautical-sheet \.nautical-header \.portrait-frame/);
 });
+
+test('el Máster puede abrir y editar la misma ficha compartida del jugador', () => {
+  assert.match(app, /on:click=\{\(\) => openMasterCharacter\(entry\)\}>Visualizar hoja/);
+  assert.match(app, /function openMasterCharacter\(entry: RoomEntry\)/);
+  assert.match(app, /function closeMasterCharacter\(\)/);
+  assert.match(app, /if \(!masterViewingEntry\)/);
+  assert.match(app, /on:click=\{closeMasterCharacter\}>Salir de hoja del jugador/);
+  assert.match(app, /playerId = masterViewingEntry\?\.playerId \|\| supabasePlayerId/);
+  assert.match(app, /playerNameValue = masterViewingEntry\?\.playerName \|\| supabasePlayerName/);
+  assert.match(app, /if \(latest && !syncPending && !supabaseSaving\)/);
+  assert.match(app, /d\?\.type === 'character-updated' && obrRole === 'PLAYER' && d\.playerId === supabasePlayerId/);
+});
