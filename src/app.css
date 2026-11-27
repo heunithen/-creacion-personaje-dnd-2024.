@@ -179,13 +179,7 @@ button.active,.player-tabs button.active,.primary{background:#5fe6e0!important;c
 @media(max-width:520px){.inventory-slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.inventory-add-form{grid-template-columns:1fr}.inventory-add-form label{grid-column:1/-1}.spell-learn-panel>button{align-items:flex-start;flex-direction:column}}
 
 /* El retrato del personaje se muestra únicamente en la cabecera de la hoja. */
-:global(.nautical-sheet .sheet-portrait-footer),
-:global(.nautical-sheet .player-portrait-footer),
-:global(.nautical-sheet .portrait-footer),
-:global(.nautical-sheet .character-portrait-footer),
-:global(.nautical-sheet .sheet-content .portrait-frame),
-:global(.nautical-sheet .nautical-columns .portrait-frame),
-:global(.nautical-sheet .nautical-tabs-content .portrait-frame) {
+:global(.nautical-sheet .portrait-frame) {
   display:none!important;
 }
 :global(.nautical-sheet .nautical-header .portrait-frame) {
