@@ -129,7 +129,9 @@ test('el generador devuelve pasos progresivos con gasto y saldo acumulado cohere
     assert.equal(step.creatures,generated.steps.indexOf(step)+1);
     previous=step.spent;
   }
-  assert.equal(previous,generated.encounter?.spent);
+  assert.ok(generated.encounter, 'Expected the generated encounter to exist');
+  const encounter = generated.encounter;
+  assert.equal(previous, encounter.spent);
 });
 
 test('el generador rechaza presupuestos que no permiten reunir al menos tres monstruos', () => {
