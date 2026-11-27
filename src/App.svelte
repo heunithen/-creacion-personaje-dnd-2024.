@@ -13,12 +13,11 @@
   type RawSection = { id?: number; name?: string; stats?: RawStat[]; [key: string]: unknown };
   type RawSheet = { id?: number; name?: string; notes?: string; sections?: RawSection[]; [key: string]: unknown };
   type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet; saved?: boolean; live?: boolean };
-  const MASTER_SHEETS_KEY = 'forja-master-saved-characters';
 
   let sheet: RawSheet | null = null;
   let roomSheets: RoomEntry[] = [];
   let liveRoomSheets: RoomEntry[] = [];
-  let savedMasterSheets: RoomEntry[] = [];
+  let characterStorageReady = false;
   let importOpen = false;
   let notice = '';
   let obrReady = false;
@@ -1255,7 +1254,6 @@
   function applySheetPortrait(path:string) {
     if (!sheet) return;
     sheet = {...sheet, portrait:path};
-    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
     scheduleAutoSync();
   }
   function chooseBundledPortrait(path:string){
@@ -2452,7 +2450,7 @@
     refreshDerivedCharacterSheet(result);
     return result;
   }
-  function finishBuilder() {
+  async function finishBuilder() {
     builderStepError = '';
     try {
       const missing = builderMissingFields();
@@ -2466,17 +2464,16 @@
       if (!generated || !Array.isArray(generated.sections) || !generated.sections.length) {
         throw new Error('La ficha se generó sin secciones. Revisa las elecciones y vuelve a intentarlo.');
       }
-      // El resumen es la última etapa: guardar directamente en el almacenamiento local del jugador.
+      // La ficha se abre solo después de confirmar su guardado en el registro compartido.
       const characterToSave = JSON.parse(JSON.stringify(generated)) as RawSheet;
-      localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave));
+      await saveCharacterToSupabase(characterToSave);
       builderPreview = null;
       sheet = characterToSave;
-      void saveCharacterToSupabase(characterToSave).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); });
       playerCreating = false;
       demoPreview = false;
       activeTab = 'Datos';
       builderStep = 0;
-      notice = 'Personaje guardado en este dispositivo.';
+      notice = 'Personaje creado y guardado en la base de datos.';
       keepBuilderAtTop();
     } catch (error) {
       console.error('Error al generar la ficha:', error);
@@ -2489,13 +2486,12 @@
     builderSaving = true;
     try {
       const characterToSave = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
-      localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave));
-      sheet = characterToSave;
       await saveCharacterToSupabase(characterToSave);
+      sheet = characterToSave;
       builderPreview = null;
       playerCreating = false;
       activeTab = 'Datos';
-      notice = 'Personaje guardado localmente en este dispositivo.';
+      notice = 'Personaje guardado en la base de datos.';
     } catch (error) {
       notice = 'No se pudo guardar el personaje: ' + (error instanceof Error ? error.message : String(error));
     } finally {
@@ -2507,7 +2503,6 @@
       const confirmed = window.confirm('¿Crear un personaje nuevo? La ficha actual se eliminará permanentemente de este dispositivo y no se podrá recuperar. Exporta una copia antes si deseas conservarla.');
       if (!confirmed) return;
       sheet = null;
-      localStorage.removeItem('forja-raw-character');
     }
     if (demoPreview) sheet = null;
     demoPreview = false;
@@ -3027,7 +3022,6 @@ import ITEMS from './items.json';
 
   function scheduleAutoSync() {
     if (!sheet) return;
-    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
     syncPending = true;
     if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
     supabaseSaveTimer = setTimeout(() => { void flushAutoSync(); }, 450);
@@ -3035,7 +3029,6 @@ import ITEMS from './items.json';
 
   async function flushAutoSync() {
     if (!sheet) return;
-    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
     if (supabaseSaving) {
       if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
       supabaseSaveTimer = setTimeout(() => { void flushAutoSync(); }, 500);
@@ -3074,7 +3067,6 @@ import ITEMS from './items.json';
       }
       sheet = imported;
       playerCreating = false;
-      localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
       await saveCharacterToSupabase(sheet);
       importOpen = false;
       notice = 'Ficha importada y guardada localmente en este dispositivo.';
@@ -3393,7 +3385,6 @@ import ITEMS from './items.json';
 
   function saveSheetMutation() {
     if (!sheet) return;
-    localStorage.setItem('forja-raw-character', JSON.stringify(sheet));
     void saveCharacterToSupabase(sheet).catch(error => {
       syncStatus = 'Error al guardar en Supabase: ' + (error instanceof Error ? error.message : String(error));
     });
@@ -4977,7 +4968,6 @@ import ITEMS from './items.json';
     refreshDerivedCharacterSheet(updated);
     if (levelUpIsPlayer) {
       sheet = updated;
-      localStorage.setItem('forja-raw-character', JSON.stringify(updated));
       syncPending = false;
       void saveCharacterToSupabase(updated).catch(error => { syncStatus = 'Error al guardar en Supabase: ' + String(error); });
       syncStatus = 'Ficha guardada en Supabase.';
@@ -5401,44 +5391,8 @@ import ITEMS from './items.json';
     return String(value).trim() === '' ? '' : String(value);
   }
 
-  function persistMasterCopies() {
-    try { localStorage.setItem(MASTER_SHEETS_KEY, JSON.stringify(savedMasterSheets)); }
-    catch { notice = 'No se pudieron guardar las copias locales del director. El almacenamiento puede estar lleno.'; }
-  }
-
   function refreshRoomSheetList() {
-    const merged = new Map<string, RoomEntry>();
-    savedMasterSheets.forEach(entry => merged.set(entry.playerId, { ...entry, saved: true, live: false }));
-    liveRoomSheets.forEach(entry => {
-      const saved = savedMasterSheets.find(copy => copy.playerId === entry.playerId);
-      if (saved) merged.set(entry.playerId, { ...entry, saved: true, live: true });
-      else merged.set(entry.playerId, { ...entry, saved: false, live: true });
-    });
-    roomSheets = [...merged.values()].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
-  }
-
-  function loadMasterCopies() {
-    try {
-      const raw = localStorage.getItem(MASTER_SHEETS_KEY);
-      const parsed = raw ? JSON.parse(raw) : [];
-      savedMasterSheets = Array.isArray(parsed) ? parsed.filter((entry: any) => entry?.playerId && entry?.sheet?.sections).map((entry: any) => ({ ...entry, saved: true, live: false })) : [];
-    } catch { savedMasterSheets = []; }
-    refreshRoomSheetList();
-  }
-
-  function saveMasterCopy(entry: RoomEntry) {
-    const copy = { playerId: entry.playerId, playerName: entry.playerName, sheet: JSON.parse(JSON.stringify(entry.sheet)), saved: true, live: false } as RoomEntry;
-    savedMasterSheets = [...savedMasterSheets.filter(item => item.playerId !== entry.playerId), copy];
-    persistMasterCopies();
-    refreshRoomSheetList();
-    notice = 'Copia de «' + (copy.sheet.name || copy.playerName) + '» guardada en este dispositivo.';
-  }
-
-  function deleteMasterCopy(entry: RoomEntry) {
-    savedMasterSheets = savedMasterSheets.filter(item => item.playerId !== entry.playerId);
-    persistMasterCopies();
-    refreshRoomSheetList();
-    notice = 'Copia local eliminada: ' + (entry.sheet?.name || entry.playerName) + '.';
+    roomSheets = [...liveRoomSheets].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
   }
 
   function exportMasterCopy(entry: RoomEntry) {
@@ -5458,29 +5412,11 @@ import ITEMS from './items.json';
     notice = 'Copia exportada como ' + safeName + '.json';
   }
 
-  function receiveLiveCharacter(entry: RoomEntry) {
-    liveRoomSheets = [...liveRoomSheets.filter(item => item.playerId !== entry.playerId), { ...entry, live: true }];
-    const existingCopy = savedMasterSheets.find(item => item.playerId === entry.playerId);
-    if (existingCopy) {
-      savedMasterSheets = [...savedMasterSheets.filter(item => item.playerId !== entry.playerId), { ...entry, saved: true, live: false }];
-      persistMasterCopies();
-    }
-    refreshRoomSheetList();
+  function receiveLiveCharacter(_entry: RoomEntry) {
+    if (obrRole === 'GM') void loadSupabaseRoomCharacters();
   }
 
-  function readPlayers(players: any[]) {
-    liveRoomSheets = players.flatMap((p: any) => {
-      const payload = p.metadata?.[KEY];
-      if (!payload || payload.deleted || !payload.character) return [];
-      return [{ playerId: p.id, playerName: p.name || payload.playerName || 'Jugador', sheet: repairGenericStatLabels(payload.character as RawSheet) as RawSheet, live: true }];
-    });
-    liveRoomSheets.forEach(entry => {
-      if (savedMasterSheets.some(copy => copy.playerId === entry.playerId)) {
-        savedMasterSheets = [...savedMasterSheets.filter(copy => copy.playerId !== entry.playerId), { ...entry, saved: true, live: false }];
-      }
-    });
-    if (liveRoomSheets.some(entry => savedMasterSheets.some(copy => copy.playerId === entry.playerId))) persistMasterCopies();
-    refreshRoomSheetList();
+  function readPlayers(_players: any[]) {
     const rosterIds=new Set(roomSheets.map(entry=>'player:'+entry.playerId));
     initiativeOrder=initiativeOrder.filter(entry=>!entry.id.startsWith('player:')||rosterIds.has(entry.id));
     if(activeInitiativeIndex>=initiativeOrder.length)activeInitiativeIndex=Math.max(0,initiativeOrder.length-1);
@@ -5488,6 +5424,7 @@ import ITEMS from './items.json';
 
   async function refreshPlayers() {
     try { readPlayers(await OBR.party.getPlayers()); } catch {}
+    if (obrRole === 'GM') await loadSupabaseRoomCharacters();
   }
 
 
@@ -5559,35 +5496,21 @@ import ITEMS from './items.json';
   async function restoreOwnSheet() {
     if (obrRole !== 'PLAYER') return;
     try {
-      const cloudSheet = await loadOwnCharacterFromSupabase();
-      if (cloudSheet) {
-        sheet = cloudSheet;
-        localStorage.setItem('forja-raw-character', JSON.stringify(cloudSheet));
-        syncStatus = 'Ficha recuperada desde Supabase.';
-        return;
-      }
+      sheet = await loadOwnCharacterFromSupabase();
+      syncStatus = sheet ? 'Personaje cargado desde Supabase.' : 'No hay un personaje registrado para este jugador en esta sala.';
     } catch (error) {
-      syncStatus = 'No se pudo consultar Supabase; se intentará recuperar la copia local.';
+      sheet = null;
+      syncStatus = 'No se pudo consultar Supabase. No se utilizará una copia local.';
       console.error(error);
+    } finally {
+      characterStorageReady = true;
     }
-    if (!sheet) {
-      try {
-        const saved = localStorage.getItem('forja-raw-character');
-        if (saved) {
-          const parsed = JSON.parse(saved) as RawSheet;
-          if (parsed && Array.isArray(parsed.sections)) sheet = repairGenericStatLabels(parsed) as RawSheet;
-        }
-      } catch { localStorage.removeItem('forja-raw-character'); }
-    }
-    if (sheet) await saveCharacterToSupabase(sheet).catch(error => console.error('No se pudo migrar la ficha local a Supabase', error));
   }
-
 
 
   async function exportSheet() {
     if (!sheet) return;
     const json = JSON.stringify(sheet, null, 2);
-    localStorage.setItem('forja-raw-character', json);
     const safeName = (sheet.name || 'personaje')
       .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
       .replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'personaje';
@@ -5604,7 +5527,7 @@ import ITEMS from './items.json';
   }
 
   async function deleteSheet() {
-    if (!window.confirm('¿Eliminar este personaje? La ficha se borrará permanentemente de este dispositivo y no se podrá recuperar. Exporta una copia antes si deseas conservarla.')) return;
+    if (!window.confirm('¿Eliminar este personaje de la base de datos de la sala? También desaparecerá de la vista del Máster.')) return;
     if (supabaseRoomId && supabasePlayerId) {
       const response = await fetch(SUPABASE_URL + '/rest/v1/characters?room_id=eq.' + encodeURIComponent(supabaseRoomId) + '&player_id=eq.' + encodeURIComponent(supabasePlayerId), {
         method: 'PATCH',
@@ -5614,9 +5537,9 @@ import ITEMS from './items.json';
       if (!response.ok) { notice = 'No se pudo eliminar la ficha de Supabase.'; return; }
     }
     sheet = null;
-    localStorage.removeItem('forja-raw-character');
     importOpen = false;
-    notice = 'Ficha eliminada de la sala y de este dispositivo.';
+    try { await OBR.broadcast.sendMessage(CHANNEL, { type: 'character-deleted', playerId: supabasePlayerId }, { destination: 'ALL' }); } catch {}
+    notice = 'Personaje eliminado de la base de datos de la sala.';
   }
 
   onMount(() => {
@@ -5646,11 +5569,8 @@ import ITEMS from './items.json';
     try {
       const params = new URLSearchParams(window.location.search);
       if (params.get('preview') === '1') openDemoPreview();
-      const stored = localStorage.getItem('forja-raw-character');
-      if (!demoPreview && stored) sheet = JSON.parse(stored) as RawSheet;
       localStorage.removeItem('forja-custom-rolls');
     } catch {
-      localStorage.removeItem('forja-raw-character');
     }
     if (OBR.isAvailable) OBR.onReady(async () => {
       obrReady = true;
@@ -5661,11 +5581,15 @@ import ITEMS from './items.json';
         supabasePlayerName = playerName;
         supabaseRoomId = OBR.room.id;
         builderData.player = playerName;
-        if (obrRole === 'GM') { loadMasterCopies(); await loadGithubRoomConfig(); }
+        if (obrRole === 'GM') { await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
-        if (!demoPreview) await restoreOwnSheet();
+        if (obrRole === 'PLAYER' && !demoPreview) await restoreOwnSheet();
+        else if (obrRole !== 'PLAYER') characterStorageReady = true;
         await refreshPlayers();
-        if (obrRole === 'GM') await loadSupabaseRoomCharacters().catch(error => console.error(error));
+        if (obrRole === 'GM') {
+          await loadSupabaseRoomCharacters().catch(error => { syncStatus = 'No se pudieron cargar los personajes desde Supabase.'; console.error(error); });
+          window.setInterval(() => { void loadSupabaseRoomCharacters().catch(error => console.error('Error actualizando personajes desde Supabase', error)); }, 3000);
+        }
         OBR.party.onChange((players: any[]) => readPlayers(players));
         OBR.broadcast.onMessage(INITIATIVE_NOTICE_CHANNEL, (event: any) => {
           const message=String(event.data?.message||'').trim();
@@ -5707,10 +5631,13 @@ import ITEMS from './items.json';
             receiveLiveCharacter({ playerId: d.playerId, playerName: d.playerName || 'Jugador', sheet: repairGenericStatLabels(d.character as RawSheet) as RawSheet, live: true });
           }
           if (d?.type === 'character-deleted') {
-            liveRoomSheets = liveRoomSheets.filter(x => x.playerId !== d.playerId);
-            refreshRoomSheetList();
+            if (obrRole === 'GM') void loadSupabaseRoomCharacters().catch(error => console.error(error));
+            if (obrRole === 'PLAYER' && d.playerId === supabasePlayerId) { sheet = null; syncStatus = 'El personaje fue eliminado de la sala.'; }
           }
-          // Las fichas son locales: los cambios de nivel del director no sobrescriben la copia del jugador.
+          if (d?.type === 'character-updated' && obrRole === 'PLAYER' && d.playerId === supabasePlayerId) {
+            void loadOwnCharacterFromSupabase().then(cloudSheet => { sheet = cloudSheet; }).catch(error => console.error('No se pudo actualizar el personaje desde Supabase', error));
+          }
+          // Los mensajes notifican cambios; Supabase es la fuente del contenido oficial.
         });
       } catch {
         syncStatus = 'Owlbear está abierto, pero no se pudo leer la sala.';
@@ -5737,16 +5664,13 @@ import ITEMS from './items.json';
         <section class="panel roster-panel">
           <div class="section-heading"><h2>Personajes de la sala</h2><span class="count">{roomSheets.length}</span></div>
           <div class="actions"><button class="secondary" on:click={refreshPlayers}>Actualizar</button></div>
-          {#if !roomSheets.length}<p class="muted">No hay personajes publicados ni copias guardadas.</p>
+          {#if !roomSheets.length}<p class="muted">No hay personajes registrados en la base de datos para esta sala.</p>
           {:else}
             {#each roomSheets as entry}
               <article class="character-card">
                 <div class="card-symbol">✧</div>
-                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · {entry.live ? 'Conectado' : 'Copia local'}</p></div>
-                <div class="actions">
-                  {#if entry.saved}<span class="muted">✓ Copia guardada</span>{:else}<button class="primary" on:click={() => saveMasterCopy(entry)}>Guardar ficha</button>{/if}
-                  {#if entry.saved}<button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar copia</button><button class="secondary" on:click={() => deleteMasterCopy(entry)}>Eliminar copia</button>{/if}
-                </div>
+                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · Registro oficial en Supabase</p></div>
+                <div class="actions"><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
                 <details class="gm-sheet-details">
                   <summary>Ver ficha</summary>
                   <div class="actions level-up-action"><button class="primary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button></div>
@@ -6060,7 +5984,9 @@ import ITEMS from './items.json';
         </section>
       {/if}
     {:else}
-      {#if !sheet || playerCreating}
+      {#if obrReady && obrRole === 'PLAYER' && !characterStorageReady}
+        <section class="panel"><p class="muted">Cargando personaje desde Supabase…</p></section>
+      {:else if !sheet || playerCreating}
         <section class="panel import-character-panel">
           <div class="section-heading"><h2>{sheet ? 'Crear otro personaje' : 'Crear personaje'}</h2><span class="count">Nivel 1</span></div>
           <div class="import-row">
