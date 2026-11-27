@@ -5628,42 +5628,42 @@ import ITEMS from './items.json';
     roomSheets = [...liveRoomSheets].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
   }
 
-  async function adjustRoomCharacterStat(entry: RoomEntry, statName: string, delta: number) {
-    // Leer siempre el último estado local; la ficha incluida en el evento puede estar obsoleta
-    // si el usuario pulsa varias veces antes de que termine el guardado anterior.
+  const roomStatPending = new Map<string, RawSheet>();
+  const roomStatSending = new Set<string>();
+
+  function adjustRoomCharacterStat(entry: RoomEntry, statName: string, delta: number) {
+    // Los botones solo modifican el borrador local; no escriben ni sincronizan con Owlbear.
     const latestEntry = liveRoomSheets.find(item => item.playerId === entry.playerId) || entry;
     const updated = JSON.parse(JSON.stringify(latestEntry.sheet)) as RawSheet;
     const current = getCharacterNumber(updated, 'COMBATE', statName,
       statName === 'Armor Class' ? 10 : 0);
-    const nextValue = Math.max(0, current + delta);
-    setCharacterStat(updated, 'COMBATE', statName, nextValue);
+    setCharacterStat(updated, 'COMBATE', statName, Math.max(0, current + delta));
 
     liveRoomSheets = liveRoomSheets.map(item =>
       item.playerId === entry.playerId ? { ...item, sheet: updated } : item
     );
     refreshRoomSheetList();
+    roomStatPending.set(entry.playerId, updated);
     if (masterViewingEntry?.playerId === entry.playerId) {
       masterViewingEntry = { ...masterViewingEntry, sheet: updated };
       if (!document.querySelector('.nautical-sheet')?.contains(document.activeElement)) {
         sheet = JSON.parse(JSON.stringify(updated)) as RawSheet;
       }
     }
+  }
 
-    // Serializar las escrituras para impedir que una respuesta lenta sobrescriba un clic posterior.
-    const previous = roomStatSaveQueues.get(entry.playerId) || Promise.resolve();
-    const nextSave = previous.catch(() => {}).then(() =>
-      saveCharacterToSupabase(updated, entry.playerId, entry.playerName)
-    );
-    roomStatSaveQueues.set(entry.playerId, nextSave);
+  async function sendRoomCharacterStatChanges(entry: RoomEntry) {
+    const pending = roomStatPending.get(entry.playerId);
+    if (!pending || roomStatSending.has(entry.playerId)) return;
+    roomStatSending.add(entry.playerId);
     try {
-      await nextSave;
+      await saveCharacterToSupabase(pending, entry.playerId, entry.playerName);
+      if (roomStatPending.get(entry.playerId) === pending) roomStatPending.delete(entry.playerId);
+      syncStatus = 'Cambios de ' + (pending.name || entry.playerName) + ' enviados.';
     } catch (error) {
-      syncStatus = 'No se pudo guardar el cambio: ' + (error instanceof Error ? error.message : String(error));
-      await loadSupabaseRoomCharacters();
+      syncStatus = 'No se pudieron enviar los cambios: ' + (error instanceof Error ? error.message : String(error));
     } finally {
-      if (roomStatSaveQueues.get(entry.playerId) === nextSave) {
-        roomStatSaveQueues.delete(entry.playerId);
-      }
+      roomStatSending.delete(entry.playerId);
     }
   }
 
@@ -5985,6 +5985,14 @@ import ITEMS from './items.json';
                     <button type="button" aria-label="Aumentar puntos de golpe temporales" on:click={() => adjustRoomCharacterStat(entry, 'Puntos de golpe temporales', 1)}>+</button>
                   </div>
                 </div>
+                {#if roomStatPending.has(entry.playerId)}
+                  <div class="actions roster-pending-actions">
+                    <span class="muted">Cambios sin enviar</span>
+                    <button class="primary" type="button" disabled={roomStatSending.has(entry.playerId)} on:click={() => sendRoomCharacterStatChanges(entry)}>
+                      {roomStatSending.has(entry.playerId) ? 'Enviando…' : 'Enviar cambios'}
+                    </button>
+                  </div>
+                {/if}
                 <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
               </article>
             {/each}
