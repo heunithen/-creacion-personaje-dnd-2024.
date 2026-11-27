@@ -1,6 +1,6 @@
 <script lang="ts">
   import MONSTERS from './monsters.json';
-  import { ENCOUNTER_BUDGETS, crValue, numericCr, monsterXp, chooseMonsterForPurchase, canPurchase, withinBudget } from './encounterRules.mjs';
+  import { ENCOUNTER_BUDGETS, crValue, numericCr, monsterXp, chooseMonsterForPurchase, createRandomEncounter, encounterSignature, canPurchase, withinBudget } from './encounterRules.mjs';
   const BUDGETS: Record<number, Record<'easy'|'normal'|'hard', number>> = ENCOUNTER_BUDGETS;
 
   type Monster = {
@@ -141,38 +141,13 @@
   async function buildRandomEncounter(index: number, generationBudget: number): Promise<GeneratedEncounter | null> {
     const available = allMonsters.filter(item => item.xp > 0 && item.xp <= generationBudget);
     if (!available.length) return null;
-    const targetCount = 3 + Math.floor(Math.random() * 3);
-    const items: Selection[] = [];
-    let total = 0;
-    let creatures = 0;
-    liveGeneration = { index, target: targetCount, items: [], spent: 0, creatures: 0 };
-    await pause(220);
-    while (creatures < targetCount) {
-      const chosen = chooseMonsterForPurchase(available, generationBudget - total, targetCount - creatures);
-      if (!chosen) break;
-      const existing = items.find(entry => entry.monster.name === chosen.monster.name);
-      if (existing) existing.quantity += 1;
-      else items.push({ monster: chosen.monster, quantity: 1 });
-      total += chosen.xp;
-      creatures += 1;
-      liveGeneration = {
-        index,
-        target: targetCount,
-        items: items.map(item => ({...item})),
-        spent: total,
-        creatures
-      };
+    const generated = createRandomEncounter(available, generationBudget);
+    if (!generated.encounter) return null;
+    for (const step of generated.steps) {
+      liveGeneration = { index, target: step.target, items: step.items, spent: step.spent, creatures: step.creatures };
       await pause(420);
-      if (creatures >= 3 && Math.random() < 0.22) break;
     }
-    if (creatures < 3) return null;
-    const normalized = items.map(item => ({...item})).sort((a,b) => a.monster.name.localeCompare(b.monster.name, 'es'));
-    return {
-      items: normalized,
-      spent: total,
-      creatures,
-      key: normalized.map(item => item.monster.name + ':' + item.quantity).join('|')
-    };
+    return generated.encounter;
   }
   async function generateThreeEncounters() {
     if (generationRunning) return;
