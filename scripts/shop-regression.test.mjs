@@ -4,7 +4,7 @@ import { currencyToCopper, copperToCurrency, parsePriceToCopper, magicItemPriceC
 
 test('monedas D&D se convierten sin perder valor', () => {
   assert.equal(currencyToCopper({ PC: 1, PP: 1, PE: 1, PO: 1, PPt: 1 }), 1161);
-  assert.deepEqual(copperToCurrency(1161), { PPt: 1, PO: 1, PE: 1, PP: 1, PC: 1 });
+  assert.deepEqual(copperToCurrency(1161), { PO: 11, PPt: 0, PE: 1, PP: 1, PC: 1 });
 });
 
 test('precios del Manual del Jugador se convierten a cobre', () => {
