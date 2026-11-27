@@ -79,6 +79,8 @@ jobs:
         run: npm run check
       - name: Test character creation combinations
         run: npm run test:builder
+      - name: Test encounter budget and generation rules
+        run: npm run test:encounters
       - name: Audit manual and character progression
         run: npm run audit:manual
       - name: Build
