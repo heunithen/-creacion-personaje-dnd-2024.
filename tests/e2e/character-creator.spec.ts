@@ -283,9 +283,9 @@ test('Pícaro: exige cuatro habilidades, dos pericias, dos maestrías y un idiom
   test.setTimeout(120000);
   await reachClassSkillsStep(page, 'Pícaro');
 
-  const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 4 habilidades' }).locator('input[type="checkbox"]');
+  const skills = page.locator('.builder-choice-wrapper').filter({ hasText: 'Competencias de clase: elige 4 habilidades' }).locator('label.builder-checkbox');
   await expect(skills).toHaveCount(8);
-  for (let i = 0; i < 4; i++) await skills.nth(i).check({ force: true });
+  for (let i = 0; i < 4; i++) await skills.nth(i).click();
 
   const expertise = page.locator('.builder-choice-wrapper').filter({ hasText: 'Pericia: elige 2 habilidades' }).locator('label.builder-checkbox');
   await expect(expertise.count()).resolves.toBeGreaterThanOrEqual(2);
