@@ -7181,11 +7181,11 @@ import ITEMS from './items.json';
                   <aside class="builder-species-learn">
                     <span>CONOCE LA ESPECIE</span>
                     <h5>Acerca de los {BUILDER_SPECIES[builderSpeciesSlideIndex]}</h5>
-                    {#if ['Elfo','Humano','Tiefling'].includes(BUILDER_SPECIES[builderSpeciesSlideIndex])}
+                    {#if BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Orco'}
                       <img
                         class="builder-species-art"
-                        src={BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Elfo' ? '/images/character-creation/elfos.webp' : BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Humano' ? '/images/character-creation/humanos.webp' : '/images/character-creation/tieflings.webp'}
-                        alt={'Ilustración de '+BUILDER_SPECIES[builderSpeciesSlideIndex]}
+                        src="/images/character-creation/portraits/po_orcwar_h.webp"
+                        alt="Ilustración de un orco"
                         loading="lazy"
                       />
                     {/if}
