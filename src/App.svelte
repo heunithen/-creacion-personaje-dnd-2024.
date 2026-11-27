@@ -6765,7 +6765,11 @@ import ITEMS from './items.json';
         </section>
       {/if}
     {:else}
-      {#if obrReady && obrRole === 'PLAYER' && !characterStorageReady}
+      {#if webReadOnly && !characterStorageReady}
+        <section class="panel"><p class="muted">Cargando ficha compartida…</p></section>
+      {:else if webReadOnly && !sheet}
+        <section class="panel"><h2>No se pudo abrir la ficha</h2><p class="muted">{syncStatus}</p></section>
+      {:else if obrReady && obrRole === 'PLAYER' && !characterStorageReady}
         <section class="panel"><p class="muted">Cargando personaje desde Supabase…</p></section>
       {:else if !sheet || playerCreating}
         <section class="panel import-character-panel">
@@ -7148,7 +7152,6 @@ import ITEMS from './items.json';
         <section class="panel player-character-actions">
           {#if webReadOnly}<p class="muted">Ficha compartida para consulta. No se pueden modificar sus datos desde este enlace.</p><button class="primary" type="button" on:click={() => exportCharacterSummary(sheet, playerName)}>Exportar resumen PDF</button>
           {:else if demoPreview}
-          {#if demoPreview}
             <p class="muted"><strong>Vista de ejemplo.</strong> Este personaje es ficticio y no se guarda ni modifica tu ficha.</p>
             <button class="secondary" on:click={closeDemoPreview}>Volver al inicio</button>
             <button class="primary" on:click={startBuilder}>Crear mi personaje</button>
