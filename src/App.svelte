@@ -7079,20 +7079,29 @@ import ITEMS from './items.json';
               <h3>02. Elige tu clase</h3>
               <p class="muted">Explora las clases y revisa qué tipo de aventurero quieres interpretar.</p>
               <section class="builder-class-flyer" aria-label={'Información de la clase '+builderDisplayedClass}>
-                <img class="builder-class-emblem" src={'/-creacion-personaje-dnd-2024./images/character-creation/classes/individual/class-emblem-'+BUILDER_CLASS_EMBLEMS[builderDisplayedClass]+'.webp'} alt={'Emblema de '+builderDisplayedClass} />
+                <div class="builder-class-topline"><span>MANUAL DEL JUGADOR</span><span>CLASE DE AVENTURERO</span></div>
                 <div class="builder-class-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Clase anterior" on:click={()=>builderMoveClass(-1)}>‹</button>
-                  <h4 style={`--builder-title-color:${BUILDER_CLASS_COLORS[builderDisplayedClass]}`} class="builder-class-title">{builderDisplayedClass}</h4>
+                  <h4 class="builder-class-title">{builderDisplayedClass}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Clase siguiente" on:click={()=>builderMoveClass(1)}>›</button>
                 </div>
-                <p class="builder-class-flyer-description">{BUILDER_CLASS_GUIDANCE[builderDisplayedClass]}</p>
-                <div class="builder-class-flyer-detail">
-                  <span>Característica principal</span>
-                  <strong>{BUILDER_PRIMARY[builderDisplayedClass]}</strong>
-                </div>
-                <div class="builder-class-flyer-detail">
-                  <span>Estilo de juego</span>
-                  <strong>{BUILDER_CLASS_PLAYSTYLE[builderDisplayedClass]}</strong>
+                <div class="builder-class-content">
+                  <aside class="builder-class-learn">
+                    <img class="builder-class-emblem" src={'/-creacion-personaje-dnd-2024./images/character-creation/classes/individual/class-emblem-'+BUILDER_CLASS_EMBLEMS[builderDisplayedClass]+'.webp'} alt={'Emblema de '+builderDisplayedClass} />
+                    <span>CONOCE LA CLASE</span>
+                    <h5>Acerca del {builderDisplayedClass}</h5>
+                    <p class="builder-class-flyer-description">{BUILDER_CLASS_GUIDANCE[builderDisplayedClass]}</p>
+                  </aside>
+                  <div class="builder-class-information">
+                    <section class="builder-class-info-section">
+                      <span>CARACTERÍSTICA PRINCIPAL</span><h5>¿Cuál es tu fortaleza?</h5>
+                      <strong>{BUILDER_PRIMARY[builderDisplayedClass]}</strong>
+                    </section>
+                    <section class="builder-class-info-section">
+                      <span>ESTILO DE JUEGO</span><h5>¿Cómo afrontas las aventuras?</h5>
+                      <strong>{BUILDER_CLASS_PLAYSTYLE[builderDisplayedClass]}</strong>
+                    </section>
+                  </div>
                 </div>
               </section>
                           
@@ -7162,19 +7171,32 @@ import ITEMS from './items.json';
               {#if !builderSpeciesSetup}
               <p class="muted">Explora las especies y sus capacidades antes de elegir.</p>
               <section class="builder-species-flyer" aria-label={'Información de la especie '+BUILDER_SPECIES[builderSpeciesSlideIndex]}>
+                <div class="builder-species-topline"><span>MANUAL DEL JUGADOR</span><span>ESPECIE DE AVENTURERO</span></div>
                 <div class="builder-species-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Especie anterior" on:click={()=>builderMoveSpecies(-1)}>‹</button>
                   <h4>{BUILDER_SPECIES[builderSpeciesSlideIndex]}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Especie siguiente" on:click={()=>builderMoveSpecies(1)}>›</button>
                 </div>
-                <p class="builder-species-description">{BUILDER_SPECIES_TRAITS[BUILDER_SPECIES[builderSpeciesSlideIndex]]}</p>
-                <section class="builder-species-lore">
-                  <h5>Lore</h5>
-                  <p>{BUILDER_SPECIES_LORE[BUILDER_SPECIES[builderSpeciesSlideIndex]]}</p>
-                </section>
-                <div class="builder-species-details">
-                  <div class="builder-class-flyer-detail"><span>Linaje o variante</span><strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].join(' · ') : 'No requiere elección de linaje'}</strong></div>
-                  <div class="builder-class-flyer-detail"><span>Rasgos y capacidades</span><strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? 'Incluye una elección propia de especie' : 'Capacidades propias de la especie'}</strong></div>
+                <div class="builder-species-content">
+                  <aside class="builder-species-learn">
+                    <span>CONOCE LA ESPECIE</span>
+                    <h5>Acerca de los {BUILDER_SPECIES[builderSpeciesSlideIndex]}</h5>
+                    <p class="builder-species-description">{BUILDER_SPECIES_TRAITS[BUILDER_SPECIES[builderSpeciesSlideIndex]]}</p>
+                    <div class="builder-species-lore">
+                      <h5>ORIGEN Y CULTURA</h5>
+                      <p>{BUILDER_SPECIES_LORE[BUILDER_SPECIES[builderSpeciesSlideIndex]]}</p>
+                    </div>
+                  </aside>
+                  <div class="builder-species-information">
+                    <section class="builder-species-info-section">
+                      <span>LINaje O VARIANTE</span><h5>¿Qué opciones tienes?</h5>
+                      <strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].join(' · ') : 'No requiere elección de linaje'}</strong>
+                    </section>
+                    <section class="builder-species-info-section">
+                      <span>RASGOS Y CAPACIDADES</span><h5>¿Qué te distingue?</h5>
+                      <strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? 'Incluye una elección propia de especie' : 'Capacidades propias de la especie'}</strong>
+                    </section>
+                  </div>
                 </div>
                 <span class="builder-background-counter">{builderSpeciesSlideIndex+1} de {BUILDER_SPECIES.length}</span>
               </section>
@@ -8843,15 +8865,35 @@ import ITEMS from './items.json';
   .builder-background-counter{color:#d7b65e;font:600 .58rem system-ui,sans-serif}
   @media(max-width:620px){.builder-background-flyer{min-height:650px;padding:1.35rem 1rem}.builder-background-content{grid-template-columns:1fr;gap:1rem}.builder-background-learn{margin-top:0;padding:.85rem}.builder-background-ability-chips{padding-left:0}.builder-background-title-row h4{font-size:2.1rem}.builder-background-info-section{margin-bottom:.45rem;padding-bottom:.5rem}.builder-background-info-section h5{font-size:.98rem}.builder-background-info-section strong{font-size:.78rem}}
 
-  .builder-species-flyer{box-sizing:border-box;display:flex;flex-direction:column;gap:.4rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;overflow:hidden}
-  .builder-species-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%}
-  .builder-species-title-row h4{margin:0;color:#5fe6e0!important;font:700 1.35rem Georgia,serif;text-align:center}
-  .builder-species-description{flex:0 0 auto;min-height:0;margin:0;padding:.1rem .2rem;color:#e0e7e9;font:400 .93rem/1.5 system-ui,sans-serif;overflow-y:auto;max-height:225px}\n  .builder-species-lore{flex:1 1 auto;min-height:0;margin:0;padding:.25rem .2rem .35rem;text-align:left;overflow-y:auto;border-top:1px solid #668087}\n  .builder-species-lore h5{margin:0 0 .2rem;color:#5fe6e0;font:700 .82rem Georgia,serif;text-transform:uppercase;letter-spacing:.08em}\n  .builder-species-lore p{margin:0;color:#c4d0d3;font:400 .84rem/1.45 system-ui,sans-serif}
-  .builder-species-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem 1rem;padding:.75rem 0;border-top:1px solid #668087;border-bottom:1px solid #668087}
-  .builder-species-details .builder-class-flyer-detail{min-width:0;max-width:none;padding:0;border:0}
-  .builder-species-details .builder-class-flyer-detail strong{font-size:.86rem;line-height:1.5;overflow-wrap:anywhere}
-  @media(max-width:460px){.builder-species-flyer{height:650px;min-height:650px;padding:.9rem;gap:.8rem}.builder-species-title-row{grid-template-columns:40px minmax(0,1fr) 40px;gap:.45rem}.builder-species-title-row h4{font-size:1.15rem}.builder-species-description{font-size:.9rem;line-height:1.7}.builder-species-details{gap:.65rem}.builder-species-details .builder-class-flyer-detail strong{font-size:.78rem}}
-  @media(max-width:460px){.builder-background-flyer{height:650px;min-height:650px;padding:.9rem;gap:.8rem}.builder-background-title-row{grid-template-columns:40px minmax(0,1fr) 40px;gap:.45rem}.builder-background-title-row h4{font-size:1.15rem}.builder-background-description{font-size:.9rem;line-height:1.7}.builder-background-details{gap:.65rem}.builder-background-details .builder-class-flyer-detail strong{font-size:.78rem}}
+  /* Clase: mismo diseño editorial, marco rojo */
+  .builder-class-flyer{box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:.65rem;width:100%;max-width:920px;min-height:650px;margin:1rem auto 1.2rem;padding:2rem 2.15rem;border:2px solid #a94343;border-radius:0;background:linear-gradient(145deg,rgba(79,68,65,.94),rgba(28,28,34,.98) 58%,#211d22);color:#f7f2e7;overflow:hidden;box-shadow:inset 0 0 0 4px rgba(169,67,67,.18),inset 0 0 0 7px rgba(169,67,67,.07)}
+  .builder-class-flyer:before{content:"";position:absolute;inset:8px;border:1px solid rgba(190,91,83,.65);pointer-events:none}
+  .builder-class-topline,.builder-species-topline{display:flex;justify-content:space-between;align-items:center;color:#d58a80;font:700 .58rem/1.2 system-ui,sans-serif;letter-spacing:.12em}
+  .builder-class-title-row,.builder-species-title-row{display:grid;grid-template-columns:38px minmax(0,1fr) 38px;align-items:center;gap:.5rem;width:100%;margin-top:.1rem}
+  .builder-class-title-row h4,.builder-species-title-row h4{margin:0;color:#fff!important;font:700 clamp(2.1rem,5vw,3.35rem)/1.05 Georgia,serif;text-align:left;letter-spacing:-.035em}
+  .builder-class-title-row .builder-class-arrow,.builder-species-title-row .builder-class-arrow{width:32px;height:32px;border:1px solid #a94343;border-radius:50%;background:rgba(9,20,24,.62);color:#e5a09a;font-size:1.45rem}
+  .builder-class-content,.builder-species-content{display:grid;grid-template-columns:minmax(210px,.82fr) minmax(0,1.45fr);gap:1.7rem;align-items:start;min-height:0;flex:1}
+  .builder-class-learn,.builder-species-learn{margin-top:.15rem;padding:1rem 1.2rem 1.3rem;border-top:1px solid #a94343;border-bottom:1px solid #a94343;background:linear-gradient(180deg,rgba(11,25,29,.68),rgba(11,25,29,.36));box-shadow:0 10px 24px rgba(0,0,0,.12)}
+  .builder-class-learn>span,.builder-species-learn>span,.builder-class-info-section>span,.builder-species-info-section>span{display:block;margin-bottom:.35rem;color:#d58a80;font:700 .56rem/1.3 system-ui,sans-serif;letter-spacing:.1em}
+  .builder-class-learn h5,.builder-species-learn h5,.builder-class-info-section h5,.builder-species-info-section h5{margin:0 0 .45rem;color:#fff;font:700 1.15rem/1.2 Georgia,serif}
+  .builder-class-emblem{display:block;width:100%;max-width:104px;height:112px;margin:0 auto .75rem;object-fit:contain;image-rendering:pixelated}
+  .builder-class-flyer-description,.builder-species-description{margin:0;color:#e0e3df;font:400 .76rem/1.55 system-ui,sans-serif;white-space:pre-line}
+  .builder-class-information,.builder-species-information{display:flex;flex-direction:column;min-width:0}
+  .builder-class-info-section,.builder-species-info-section{padding:.15rem 0 .75rem;margin:0 0 .65rem;border-bottom:1px solid rgba(169,67,67,.3);min-width:0}
+  .builder-class-info-section h5,.builder-species-info-section h5{font-size:1.05rem}
+  .builder-class-info-section strong,.builder-species-info-section strong{display:block;color:#f1eee5;font:500 .82rem/1.5 Georgia,serif;overflow-wrap:anywhere}
+  .builder-species-flyer{box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:.65rem;width:100%;max-width:920px;min-height:650px;margin:1rem auto 1.2rem;padding:2rem 2.15rem;border:2px solid #397da9;border-radius:0;background:linear-gradient(145deg,rgba(65,78,83,.94),rgba(19,31,39,.98) 58%,#17232b);color:#f7f2e7;overflow:hidden;box-shadow:inset 0 0 0 4px rgba(57,125,169,.18),inset 0 0 0 7px rgba(57,125,169,.07)}
+  .builder-species-flyer:before{content:"";position:absolute;inset:8px;border:1px solid rgba(93,157,194,.65);pointer-events:none}
+  .builder-species-topline{color:#8fc4e2}
+  .builder-species-title-row .builder-class-arrow{border-color:#397da9;color:#9bcce7}
+  .builder-species-learn{border-color:#397da9}
+  .builder-species-learn>span,.builder-species-info-section>span{color:#8fc4e2}
+  .builder-species-info-section{border-bottom-color:rgba(57,125,169,.3)}
+  .builder-species-lore{margin-top:1rem;padding:.8rem 0 0;border-top:1px solid rgba(169,67,67,.3)}
+  .builder-species-lore h5{margin:0 0 .35rem;color:#8fc4e2;font:700 .62rem/1.3 system-ui,sans-serif;letter-spacing:.1em}
+  .builder-species-lore p{margin:0;color:#c4d0d3;font:400 .74rem/1.5 system-ui,sans-serif}
+  .builder-background-counter{align-self:center;color:#d7b65e;font:600 .58rem system-ui,sans-serif}
+  @media(max-width:620px){.builder-class-flyer,.builder-species-flyer{min-height:650px;padding:1.35rem 1rem}.builder-class-content,.builder-species-content{grid-template-columns:1fr;gap:1rem}.builder-class-learn,.builder-species-learn{margin-top:0;padding:.85rem}.builder-class-title-row h4,.builder-species-title-row h4{font-size:2.1rem}.builder-class-info-section,.builder-species-info-section{margin-bottom:.45rem;padding-bottom:.5rem}.builder-class-info-section h5,.builder-species-info-section h5{font-size:.98rem}.builder-class-info-section strong,.builder-species-info-section strong{font-size:.78rem}}
   .builder-class-flyer{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1rem 1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;text-align:center;overflow:hidden}
   .builder-class-emblem{display:block;flex:0 0 166px;width:116px;height:166px;object-fit:contain;image-rendering:pixelated}
   .builder-class-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;flex:0 0 44px;width:100%;max-width:430px}
