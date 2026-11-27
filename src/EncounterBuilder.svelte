@@ -1,6 +1,6 @@
 <script lang="ts">
   import MONSTERS from './monsters.json';
-  import { ENCOUNTER_BUDGETS, crValue, numericCr, monsterXp, chooseMonsterForPurchase, createRandomEncounter, encounterSignature, canPurchase, withinBudget } from './encounterRules.mjs';
+  import { ENCOUNTER_BUDGETS, ENCOUNTER_TEMPLATES, crValue, numericCr, monsterXp, createEncounterFromTemplate, encounterSignature, canPurchase, withinBudget } from './encounterRules.mjs';
   const BUDGETS: Record<number, Record<'easy'|'normal'|'hard', number>> = ENCOUNTER_BUDGETS;
 
   type Monster = {
@@ -12,7 +12,8 @@
     [key: string]: any;
   };
   type Selection = { monster: Monster; quantity: number };
-  type GeneratedEncounter = { items: Selection[]; spent: number; creatures: number; key: string };
+  type TemplateId = 'solo'|'boss_minions'|'duo'|'trio'|'horde';
+  type GeneratedEncounter = { items: Selection[]; spent: number; creatures: number; key: string; template: TemplateId };
 
   export let onAddToCombat: (selection: Selection[]) => void = () => {};
 
@@ -29,6 +30,7 @@
   let groupLevel = 1;
   let partySize = 4;
   let difficulty: 'easy'|'normal'|'hard' = 'normal';
+  let selectedTemplate: 'any'|TemplateId = 'any';
   let search = '';
   let crFilter = '';
   let selected: Selection[] = [];
@@ -37,7 +39,7 @@
   let generatedEncounters: GeneratedEncounter[] = [];
   let generationMessage = '';
   let generationRunning = false;
-  let liveGeneration: { index: number; target: number; items: Selection[]; spent: number; creatures: number } | null = null;
+  let liveGeneration: { index: number; target: number|string; items: Selection[]; spent: number; creatures: number } | null = null;
 
   $: budgetPerCharacter = BUDGETS[groupLevel][difficulty];
   $: budget = budgetPerCharacter * partySize;
@@ -138,15 +140,15 @@
   function pause(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-  async function buildRandomEncounter(index: number, generationBudget: number): Promise<GeneratedEncounter | null> {
+  async function buildRandomEncounter(index: number, generationBudget: number, template: TemplateId): Promise<GeneratedEncounter | null> {
     const available = allMonsters.filter(item => item.xp > 0 && item.xp <= generationBudget);
     if (!available.length) return null;
-    const generated = createRandomEncounter(available, generationBudget);
+    const generated = createEncounterFromTemplate(available, generationBudget, template);
     const encounter = generated.encounter as GeneratedEncounter | null;
     if (!encounter) return null;
     for (const step of generated.steps) {
       liveGeneration = { index, target: step.target, items: step.items, spent: step.spent, creatures: step.creatures };
-      await pause(420);
+      await pause(300);
     }
     return encounter;
   }
@@ -161,23 +163,27 @@
     const seen = new Set<string>();
     let attempts = 0;
     try {
-      while (results.length < 3 && attempts < 45) {
+      const templateIds: TemplateId[] = ['solo','boss_minions','duo','trio','horde'];
+      while (results.length < 3 && attempts < 60) {
+        const template = selectedTemplate === 'any'
+          ? templateIds[attempts % templateIds.length]
+          : selectedTemplate;
         attempts += 1;
-        const encounter = await buildRandomEncounter(results.length + 1, generationBudget);
+        const encounter = await buildRandomEncounter(results.length + 1, generationBudget, template);
         if (encounter && !seen.has(encounter.key)) {
           seen.add(encounter.key);
           results = [...results, encounter];
           generatedEncounters = [...results];
           liveGeneration = null;
-          generationMessage = 'Encuentro ' + results.length + ' de 3 completado.';
-          await pause(550);
+          generationMessage = 'Alternativa ' + results.length + ' de 3: ' + ENCOUNTER_TEMPLATES[template].label + '.';
+          await pause(450);
         } else {
           liveGeneration = null;
         }
       }
       generationMessage = results.length
-        ? 'Se generaron ' + results.length + ' alternativas aleatorias dentro del presupuesto.'
-        : 'No se encontraron combinaciones válidas con al menos 3 monstruos para este presupuesto.';
+        ? 'Se generaron ' + results.length + ' alternativas con plantillas de composición y dentro del presupuesto.'
+        : 'No se encontraron composiciones válidas para estas plantillas con el presupuesto actual.';
     } finally {
       liveGeneration = null;
       generationRunning = false;
@@ -253,15 +259,29 @@
 <section class="random-generator">
     <div class="random-generator-copy">
       <div><span class="eyebrow">COMPRA AUTOMÁTICA</span><h3>Generación aleatoria</h3></div>
-      <p>Genera tres alternativas de 3 a 5 monstruos. La selección es aleatoria, permite repeticiones y nunca supera el presupuesto disponible.</p>
+      <p>Genera tres alternativas aleatorias siguiendo una plantilla de composición. Cada plantilla cambia la cantidad y la relación entre enemigos; ninguna supera el presupuesto.</p>
     </div>
-    <button type="button" class="generate-random" disabled={generationRunning} on:click={generateThreeEncounters}>{generationRunning ? "Comprando monstruos..." : "Generar 3 encuentros aleatorios"}</button>
+    <div class="template-controls">
+      <label for="enc-template">Plantilla de composición</label>
+      <select id="enc-template" bind:value={selectedTemplate} disabled={generationRunning}>
+        <option value="any">Aleatorio: combinar plantillas</option>
+        <option value="solo">Jefe individual</option>
+        <option value="boss_minions">Jefe con secuaces</option>
+        <option value="duo">Dúo</option>
+        <option value="trio">Trío</option>
+        <option value="horde">Horda</option>
+      </select>
+      <small>{selectedTemplate === 'any' ? 'Las tres alternativas probarán diferentes estructuras.' : ENCOUNTER_TEMPLATES[selectedTemplate].description}</small>
+    </div>
+    <button type="button" class="generate-random" disabled={generationRunning} on:click={generateThreeEncounters}>{generationRunning ? "Construyendo encuentros..." : "Generar 3 encuentros"}</button>
     {#if generationMessage}<p class="generation-message" role="status">{generationMessage}</p>{/if}
     {#if generatedEncounters.length}
       <div class="generated-grid">
         {#each generatedEncounters as encounter, index}
           <article class="generated-card">
-            <div class="generated-card-heading"><strong>Alternativa {index + 1}</strong><span>{encounter.creatures} monstruos</span></div>
+            <div class="generated-card-heading"><strong>Alternativa {index + 1}</strong><span>{ENCOUNTER_TEMPLATES[encounter.template].label}</span></div>
+            <p class="generated-template-description">{ENCOUNTER_TEMPLATES[encounter.template].description}</p>
+            <div class="generated-creature-count">{encounter.creatures} {encounter.creatures === 1 ? 'criatura' : 'criaturas'}</div>
             <div class="generated-monsters">
               {#each encounter.items as item}
                 <div><span>{item.monster.name}{#if item.quantity > 1} × {item.quantity}{/if}</span><small>VD {crValue(item.monster)} · {formatXp(monsterXp(item.monster) * item.quantity)}</small></div>
@@ -371,6 +391,11 @@
   .random-generator-copy p{max-width:560px;margin:0;color:var(--ink-soft,#b5bec3);font-size:.72rem;line-height:1.5}
   .generate-random,.use-generated{padding:.65rem .8rem;border:1px solid var(--gold,#5fe6e0);border-radius:5px;background:var(--gold,#5fe6e0);color:#13262e;font-weight:800;cursor:pointer}
   .generate-random{justify-self:start}
+  .template-controls{display:grid;gap:.3rem;max-width:420px}
+  .template-controls label{color:var(--ink-soft,#b5bec3);font-size:.72rem;font-weight:700}
+  .template-controls select{width:100%;padding:.55rem;border:1px solid var(--rule,#3a4a52);border-radius:4px;background:#1b2a33;color:var(--ink,#fff);font:inherit}
+  .template-controls small,.generated-template-description{margin:0;color:var(--ink-soft,#b5bec3);font-size:.66rem;line-height:1.45}
+  .generated-creature-count{color:var(--gold,#5fe6e0);font-size:.68rem;font-weight:800}
   .generation-message{margin:0;color:var(--ink-soft,#b5bec3);font-size:.72rem}
   .generated-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem}
   .live-generated{border-color:var(--gold,#5fe6e0)}
