@@ -6089,9 +6089,6 @@ import ITEMS from './items.json';
 
 
   function exportCharacterSummary(target: RawSheet, playerLabel = '') {
-    const safeName = (target.name || 'personaje')
-      .normalize('NFD').replace(/[u0300-\u036f]/g, '')
-      .replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'personaje';
     const escapeHtml = (value: unknown) => String(value ?? '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
