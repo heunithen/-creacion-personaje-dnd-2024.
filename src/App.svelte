@@ -954,17 +954,53 @@
     }
   }
 
+  const statBubblePending = new Map<string, { playerName: string; stats: any }>();
+  const statBubbleTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  const statBubbleProcessing = new Set<string>();
+
   function syncSheetStatsFromStatBubbles(characterId: string, playerNameValue: string, stats: any) {
     if (!supabaseRoomId || !characterId || !stats || typeof stats !== 'object') return;
     if (obrRole !== 'GM' && characterId !== supabasePlayerId) return;
-    const health = Number(stats.health);
-    const maxHealth = Number(stats['max health']);
-    const temporaryHealth = Number(stats['temporary health']);
-    const armorClass = Number(stats['armor class']);
-    if (![health, maxHealth, temporaryHealth, armorClass].every(Number.isFinite)) return;
 
-    const previous = statBubbleSyncQueues.get(characterId) || Promise.resolve();
-    const next = previous.catch(() => {}).then(async () => {
+    // Conservar solo la última lectura recibida durante una ráfaga de cambios.
+    statBubblePending.set(characterId, {
+      playerName: playerNameValue,
+      stats: {
+        health: Number(stats.health),
+        'max health': Number(stats['max health']),
+        'temporary health': Number(stats['temporary health']),
+        'armor class': Number(stats['armor class'])
+      }
+    });
+
+    const previousTimer = statBubbleTimers.get(characterId);
+    if (previousTimer) clearTimeout(previousTimer);
+    statBubbleTimers.set(characterId, setTimeout(() => {
+      statBubbleTimers.delete(characterId);
+      void flushStatBubbleChanges(characterId);
+    }, 180));
+  }
+
+  async function flushStatBubbleChanges(characterId: string) {
+    if (statBubbleProcessing.has(characterId)) return;
+    const pending = statBubblePending.get(characterId);
+    if (!pending) return;
+
+    const stats = pending.stats;
+    const values: Array<[string, number]> = [
+      ['Puntos de golpe actuales', stats.health],
+      ['Puntos de golpe máximos', stats['max health']],
+      ['Puntos de golpe temporales', stats['temporary health']],
+      ['Armor Class', stats['armor class']]
+    ];
+    if (!values.every(([, value]) => Number.isFinite(value))) {
+      statBubblePending.delete(characterId);
+      return;
+    }
+
+    statBubbleProcessing.add(characterId);
+    statBubblePending.delete(characterId);
+    try {
       const query = '?select=sheet,player_name&room_id=eq.' + encodeURIComponent(supabaseRoomId) +
         '&player_id=eq.' + encodeURIComponent(characterId) + '&deleted_at=is.null&limit=1';
       const response = await fetch(SUPABASE_URL + '/rest/v1/characters' + query, {
@@ -974,13 +1010,8 @@
       const rows = await response.json();
       const stored = rows?.[0]?.sheet;
       if (!stored || !Array.isArray(stored.sections)) return;
+
       const updated = JSON.parse(JSON.stringify(stored)) as RawSheet;
-      const values: Array<[string, number]> = [
-        ['Puntos de golpe actuales', health],
-        ['Puntos de golpe máximos', maxHealth],
-        ['Puntos de golpe temporales', temporaryHealth],
-        ['Armor Class', armorClass]
-      ];
       let changed = false;
       for (const [name, value] of values) {
         if (getCharacterNumber(updated, 'COMBATE', name, Number.NaN) !== value) {
@@ -989,7 +1020,8 @@
         }
       }
       if (!changed) return;
-      await saveCharacterToSupabase(updated, characterId, rows[0].player_name || playerNameValue || 'Jugador');
+
+      await saveCharacterToSupabase(updated, characterId, rows[0].player_name || pending.playerName || 'Jugador');
       if (characterId === supabasePlayerId) sheet = updated;
       if (masterViewingEntry?.playerId === characterId) {
         masterViewingEntry = { ...masterViewingEntry, sheet: updated };
@@ -997,11 +1029,18 @@
       }
       liveRoomSheets = liveRoomSheets.map(entry => entry.playerId === characterId ? { ...entry, sheet: updated } : entry);
       refreshRoomSheetList();
-    }).catch(error => console.error('Error sincronizando Stat Bubbles con la ficha:', error));
-    statBubbleSyncQueues.set(characterId, next);
-    void next.finally(() => {
-      if (statBubbleSyncQueues.get(characterId) === next) statBubbleSyncQueues.delete(characterId);
-    });
+    } catch (error) {
+      console.error('Error sincronizando Stat Bubbles con la ficha:', error);
+    } finally {
+      statBubbleProcessing.delete(characterId);
+      // Si llegaron nuevos cambios mientras se guardaba, procesar únicamente el último.
+      if (statBubblePending.has(characterId) && !statBubbleTimers.has(characterId)) {
+        statBubbleTimers.set(characterId, setTimeout(() => {
+          statBubbleTimers.delete(characterId);
+          void flushStatBubbleChanges(characterId);
+        }, 180));
+      }
+    }
   }
 
   function registerStatBubblesSync() {
