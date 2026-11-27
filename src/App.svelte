@@ -6122,7 +6122,7 @@ import ITEMS from './items.json';
     const sectionsHtml = sections.map(section =>
       '<section class="summary-section"><h2>' + escapeHtml(section.title) + '</h2>' +
       section.fields.map(field => '<p><strong>' + escapeHtml(field.label) + ':</strong> ' +
-        escapeHtml(field.value).replace(/\n/g, '<br>') + '</p>').join('') + '</section>'
+        escapeHtml(field.value).replaceAll(String.fromCharCode(10), '<br>') + '</p>').join('') + '</section>'
     ).join('');
     const popup = window.open('', '_blank');
     if (!popup) {
@@ -7062,7 +7062,7 @@ import ITEMS from './items.json';
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
               <button type="button" class="primary" disabled={builderSaving} on:click={saveBuilderCharacter}>{builderSaving ? 'Guardando…' : 'Guardar personaje en mi ficha'}</button>
-              <button class="secondary" on:click={() => exportCharacterSummary(builderPreview!, playerName)}>Exportar PDF</button><button class="secondary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
+              <button class="secondary" on:click={() => exportCharacterSummary(builderPreview, playerName)}>Exportar PDF</button><button class="secondary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
               <button class="secondary" on:click={startBuilder}>Crear otro personaje</button>
             </div>
           {/if}
