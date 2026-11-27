@@ -6140,10 +6140,13 @@ import ITEMS from './items.json';
       '</style></head><body><header><h1>' + escapeHtml(target.name || 'Personaje') +
       '</h1><p class="meta">' + escapeHtml(identity.join(' · ')) + '</p></header>' +
       (sectionsHtml || '<p>Esta ficha todavía no contiene información para resumir.</p>') +
-      '<script>window.addEventListener("load",function(){setTimeout(function(){window.focus();window.print();},250);});</script>' +
       '</body></html>');
     popup.document.close();
+    window.setTimeout(() => {
+      try { popup.focus(); popup.print(); } catch (error) { console.error('No se pudo abrir la impresión del resumen', error); }
+    }, 300);
     notice = 'Resumen preparado. En el diálogo de impresión, selecciona «Guardar como PDF».';
+
   }
 
   async function exportSheet() {
