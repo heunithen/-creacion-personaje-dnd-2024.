@@ -894,7 +894,6 @@
 
   const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
 
-  const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
 
   async function assignSelectedToken(entry: RoomEntry) {
     try {
