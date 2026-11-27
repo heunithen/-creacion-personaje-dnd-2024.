@@ -142,12 +142,13 @@
     const available = allMonsters.filter(item => item.xp > 0 && item.xp <= generationBudget);
     if (!available.length) return null;
     const generated = createRandomEncounter(available, generationBudget);
-    if (!generated.encounter) return null;
+    const encounter = generated.encounter as GeneratedEncounter | null;
+    if (!encounter) return null;
     for (const step of generated.steps) {
       liveGeneration = { index, target: step.target, items: step.items, spent: step.spent, creatures: step.creatures };
       await pause(420);
     }
-    return generated.encounter;
+    return encounter;
   }
   async function generateThreeEncounters() {
     if (generationRunning) return;
