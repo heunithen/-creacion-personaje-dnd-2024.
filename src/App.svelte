@@ -4512,6 +4512,13 @@ import ITEMS from './items.json';
     setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Espacios gastados', JSON.stringify(usage));
     saveSheetMutation();
   }
+  function handleSpellSlotChange(level: string, index: number, event: Event) {
+    const input = event.currentTarget as HTMLInputElement;
+    setSpellSlotCheckbox(level, index, input.checked);
+  }
+  function isSpellSlotChecked(level: string, index: number): boolean {
+    return Boolean(sheet && slotUsage(sheet)[level]?.includes(index));
+  }
   function resetSpellUseStates() {
     if (!sheet) return;
     const states = spellStates(sheet);
@@ -7230,7 +7237,7 @@ remove exit from sheet header              {#if demoPreview}
                               <div class="spell-slot-boxes">
                                 {#each Array.from({length: maximum}) as _,index}
                                   <label title={'Espacio de nivel ' + level + ' · ' + (index + 1)}>
-                                    <input type="checkbox" checked={(sheetSpellUsage[level] || []).includes(index)} on:change={(event) => setSpellSlotCheckbox(level,index,(event.currentTarget as HTMLInputElement).checked)} aria-label={'Marcar espacio de conjuro nivel ' + level + ', casilla ' + (index + 1)} />
+                                    <input type="checkbox" checked={isSpellSlotChecked(level,index)} on:change={(event) => handleSpellSlotChange(level,index,event)} aria-label={'Marcar espacio de conjuro nivel ' + level + ', casilla ' + (index + 1)} />
                                   </label>
                                 {/each}
                               </div>
