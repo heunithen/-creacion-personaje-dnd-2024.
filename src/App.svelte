@@ -3521,8 +3521,6 @@ import ITEMS from './items.json';
   }
   function shopUpdateWeaponList(item:any,remove=false) {
     if (!sheet || item.type!=='Arma') return;
-    const base=shopWeaponBase(item.name);
-    if (!WEAPON_PROFILES[base] && !WEAPON_PROFILES[item.name]) return;
     const names=splitChoiceList(getCharacterStat(sheet,'ATAQUES','Armas incluidas en el equipo'));
     const hasMore=shopOwnedQuantity(item.name)>0;
     const exists=names.some(value=>normalizeLevelText(value)===normalizeLevelText(item.name));
