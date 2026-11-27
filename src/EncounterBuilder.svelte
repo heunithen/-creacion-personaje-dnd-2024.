@@ -1,6 +1,6 @@
 <script lang="ts">
   import MONSTERS from './monsters.json';
-  import { ENCOUNTER_BUDGETS, crValue, numericCr, monsterXp, chooseMonsterForPurchase } from './encounterRules.mjs';
+  import { ENCOUNTER_BUDGETS, crValue, numericCr, monsterXp, chooseMonsterForPurchase, canPurchase, withinBudget } from './encounterRules.mjs';
   const BUDGETS: Record<number, Record<'easy'|'normal'|'hard', number>> = ENCOUNTER_BUDGETS;
 
   type Monster = {
@@ -55,7 +55,7 @@
   function addMonster(monster: Monster) {
     const cost = monsterXp(monster);
     if (!cost) return;
-    if (spent + cost > budget) {
+    if (!canPurchase(spent, cost, budget)) {
       budgetMessage = 'No se puede añadir '+monster.name+': supera el presupuesto. Quedan '+formatXp(Math.max(0, remaining))+'.';
       return;
     }
@@ -70,7 +70,7 @@
     if (!current) return;
     const quantity = Math.max(1, current.quantity + delta);
     const nextSpent = spent + (quantity - current.quantity) * monsterXp(current.monster);
-    if (nextSpent > budget) {
+    if (!withinBudget(nextSpent, budget)) {
       budgetMessage = 'No se puede aumentar la cantidad: supera el presupuesto. Quedan '+formatXp(Math.max(0, remaining))+'.';
       return;
     }
@@ -91,7 +91,7 @@
   }
   function changeGroupLevel(value: number) {
     const nextBudget = BUDGETS[value][difficulty] * partySize;
-    if (spent > nextBudget) { budgetMessage = 'No se puede reducir el nivel: el encuentro actual supera el nuevo presupuesto.'; return; }
+    if (!withinBudget(spent, nextBudget)) { budgetMessage = 'No se puede reducir el nivel: el encuentro actual supera el nuevo presupuesto.'; return; }
     groupLevel = value; budgetMessage = '';
   }
   function changePartySize(value: number) {
