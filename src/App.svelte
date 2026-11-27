@@ -6257,7 +6257,7 @@ import ITEMS from './items.json';
       const setByAliases = (aliases: string[], value: unknown) => {
         if (!clean(value)) return;
         const terms = aliases.map(normalizeField);
-        const found = fieldEntries.filter(entry => terms.some(term => entry.key === term || entry.key.endsWith(' ' + term) || entry.key.startsWith(term + ' ')));
+        const found = fieldEntries.filter(entry => terms.some(term => entry.key === term || entry.key.endsWith(' ' + term)) && !((entry.key.includes('subclasse') || entry.key.includes('subclass')) && terms.some(term => term === 'classe' || term === 'class')));
         found.forEach(entry => setField(entry, value));
       };
       const value = (section: string, stat: string) => clean(getCharacterStat(target, section, stat));
@@ -6395,6 +6395,37 @@ import ITEMS from './items.json';
       setByAliases(['ep','electrum'],currency.ep || currency.pe || '');
       setByAliases(['gp','ouro','oro','gold pieces'],currency.gp || currency.po || '');
       setByAliases(['pp','platina','platino','platinum pieces'],currency.pp || currency.pl || '');
+
+      // La plantilla fue identificada con numeración propia: 56–67 son los
+      // datos de lanzamiento, 68–150 y 156–162 las 30 filas de conjuros,
+      // y 151–155 las cinco monedas.
+      const numberedFields = fieldEntries.map(entry => {
+        const match = entry.name.match(/(?:^|\\D)(\\d{1,3})$/);
+        return match ? { entry, number:Number(match[1]) } : null;
+      }).filter((item): item is { entry: typeof fieldEntries[number]; number:number } => !!item);
+      const byNumber = new Map(numberedFields.map(item => [item.number,item.entry]));
+      const setNumbered = (number:number, item:unknown) => {
+        const entry = byNumber.get(number);
+        if (entry) setField(entry,item);
+      };
+      setNumbered(56,value('CONJUROS','Aptitud mágica'));
+      setNumbered(57,value('CONJUROS','CD de salvación'));
+      setNumbered(58,value('CONJUROS','Ataque de conjuro'));
+      const slotValues = (spellSlotText.match(/\\d+/g) || []);
+      for (let level=1; level<=9; level++) setNumbered(58+level,slotValues[level-1] || '');
+
+      const spellFieldNumbers = [
+        ...Array.from({length:83},(_,index)=>68+index),
+        ...Array.from({length:7},(_,index)=>156+index)
+      ];
+      spellFieldNumbers.forEach((number,index) => {
+        const row = spellRecords[Math.floor(index/3)];
+        if (!row) return;
+        const column = index%3;
+        setNumbered(number,column===0?row.level:column===1?row.castingTime:row.range);
+      });
+      const currencyNumbers = [currency.cp || currency.pc || '',currency.sp || currency.pa || '',currency.ep || currency.pe || '',currency.gp || currency.po || '',currency.pp || currency.pl || ''];
+      currencyNumbers.forEach((amount,index)=>setNumbered(151+index,amount));
 
       if (!fields.length) throw new Error('La plantilla no contiene campos rellenables.');
       form.flatten();
