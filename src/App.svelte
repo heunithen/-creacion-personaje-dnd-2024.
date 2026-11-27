@@ -2868,7 +2868,8 @@
       // La ficha se abre solo después de confirmar su guardado en el registro compartido.
       const characterToSave = JSON.parse(JSON.stringify(generated)) as RawSheet;
       if (webCreateMode) characterToSave._creationSource = 'web';
-      await saveCharacterToSupabase(characterToSave, supabasePlayerId, builderData.player || supabasePlayerName || 'Jugador');
+      if (webCreateMode) supabasePlayerName = builderData.player || supabasePlayerName || 'Jugador';
+      await saveCharacterToSupabase(characterToSave);
       builderPreview = null;
       sheet = characterToSave;
       playerCreating = false;
