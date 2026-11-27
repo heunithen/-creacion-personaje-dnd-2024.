@@ -19,7 +19,7 @@ export const XP_BY_CR = {
   '24':62000,'25':75000,'26':90000,'27':105000,'28':120000,'29':135000,'30':155000
 };
 export function crValue(monster) {
-  return String(monster.cr || '').trim().split(/\\s+/)[0] || '';
+  return String(monster.cr || '').trim().split(/\s+/)[0] || '';
 }
 export function numericCr(cr) {
   const parts = cr.split('/').map(Number);
@@ -27,8 +27,8 @@ export function numericCr(cr) {
 }
 export function monsterXp(monster) {
   const raw = String(monster.cr || '');
-  const before = raw.match(/XP\\s*([\\d,]+)/i);
-  const after = raw.match(/([\\d,]+)\\s*XP/i);
+  const before = raw.match(/XP\s*([\d,]+)/i);
+  const after = raw.match(/([\d,]+)\s*XP/i);
   const explicit = before?.[1] || after?.[1];
   if (explicit) return Number(explicit.replace(/,/g, ''));
   return XP_BY_CR[crValue(monster)] || 0;
@@ -56,3 +56,5 @@ export function expandEncounterForCombat(selection) {
     return Array.from({length:item.quantity}, () => item.monster);
   });
 }
+
+export function withinBudget(spent, budget) { return Number.isFinite(spent) && Number.isFinite(budget) && spent >= 0 && budget >= 0 && spent <= budget; }
