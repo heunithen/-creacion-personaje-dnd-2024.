@@ -171,7 +171,8 @@ export function createEncounterFromTemplate(available, budget, template, random 
     const fallbackBosses = pool.filter(item => item.xp <= budget * 0.6);
     const boss = randomItem(bossPool.length ? bossPool : fallbackBosses, random);
     if (!boss || !add(boss)) return {steps,encounter:null};
-    const minions = pool.filter(item => item.xp < boss.xp);
+    const bossXp = boss.xp;
+    const minions = pool.filter(item => item.xp < bossXp);
     for (let i=0;i<2;i++) {
       if (!addBestFit(minions)) return {steps,encounter:null};
     }
@@ -184,7 +185,7 @@ export function createEncounterFromTemplate(available, budget, template, random 
     while (spent < budget * 0.8 && safety < 100) {
       safety += 1;
       const candidates = template === 'boss_minions'
-        ? pool.filter(item => item.xp < (items.find(entry => entry.monster.name === items[0]?.monster.name)?.monster ? monsterXp(items[0].monster) : Infinity))
+        ? pool.filter(item => item.xp < bossXp)
         : pool;
       if (!addBestFit(candidates)) break;
     }
