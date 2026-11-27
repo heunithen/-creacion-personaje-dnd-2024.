@@ -7416,13 +7416,11 @@ import ITEMS from './items.json';
                 <span>{sheetValueByNames(sheet, ['Nombre del jugador','Jugador']) || playerName || 'Jugador'}</span>
               </div>
             </div>
-            <div class="header-actions">
-remove exit from sheet header              {#if demoPreview}
+            {#if demoPreview}
+              <div class="header-actions">
                 <button type="button" on:click={closeDemoPreview}>Salir de vista previa</button>
-              {:else}
-                <button type="button" on:click={() => exportCharacterSummary(sheet, playerName)}>Exportar PDF</button><button type="button" on:click={exportSheet}>Exportar JSON</button>
-              {/if}
-            </div>
+              </div>
+            {/if}
           </header>
 
           <section class="sheet-quick-stats nautical-quick-stats" aria-label="Características y estadísticas">
@@ -7951,8 +7949,9 @@ remove exit from sheet header              {#if demoPreview}
         {/if}
 
         <section class="panel save-panel">
-          <button class="primary full" on:click={exportSheet}>Exportar personaje (JSON)</button>
-          <button class="danger-text" on:click={deleteSheet}>Eliminar personaje</button>
+          <button class="primary full" type="button" on:click={() => exportCharacterSummary(sheet, playerName)}>Exportar PDF</button>
+          <button class="primary full" type="button" on:click={exportSheet}>Exportar JSON</button>
+          <button class="danger-text" type="button" on:click={deleteSheet}>Eliminar personaje</button>
         </section>
       {/if}
     {/if}
