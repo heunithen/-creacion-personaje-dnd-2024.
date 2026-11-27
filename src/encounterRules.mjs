@@ -145,7 +145,7 @@ export function createEncounterFromTemplate(available, budget, template, random 
   } else if (template === 'duo' || template === 'trio') {
     const count = template === 'duo' ? 2 : 3;
     for (let i=0;i<count;i++) {
-      const candidate = pickDistinct(budget - spent);
+      const candidate = pickDistinct(budget - spent, items.map(item => item.monster.name));
       if (!candidate || !add(candidate)) break;
     }
     if (creatures !== count) return {steps,encounter:null};
