@@ -6354,16 +6354,17 @@ import ITEMS from './items.json';
         text(page1,'Punt. '+(score===null?'—':score),x+3,515,6,regular,ink,72);
       });
       // Saving throws and skills with an at-a-glance proficiency marker.
+      const skillRowFill=rgb(0.975,0.975,0.975), skillDivider=rgb(0.78,0.78,0.78);
       panel(page1,M,285,174,198,'SALVACIONES');
       abilities.forEach((name,i)=>{
         const raw=stat('SALVACIONES',name), proficient=/competente|proficient/i.test(raw);
         const y=448-i*28;
+        if(i%2===1) page1.drawRectangle({x:M+7,y:y-5,width:160,height:17,color:skillRowFill});
         page1.drawCircle({x:M+13,y:y+2,size:3.5,borderColor:proficient?accent:line,borderWidth:0.8,color:proficient?accent:white});
         text(page1,name,M+24,y,7,proficient?bold:regular);
         text(page1,(raw.replace(/\s*[·|].*$/,'')||'—'),M+119,y,7,bold,accent,45);
       });
       panel(page1,215,285,348,198,'HABILIDADES');
-      const skillRowFill=rgb(0.975,0.975,0.975), skillDivider=rgb(0.78,0.78,0.78);
       skills.forEach((name,i)=>{
         const col=i<9?0:1,row=i%9,x=224+col*168,y=448-row*20;
         if(row%2===1) page1.drawRectangle({x:x-3,y:y-5,width:163,height:15,color:skillRowFill});
@@ -6379,6 +6380,7 @@ import ITEMS from './items.json';
       text(page1,'DAÑO Y PROPIEDADES',M+258,252,6,bold,muted);
       attacks.forEach((row,i)=>{
         const y=235-i*16;
+        if(i%2===1) page1.drawRectangle({x:M+5,y:y-5,width:W-2*M-10,height:15,color:skillRowFill});
         const name=String(row[0]||'Ataque');
         const nameSize=Math.max(5.4,Math.min(7.2,180*7.2/Math.max(1,regular.widthOfTextAtSize(name,7.2))));
         text(page1,name,M+9,y,nameSize,bold,ink,185);
@@ -6434,6 +6436,7 @@ import ITEMS from './items.json';
       panel(page2,M,225,260,185,'EQUIPO E INVENTARIO');
       inventory.slice(0,14).forEach((item,i)=>{
         const y=378-i*12;
+        if(i%2===1) page2.drawRectangle({x:M+7,y:y-5,width:246,height:11,color:skillRowFill});
         page2.drawRectangle({x:M+10,y:y-1,width:6,height:6,borderColor:line,borderWidth:0.65});
         text(page2,item.name,M+22,y,6.5,regular,ink,145);
         text(page2,item.value,M+174,y,6.5,bold,ink,70);
