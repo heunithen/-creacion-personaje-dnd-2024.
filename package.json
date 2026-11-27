@@ -9,8 +9,9 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "audit:manual": "node scripts/audit-manual.mjs",
-    "test:builder": "node --test scripts/character-creation-regression.test.mjs scripts/shop-regression.test.mjs",
-    "test:e2e": "playwright test"
+    "test:builder": "node --test scripts/character-creation-regression.test.mjs scripts/shop-regression.test.mjs scripts/encounter-regression.test.mjs",
+    "test:e2e": "playwright test",
+    "test:encounters": "node --test scripts/encounter-regression.test.mjs"
   },
   "dependencies": {
     "@owlbear-rodeo/sdk": "3.1.0",
