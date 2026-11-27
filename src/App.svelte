@@ -11192,4 +11192,135 @@ import ITEMS from './items.json';
     }
   }
 
+
+  /* 3. Tarjetas de selección: contenido agrupado y controles más visibles */
+  :global(.builder-class-flyer),
+  :global(.builder-background-flyer),
+  :global(.builder-species-flyer){
+    isolation:isolate;
+  }
+  :global(.builder-class-learn),
+  :global(.builder-background-learn),
+  :global(.builder-species-learn){
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    gap:.45rem;
+    border-radius:8px;
+    background:linear-gradient(155deg,rgba(5,17,22,.78),rgba(12,29,36,.56))!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.045),0 8px 22px rgba(0,0,0,.14);
+  }
+  :global(.builder-class-information),
+  :global(.builder-background-information),
+  :global(.builder-species-information){
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    align-content:start;
+    gap:.25rem 1.15rem;
+  }
+  :global(.builder-class-info-section),
+  :global(.builder-background-info-section),
+  :global(.builder-species-info-section){
+    min-width:0;
+    margin:0!important;
+    padding:.7rem .75rem .8rem!important;
+    border:1px solid rgba(218,226,220,.12)!important;
+    border-left:2px solid rgba(218,182,102,.55)!important;
+    border-radius:6px;
+    background:rgba(5,17,22,.32);
+  }
+  :global(.builder-species-info-section){
+    border-left-color:rgba(93,157,194,.78)!important;
+  }
+  :global(.builder-class-info-section h5),
+  :global(.builder-background-info-section h5),
+  :global(.builder-species-info-section h5){
+    margin-bottom:.35rem!important;
+    color:#e7ece8!important;
+  }
+  :global(.builder-class-info-section strong),
+  :global(.builder-background-info-section strong),
+  :global(.builder-species-info-section strong){
+    font-size:.86rem!important;
+    line-height:1.5!important;
+  }
+  :global(.builder-class-select-row){
+    padding:.7rem .8rem;
+    border:1px solid rgba(212,173,85,.28);
+    border-radius:7px;
+    background:rgba(7,18,22,.48);
+  }
+  :global(.builder-class-select){
+    min-height:38px;
+    padding:.55rem 1.2rem!important;
+    box-shadow:0 3px 10px rgba(0,0,0,.2);
+  }
+  :global(.builder-class-select:focus-visible),
+  :global(.builder-class-arrow:focus-visible){
+    outline:3px solid rgba(255,255,255,.78)!important;
+    outline-offset:3px;
+  }
+  :global(.builder-background-ability-chips){
+    margin:.1rem 0 .8rem!important;
+    padding:.65rem .75rem!important;
+    border:1px solid rgba(189,146,47,.24);
+    border-radius:7px;
+    background:rgba(7,18,22,.42);
+  }
+  :global(.builder-background-ability-chips span){
+    padding:.3rem .7rem!important;
+    background:rgba(189,146,47,.1);
+  }
+  :global(.builder-species-art){
+    max-height:320px!important;
+    padding:.35rem;
+    border-radius:7px;
+    background:linear-gradient(145deg,rgba(4,13,19,.58),rgba(31,54,67,.42))!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.2);
+  }
+  :global(.builder-class-flyer-description),
+  :global(.builder-background-description),
+  :global(.builder-species-description){
+    font-size:.84rem!important;
+    line-height:1.65!important;
+  }
+  :global(.builder-class-flyer:hover),
+  :global(.builder-background-flyer:hover),
+  :global(.builder-species-flyer:hover){
+    box-shadow:inset 0 0 0 4px rgba(255,255,255,.045),0 12px 30px rgba(0,0,0,.24);
+  }
+  @media(max-width:760px){
+    :global(.builder-class-content),
+    :global(.builder-background-content),
+    :global(.builder-species-content){
+      grid-template-columns:minmax(0,1fr)!important;
+      gap:1rem!important;
+    }
+    :global(.builder-class-information),
+    :global(.builder-background-information),
+    :global(.builder-species-information){
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.5rem;
+    }
+    :global(.builder-class-learn),
+    :global(.builder-background-learn),
+    :global(.builder-species-learn){
+      height:auto!important;
+      min-height:0;
+    }
+  }
+  @media(max-width:480px){
+    :global(.builder-class-information),
+    :global(.builder-background-information),
+    :global(.builder-species-information){
+      grid-template-columns:minmax(0,1fr);
+    }
+    :global(.builder-class-select-row){
+      align-items:stretch!important;
+    }
+    :global(.builder-class-select){
+      align-self:flex-end;
+    }
+  }
+
 </style>
