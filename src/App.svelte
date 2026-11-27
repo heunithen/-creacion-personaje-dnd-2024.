@@ -897,6 +897,7 @@
 
   const STAT_BUBBLES_METADATA_KEY = 'com.owlbear-rodeo-bubbles-extension/metadata';
   const statBubbleSyncQueues = new Map<string, Promise<void>>();
+  const roomStatSaveQueues = new Map<string, Promise<void>>();
 
   async function syncCharacterBubbles(targetSheet: RawSheet, characterId: string) {
     if (!OBR.isAvailable || !(await OBR.scene.isReady())) return;
@@ -928,6 +929,15 @@
       for (const key of ['hpBubbleId','acBubbleId','hpBarBackgroundId','hpBarFillId','acShapeId','acTextId','hpTextId']) {
         delete tokenData[key];
       }
+      const previousStats = (token.metadata as any)?.[STAT_BUBBLES_METADATA_KEY] || {};
+      const statsUnchanged =
+        Number(previousStats.health) === currentHp &&
+        Number(previousStats['max health']) === maxHp &&
+        Number(previousStats['temporary health']) === tempHp &&
+        Number(previousStats['armor class']) === armorClass;
+      const tokenLinkUnchanged = JSON.stringify((token.metadata as any)?.[TOKEN_METADATA_KEY] || {}) === JSON.stringify(tokenData);
+      if (statsUnchanged && tokenLinkUnchanged) continue;
+
       await OBR.scene.items.updateItems([token.id], (items: any[]) => {
         for (const item of items) {
           item.metadata[TOKEN_METADATA_KEY] = tokenData;
@@ -5580,7 +5590,10 @@ import ITEMS from './items.json';
   }
 
   async function adjustRoomCharacterStat(entry: RoomEntry, statName: string, delta: number) {
-    const updated = JSON.parse(JSON.stringify(entry.sheet)) as RawSheet;
+    // Leer siempre el último estado local; la ficha incluida en el evento puede estar obsoleta
+    // si el usuario pulsa varias veces antes de que termine el guardado anterior.
+    const latestEntry = liveRoomSheets.find(item => item.playerId === entry.playerId) || entry;
+    const updated = JSON.parse(JSON.stringify(latestEntry.sheet)) as RawSheet;
     const current = getCharacterNumber(updated, 'COMBATE', statName,
       statName === 'Armor Class' ? 10 : 0);
     const nextValue = Math.max(0, current + delta);
@@ -5597,11 +5610,21 @@ import ITEMS from './items.json';
       }
     }
 
+    // Serializar las escrituras para impedir que una respuesta lenta sobrescriba un clic posterior.
+    const previous = roomStatSaveQueues.get(entry.playerId) || Promise.resolve();
+    const nextSave = previous.catch(() => {}).then(() =>
+      saveCharacterToSupabase(updated, entry.playerId, entry.playerName)
+    );
+    roomStatSaveQueues.set(entry.playerId, nextSave);
     try {
-      await saveCharacterToSupabase(updated, entry.playerId, entry.playerName);
+      await nextSave;
     } catch (error) {
       syncStatus = 'No se pudo guardar el cambio: ' + (error instanceof Error ? error.message : String(error));
       await loadSupabaseRoomCharacters();
+    } finally {
+      if (roomStatSaveQueues.get(entry.playerId) === nextSave) {
+        roomStatSaveQueues.delete(entry.playerId);
+      }
     }
   }
 
