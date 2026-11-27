@@ -3385,7 +3385,8 @@ import ITEMS from './items.json';
     refreshRoomSheetList();
     if (masterViewingEntry) {
       const latest = liveRoomSheets.find(entry => entry.playerId === masterViewingEntry?.playerId);
-      if (latest && !syncPending && !supabaseSaving) {
+      const editingMasterSheet = Boolean(document.querySelector('.nautical-sheet')?.contains(document.activeElement));
+      if (latest && !syncPending && !supabaseSaving && !editingMasterSheet) {
         masterViewingEntry = latest;
         sheet = JSON.parse(JSON.stringify(latest.sheet)) as RawSheet;
       }
