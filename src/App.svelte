@@ -10906,4 +10906,72 @@ import ITEMS from './items.json';
   .builder-class-info-section strong{display:block;color:#f1eee5;font:500 .84rem/1.55 Georgia,serif;overflow-wrap:anywhere}
   @media(max-width:620px){.builder-class-flyer{min-height:0;padding:1.35rem 1rem}.builder-class-content{grid-template-columns:1fr;gap:1rem}.builder-class-learn{margin-top:0;padding:.9rem}.builder-class-title-row h4{font-size:2.1rem}.builder-class-select-row{align-items:flex-start;flex-direction:column}.builder-class-select{align-self:flex-end}.builder-class-info-section{margin-bottom:.45rem;padding-bottom:.55rem}.builder-class-info-section h5{font-size:1rem}.builder-class-info-section strong{font-size:.8rem}}
 
+
+
+  /* Paso 6: distribución, alineación y espacios de la ficha del personaje. */
+  :global(.nautical-columns){
+    box-sizing:border-box!important;
+    display:grid!important;
+    grid-template-columns:minmax(210px,.82fr) minmax(230px,.92fr) minmax(0,1.55fr)!important;
+    gap:1rem!important;
+    align-items:start!important;
+    padding:1rem!important;
+  }
+  :global(.nautical-columns > section){
+    box-sizing:border-box;
+    min-width:0!important;
+    width:100%;
+    align-self:start;
+  }
+  :global(.nautical-columns .sheet-section){
+    box-sizing:border-box;
+    min-width:0;
+    margin:0 0 .8rem!important;
+    padding:.85rem!important;
+  }
+  :global(.nautical-columns .sheet-section:last-child){margin-bottom:0!important}
+  :global(.nautical-columns .sheet-section-title){margin-bottom:.55rem!important;padding-bottom:.5rem!important}
+  :global(.nautical-columns .sheet-stat){align-items:center;gap:.6rem;padding:.48rem .2rem!important}
+  :global(.nautical-columns .stat-label){line-height:1.35;overflow-wrap:anywhere}
+  :global(.nautical-columns .stat-value){min-width:2.2rem;white-space:nowrap}
+  :global(.nautical-actions){display:flex;flex-direction:column;gap:.8rem;min-width:0}
+  :global(.nautical-actions .sheet-section){height:auto;min-height:0}
+  :global(.nautical-actions button){max-width:100%;white-space:normal}
+  :global(.nautical-content){min-width:0}
+  :global(.nautical-tabs){gap:.35rem!important;margin-bottom:.75rem!important;padding:.15rem .1rem .65rem!important}
+  :global(.nautical-tabs button){min-height:36px;padding:.55rem .75rem!important}
+  :global(.nautical-tab-content){gap:.8rem!important;min-width:0}
+  :global(.weapon-attack-card){box-sizing:border-box;padding:.8rem!important}
+  :global(.weapon-attack-values){gap:.7rem!important}
+  :global(.player-spell-card){gap:.8rem!important;padding:.7rem .8rem!important}
+  :global(.player-feature-card summary){gap:.75rem;padding:.75rem .85rem!important}
+  :global(.nautical-columns .sheet-section button){box-sizing:border-box}
+  @media(max-width:1120px){
+    :global(.nautical-columns){
+      grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;
+      gap:.85rem!important;
+    }
+    :global(.nautical-skills){grid-column:1}
+    :global(.nautical-actions){grid-column:2}
+    :global(.nautical-content){grid-column:1/-1}
+  }
+  @media(max-width:700px){
+    :global(.nautical-columns){
+      grid-template-columns:minmax(0,1fr)!important;
+      gap:.75rem!important;
+      padding:.65rem!important;
+    }
+    :global(.nautical-skills),:global(.nautical-actions),:global(.nautical-content){grid-column:1!important}
+    :global(.nautical-columns .sheet-section){padding:.75rem!important;margin-bottom:.65rem!important}
+    :global(.nautical-tabs){max-width:100%;gap:.25rem!important}
+    :global(.nautical-tabs button){padding:.5rem .6rem!important}
+    :global(.weapon-attack-values){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  }
+  @media(max-width:420px){
+    :global(.nautical-columns){padding:.45rem!important;gap:.6rem!important}
+    :global(.nautical-columns .sheet-section){padding:.65rem!important}
+    :global(.nautical-actions){gap:.6rem}
+    :global(.weapon-attack-values){gap:.5rem!important}
+  }
+
 </style>
