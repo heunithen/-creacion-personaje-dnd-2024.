@@ -3476,7 +3476,7 @@ import ITEMS from './items.json';
         const parsed = parseInventoryLine(line);
         if (!parsed) continue;
         const key = normalizeLevelText(parsed.name);
-        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || (target as any).customInventoryItems?.[key] || {name:parsed.name,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null};
+        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || (ITEMS as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || (target as any).customInventoryItems?.[key] || {name:parsed.name,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null};
         const current = totals.get(key) || {name:parsed.name,item,quantity:0};
         current.quantity += parsed.quantity;
         totals.set(key,current);
@@ -6785,7 +6785,7 @@ import ITEMS from './items.json';
                 {:else if playerSheetTab === 'Tiendita'}
                   <section class="sheet-section player-shop-section">
                     <div class="shopkeeper-banner">
-                      <img src={new URL("images/character-creation/portraits/vendedor.png", document.baseURI).href} alt="Vendedor de la tienda" />
+                      <img src="/-creacion-personaje-dnd-2024./images/character-creation/portraits/vendedor.png" alt="Vendedor de la tienda" />
                       <div><h3>La Tiendita</h3><p>Compra equipo para tus aventuras o vende lo que ya no necesites. Los objetos mágicos siguen los valores de rareza de la Guía del Dungeon Master 2024.</p></div>
                     </div>
                     <div class="shop-balance">
