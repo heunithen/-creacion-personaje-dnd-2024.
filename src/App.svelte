@@ -6209,7 +6209,21 @@ import ITEMS from './items.json';
     } catch (error) { cloudStatus = 'No se pudo guardar en GitHub: ' + (error instanceof Error ? error.message : String(error)); }
   }
 
-async function exportCharacterSummary(target: RawSheet | null, playerLabel = '') {
+  async function restoreOwnSheet() {
+    if (obrRole !== 'PLAYER') return;
+    try {
+      sheet = await loadOwnCharacterFromSupabase();
+      syncStatus = sheet ? 'Personaje cargado desde Supabase.' : 'No hay un personaje registrado para este jugador en esta sala.';
+    } catch (error) {
+      sheet = null;
+      syncStatus = 'No se pudo consultar Supabase. No se utilizará una copia local.';
+      console.error(error);
+    } finally {
+      characterStorageReady = true;
+    }
+  }
+
+  async function exportCharacterSummary(target: RawSheet | null, playerLabel = '') {
     if (!target) return;
     await exportCleanCharacterPdf(target, playerLabel);
   }
