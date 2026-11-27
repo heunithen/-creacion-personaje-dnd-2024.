@@ -11066,4 +11066,108 @@ import ITEMS from './items.json';
     border-radius:0!important;
   }
 
+
+
+  /* 2. Jerarquía tipográfica: distinguir título, sección, subsección y texto auxiliar */
+  :global(.panel > h2),
+  :global(.builder-panel > h2),
+  :global(.import-character-panel > h2){
+    margin:0 0 1.15rem!important;
+    padding:0 0 .8rem!important;
+    color:#f5f8f6!important;
+    font:700 clamp(1.45rem,2.4vw,1.9rem)/1.15 Georgia,'Times New Roman',serif!important;
+    letter-spacing:.01em!important;
+    border-bottom:1px solid rgba(99,216,208,.42)!important;
+    text-wrap:balance;
+  }
+  :global(.section-heading h2),
+  :global(.sheet-section-title h3){
+    margin:0!important;
+    color:#eaf6f4!important;
+    font:700 clamp(1.05rem,1.7vw,1.28rem)/1.25 Georgia,'Times New Roman',serif!important;
+    letter-spacing:.015em!important;
+    text-wrap:balance;
+  }
+  :global(.panel h3),
+  :global(.builder-panel h3),
+  :global(.sheet-section h3){
+    color:#dcebea!important;
+    font:700 1rem/1.35 Georgia,'Times New Roman',serif!important;
+    letter-spacing:.01em;
+  }
+  :global(.panel h4),
+  :global(.builder-panel h4),
+  :global(.sheet-section h4){
+    color:#c8dddc!important;
+    font:700 .88rem/1.35 system-ui,sans-serif!important;
+    letter-spacing:.025em;
+  }
+  :global(.panel small),
+  :global(.builder-panel small),
+  :global(.sheet-section small),
+  :global(.muted),
+  :global(.hint){
+    font-size:.76rem;
+    line-height:1.5;
+  }
+  :global(.builder-panel > h3){
+    display:flex;
+    align-items:center;
+    gap:.7rem;
+    margin:1.35rem 0 .8rem!important;
+    padding:0 0 .55rem!important;
+    border-bottom:1px solid rgba(99,216,208,.24);
+    color:#f0f5f2!important;
+    font:700 clamp(1.05rem,1.8vw,1.3rem)/1.25 Georgia,'Times New Roman',serif!important;
+    text-wrap:balance;
+  }
+  :global(.builder-panel > h3:first-of-type){margin-top:.25rem!important}
+  :global(.builder-step-track){
+    gap:.45rem!important;
+    padding:.7rem .8rem!important;
+    border:1px solid rgba(99,216,208,.2);
+    border-radius:9px;
+    background:rgba(5,18,24,.38);
+  }
+  :global(.builder-progress){margin:.35rem 0 .65rem!important}
+  :global(.builder-review-kicker){
+    color:#8de5dd!important;
+    font-size:.68rem!important;
+    font-weight:800!important;
+    letter-spacing:.14em!important;
+    text-transform:uppercase;
+  }
+  :global(.builder-review-section){
+    border-top:1px solid rgba(99,216,208,.28);
+    padding-top:.8rem;
+  }
+  :global(.builder-review-section h4){
+    margin:0 0 .6rem!important;
+    color:#8de5dd!important;
+    font-size:.72rem!important;
+    font-weight:800!important;
+    letter-spacing:.1em!important;
+    text-transform:uppercase;
+  }
+  :global(.stat-label){
+    color:#91b4b7!important;
+    font-size:.68rem!important;
+    font-weight:800!important;
+    letter-spacing:.08em!important;
+    text-transform:uppercase;
+  }
+  :global(.character-name){
+    color:#f5f3e9!important;
+    font:700 clamp(1.65rem,3vw,2.35rem)/1.08 Georgia,'Times New Roman',serif!important;
+    letter-spacing:.015em;
+    text-wrap:balance;
+  }
+  @media(max-width:620px){
+    :global(.panel > h2),
+    :global(.builder-panel > h2),
+    :global(.import-character-panel > h2){font-size:1.4rem!important}
+    :global(.builder-panel > h3){margin-top:1.05rem!important}
+    :global(.builder-step-track){padding:.55rem!important}
+  }
+
 </style>
