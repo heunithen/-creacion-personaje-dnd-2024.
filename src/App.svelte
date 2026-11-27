@@ -36,6 +36,12 @@
   let itemWeightMin = '';
   let itemWeightMax = '';
   let spellSearch = '';
+  let spellLearnSearch = '';
+  let spellLearnOpen = false;
+  let inventoryAddOpen = false;
+  let inventoryNewName = '';
+  let inventoryNewType = 'Equipo';
+  let inventoryNewDetails = '';
   let spellLetterFilter = '';
   let rulesSearch = '';
   let rulesCategoryFilter = '';
@@ -3434,6 +3440,7 @@ import ITEMS from './items.json';
     return matchesQuery && (shopCategory === 'Todos' || item.type === shopCategory);
   });
   $: shopOwnedItems = sheet ? getShopOwnedItems(sheet) : [];
+  $: spellLearnOptions = SPELLS.filter((spell:any) => !spellIsKnown(sheet,spell) && normalizeLevelText(spell.name+' '+spell.school+' '+spell.level).includes(normalizeLevelText(spellLearnSearch))).slice(0,12);
 
   function setShopQuantity(name:string,event:Event,max=999) {
     const value=Number((event.currentTarget as HTMLInputElement).value)||1;
@@ -3552,25 +3559,74 @@ import ITEMS from './items.json';
     refreshDerivedCharacterSheet(target);
   }
   function shopToggleEquip(item:any) {
-    if(!sheet || (item.type!=='Escudo' && typeof item.armorBase!=='number')) return;
+    if(!sheet || (item.type!=='Arma' && item.type!=='Escudo' && typeof item.armorBase!=='number')) return;
     if(shopOwnedQuantity(item.name)<1) { shopNotice='Debes tener el objeto en el inventario para equiparlo.'; return; }
     const before=captureProgressionSections();
     const wasEquipped=shopItemIsEquipped(item);
-    if(item.type==='Escudo') {
+    if(item.type==='Arma') {
+      const current=splitChoiceList(getCharacterStat(sheet,'EQUIPO','Armas equipadas'));
+      const exists=current.some((name:string)=>normalizeLevelText(name)===normalizeLevelText(item.name));
+      setCharacterStat(sheet,'EQUIPO','Armas equipadas',(exists?current.filter((name:string)=>normalizeLevelText(name)!==normalizeLevelText(item.name)):[...current,item.name]).join(', '));
+    } else if(item.type==='Escudo') {
       const current=getCharacterStat(sheet,'EQUIPO','Escudo equipado en tienda');
       setCharacterStat(sheet,'EQUIPO','Escudo equipado en tienda',normalizeLevelText(current)===normalizeLevelText(item.name)?'':item.name);
     } else {
       const current=getCharacterStat(sheet,'EQUIPO','Armadura equipada en tienda');
       setCharacterStat(sheet,'EQUIPO','Armadura equipada en tienda',normalizeLevelText(current)===normalizeLevelText(item.name)?'':item.name);
     }
-    shopApplyArmorClass(sheet);
+    if(item.type!=='Arma') shopApplyArmorClass(sheet);
     sheet={...sheet};
     recordProgressionChange('Equipo: '+item.name,before);
     shopNotice=wasEquipped?'Se desequipó '+item.name+'.':'Se equipó '+item.name+'.';
   }
   function shopItemIsEquipped(item:any): boolean {
     if(!sheet)return false;
+    if(item.type==='Arma') return splitChoiceList(getCharacterStat(sheet,'EQUIPO','Armas equipadas')).some((name:string)=>normalizeLevelText(name)===normalizeLevelText(item.name));
     return normalizeLevelText(getCharacterStat(sheet,'EQUIPO',item.type==='Escudo'?'Escudo equipado en tienda':'Armadura equipada en tienda'))===normalizeLevelText(item.name);
+  }
+
+  function addInventoryCustomItem() {
+    if(!sheet) return;
+    const name=inventoryNewName.trim();
+    if(!name) return;
+    const item={name,type:inventoryNewType,rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null,description:inventoryNewDetails.trim(),custom:true};
+    shopAddInventoryItem(item,1);
+    sheet={...sheet}; saveSheetMutation();
+    inventoryNewName=''; inventoryNewDetails=''; inventoryNewType='Equipo'; inventoryAddOpen=false;
+    shopNotice='Objeto añadido al inventario.';
+  }
+  function removeInventoryItem(item:any) {
+    if(!sheet || !window.confirm('¿Estás seguro? Se eliminará definitivamente este objeto del inventario.')) return;
+    const before=captureProgressionSections();
+    if(!shopRemoveInventoryItem(item.name,item.quantity)) return;
+    if(shopItemIsEquipped(item)) {
+      setCharacterStat(sheet,'EQUIPO',item.type==='Escudo'?'Escudo equipado en tienda':'Armadura equipada en tienda','');
+      shopApplyArmorClass(sheet);
+    }
+    shopUpdateWeaponList(item,true); sheet={...sheet};
+    recordProgressionChange('Eliminación: '+item.name,before);
+    shopNotice='Objeto eliminado definitivamente.';
+  }
+  function learnSpellByName(name:string) {
+    if(!sheet) return;
+    const spell=(SPELLS as any[]).find((entry:any)=>normalizeLevelText(entry.name)===normalizeLevelText(name));
+    if(!spell) return;
+    const states=spellStates(sheet), key=normalizeLevelText(spell.name);
+    states[key]={...(states[key]||{}),known:true};
+    setCharacterStat(sheet,'GESTIÓN DE FICHA','Estados de conjuros',JSON.stringify(states));
+    saveSheetMutation(); spellLearnSearch=''; spellLearnOpen=false;
+    notice='Conjuro aprendido: '+spell.name+'.';
+  }
+  function removeKnownSpell(spell:any) {
+    if(!sheet || !window.confirm('¿Estás seguro? Se eliminará definitivamente este conjuro de tu lista.')) return;
+    const states=spellStates(sheet), key=normalizeLevelText(spell.name);
+    delete states[key];
+    setCharacterStat(sheet,'GESTIÓN DE FICHA','Estados de conjuros',JSON.stringify(states));
+    for(const field of ['Conjuros conocidos','Conjuros preparados de clase','Conjuros preparados de subclase','Conjuros de nivel 1']) {
+      const value=getCharacterStat(sheet,'CONJUROS',field);
+      if(value) setCharacterStat(sheet,'CONJUROS',field,splitChoiceList(value).filter((entry:string)=>normalizeLevelText(entry)!==key).join(', '));
+    }
+    saveSheetMutation(); notice='Conjuro eliminado definitivamente.';
   }
   function shopBuyItem(item:any) {
     if(!sheet)return;
@@ -6556,6 +6612,44 @@ import ITEMS from './items.json';
                     {/if}
                     <p class="muted">Esta lista es de solo lectura. El orden y el turno actual se actualizan desde el tracker del director.</p>
                   </section>
+
+                {:else if playerSheetTab === 'Inventario'}
+                  <section class="sheet-section player-inventory-panel">
+                    <div class="sheet-section-title"><h3>Inventario unificado</h3><span class="count">{shopOwnedItems.length} objetos</span></div>
+                    <p class="muted">Todo tu equipo aparece en una sola lista, sin separar su procedencia. Las armas, armaduras y escudos pueden equiparse o desequiparse desde cada casilla.</p>
+                    <div class="inventory-toolbar"><button type="button" class="inventory-add-button" on:click={()=>inventoryAddOpen=!inventoryAddOpen}>{inventoryAddOpen?'Cancelar':'＋ Agregar objeto'}</button></div>
+                    {#if inventoryAddOpen}
+                      <form class="inventory-add-form" on:submit|preventDefault={addInventoryCustomItem}>
+                        <label>Nombre del objeto<input bind:value={inventoryNewName} required maxlength="100" placeholder="Nombre del objeto" /></label>
+                        <label>Tipo<select bind:value={inventoryNewType}><option>Equipo</option><option>Arma</option><option>Armadura</option><option>Escudo</option><option>Consumible</option><option>Herramienta</option><option>Munición</option><option>Objeto mágico</option><option>Otro</option></select></label>
+                        <label>Características o descripción<input bind:value={inventoryNewDetails} maxlength="240" placeholder="Daño, CA, propiedades, notas..." /></label>
+                        <button type="submit" disabled={!inventoryNewName.trim()}>Añadir al inventario</button>
+                      </form>
+                    {/if}
+                    {#if shopNotice}<p class="shop-notice" role="status">{shopNotice}</p>{/if}
+                    {#if shopOwnedItems.length}
+                      <div class="inventory-slot-grid">
+                        {#each shopOwnedItems as owned (owned.name)}
+                          <article class="inventory-slot">
+                            <button type="button" class="inventory-remove" aria-label={'Eliminar '+owned.name} title="Eliminar definitivamente" on:click={()=>removeInventoryItem(owned)}>×</button>
+                            <div class="inventory-slot-icon">{owned.item.type==='Arma'?'⚔':owned.item.type==='Armadura'?'▣':owned.item.type==='Escudo'?'⬡':owned.item.type==='Consumible'?'◈':'◇'}</div>
+                            <h4>{owned.name}</h4>
+                            <span class="inventory-slot-type">{owned.item.type} · ×{owned.quantity}</span>
+                            {#if owned.item.rarity}<span class="inventory-slot-detail">{owned.item.rarity}</span>{/if}
+                            {#if typeof owned.item.armorBase==='number'}<span class="inventory-slot-detail">CA {owned.item.armorBase}{#if owned.item.armorMaxDex<99} + DES (máx. {owned.item.armorMaxDex}){/if}</span>{/if}
+                            {#if owned.item.damage}<span class="inventory-slot-detail">Daño {owned.item.damage}</span>{/if}
+                            {#if owned.item.weight}<span class="inventory-slot-detail">Peso {owned.item.weight}</span>{/if}
+                            {#if owned.item.description}<p class="inventory-slot-description">{owned.item.description}</p>{/if}
+                            {#if owned.item.type==='Arma' || owned.item.type==='Escudo' || typeof owned.item.armorBase==='number'}
+                              <button type="button" class:equipped={shopItemIsEquipped(owned.item)} class="inventory-equip-button" on:click={()=>shopToggleEquip(owned.item)}>{shopItemIsEquipped(owned.item)?'Equipado':'Desequipado'}</button>
+                            {/if}
+                          </article>
+                        {/each}
+                      </div>
+                    {:else}
+                      <p class="muted nautical-empty">Tu inventario está vacío. Usa «Agregar objeto» para registrar equipo.</p>
+                    {/if}
+                  </section>
                 {:else if playerSheetTab === 'Conjuros'}
                   <section class="sheet-section player-spellcasting-summary">
                     <div class="sheet-section-title"><h3>Lanzamiento de conjuros</h3></div>
@@ -6575,7 +6669,8 @@ import ITEMS from './items.json';
                     </div>
                   </section>
 
-                  <div class="sheet-section-title"><h3>Conjuros del personaje</h3></div>
+                  <div class="sheet-section-title"><h3>Conjuros del personaje</h3><button type="button" class="spell-learn-button" on:click={()=>spellLearnOpen=!spellLearnOpen}>{spellLearnOpen?'Cerrar':'＋ Aprender conjuro'}</button></div>
+                  {#if spellLearnOpen}<div class="spell-learn-panel"><label>Buscar conjuro<input type="search" bind:value={spellLearnSearch} placeholder="Escribe el nombre del conjuro..." /></label>{#each spellLearnOptions as option (option.name)}<button type="button" on:click={()=>learnSpellByName(option.name)}><span>{option.name}</span><small>{option.level===0?'Truco':'Nivel '+option.level} · {option.school||'—'}</small></button>{/each}{#if !spellLearnOptions.length}<p class="muted">No hay conjuros disponibles con esa búsqueda.</p>{/if}</div>{/if}
                   <section class="sheet-section player-spell-list-section">
                     <div class="sheet-section-title"><h3>Conjuros</h3></div>
                     {#if playerKnownSpellCards(sheet).length}
@@ -6599,10 +6694,10 @@ import ITEMS from './items.json';
                                 <p class="spell-description">{spell.description || 'Descripción no disponible.'}</p>
                               </div>
                             </details>
-                            <div class="player-spell-checks">
+                            <div class="player-spell-card-actions"><div class="player-spell-checks">
                               <label><input type="checkbox" checked={spellIsKnown(sheet, spell)} on:change={() => toggleSpellState(spell, 'known')} /> Conocido</label>
                               <label><input type="checkbox" checked={spellIsPrepared(sheet, spell)} on:change={() => toggleSpellState(spell, 'prepared')} /> Preparado</label>
-                            </div>
+                            </div><button type="button" class="spell-remove-button" aria-label={'Eliminar '+spell.name} title="Eliminar definitivamente" on:click={()=>removeKnownSpell(spell)}>×</button></div>
                           </article>
                         {/each}
                       </div>

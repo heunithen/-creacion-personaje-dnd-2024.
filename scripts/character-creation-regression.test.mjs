@@ -223,3 +223,15 @@ test('la interfaz y la ficha final están conectadas a las reglas revisadas', ()
   assert.match(app,/put\(0,9,b\.age \|\| '—'\); put\(0,10,b\.height \|\| '—'\)/);
   assert.match(app,/put\(9,0,b\.appearance \|\| '—'\); put\(9,1,b\.personality \|\| '—'\); put\(9,2,b\.ideals \|\| '—'\); put\(9,3,b\.bonds \|\| '—'\); put\(9,4,b\.flaws \|\| '—'\)/);
 });
+
+\ntest('inventario unificado y gestión manual de conjuros', () => {
+  assert.match(app, /playerSheetTab === 'Inventario'/);
+  assert.match(app, /Inventario unificado/);
+  assert.match(app, /Agregar objeto/);
+  assert.match(app, /Se eliminará definitivamente este objeto del inventario/);
+  assert.match(app, /shopToggleEquip\(item:any\)/);
+  assert.match(app, /inventory-slot-grid/);
+  assert.match(app, /Aprender conjuro/);
+  assert.match(app, /learnSpellByName\(name:string\)/);
+  assert.match(app, /Se eliminará definitivamente este conjuro de tu lista/);
+});
