@@ -6294,10 +6294,15 @@ import ITEMS from './items.json';
       const player=first([['PERSONAJE','Jugador']]) || playerLabel || '—';
       const abilities=['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
       const skills=['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
-      const attacks=(stat('ATAQUES','Perfiles de ataque')||'').split(/\r?\n/).map(v=>v.trim()).filter(Boolean).slice(0,6).map(row=>{
-        const m=row.match(/^([^:]+):\s*ataque\s*([+-]?\d+)\s*[·|]\s*([^·|]+)(?:[·|]\s*(.*))?$/i);
-        return m?[m[1].trim(),m[2],m[3].trim(),(m[4]||'').trim()]:[row,'','',''];
-      });
+      const attackNames=splitChoiceList(stat('ATAQUES','Armas incluidas en el equipo'));
+      const storedAttackProfiles=stat('ATAQUES','Perfiles de ataque');
+      const attackSource=storedAttackProfiles || (attackNames.length?weaponAttackDetails(target,attackNames.join(', ')):'');
+      const attacks=attackSource.split(/\r?\n/).map(v=>v.trim()).filter(Boolean).map(row=>{
+        const m=row.match(/^(.+?):\s*ataque\s*([+-]?\d+)\s*[·|]\s*([^·|]+)(?:\s*[·|]\s*(.*))?$/i);
+        if(m) return [m[1].trim(),m[2],m[3].trim(),(m[4]||'').trim()];
+        const name=row.split(':')[0].trim();
+        return [name || row,'','',''];
+      }).slice(0,6);
       const featureGroups=playerFeatureGroups(target);
       const traits=[...(featureGroups.traits||[]),...(featureGroups.feats||[])];
       const ownedInventory=getShopOwnedItems(target).map((entry:any)=>({name:String(entry.name||''),value:entry.quantity>1?'× '+entry.quantity:'× 1'})).filter((item:any)=>item.name);
@@ -6357,20 +6362,23 @@ import ITEMS from './items.json';
         text(page1,name,x+11,y,6.3,proficient?bold:regular,ink,105);
         text(page1,raw.replace(/\s*[·|].*$/,'')||'—',x+119,y,6.5,bold,proficient?accent:muted,38);
       });
-      panel(page1,M,157,W-2*M,113,'ATAQUES');
-      text(page1,'ARMA',M+9,238,6,bold,muted);
-      text(page1,'BONO',M+258,238,6,bold,muted);
-      text(page1,'DAÑO Y PROPIEDADES',M+320,238,6,bold,muted);
+      panel(page1,M,145,W-2*M,125,'ATAQUES');
+      text(page1,'ARMA',M+9,252,6,bold,muted);
+      text(page1,'BONO',M+205,252,6,bold,muted);
+      text(page1,'DAÑO Y PROPIEDADES',M+258,252,6,bold,muted);
       attacks.forEach((row,i)=>{
-        const y=220-i*15;
-        text(page1,row[0],M+9,y,7.2,bold,ink,240);
-        text(page1,row[1]?signedBonus(Number(row[1])):'—',M+258,y,7.2,bold,accent,48);
-        text(page1,[row[2],row[3]].filter(Boolean).join(' · ')||'—',M+320,y,6.7,regular,ink,190);
+        const y=235-i*16;
+        const name=String(row[0]||'Ataque');
+        const nameSize=Math.max(5.4,Math.min(7.2,180*7.2/Math.max(1,regular.widthOfTextAtSize(name,7.2))));
+        text(page1,name,M+9,y,nameSize,bold,ink,185);
+        text(page1,row[1]?signedBonus(Number(row[1])):'—',M+205,y,7.2,bold,accent,42);
+        text(page1,[row[2],row[3]].filter(Boolean).join(' · ')||'—',M+258,y,6.4,regular,ink,263);
       });
+      if(!attacks.length) text(page1,'No hay ataques registrados.',M+9,235,7,italic,muted);
       // Proficiencies are kept in a dedicated readable line, not stranded under the attack table.
       const profText=proficiencies.map(v=>[v.name,v.value].filter(Boolean).join(': ')).join(' · ') ||
         first([['COMPETENCIAS','Skills'],['COMPETENCIAS','Competencias'],['COMPETENCIAS','Armas y armaduras'],['COMPETENCIAS','Idiomas']]);
-      wrapped(page1,'COMPETENCIAS: '+(profText||'—'),M+7,145,W-2*M-14,6.2,2);
+      wrapped(page1,'COMPETENCIAS: '+(profText||'—'),M+7,132,W-2*M-14,6.2,2);
       // Los rasgos de clase, incluida Furia, se presentan juntos en la página siguiente.
       footer(page1,1);
 
