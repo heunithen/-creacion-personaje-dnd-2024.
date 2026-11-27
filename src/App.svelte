@@ -956,6 +956,7 @@
       };
 
       let token: any;
+      let portraitFrame: any = null;
       if (portraitUrl) {
         try {
           const portraitInfo = await getPortraitImageInfo(portraitUrl);
@@ -964,14 +965,34 @@
             { dpi: Math.max(portraitInfo.width, portraitInfo.height), offset: { x: portraitInfo.width / 2, y: portraitInfo.height / 2 } }
           )
             .name(characterName)
-            .description('Token con el retrato de ' + characterName + ', vinculado a su ficha.')
+            .description('Retrato de ' + characterName + ', vinculado a su ficha.')
             .scale({ x: size / portraitInfo.width, y: size / portraitInfo.height })
+            .position(position)
+            .layer('CHARACTER')
+            .metadata(metadata)
+            .build();
+
+          // El marco se dibuja como un elemento independiente encima del retrato.
+          // Así evitamos convertir la imagen a data URL, que puede fallar en Owlbear.
+          portraitFrame = buildShape()
+            .name(characterName + ' - Marco dorado')
+            .description('Marco circular dorado del token de ' + characterName + '.')
+            .shapeType('CIRCLE')
+            .width(size)
+            .height(size)
+            .fillColor('#bd9138')
+            .fillOpacity(0)
+            .strokeColor('#f4d88b')
+            .strokeOpacity(1)
+            .strokeWidth(Math.max(5, size * 0.025))
             .position(position)
             .layer('CHARACTER')
             .metadata(metadata)
             .build();
         } catch (portraitError) {
           console.warn('No se pudo cargar el retrato en Owlbear; se usará el círculo dorado.', portraitError);
+          token = null;
+          portraitFrame = null;
         }
       }
 
@@ -993,8 +1014,8 @@
           .build();
       }
 
-      await OBR.scene.items.addItems([token]);
-      notice = (portraitUrl && token.type === 'IMAGE' ? 'Token con retrato de ' : 'Token dorado de ') + characterName + ' creado en la escena (5 pies × 5 pies).';
+      await OBR.scene.items.addItems(portraitFrame ? [token, portraitFrame] : [token]);
+      notice = (portraitUrl && portraitFrame ? 'Token con retrato y marco dorado de ' : 'Token dorado de ') + characterName + ' creado en la escena (5 pies × 5 pies).';
     } catch (error) {
       console.error('Error al crear token de personaje:', error);
       let detail = '';
