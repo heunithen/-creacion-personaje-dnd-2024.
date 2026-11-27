@@ -10,6 +10,7 @@
     [key: string]: any;
   };
   type Selection = { monster: Monster; quantity: number };
+  type GeneratedEncounter = { items: Selection[]; spent: number; creatures: number; key: string };
 
   export let onAddToCombat: (selection: Selection[]) => void = () => {};
 
@@ -67,6 +68,8 @@
   let selected: Selection[] = [];
   let warnings: string[] = [];
   let budgetMessage = '';
+  let generatedEncounters: GeneratedEncounter[] = [];
+  let generationMessage = '';
 
   $: budgetPerCharacter = BUDGETS[groupLevel][difficulty];
   $: budget = budgetPerCharacter * partySize;
@@ -164,6 +167,61 @@
     }
     return warnings;
   }
+  function randomEncounter(): GeneratedEncounter | null {
+    const available = allMonsters.filter(item => item.xp > 0 && item.xp <= budget);
+    if (!available.length) return null;
+    const targetCount = 3 + Math.floor(Math.random() * 3);
+    const items: Selection[] = [];
+    let total = 0;
+    let creatures = 0;
+    while (creatures < targetCount) {
+      const affordable = available.filter(item => item.xp <= budget - total);
+      if (!affordable.length) break;
+      const remainingSlots = targetCount - creatures;
+      const candidates = affordable.filter(item => item.xp <= Math.max(1, (budget - total) / Math.max(1, remainingSlots - 0.35)));
+      const pool = candidates.length ? candidates : affordable;
+      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      const existing = items.find(entry => entry.monster.name === chosen.monster.name);
+      if (existing) existing.quantity += 1;
+      else items.push({ monster: chosen.monster, quantity: 1 });
+      total += chosen.xp;
+      creatures += 1;
+      if (creatures >= 3 && Math.random() < 0.22) break;
+    }
+    if (creatures < 3) return null;
+    const normalized = items.map(item => ({...item})).sort((a,b) => a.monster.name.localeCompare(b.monster.name, 'es'));
+    return {
+      items: normalized,
+      spent: total,
+      creatures,
+      key: normalized.map(item => item.monster.name + ':' + item.quantity).join('|')
+    };
+  }
+  function generateThreeEncounters() {
+    const results: GeneratedEncounter[] = [];
+    const seen = new Set<string>();
+    for (let attempt = 0; attempt < 300 && results.length < 3; attempt += 1) {
+      const encounter = randomEncounter();
+      if (encounter && !seen.has(encounter.key)) {
+        seen.add(encounter.key);
+        results.push(encounter);
+      }
+    }
+    generatedEncounters = results;
+    generationMessage = results.length
+      ? 'Se generaron ' + results.length + ' alternativas aleatorias dentro del presupuesto.'
+      : 'No se encontraron combinaciones válidas con al menos 3 monstruos para este presupuesto.';
+  }
+  function useGeneratedEncounter(encounter: GeneratedEncounter) {
+    const cost = encounter.items.reduce((sum, item) => sum + monsterXp(item.monster) * item.quantity, 0);
+    if (cost > budget) {
+      generationMessage = 'La alternativa ya no cabe en el presupuesto actual. Vuelve a generarla.';
+      return;
+    }
+    selected = encounter.items.map(item => ({...item}));
+    budgetMessage = '';
+    generationMessage = 'Encuentro seleccionado. Puedes ajustarlo manualmente o enviarlo a Combate.';
+  }
   function sendToCombat() {
     if (selected.length) onAddToCombat(selected.map(item => ({...item})));
   }
@@ -219,6 +277,31 @@
       <p class="budget-note">Has utilizado exactamente el presupuesto disponible.</p>
     {/if}
     {#if budgetMessage}<p class="budget-note over-note" role="status">{budgetMessage}</p>{/if}
+  </section>
+
+<section class="random-generator">
+    <div class="random-generator-copy">
+      <div><span class="eyebrow">COMPRA AUTOMÁTICA</span><h3>Generación aleatoria</h3></div>
+      <p>Genera tres alternativas de 3 a 5 monstruos. La selección es aleatoria, permite repeticiones y nunca supera el presupuesto disponible.</p>
+    </div>
+    <button type="button" class="generate-random" on:click={generateThreeEncounters}>Generar 3 encuentros aleatorios</button>
+    {#if generationMessage}<p class="generation-message" role="status">{generationMessage}</p>{/if}
+    {#if generatedEncounters.length}
+      <div class="generated-grid">
+        {#each generatedEncounters as encounter, index}
+          <article class="generated-card">
+            <div class="generated-card-heading"><strong>Alternativa {index + 1}</strong><span>{encounter.creatures} monstruos</span></div>
+            <div class="generated-monsters">
+              {#each encounter.items as item}
+                <div><span>{item.monster.name}{#if item.quantity > 1} × {item.quantity}{/if}</span><small>VD {crValue(item.monster)} · {formatXp(monsterXp(item.monster) * item.quantity)}</small></div>
+              {/each}
+            </div>
+            <div class="generated-total"><span>{formatXp(encounter.spent)} / {formatXp(budget)}</span><strong>{(encounter.spent / budget * 100).toFixed(1)} %</strong></div>
+            <button type="button" class="use-generated" on:click={()=>useGeneratedEncounter(encounter)}>Usar este encuentro</button>
+          </article>
+        {/each}
+      </div>
+    {/if}
   </section>
 
   <div class="encounter-columns">
@@ -311,6 +394,24 @@
   .budget-metrics .negative{color:#ff9292}
   .budget-note{margin:.7rem 0 0;color:var(--ink-soft,#b5bec3);font-size:.72rem}
   .over-note{color:#ff9292}
+  .random-generator{display:grid;gap:.7rem;padding:.9rem;border:1px solid var(--gold,#5fe6e0);border-radius:6px;background:var(--paper-deep,#1b2a33)}
+  .random-generator-copy{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+  .random-generator-copy h3{margin:.2rem 0 0;color:var(--ink,#fff);font:700 1.05rem Georgia,serif}
+  .random-generator-copy p{max-width:560px;margin:0;color:var(--ink-soft,#b5bec3);font-size:.72rem;line-height:1.5}
+  .generate-random,.use-generated{padding:.65rem .8rem;border:1px solid var(--gold,#5fe6e0);border-radius:5px;background:var(--gold,#5fe6e0);color:#13262e;font-weight:800;cursor:pointer}
+  .generate-random{justify-self:start}
+  .generation-message{margin:0;color:var(--ink-soft,#b5bec3);font-size:.72rem}
+  .generated-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem}
+  .generated-card{display:grid;align-content:start;gap:.55rem;padding:.7rem;border:1px solid var(--rule,#3a4a52);border-radius:5px;background:#13262e;min-width:0}
+  .generated-card-heading,.generated-total{display:flex;justify-content:space-between;align-items:center;gap:.4rem}
+  .generated-card-heading strong{color:var(--gold,#5fe6e0);font:700 .9rem Georgia,serif}
+  .generated-card-heading span,.generated-total{font-size:.68rem;color:var(--ink-soft,#b5bec3)}
+  .generated-monsters{display:grid;gap:.35rem}
+  .generated-monsters>div{display:grid;gap:.12rem;padding-bottom:.3rem;border-bottom:1px solid var(--rule,#3a4a52)}
+  .generated-monsters span{font-size:.72rem;font-weight:700}
+  .generated-monsters small{font-size:.62rem;color:var(--ink-soft,#b5bec3)}
+  .generated-total strong{color:var(--ink,#fff)}
+  .use-generated{width:100%;font-size:.7rem}
   .encounter-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.8rem;align-items:start}
   .catalog-panel,.selection-panel{min-width:0;display:grid;gap:.65rem}
   .panel-heading{display:flex;justify-content:space-between;align-items:center;gap:.5rem}
@@ -345,6 +446,6 @@
   .composition-warnings small,.encounter-footnote p{color:var(--ink-soft,#b5bec3);font-size:.68rem;line-height:1.5}
   .encounter-footnote strong{color:var(--gold,#5fe6e0);font:700 .85rem Georgia,serif}
   .encounter-footnote p{margin:.35rem 0 0}
-  @media(max-width:760px){.encounter-config{grid-template-columns:1fr 1fr}.encounter-config .config-field:last-child{grid-column:1/-1}.encounter-columns{grid-template-columns:1fr}}
+  @media(max-width:760px){.generated-grid{grid-template-columns:1fr}.random-generator-copy{display:grid}.encounter-config{grid-template-columns:1fr 1fr}.encounter-config .config-field:last-child{grid-column:1/-1}.encounter-columns{grid-template-columns:1fr}}
   @media(max-width:480px){.encounter-config{grid-template-columns:1fr}.encounter-config .config-field:last-child{grid-column:auto}.budget-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.selected-monster{grid-template-columns:minmax(0,1fr) auto 1.7rem}.line-total{grid-column:1;text-align:left}.remove-monster{grid-column:3;grid-row:1}.encounter-intro{flex-direction:column}}
 </style>
