@@ -162,12 +162,13 @@ test('las plantillas de composición generan estructuras diferentes sin superar 
   ];
   const templateIds = ['solo','boss_minions','duo','trio','horde'];
   for (const template of templateIds) {
-    const limits = template==='solo' ? [1,1] : template==='boss_minions' ? [3,5] : template==='duo' ? [2,2] : template==='trio' ? [3,3] : [6,8];
+    const minimums = {solo:1,boss_minions:3,duo:2,trio:3,horde:6};
     const generated = createEncounterFromTemplate(available,1000,template,()=>0.3);
     assert.ok(generated.encounter, 'Expected a valid '+template+' encounter');
     assert.ok(generated.encounter.spent <= 1000);
-    assert.ok(generated.encounter.creatures >= limits[0]);
-    assert.ok(generated.encounter.creatures <= limits[1]);
+    assert.ok(generated.encounter.creatures >= minimums[template]);
+    if (template !== 'solo') assert.ok(generated.encounter.spent / 1000 >= 0.8, template+' should try to reach at least 80 percent of budget');
+    else assert.equal(generated.encounter.creatures,1);
     assert.equal(generated.encounter.template,template);
     assert.equal(generated.steps.length,generated.encounter.creatures);
   }
@@ -182,10 +183,13 @@ test('las plantillas dúo y trío priorizan enemigos distintos', () => {
   for (const template of ['duo','trio']) {
     const generated = createEncounterFromTemplate(available,500,template,()=>0.4);
     assert.ok(generated.encounter);
-    assert.equal(generated.encounter.items.length,template==='duo'?2:3);
+    const coreCount = template==='duo'?2:3;
     /** @type {Array<{monster:{name:string},quantity:number}>} */
     const items = generated.encounter.items;
-    assert.ok(items.every(item=>item.quantity===1));
+    assert.ok(items.length >= coreCount);
+    assert.ok(items.slice(0,coreCount).every(item=>item.quantity===1));
+    assert.equal(new Set(items.slice(0,coreCount).map(item=>item.monster.name)).size,coreCount);
+    assert.ok(generated.encounter.spent / 500 >= 0.8);
   }
 });
 
@@ -197,9 +201,23 @@ test('la plantilla jefe con secuaces reserva una amenaza principal y añade enem
   ];
   const generated = createEncounterFromTemplate(available,700,'boss_minions',()=>0.2);
   assert.ok(generated.encounter);
-  assert.equal(generated.encounter.creatures,3);
+  assert.ok(generated.encounter.creatures >= 3);
+  assert.ok(generated.encounter.spent / 700 >= 0.8);
   /** @type {Array<{monster:{name:string},quantity:number}>} */
   const items = generated.encounter.items;
   assert.ok(items.some(item=>item.monster.name==='Jefe'));
   assert.ok(items.some(item=>item.monster.name!=='Jefe'));
+});
+
+test('el jefe individual elige la criatura más potente disponible aunque no alcance el 80 por ciento', () => {
+  const available = [
+    {monster:{name:'Criatura menor',cr:'1/2'},xp:100},
+    {monster:{name:'Jefe',cr:'2'},xp:450},
+    {monster:{name:'Gran jefe',cr:'3'},xp:700}
+  ];
+  const generated = createEncounterFromTemplate(available,1000,'solo',()=>0.4);
+  assert.ok(generated.encounter);
+  assert.equal(generated.encounter.creatures,1);
+  assert.equal(generated.encounter.spent,700);
+  assert.equal(generated.encounter.targetReached,false);
 });
