@@ -40,9 +40,8 @@
   let spellLearnOptions: any[] = [];
   let spellLearnOpen = false;
   let inventoryAddOpen = false;
-  let inventoryNewName = '';
-  let inventoryNewType = 'Equipo';
-  let inventoryNewDetails = '';
+  let inventoryItemSearch = '';
+  let inventorySelectedName = '';
   let spellLetterFilter = '';
   let rulesSearch = '';
   let rulesCategoryFilter = '';
@@ -3601,17 +3600,21 @@ import ITEMS from './items.json';
     return normalizeLevelText(getCharacterStat(sheet,'EQUIPO',item.type==='Escudo'?'Escudo equipado en tienda':'Armadura equipada en tienda'))===normalizeLevelText(item.name);
   }
 
-  function addInventoryCustomItem() {
+  function addInventoryCatalogItem() {
     if(!sheet) return;
-    const name=inventoryNewName.trim();
-    if(!name) return;
-    const item={name,type:inventoryNewType,rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null,description:inventoryNewDetails.trim(),custom:true};
-    const customItems={...((sheet as any).customInventoryItems||{}),[normalizeLevelText(name)]:item};
-    (sheet as any).customInventoryItems=customItems;
+    const selected=(ITEMS as any[]).find((entry:any)=>normalizeLevelText(entry.name)===normalizeLevelText(inventorySelectedName));
+    if(!selected) { shopNotice='Selecciona un objeto del compendio.'; return; }
+    const item=(SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===normalizeLevelText(selected.name)) || selected;
+    const before=captureProgressionSections();
     shopAddInventoryItem(item,1);
-    sheet={...sheet}; saveSheetMutation();
-    inventoryNewName=''; inventoryNewDetails=''; inventoryNewType='Equipo'; inventoryAddOpen=false;
-    shopNotice='Objeto añadido al inventario.';
+    shopUpdateWeaponList(item,false);
+    sheet={...sheet};
+    recordProgressionChange('Añadido al inventario: '+item.name,before);
+    saveSheetMutation();
+    inventoryItemSearch='';
+    inventorySelectedName='';
+    inventoryAddOpen=false;
+    shopNotice='Objeto del compendio añadido: '+item.name+'.';
   }
   function removeInventoryItem(item:any) {
     if(!sheet || !window.confirm('¿Estás seguro? Se eliminará definitivamente este objeto del inventario.')) return;
@@ -6646,11 +6649,20 @@ import ITEMS from './items.json';
                     <p class="muted">Todo tu equipo aparece en una sola lista, sin separar su procedencia. Las armas, armaduras y escudos pueden equiparse o desequiparse desde cada casilla.</p>
                     <div class="inventory-toolbar"><button type="button" class="inventory-add-button" on:click={()=>inventoryAddOpen=!inventoryAddOpen}>{inventoryAddOpen?'Cancelar':'＋ Agregar objeto'}</button></div>
                     {#if inventoryAddOpen}
-                      <form class="inventory-add-form" on:submit|preventDefault={addInventoryCustomItem}>
-                        <label>Nombre del objeto<input bind:value={inventoryNewName} required maxlength="100" placeholder="Nombre del objeto" /></label>
-                        <label>Tipo<select bind:value={inventoryNewType}><option>Equipo</option><option>Arma</option><option>Armadura</option><option>Escudo</option><option>Consumible</option><option>Herramienta</option><option>Munición</option><option>Objeto mágico</option><option>Otro</option></select></label>
-                        <label>Características o descripción<input bind:value={inventoryNewDetails} maxlength="240" placeholder="Daño, CA, propiedades, notas..." /></label>
-                        <button type="submit" disabled={!inventoryNewName.trim()}>Añadir al inventario</button>
+                      <form class="inventory-add-form" on:submit|preventDefault={addInventoryCatalogItem}>
+                        <label>Buscar en el compendio
+                          <input type="search" bind:value={inventoryItemSearch} placeholder="Buscar arma, armadura, equipo..." />
+                        </label>
+                        <label>Objeto
+                          <select bind:value={inventorySelectedName} required>
+                            <option value="">Selecciona un objeto del compendio</option>
+                            {#each ITEMS.filter((entry:any)=>!inventoryItemSearch.trim() || normalizeLevelText(entry.name+' '+entry.type+' '+entry.source).includes(normalizeLevelText(inventoryItemSearch))).slice(0,100) as entry}
+                              <option value={entry.name}>{entry.name} · {entry.type}</option>
+                            {/each}
+                          </select>
+                        </label>
+                        <small class="muted">Solo se pueden añadir objetos registrados en el compendio D&D 2024.</small>
+                        <button type="submit" disabled={!inventorySelectedName}>Añadir al inventario</button>
                       </form>
                     {/if}
                     {#if shopNotice}<p class="shop-notice" role="status">{shopNotice}</p>{/if}
