@@ -271,7 +271,7 @@ test('el Máster puede abrir y editar la misma ficha compartida del jugador', ()
   assert.match(app, /on:click=\{\(\) => openMasterCharacter\(entry\)\}>Visualizar hoja/);
   assert.match(app, /function openMasterCharacter\(entry: RoomEntry\)/);
   assert.match(app, /function closeMasterCharacter\(\)/);
-  assert.match(app, /if \(!masterViewingEntry\)/);
+  assert.match(app, /\{#if obrRole === 'GM' && !masterViewingEntry\}/);
   assert.match(app, /on:click=\{closeMasterCharacter\}>Salir de hoja del jugador/);
   assert.match(app, /playerId = masterViewingEntry\?\.playerId \|\| supabasePlayerId/);
   assert.match(app, /playerNameValue = masterViewingEntry\?\.playerName \|\| supabasePlayerName/);
