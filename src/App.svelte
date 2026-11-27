@@ -3447,6 +3447,9 @@ import ITEMS from './items.json';
     const value=Number((event.currentTarget as HTMLInputElement).value)||1;
     shopQuantities={...shopQuantities,[name]:Math.max(1,Math.min(max,value))};
   }
+  function shopDisplayCurrencyValue(key:string):number {
+    return copperToCurrency(shopCurrencyCopper())[key] || 0;
+  }
   function shopCurrencyCopper(): number {
     return currencyToCopper({ PC: progressionCurrencyValue('PC'), PP: progressionCurrencyValue('PP'), PE: progressionCurrencyValue('PE'), PO: progressionCurrencyValue('PO'), PPt: progressionCurrencyValue('PPt') });
   }
@@ -6788,7 +6791,7 @@ import ITEMS from './items.json';
                     <div class="shop-balance">
                       <div><span>Dinero disponible</span><strong>{shopFormatCopper(shopCurrencyCopper())}</strong></div>
                       {#each PROGRESSION_CURRENCIES as currency}
-                        <div class="shop-coin"><small>{currency.label}</small><b>{progressionCurrencyValue(currency.key).toLocaleString('es-CL')}</b><small>{currency.key}</small></div>
+                        <div class="shop-coin"><small>{currency.label}</small><b>{shopDisplayCurrencyValue(currency.key).toLocaleString('es-CL')}</b><small>{currency.key}</small></div>
                       {/each}
                     </div>
                     {#if shopNotice}<p class="shop-notice" role="status">{shopNotice}</p>{/if}
