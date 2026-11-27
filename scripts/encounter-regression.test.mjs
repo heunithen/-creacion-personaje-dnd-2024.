@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ENCOUNTER_BUDGETS, XP_BY_CR, crValue, numericCr, monsterXp, encounterBudget, canPurchase, chooseMonsterForPurchase, expandEncounterForCombat } from '../src/encounterRules.ts';
+import { ENCOUNTER_BUDGETS, XP_BY_CR, crValue, numericCr, monsterXp, encounterBudget, canPurchase, chooseMonsterForPurchase, expandEncounterForCombat } from '../src/encounterRules.mjs';
 
 test('la tabla de presupuesto contiene los 20 niveles y tres dificultades', () => {
   assert.equal(Object.keys(ENCOUNTER_BUDGETS).length, 20);
