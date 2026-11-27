@@ -235,3 +235,10 @@ test('inventario unificado y gestión manual de conjuros', () => {
   assert.match(app, /learnSpellByName\(name:string\)/);
   assert.match(app, /Se eliminará definitivamente este conjuro de tu lista/);
 });
+
+test('el retrato de la hoja se reserva para la cabecera y no aparece en el contenido inferior', () => {
+  assert.match(app, /class="portrait-frame">\{#if sheet\.portrait\}/);
+  assert.match(app, /nautical-header/);
+  assert.match(styles, /nautical-sheet \.sheet-portrait-footer/);
+  assert.match(styles, /nautical-sheet \.nautical-header \.portrait-frame/);
+});
