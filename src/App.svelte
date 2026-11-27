@@ -895,6 +895,61 @@
   const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
 
 
+  function buildCharacterBubble(token: any, text: string, color: string, offsetX: number, offsetY: number) {
+    return buildLabel()
+      .plainText(text)
+      .fontSize(14)
+      .fontWeight(700)
+      .fillColor('#ffffff')
+      .backgroundColor(color)
+      .backgroundOpacity(0.96)
+      .cornerRadius(14)
+      .padding(7)
+      .position({ x: token.position.x + offsetX, y: token.position.y + offsetY })
+      .layer('TEXT')
+      .attachedTo(token.id)
+      .disableHit(true)
+      .disableAttachmentBehavior(['ROTATION'])
+      .build();
+  }
+
+  async function syncCharacterBubbles(targetSheet: RawSheet, characterId: string) {
+    if (!OBR.isAvailable || !(await OBR.scene.isReady())) return;
+    const currentHp = getCharacterNumber(targetSheet, 'COMBATE', 'Puntos de golpe actuales', 0);
+    const maxHp = getCharacterNumber(targetSheet, 'COMBATE', 'Puntos de golpe máximos', currentHp);
+    const tempHp = getCharacterNumber(targetSheet, 'COMBATE', 'Puntos de golpe temporales', 0);
+    const armorClass = getCharacterNumber(targetSheet, 'COMBATE', 'Armor Class', 10);
+    const sceneItems = await OBR.scene.items.getItems();
+    const linkedTokens = sceneItems.filter((item: any) =>
+      item.layer === 'CHARACTER' &&
+      (item.metadata as any)?.[TOKEN_METADATA_KEY]?.characterId === characterId
+    );
+
+    for (const token of linkedTokens as any[]) {
+      const tokenData = { ...(token.metadata as any)[TOKEN_METADATA_KEY] };
+      const oldBubbleIds = [tokenData.hpBubbleId, tokenData.acBubbleId].filter(Boolean);
+      if (oldBubbleIds.length) {
+        const existingIds = new Set(sceneItems.map((item: any) => item.id));
+        const deletableIds = oldBubbleIds.filter((id: string) => existingIds.has(id));
+        if (deletableIds.length) await OBR.scene.items.deleteItems(deletableIds);
+      }
+
+      const hpText = '♥ ' + currentHp + ' / ' + maxHp + (tempHp > 0 ? '  +' + tempHp : '');
+      const hpColor = maxHp > 0 && currentHp / maxHp <= 0.25 ? '#9f2525' : '#263b32';
+      const hpBubble = buildCharacterBubble(token, hpText, hpColor, -22, -52);
+      const acBubble = buildCharacterBubble(token, 'CA ' + armorClass, '#26384f', 48, -52);
+      await OBR.scene.items.addItems([hpBubble, acBubble]);
+
+      tokenData.hitPoints = { current: currentHp, maximum: maxHp, temporary: tempHp };
+      tokenData.armorClass = armorClass;
+      tokenData.hpBubbleId = hpBubble.id;
+      tokenData.acBubbleId = acBubble.id;
+      await OBR.scene.items.updateItems([token.id], (items) => {
+        for (const item of items) item.metadata[TOKEN_METADATA_KEY] = tokenData;
+      });
+    }
+  }
+
   async function assignSelectedToken(entry: RoomEntry) {
     try {
       if (obrRole !== 'GM') throw new Error('Solo el director puede asignar tokens.');
@@ -942,6 +997,7 @@
           item.metadata[TOKEN_METADATA_KEY] = tokenData;
         }
       });
+      await syncCharacterBubbles(entry.sheet, entry.playerId);
 
       notice = 'Token asignado a ' + characterName + '. La apariencia del token se ha conservado.';
     } catch (error) {
@@ -3407,6 +3463,7 @@ import ITEMS from './items.json';
     });
     if (!response.ok) throw new Error('Supabase (' + response.status + '): ' + await response.text());
     syncStatus = 'Ficha guardada en Supabase.';
+    void syncCharacterBubbles(snapshot, playerId).catch(error => console.error('No se pudieron actualizar las burbujas del token', error));
     try {
       await OBR.broadcast.sendMessage(CHANNEL, {
         type: 'character-updated',
