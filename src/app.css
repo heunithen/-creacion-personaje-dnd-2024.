@@ -128,7 +128,7 @@ button.active,.player-tabs button.active,.primary{background:#5fe6e0!important;c
 .shop-coin{display:grid;gap:2px;min-width:52px;text-align:center;padding:5px 8px;border-left:1px solid rgba(255,255,255,.1)}
 .shop-coin b{color:#eee}
 .shop-toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
-.shop-toolbar input,.shop-toolbar select,.shop-custom-price input,.shop-item-actions input{min-width:0;padding:8px 10px;border:1px solid rgba(255,255,255,.16);border-radius:7px;background:#171c25;color:#f0eee9}
+.shop-toolbar input,.shop-toolbar select,.shop-item-actions input{min-width:0;padding:8px 10px;border:1px solid rgba(255,255,255,.16);border-radius:7px;background:#171c25;color:#f0eee9}
 .shop-toolbar>input{flex:1 1 180px}
 .shop-mode-switch{display:flex;gap:4px;padding:3px;border:1px solid rgba(211,174,103,.28);border-radius:8px;background:#111720}
 .shop-mode-switch button{padding:7px 14px;border:0;border-radius:6px;background:transparent;color:#c5c5c5;cursor:pointer}
@@ -143,8 +143,6 @@ button.active,.player-tabs button.active,.primary{background:#5fe6e0!important;c
 .shop-rarity.shop-artifact{background:rgba(183,135,61,.2);color:#e9c77d}
 .shop-item-price{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .shop-item-price strong,.shop-owned-info strong{color:#e4c27e;font-size:.9rem}
-.shop-custom-price{display:grid;gap:4px;color:var(--muted,#aaa);font-size:.75rem}
-.shop-custom-price input{width:100%}
 .shop-item-actions{display:flex;align-items:end;gap:8px}
 .shop-item-actions label{display:grid;gap:4px;flex:1;color:var(--muted,#aaa);font-size:.75rem}
 .shop-item-actions input{width:100%;max-width:78px}

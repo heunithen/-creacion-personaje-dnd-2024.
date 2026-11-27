@@ -176,6 +176,15 @@ test('la ficha del jugador incorpora Tiendita y retrato al inicio y al final', (
   assert.match(app, /class="sheet-portrait-choose"/);
 });
 
+test('la Tiendita usa precios fijos del manual, marca sin precio como agotado y vuelve al saldo', () => {
+  assert.match(app, /shopPriceLabel\(item:any\): string[\s\S]*?'Agotado'/);
+  assert.doesNotMatch(app, /A convenir|Precio manual|Modificar precio|shopCustomPrice/);
+  assert.match(app, /vendedor\.png/);
+  assert.match(app, /shopReturnToBalance\(\)/);
+  assert.match(app, /shopNotice='Compra realizada:[\s\S]*?shopReturnToBalance\(\)/);
+  assert.match(app, /shopNotice='Venta realizada:[\s\S]*?shopReturnToBalance\(\)/);
+});
+
 test('el compendio de conjuros solo está disponible en la pantalla del director', () => {
   const tabsMatch = /const\s+playerSheetTabs\s*=\s*\[([^\]]+)\]/.exec(app);
   assert.ok(tabsMatch, 'No se encontró la lista de pestañas de la ficha');

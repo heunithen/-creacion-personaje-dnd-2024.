@@ -3450,35 +3450,11 @@ import ITEMS from './items.json';
     const coins = copperToCurrency(value);
     for (const key of ['PC','PP','PE','PO','PPt']) setCharacterStat(sheet,'ECONOMÍA',key,String(coins[key] || 0));
   }
-  function shopCustomPrice(name:string): string {
-    return String((sheet as any)?.shopCustomPrices?.[name] ?? '');
-  }
-  function setShopCustomPrice(name:string,event:Event) {
-    if (!sheet) return;
-    const value = (event.currentTarget as HTMLInputElement).value;
-    const prices = { ...((sheet as any).shopCustomPrices || {}) };
-    if (value.trim() === '') delete prices[name];
-    else prices[name] = value;
-    (sheet as any).shopCustomPrices = prices;
-    sheet = { ...sheet };
-    scheduleAutoSync();
-  }
   function shopItemPriceCopper(item:any): number | null {
-    const custom = shopCustomPrice(item.name);
-    if (custom.trim() !== '') {
-      const amount = Number(custom.replace(',','.'));
-      return Number.isFinite(amount) && amount >= 0 ? Math.round(amount * 100) : null;
-    }
-    return typeof item.priceCopper === 'number' ? item.priceCopper : null;
+    return typeof item.priceCopper === 'number' && Number.isFinite(item.priceCopper) ? item.priceCopper : null;
   }
   function shopPriceLabel(item:any): string {
-    const custom = shopCustomPrice(item.name);
-    if (custom.trim() !== '') {
-      const value = shopItemPriceCopper(item);
-      return value === null ? 'Precio no válido' : shopFormatCopper(value);
-    }
-    if (item.rarity === 'Artefacto') return 'Incalculable';
-    return item.priceLabel || 'A convenir';
+    return shopItemPriceCopper(item) === null ? 'Agotado' : (item.priceLabel || shopFormatCopper(shopItemPriceCopper(item)!));
   }
   function shopInventoryFields() { return ['Equipo de clase','Equipo de trasfondo','Equipo adicional']; }
   function getShopOwnedItems(target:RawSheet) {
@@ -3489,7 +3465,7 @@ import ITEMS from './items.json';
         const parsed = parseInventoryLine(line);
         if (!parsed) continue;
         const key = normalizeLevelText(parsed.name);
-        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || {name:parsed.name,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'A convenir',armorBase:null,armorMaxDex:null};
+        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || {name:parsed.name,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null};
         const current = totals.get(key) || {name:parsed.name,item,quantity:0};
         current.quantity += parsed.quantity;
         totals.set(key,current);
@@ -3600,7 +3576,7 @@ import ITEMS from './items.json';
     if(!sheet)return;
     const quantity=Math.max(1,Math.min(999,Number(shopQuantities[item.name])||1));
     const price=shopItemPriceCopper(item);
-    if(price===null || price<0){shopNotice='Este objeto necesita un precio establecido por el director de juego.';return;}
+    if(price===null || price<0){shopNotice='Agotado: no hay un precio de referencia en el manual.';return;}
     const total=price*quantity, balance=shopCurrencyCopper();
     if(balance<total){shopNotice='No tienes monedas suficientes para esta compra.';return;}
     const before=captureProgressionSections();
@@ -3610,13 +3586,14 @@ import ITEMS from './items.json';
     sheet={...sheet};
     recordProgressionChange('Compra: '+item.name+' ×'+quantity,before);
     shopNotice='Compra realizada: '+item.name+' ×'+quantity+'.';
+    shopReturnToBalance();
   }
   function shopSellItem(item:any,ownedQuantity:number) {
     if(!sheet)return;
     const quantity=Math.max(1,Math.min(ownedQuantity,Number(shopQuantities[item.name])||1));
     if(quantity>ownedQuantity){shopNotice='No tienes esa cantidad en el inventario.';return;}
     const price=shopItemPriceCopper(item);
-    if(price===null || price<0){shopNotice='El director de juego debe establecer un precio para este objeto antes de venderlo.';return;}
+    if(price===null || price<0){shopNotice='No se puede vender: el manual no indica un precio de referencia.';return;}
     const payout=Math.floor(price*quantity*0.8);
     const before=captureProgressionSections();
     if(!shopRemoveInventoryItem(item.name,quantity)){shopNotice='No se encontró el objeto en el inventario.';return;}
@@ -3629,10 +3606,14 @@ import ITEMS from './items.json';
     sheet={...sheet};
     recordProgressionChange('Venta: '+item.name+' ×'+quantity,before);
     shopNotice='Venta realizada: '+item.name+' ×'+quantity+'. Recibiste '+shopFormatCopper(payout)+'.';
+    shopReturnToBalance();
   }
   function shopSalePriceLabel(item:any): string {
     const price=shopItemPriceCopper(item);
-    return price===null ? 'A convenir' : shopFormatCopper(Math.floor(price*0.8))+' (80 %)';
+    return price===null ? 'Agotado' : shopFormatCopper(Math.floor(price*0.8))+' (80 %)';
+  }
+  function shopReturnToBalance() {
+    requestAnimationFrame(() => document.querySelector('.shop-balance')?.scrollIntoView({behavior:'smooth',block:'start'}));
   }
   function shopEquipLabel(item:any): string {
     return shopItemIsEquipped(item) ? 'Desequipar' : 'Equipar';
@@ -6667,7 +6648,7 @@ import ITEMS from './items.json';
                 {:else if playerSheetTab === 'Tiendita'}
                   <section class="sheet-section player-shop-section">
                     <div class="shopkeeper-banner">
-                      <img src="/images/character-creation/portraits/po_hu_m_501_h.webp" alt="Comerciante de la tienda" />
+                      <img src="/images/character-creation/portraits/vendedor.png" alt="Vendedor de la tienda" />
                       <div><h3>La Tiendita</h3><p>Compra equipo para tus aventuras o vende lo que ya no necesites. Los objetos mágicos siguen los valores de rareza de la Guía del Dungeon Master 2024.</p></div>
                     </div>
                     <div class="shop-balance">
@@ -6676,40 +6657,30 @@ import ITEMS from './items.json';
                         <div class="shop-coin"><small>{currency.label}</small><b>{progressionCurrencyValue(currency.key).toLocaleString('es-CL')}</b><small>{currency.key}</small></div>
                       {/each}
                     </div>
+                    {#if shopNotice}<p class="shop-notice" role="status">{shopNotice}</p>{/if}
                     <div class="shop-toolbar">
                       <div class="shop-mode-switch"><button type="button" class:active={shopMode==='Comprar'} on:click={()=>shopMode='Comprar'}>Comprar</button><button type="button" class:active={shopMode==='Vender'} on:click={()=>shopMode='Vender'}>Vender</button></div>
                       <input type="search" bind:value={shopSearch} placeholder="Buscar objeto..." aria-label="Buscar objeto en la tienda" />
                       {#if shopMode==='Comprar'}<select bind:value={shopCategory} aria-label="Filtrar por categoría">{#each shopCategories as category}<option value={category}>{category}</option>{/each}</select>{/if}
                     </div>
-                    {#if shopNotice}<p class="shop-notice" role="status">{shopNotice}</p>{/if}
                     {#if shopMode==='Comprar'}
-                      <p class="shop-caption">{shopFilteredItems.length} objetos disponibles · Las rarezas y precios mágicos se basan en la Guía del Dungeon Master 2024. Los objetos con precio a convenir requieren una tarifa manual.</p>
+                      <p class="shop-caption">{shopFilteredItems.length} objetos en el catálogo · Los precios son fijos y corresponden al manual. Los objetos sin precio de referencia aparecen agotados.</p>
                       <div class="shop-item-grid">
                         {#each shopFilteredItems as item (item.name)}
                           <article class="shop-item-card">
                             <div class="shop-item-title"><div><h4>{item.name}</h4><small>{item.type}</small></div>{#if item.rarity}<span class:shop-artifact={item.rarity==='Artefacto'} class="shop-rarity">{item.rarity}</span>{/if}</div>
                             <div class="shop-item-price"><strong>{shopPriceLabel(item)}</strong>{#if item.source}<small>{item.source}</small>{/if}</div>
-                            {#if item.priceCopper===null}
-                              <label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(item.name)} on:input={(event)=>setShopCustomPrice(item.name,event)} placeholder="Necesario para comprar" /></label>
-                            {:else}
-                              <details class="shop-price-edit"><summary>Modificar precio</summary><label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(item.name)} on:input={(event)=>setShopCustomPrice(item.name,event)} placeholder="Opcional" /></label></details>
-                            {/if}
                             <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max="999" value={shopQuantities[item.name]||1} on:input={(event)=>setShopQuantity(item.name,event,999)} /></label><button type="button" disabled={shopItemPriceCopper(item)===null} on:click={()=>shopBuyItem(item)}>Comprar</button></div>
                           </article>
                         {/each}
                         {#if !shopFilteredItems.length}<p class="muted">No se encontraron objetos.</p>{/if}
                       </div>
                     {:else}
-                      <p class="shop-caption">La tienda compra los objetos al 80 % de su precio de referencia. Los objetos sin precio requieren una tarifa manual.</p>
+                      <p class="shop-caption">La tienda compra los objetos al 80 % de su precio fijo de referencia. Los objetos sin precio en el manual no se compran.</p>
                       <div class="shop-owned-list">
                         {#each shopOwnedItems.filter((entry)=>!shopSearch || normalizeLevelText(entry.name).includes(normalizeLevelText(shopSearch))) as owned (owned.name)}
                           <article class="shop-owned-card">
                             <div class="shop-owned-info"><h4>{owned.name}</h4><small>{owned.item.type} · Cantidad: {owned.quantity}</small><strong>Venta: {shopSalePriceLabel(owned.item)}</strong></div>
-                            {#if owned.item.priceCopper===null}
-                              <label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(owned.name)} on:input={(event)=>setShopCustomPrice(owned.name,event)} placeholder="Necesario para vender" /></label>
-                            {:else}
-                              <details class="shop-price-edit"><summary>Modificar precio</summary><label class="shop-custom-price">Precio manual (po)<input type="number" min="0" step="0.01" value={shopCustomPrice(owned.name)} on:input={(event)=>setShopCustomPrice(owned.name,event)} placeholder="Opcional" /></label></details>
-                            {/if}
                             <div class="shop-item-actions"><label>Cantidad<input type="number" min="1" max={owned.quantity} value={Math.min(owned.quantity,shopQuantities[owned.name]||1)} on:input={(event)=>setShopQuantity(owned.name,event,owned.quantity)} /></label><button type="button" disabled={shopItemPriceCopper(owned.item)===null} on:click={()=>shopSellItem(owned.item,owned.quantity)}>Vender</button></div>
                             {#if owned.item.type==='Escudo' || typeof owned.item.armorBase==='number'}<button type="button" class="shop-equip-button" on:click={()=>shopToggleEquip(owned.item)}>{shopEquipLabel(owned.item)}</button>{/if}
                           </article>
