@@ -219,7 +219,7 @@
     liveGeneration = null;
     generationMessage = 'Preparando la compra aleatoria...';
     const generationBudget = budget;
-    const results: GeneratedEncounter[] = [];
+    let results: GeneratedEncounter[] = [];
     const seen = new Set<string>();
     let attempts = 0;
     try {
