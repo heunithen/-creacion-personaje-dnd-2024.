@@ -7085,21 +7085,39 @@ import ITEMS from './items.json';
                   <h4 class="builder-class-title">{builderDisplayedClass}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Clase siguiente" on:click={()=>builderMoveClass(1)}>›</button>
                 </div>
+                <div class="builder-class-select-row">
+                  <div class="builder-class-tags">
+                    <span>{BUILDER_PRIMARY[builderDisplayedClass]}</span>
+                    <span>Salvaciones: {BUILDER_SAVES[builderDisplayedClass]}</span>
+                    <span>Dado de golpe: d{BUILDER_HIT_DIE[builderDisplayedClass]}</span>
+                  </div>
+                  <button type="button" class:chosen={builderClassChosen && builderData.className===builderDisplayedClass} class="builder-class-select" on:click={()=>builderSelectClass(builderDisplayedClass)}>{builderClassChosen && builderData.className===builderDisplayedClass ? 'SELECCIONADA' : 'SELECCIONAR'}</button>
+                </div>
                 <div class="builder-class-content">
                   <aside class="builder-class-learn">
-                    <img class="builder-class-emblem" src={'/-creacion-personaje-dnd-2024./images/character-creation/classes/individual/class-emblem-'+BUILDER_CLASS_EMBLEMS[builderDisplayedClass]+'.webp'} alt={'Emblema de '+builderDisplayedClass} />
+                    <div class="builder-class-emblem-frame">
+                      <img class="builder-class-emblem" src={'/-creacion-personaje-dnd-2024./images/character-creation/classes/individual/class-emblem-'+BUILDER_CLASS_EMBLEMS[builderDisplayedClass]+'.webp'} alt={'Emblema de '+builderDisplayedClass} />
+                    </div>
                     <span>CONOCE LA CLASE</span>
                     <h5>Acerca del {builderDisplayedClass}</h5>
                     <p class="builder-class-flyer-description">{BUILDER_CLASS_GUIDANCE[builderDisplayedClass]}</p>
                   </aside>
                   <div class="builder-class-information">
                     <section class="builder-class-info-section">
-                      <span>CARACTERÍSTICA PRINCIPAL</span><h5>¿Cuál es tu fortaleza?</h5>
+                      <span>CARACTERÍSTICA PRINCIPAL</span><h5>¿Qué hace destacar esta clase?</h5>
                       <strong>{BUILDER_PRIMARY[builderDisplayedClass]}</strong>
                     </section>
                     <section class="builder-class-info-section">
                       <span>ESTILO DE JUEGO</span><h5>¿Cómo afrontas las aventuras?</h5>
                       <strong>{BUILDER_CLASS_PLAYSTYLE[builderDisplayedClass]}</strong>
+                    </section>
+                    <section class="builder-class-info-section">
+                      <span>COMPETENCIAS DE SALVACIÓN</span><h5>¿Qué defensas has entrenado?</h5>
+                      <strong>{BUILDER_SAVES[builderDisplayedClass]}</strong>
+                    </section>
+                    <section class="builder-class-info-section">
+                      <span>RESISTENCIA</span><h5>Dado de golpe</h5>
+                      <strong>d{BUILDER_HIT_DIE[builderDisplayedClass]} · Puntos de golpe iniciales: {BUILDER_HIT_DIE[builderDisplayedClass]} + modificador de Constitución</strong>
                     </section>
                   </div>
                 </div>
@@ -10862,4 +10880,30 @@ import ITEMS from './items.json';
     .builder-species-info-section h5{font-size:1rem}
     .builder-species-info-section strong{font-size:.8rem}
   }
+
+  /* Rediseño editorial de las fichas de clase, inspirado en la referencia del Manual del Jugador. */
+  .builder-class-flyer{box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:.8rem;width:100%;max-width:920px;min-height:650px;height:auto;margin:1rem auto 1.2rem;padding:2rem 2.15rem;border:2px solid #c69d43;border-radius:0;background:linear-gradient(145deg,rgba(73,75,68,.96),rgba(29,35,35,.98) 58%,#18252a);color:#f7f2e7;text-align:left;overflow:hidden;box-shadow:inset 0 0 0 4px rgba(198,157,67,.18),inset 0 0 0 7px rgba(198,157,67,.08)}
+  .builder-class-flyer:before{content:"";position:absolute;inset:8px;border:1px solid rgba(213,174,91,.75);pointer-events:none}
+  .builder-class-topline{display:flex;justify-content:space-between;align-items:center;color:#d8b96d;font:700 .58rem/1.2 system-ui,sans-serif;letter-spacing:.13em}
+  .builder-class-title-row{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:.5rem;width:100%;margin:.2rem 0 0}
+  .builder-class-title-row h4{margin:0;color:#fff!important;font:700 clamp(2.3rem,5vw,3.5rem)/1.02 Georgia,serif;text-align:left;letter-spacing:-.035em}
+  .builder-class-title-row .builder-class-arrow{width:30px;height:30px;border:1px solid rgba(214,179,99,.75);border-radius:50%;background:rgba(9,20,24,.7);color:#e5c879;font-size:1.35rem}
+  .builder-class-select-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:.1rem 0 .35rem}
+  .builder-class-tags{display:flex;flex-wrap:wrap;gap:.35rem}
+  .builder-class-tags span{padding:.22rem .55rem;border:1px solid rgba(218,182,102,.65);border-radius:20px;color:#ead59c;font:700 .58rem/1.25 system-ui,sans-serif;letter-spacing:.04em}
+  .builder-class-select{flex:0 0 auto;padding:.5rem 1.1rem;border:1px solid #d4ad55;border-radius:20px;background:#111e23;color:#f5d783;font:800 .65rem system-ui,sans-serif;letter-spacing:.08em;cursor:pointer}
+  .builder-class-select:hover,.builder-class-select.chosen{background:#d4ad55;color:#1c2527}
+  .builder-class-content{display:grid;grid-template-columns:minmax(230px,.82fr) minmax(0,1.45fr);gap:1.7rem;align-items:stretch;min-height:0;flex:1}
+  .builder-class-learn{box-sizing:border-box;min-width:0;margin:.2rem 0 0;padding:1rem 1.15rem;border-top:1px solid rgba(218,182,102,.8);border-bottom:1px solid rgba(218,182,102,.8);background:linear-gradient(180deg,rgba(10,23,28,.68),rgba(10,23,28,.35));box-shadow:0 10px 24px rgba(0,0,0,.12)}
+  .builder-class-emblem-frame{display:grid;place-items:center;min-height:118px;margin:0 0 .7rem}
+  .builder-class-emblem{display:block;width:100%;max-width:116px;height:116px;margin:0;object-fit:contain;image-rendering:auto}
+  .builder-class-learn>span,.builder-class-info-section>span{display:block;margin-bottom:.35rem;color:#d8b96d;font:700 .58rem/1.3 system-ui,sans-serif;letter-spacing:.11em}
+  .builder-class-learn h5,.builder-class-info-section h5{margin:0 0 .45rem;color:#fff;font:700 1.18rem/1.2 Georgia,serif}
+  .builder-class-flyer-description{margin:0;color:#e0e3df;font:400 .78rem/1.6 system-ui,sans-serif;white-space:pre-line}
+  .builder-class-information{display:flex;flex-direction:column;min-width:0;padding-top:.15rem}
+  .builder-class-info-section{padding:.2rem 0 .8rem;margin:0 0 .65rem;border-bottom:1px solid rgba(218,182,102,.32);min-width:0}
+  .builder-class-info-section h5{font-size:1.08rem}
+  .builder-class-info-section strong{display:block;color:#f1eee5;font:500 .84rem/1.55 Georgia,serif;overflow-wrap:anywhere}
+  @media(max-width:620px){.builder-class-flyer{min-height:0;padding:1.35rem 1rem}.builder-class-content{grid-template-columns:1fr;gap:1rem}.builder-class-learn{margin-top:0;padding:.9rem}.builder-class-title-row h4{font-size:2.1rem}.builder-class-select-row{align-items:flex-start;flex-direction:column}.builder-class-select{align-self:flex-end}.builder-class-info-section{margin-bottom:.45rem;padding-bottom:.55rem}.builder-class-info-section h5{font-size:1rem}.builder-class-info-section strong{font-size:.8rem}}
+
 </style>
