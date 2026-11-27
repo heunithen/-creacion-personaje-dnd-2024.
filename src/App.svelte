@@ -5582,7 +5582,7 @@ import ITEMS from './items.json';
         if (obrRole === 'GM') { await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
         if (obrRole === 'PLAYER' && !demoPreview) await restoreOwnSheet();
-        else if (obrRole !== 'PLAYER') characterStorageReady = true;
+        else characterStorageReady = true;
         await refreshPlayers();
         if (obrRole === 'GM') {
           await loadSupabaseRoomCharacters().catch(error => { syncStatus = 'No se pudieron cargar los personajes desde Supabase.'; console.error(error); });
