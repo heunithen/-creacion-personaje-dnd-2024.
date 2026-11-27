@@ -5699,7 +5699,7 @@ import ITEMS from './items.json';
               <article class="character-card">
                 <div class="card-symbol">✧</div>
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · Registro oficial en Supabase</p></div>
-                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
+                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
               </article>
             {/each}
           {/if}
