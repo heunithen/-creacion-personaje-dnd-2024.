@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
-  import { buildImage, buildLabel, buildShape, buildText } from '@owlbear-rodeo/sdk';
+  
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
   import { ELF_BONUS_SKILLS, getAllowedWeaponMasteries, getStandardArrayAssignments, isOriginFeatDistinct, isSpeciesSkillAllowed, isValidAbilityIncreases, isValidUniqueSelection } from './builderRules.mjs';
 
@@ -895,60 +895,8 @@
   const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
 
 
-  function buildCharacterBubble(token: any, text: string, color: string, position: { x: number; y: number }, ids: { background: string; text: string }) {
-    const diameter = 30;
-    const behaviors = ['ROTATION', 'VISIBLE', 'COPY', 'SCALE'];
-    const background = buildShape()
-      .shapeType('CIRCLE')
-      .width(diameter)
-      .height(diameter)
-      .fillColor(color)
-      .fillOpacity(0.85)
-      .strokeColor(color)
-      .strokeOpacity(0.5)
-      .strokeWidth(0)
-      .position(position)
-      .attachedTo(token.id)
-      .layer('ATTACHMENT')
-      .locked(true)
-      .id(ids.background)
-      .visible(token.visible)
-      .disableAttachmentBehavior(behaviors as any)
-      .disableHit(true)
-      .build();
-    const label = buildText()
-      .position({ x: position.x - diameter / 2, y: position.y - diameter / 2 + 0.8 })
-      .plainText(text)
-      .textAlign('CENTER')
-      .textAlignVertical('MIDDLE')
-      .fontSize(text.length > 2 ? 15 : 22)
-      .fontFamily('Roboto, sans-serif')
-      .textType('PLAIN')
-      .height(diameter)
-      .width(diameter)
-      .fontWeight(400)
-      .attachedTo(token.id)
-      .layer('TEXT')
-      .locked(true)
-      .id(ids.text)
-      .visible(token.visible)
-      .disableAttachmentBehavior(behaviors as any)
-      .disableHit(true)
-      .build();
-    return [background, label];
-  }
-
-  function createRoundedBarPoints(width: number, height: number, radius: number, fill = 1) {
-    const w = Math.max(0, Math.min(width, width * fill));
-    const r = Math.min(radius, height / 2, w / 2);
-    if (w <= 0) return [];
-    return [
-      { x: r, y: 0 }, { x: Math.max(r, w - r), y: 0 },
-      { x: w, y: r }, { x: w, y: height - r },
-      { x: Math.max(r, w - r), y: height }, { x: r, y: height },
-      { x: 0, y: height - r }, { x: 0, y: r }
-    ];
-  }
+  const STAT_BUBBLES_METADATA_KEY = 'com.owlbear-rodeo-bubbles-extension/metadata';
+  const statBubbleSyncQueues = new Map<string, Promise<void>>();
 
   async function syncCharacterBubbles(targetSheet: RawSheet, characterId: string) {
     if (!OBR.isAvailable || !(await OBR.scene.isReady())) return;
@@ -968,111 +916,94 @@
         tokenData.hpBubbleId, tokenData.acBubbleId, tokenData.hpBarBackgroundId,
         tokenData.hpBarFillId, tokenData.acShapeId, tokenData.acTextId, tokenData.hpTextId
       ].filter(Boolean);
-      if (oldIds.length) {
-        const existingIds = new Set(sceneItems.map((item: any) => item.id));
-        const deletableIds = oldIds.filter((id: string) => existingIds.has(id));
-        if (deletableIds.length) await OBR.scene.items.deleteItems(deletableIds);
+      const legacyIds = [
+        token.id + '-health-background', token.id + '-health-fill',
+        token.id + '-health-text', token.id + '-ac-background', token.id + '-ac-text'
+      ];
+      const idsToDelete = [...new Set([...oldIds, ...legacyIds])].filter((id: string) =>
+        sceneItems.some((item: any) => item.id === id)
+      );
+      if (idsToDelete.length) await OBR.scene.items.deleteItems(idsToDelete);
+
+      for (const key of ['hpBubbleId','acBubbleId','hpBarBackgroundId','hpBarFillId','acShapeId','acTextId','hpTextId']) {
+        delete tokenData[key];
       }
-
-      // Mismo sistema de la extensión Stat Bubbles: dimensiones en unidades de escena,
-      // calculadas según el tamaño real del token y vinculadas sin heredar su escalado.
-      const dpi = await OBR.scene.grid.getDpi();
-      const image = token.image || { width: 1, height: 1 };
-      const gridDpi = token.grid?.dpi || dpi;
-      const boundsWidth = Math.abs(image.width * (dpi / gridDpi) * (token.scale?.x || 1));
-      const boundsHeight = Math.abs(image.height * (dpi / gridDpi) * (token.scale?.y || 1));
-      const center = { x: token.position.x, y: token.position.y };
-      const barHeight = 20;
-      const barPadding = 2;
-      const barWidth = Math.max(20, boundsWidth - barPadding * 2);
-      const barPosition = {
-        x: center.x - boundsWidth / 2 + barPadding,
-        y: center.y + boundsHeight / 2 - barHeight - 2
-      };
-      const hpRatio = maxHp > 0 ? Math.max(0, Math.min(1, currentHp / maxHp)) : 0;
-      const behaviors = ['ROTATION', 'VISIBLE', 'COPY', 'SCALE'];
-
-      const barBackground = buildShape()
-        .shapeType('RECTANGLE')
-        .width(barWidth)
-        .height(barHeight)
-        .fillColor('#A4A4A4')
-        .fillOpacity(0.6)
-        .strokeWidth(0)
-        .position(barPosition)
-        .zIndex(10000)
-        .attachedTo(token.id)
-        .layer('ATTACHMENT')
-        .locked(true)
-        .id(token.id + '-health-background')
-        .visible(token.visible)
-        .disableAttachmentBehavior(behaviors as any)
-        .disableHit(true)
-        .build();
-
-      const fillWidth = barWidth * hpRatio;
-      const barFill = fillWidth > 0 ? buildShape()
-        .shapeType('RECTANGLE')
-        .width(fillWidth)
-        .height(barHeight)
-        .fillColor(hpRatio <= 0.25 ? '#e04444' : hpRatio <= 0.5 ? '#e3a43b' : '#42b86a')
-        .fillOpacity(0.85)
-        .strokeWidth(0)
-        .position(barPosition)
-        .zIndex(20000)
-        .attachedTo(token.id)
-        .layer('ATTACHMENT')
-        .locked(true)
-        .id(token.id + '-health-fill')
-        .visible(token.visible)
-        .disableAttachmentBehavior(behaviors as any)
-        .disableHit(true)
-        .build() : null;
-
-      const hpText = buildText()
-        .position({ x: barPosition.x, y: barPosition.y - 0.3 })
-        .plainText(currentHp + '/' + maxHp + (tempHp > 0 ? ' +' + tempHp : ''))
-        .textAlign('CENTER')
-        .textAlignVertical('MIDDLE')
-        .fontSize(14)
-        .fontFamily('Roboto, sans-serif')
-        .textType('PLAIN')
-        .height(barHeight)
-        .width(barWidth)
-        .fontWeight(700)
-        .attachedTo(token.id)
-        .layer('TEXT')
-        .locked(true)
-        .id(token.id + '-health-text')
-        .visible(token.visible)
-        .disableAttachmentBehavior(behaviors as any)
-        .disableHit(true)
-        .build();
-
-      const acPosition = {
-        x: center.x + boundsWidth / 2 - 17,
-        y: barPosition.y - 19
-      };
-      const acItems = buildCharacterBubble(token, String(armorClass), '#6495ed', acPosition, {
-        background: token.id + '-ac-background',
-        text: token.id + '-ac-text'
-      });
-      const itemsToAdd = [barBackground, ...(barFill ? [barFill] : []), hpText, ...acItems];
-      await OBR.scene.items.addItems(itemsToAdd);
-
-      tokenData.hitPoints = { current: currentHp, maximum: maxHp, temporary: tempHp };
-      tokenData.armorClass = armorClass;
-      tokenData.hpBubbleId = token.id + '-health-text';
-      tokenData.acBubbleId = token.id + '-ac-text';
-      tokenData.hpBarBackgroundId = token.id + '-health-background';
-      tokenData.hpBarFillId = token.id + '-health-fill';
-      tokenData.hpTextId = token.id + '-health-text';
-      tokenData.acShapeId = token.id + '-ac-background';
-      tokenData.acTextId = token.id + '-ac-text';
-      await OBR.scene.items.updateItems([token.id], (items) => {
-        for (const item of items) item.metadata[TOKEN_METADATA_KEY] = tokenData;
+      await OBR.scene.items.updateItems([token.id], (items: any[]) => {
+        for (const item of items) {
+          item.metadata[TOKEN_METADATA_KEY] = tokenData;
+          const previous = item.metadata[STAT_BUBBLES_METADATA_KEY];
+          item.metadata[STAT_BUBBLES_METADATA_KEY] = {
+            ...(previous && typeof previous === 'object' ? previous : {}),
+            health: currentHp,
+            'max health': maxHp,
+            'temporary health': tempHp,
+            'armor class': armorClass
+          };
+        }
       });
     }
+  }
+
+  function syncSheetStatsFromStatBubbles(characterId: string, playerNameValue: string, stats: any) {
+    if (!supabaseRoomId || !characterId || !stats || typeof stats !== 'object') return;
+    if (obrRole !== 'GM' && characterId !== supabasePlayerId) return;
+    const health = Number(stats.health);
+    const maxHealth = Number(stats['max health']);
+    const temporaryHealth = Number(stats['temporary health']);
+    const armorClass = Number(stats['armor class']);
+    if (![health, maxHealth, temporaryHealth, armorClass].every(Number.isFinite)) return;
+
+    const previous = statBubbleSyncQueues.get(characterId) || Promise.resolve();
+    const next = previous.catch(() => {}).then(async () => {
+      const query = '?select=sheet,player_name&room_id=eq.' + encodeURIComponent(supabaseRoomId) +
+        '&player_id=eq.' + encodeURIComponent(characterId) + '&deleted_at=is.null&limit=1';
+      const response = await fetch(SUPABASE_URL + '/rest/v1/characters' + query, {
+        headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }
+      });
+      if (!response.ok) throw new Error('No se pudo recuperar la ficha para sincronizar Stat Bubbles.');
+      const rows = await response.json();
+      const stored = rows?.[0]?.sheet;
+      if (!stored || !Array.isArray(stored.sections)) return;
+      const updated = JSON.parse(JSON.stringify(stored)) as RawSheet;
+      const values: Array<[string, number]> = [
+        ['Puntos de golpe actuales', health],
+        ['Puntos de golpe máximos', maxHealth],
+        ['Puntos de golpe temporales', temporaryHealth],
+        ['Armor Class', armorClass]
+      ];
+      let changed = false;
+      for (const [name, value] of values) {
+        if (getCharacterNumber(updated, 'COMBATE', name, Number.NaN) !== value) {
+          setCharacterStat(updated, 'COMBATE', name, value);
+          changed = true;
+        }
+      }
+      if (!changed) return;
+      await saveCharacterToSupabase(updated, characterId, rows[0].player_name || playerNameValue || 'Jugador');
+      if (characterId === supabasePlayerId) sheet = updated;
+      if (masterViewingEntry?.playerId === characterId) {
+        masterViewingEntry = { ...masterViewingEntry, sheet: updated };
+        if (!document.querySelector('.nautical-sheet')?.contains(document.activeElement)) sheet = updated;
+      }
+      liveRoomSheets = liveRoomSheets.map(entry => entry.playerId === characterId ? { ...entry, sheet: updated } : entry);
+      refreshRoomSheetList();
+    }).catch(error => console.error('Error sincronizando Stat Bubbles con la ficha:', error));
+    statBubbleSyncQueues.set(characterId, next);
+    void next.finally(() => {
+      if (statBubbleSyncQueues.get(characterId) === next) statBubbleSyncQueues.delete(characterId);
+    });
+  }
+
+  function registerStatBubblesSync() {
+    OBR.scene.items.onChange((changedItems: any[]) => {
+      for (const item of changedItems || []) {
+        if (item.layer !== 'CHARACTER') continue;
+        const tokenData = item.metadata?.[TOKEN_METADATA_KEY];
+        const bubbleStats = item.metadata?.[STAT_BUBBLES_METADATA_KEY];
+        if (!tokenData?.characterId || !bubbleStats) continue;
+        syncSheetStatsFromStatBubbles(String(tokenData.characterId), String(tokenData.playerName || ''), bubbleStats);
+      }
+    });
   }
 
   async function assignSelectedToken(entry: RoomEntry) {
@@ -1123,6 +1054,11 @@
         }
       });
       await syncCharacterBubbles(entry.sheet, entry.playerId);
+      await OBR.scene.items.updateItems(selectedIds, (items: any[]) => {
+        for (const item of items) {
+          item.metadata[TOKEN_METADATA_KEY] = { ...item.metadata[TOKEN_METADATA_KEY], playerName: entry.playerName };
+        }
+      });
 
       notice = 'Token asignado a ' + characterName + '. La apariencia del token se ha conservado.';
     } catch (error) {
@@ -5850,6 +5786,7 @@ import ITEMS from './items.json';
         supabasePlayerId = await OBR.player.getId();
         supabasePlayerName = playerName;
         supabaseRoomId = OBR.room.id;
+        registerStatBubblesSync();
         builderData.player = playerName;
         if (obrRole === 'GM') { await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
