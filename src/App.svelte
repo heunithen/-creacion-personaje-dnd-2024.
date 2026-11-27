@@ -3604,10 +3604,16 @@ import ITEMS from './items.json';
     });
     if (!response.ok) throw new Error('No se pudieron cargar las fichas de la sala desde Supabase.');
     const rows = await response.json();
-    liveRoomSheets = rows.filter((row:any)=>row.sheet && Array.isArray(row.sheet.sections)).map((row:any)=>({
-      playerId: row.player_id, playerName: row.player_name || 'Jugador',
-      sheet: repairGenericStatLabels(row.sheet as RawSheet) as RawSheet, live: false
-    }));
+    liveRoomSheets = rows.filter((row:any)=>row.sheet && Array.isArray(row.sheet.sections)).map((row:any)=>{
+      const playerId = row.player_id;
+      const savedSheet = repairGenericStatLabels(row.sheet as RawSheet) as RawSheet;
+      // La actualización periódica de Supabase no debe pisar borradores que el GM aún no ha enviado.
+      const pendingSheet = roomStatPending.get(playerId);
+      return {
+        playerId, playerName: row.player_name || 'Jugador',
+        sheet: pendingSheet || savedSheet, live: false
+      };
+    });
     refreshRoomSheetList();
     if (masterViewingEntry) {
       const latest = liveRoomSheets.find(entry => entry.playerId === masterViewingEntry?.playerId);
@@ -5880,7 +5886,7 @@ import ITEMS from './items.json';
         supabasePlayerId = await OBR.player.getId();
         supabasePlayerName = playerName;
         supabaseRoomId = OBR.room.id;
-        registerStatBubblesSync();
+        // Stat Bubbles no escribe de vuelta en la ficha: Supabase es la fuente de verdad.\n        // Los cambios del GM se envían con el botón y desde ahí actualizan el token.
         builderData.player = playerName;
         if (obrRole === 'GM') { await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
@@ -7634,7 +7640,8 @@ remove exit from sheet header              {#if demoPreview}
   .roster-panel .roster-character-card>.card-symbol{grid-column:1;grid-row:1}
   .roster-panel .roster-character-card>.card-identity{grid-column:2;grid-row:1}
   .roster-panel .roster-character-card>.roster-stat-controls{grid-column:2;grid-row:2;display:flex!important;visibility:visible!important;flex-wrap:wrap;gap:.5rem;align-items:center;width:100%;min-width:0}
-  .roster-panel .roster-character-card>.actions{grid-column:2;grid-row:3;display:flex!important;visibility:visible!important;flex-wrap:wrap;gap:.5rem}
+  .roster-panel .roster-character-card>.roster-pending-actions{grid-column:2;grid-row:3;display:flex!important;visibility:visible!important;flex-wrap:wrap;gap:.5rem;align-items:center}
+  .roster-panel .roster-character-card>.actions:not(.roster-pending-actions){grid-column:2;grid-row:4;display:flex!important;visibility:visible!important;flex-wrap:wrap;gap:.5rem}
   .roster-stat-control{display:flex;align-items:center;gap:.4rem;padding:.35rem .5rem;border:1px solid var(--line);border-radius:7px;background:var(--panel-soft,rgba(0,0,0,.12))}
   .roster-stat-control>span{font-size:.72rem;font-weight:700;color:var(--ink-soft);margin-right:.15rem}
   .roster-stat-control>strong{min-width:2.2rem;text-align:center;font-variant-numeric:tabular-nums}
