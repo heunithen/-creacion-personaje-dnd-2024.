@@ -6656,7 +6656,7 @@ import ITEMS from './items.json';
                         <label>Objeto
                           <select bind:value={inventorySelectedName} required>
                             <option value="">Selecciona un objeto del compendio</option>
-                            {#each ITEMS.filter((entry:any)=>!inventoryItemSearch.trim() || normalizeLevelText(entry.name+' '+entry.type+' '+entry.source).includes(normalizeLevelText(inventoryItemSearch))).slice(0,100) as entry}
+                            {#each ITEMS.filter((entry)=>!inventoryItemSearch.trim() || normalizeLevelText(entry.name+' '+entry.type+' '+entry.source).includes(normalizeLevelText(inventoryItemSearch))).slice(0,100) as entry}
                               <option value={entry.name}>{entry.name} · {entry.type}</option>
                             {/each}
                           </select>
