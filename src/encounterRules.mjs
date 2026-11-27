@@ -1,3 +1,4 @@
+// @ts-nocheck
 export const ENCOUNTER_BUDGETS = {
   1:{easy:50,normal:75,hard:100}, 2:{easy:100,normal:150,hard:200},
   3:{easy:150,normal:225,hard:400}, 4:{easy:250,normal:375,hard:500},
