@@ -77,7 +77,7 @@
     (!crFilter || item.cr === crFilter)
   );
   $: budgetState = spent > budget ? 'above' : spent === budget ? 'exact' : 'below';
-  $: warnings = buildWarnings();
+  $: { selected; totalCreatures; warnings = buildWarnings(); }
 
   function addMonster(monster: Monster) {
     if (!monsterXp(monster)) return;
