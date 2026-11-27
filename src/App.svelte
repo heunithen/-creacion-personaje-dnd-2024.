@@ -7104,20 +7104,42 @@ import ITEMS from './items.json';
               
               {#if !builderBackgroundSetup}
               <section class="builder-background-flyer" aria-label={'Información del trasfondo '+BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}>
+                <div class="builder-background-topline"><span>MANUAL DEL JUGADOR</span><span class="builder-background-counter">{builderBackgroundSlideIndex+1} / {BUILDER_BACKGROUNDS.length}</span></div>
                 <div class="builder-background-title-row">
                   <button type="button" class="builder-class-arrow" aria-label="Trasfondo anterior" on:click={()=>builderMoveBackground(-1)}>‹</button>
-                  <h4 style={`--builder-title-color:${BUILDER_BACKGROUND_COLORS[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}`} class="builder-background-title">{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
+                  <h4 class="builder-background-title">{BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h4>
                   <button type="button" class="builder-class-arrow" aria-label="Trasfondo siguiente" on:click={()=>builderMoveBackground(1)}>›</button>
                 </div>
-                <p class="builder-background-description">{BUILDER_BACKGROUND_GUIDANCE[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}</p>
-                <div class="builder-background-details">
-                  <div class="builder-class-flyer-detail"><span>Características</span><strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].abilities.join(' · ')}</strong></div>
-                  <div class="builder-class-flyer-detail"><span>Habilidades</span><strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].skills.join(' · ')}</strong></div>
-                  <div class="builder-class-flyer-detail"><span>Dote de origen</span><strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].feat}</strong></div>
-                  <div class="builder-class-flyer-detail"><span>Herramienta</span><strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].tool}</strong></div>
+                <div class="builder-background-ability-chips">{#each BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].abilities as ability}<span>{ability}</span>{/each}</div>
+                <div class="builder-background-content">
+                  <aside class="builder-background-learn">
+                    <span>CONOCE EL TRASFONDO</span>
+                    <h5>Acerca de {BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]}</h5>
+                    <p class="builder-background-description">{BUILDER_BACKGROUND_GUIDANCE[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]]}</p>
+                  </aside>
+                  <div class="builder-background-information">
+                    <section class="builder-background-info-section">
+                      <span>CARACTERÍSTICAS</span><h5>¿En qué destaca tu trasfondo?</h5>
+                      <strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].abilities.join(' · ')}</strong>
+                    </section>
+                    <section class="builder-background-info-section">
+                      <span>DOTE DE ORIGEN</span><h5>¿Qué aprendiste?</h5>
+                      <strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].feat}</strong>
+                    </section>
+                    <section class="builder-background-info-section">
+                      <span>COMPETENCIAS EN HABILIDADES</span><h5>¿Qué sabes hacer?</h5>
+                      <strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].skills.join(' · ')}</strong>
+                    </section>
+                    <section class="builder-background-info-section">
+                      <span>COMPETENCIA EN HERRAMIENTAS</span><h5>¿Qué herramientas utilizas?</h5>
+                      <strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].tool}</strong>
+                    </section>
+                    <section class="builder-background-info-section builder-background-equipment-section">
+                      <span>EQUIPO INICIAL</span><h5>¿Qué has conseguido?</h5>
+                      <strong>{BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].equipmentA}</strong>
+                    </section>
+                  </div>
                 </div>
-                <p class="builder-background-equipment"><strong>Equipo inicial:</strong> {BUILDER_BACKGROUND_DATA[BUILDER_BACKGROUNDS[builderBackgroundSlideIndex]].equipmentA}</p>
-                <span class="builder-background-counter">{builderBackgroundSlideIndex+1} de {BUILDER_BACKGROUNDS.length}</span>
               </section>
               {/if}
               {#if builderBackgroundSetup && builderBackgroundChosen}
@@ -8799,17 +8821,27 @@ import ITEMS from './items.json';
   :global(.nautical-quick-stats>.quick-stats-row>div>strong){display:block;width:100%;text-align:center}
   :global(.nautical-skills .sheet-stat .skill-number){font-size:1.25rem!important;font-weight:800!important;line-height:1.2!important;text-align:center!important;justify-self:center}
  
-  /* Ficha informativa y navegación de clases */
-  .builder-background-flyer{box-sizing:border-box;display:flex;flex-direction:column;gap:1rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;overflow:hidden}
-  .builder-background-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%}
-  .builder-background-title-row h4{margin:0;color:var(--builder-title-color)!important;font:700 1.35rem Georgia,serif;text-align:center}
-  .builder-background-description{flex:0 0 auto;min-height:0;max-height:190px;margin:0;padding:.15rem .2rem .35rem;color:#e0e7e9;font:400 .98rem/1.7 system-ui,sans-serif;line-height:1.7;overflow-y:auto}
-  .builder-background-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem 1rem;padding:.55rem 0;border-top:1px solid #668087;border-bottom:1px solid #668087}
-  .builder-background-details .builder-class-flyer-detail{min-width:0;max-width:none;padding:0;border:0}
-  .builder-background-details .builder-class-flyer-detail strong{font-size:.86rem;line-height:1.5;overflow-wrap:anywhere}
-  .builder-background-equipment{flex:0 0 auto;max-height:78px;margin:0;color:#d1dadd;font:.82rem/1.55 system-ui,sans-serif;overflow-y:auto}
-  .builder-background-equipment strong{color:#5fe6e0}
-  .builder-background-counter{align-self:center;color:#b5bec3;font:.7rem system-ui,sans-serif}
+  /* Trasfondos: ficha editorial enmarcada, inspirada en el Manual del Jugador */
+  .builder-background-flyer{box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:.55rem;width:100%;max-width:920px;min-height:650px;margin:1rem auto 1.2rem;padding:2rem 2.15rem;border:2px solid #bd922f;border-radius:0;background:linear-gradient(145deg,rgba(79,80,70,.94),rgba(19,31,35,.98) 58%,#17252a);color:#f7f2e7;overflow:hidden;box-shadow:inset 0 0 0 4px rgba(189,146,47,.18),inset 0 0 0 7px rgba(189,146,47,.07)}
+  .builder-background-flyer:before{content:"";position:absolute;inset:8px;border:1px solid rgba(189,146,47,.65);pointer-events:none}
+  .builder-background-topline{display:flex;justify-content:space-between;align-items:center;color:#d7b65e;font:700 .58rem/1.2 system-ui,sans-serif;letter-spacing:.12em}
+  .builder-background-title-row{display:grid;grid-template-columns:38px minmax(0,1fr) 38px;align-items:center;gap:.5rem;width:100%;margin-top:.1rem}
+  .builder-background-title-row h4{margin:0;color:#fff!important;font:700 clamp(2.1rem,5vw,3.35rem)/1.05 Georgia,serif;text-align:left;letter-spacing:-.035em}
+  .builder-background-title-row .builder-class-arrow{width:32px;height:32px;border:1px solid #bd922f;border-radius:50%;background:rgba(9,20,24,.62);color:#e4bd59;font-size:1.45rem}
+  .builder-background-ability-chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.05rem 0 .9rem 0;padding-left:38px}
+  .builder-background-ability-chips span{padding:.18rem .65rem;border:1px solid #bd922f;border-radius:99px;color:#f1d58d;font:600 .55rem/1.25 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+  .builder-background-content{display:grid;grid-template-columns:minmax(210px,.82fr) minmax(0,1.45fr);gap:1.7rem;align-items:start;min-height:0;flex:1}
+  .builder-background-learn{margin-top:.15rem;padding:1.15rem 1.2rem 1.3rem;border-top:1px solid #bd922f;border-bottom:1px solid #bd922f;background:linear-gradient(180deg,rgba(11,25,29,.68),rgba(11,25,29,.36));box-shadow:0 10px 24px rgba(0,0,0,.12)}
+  .builder-background-learn>span,.builder-background-info-section>span{display:block;margin-bottom:.35rem;color:#d7b65e;font:700 .56rem/1.3 system-ui,sans-serif;letter-spacing:.1em}
+  .builder-background-learn h5,.builder-background-info-section h5{margin:0 0 .45rem;color:#fff;font:700 1.15rem/1.2 Georgia,serif}
+  .builder-background-description{margin:0;color:#e0e3df;font:400 .76rem/1.55 system-ui,sans-serif;white-space:pre-line}
+  .builder-background-information{display:flex;flex-direction:column;min-width:0}
+  .builder-background-info-section{padding:.15rem 0 .75rem;margin:0 0 .65rem;border-bottom:1px solid rgba(189,146,47,.25);min-width:0}
+  .builder-background-info-section h5{font-size:1.05rem}
+  .builder-background-info-section strong{display:block;color:#f1eee5;font:500 .82rem/1.5 Georgia,serif;overflow-wrap:anywhere}
+  .builder-background-equipment-section{margin-top:auto;margin-bottom:0;padding-bottom:0;border-bottom:0}
+  .builder-background-counter{color:#d7b65e;font:600 .58rem system-ui,sans-serif}
+  @media(max-width:620px){.builder-background-flyer{min-height:650px;padding:1.35rem 1rem}.builder-background-content{grid-template-columns:1fr;gap:1rem}.builder-background-learn{margin-top:0;padding:.85rem}.builder-background-ability-chips{padding-left:0}.builder-background-title-row h4{font-size:2.1rem}.builder-background-info-section{margin-bottom:.45rem;padding-bottom:.5rem}.builder-background-info-section h5{font-size:.98rem}.builder-background-info-section strong{font-size:.78rem}}
 
   .builder-species-flyer{box-sizing:border-box;display:flex;flex-direction:column;gap:.4rem;width:100%;max-width:620px;height:650px;min-height:650px;margin:1rem auto 1.2rem;padding:1.2rem;border:1px solid #b5bec3;border-radius:9px;background:#1b2a33;color:#fff;overflow:hidden}
   .builder-species-title-row{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:.75rem;width:100%}
