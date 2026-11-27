@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
-  import { buildImage, buildLabel, buildShape } from '@owlbear-rodeo/sdk';
+  import { buildImage, buildLabel, buildShape, buildText } from '@owlbear-rodeo/sdk';
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
   import { ELF_BONUS_SKILLS, getAllowedWeaponMasteries, getStandardArrayAssignments, isOriginFeatDistinct, isSpeciesSkillAllowed, isValidAbilityIncreases, isValidUniqueSelection } from './builderRules.mjs';
 
