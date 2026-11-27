@@ -938,22 +938,41 @@
       const hpColor = maxHp > 0 && currentHp / maxHp <= 0.25 ? '#9f2525' : '#263b32';
       const hpBubble = buildCharacterBubble(token, hpText, hpColor, -22, -58);
       const acBubble = buildCharacterBubble(token, 'CA ' + armorClass, '#26384f', 48, -58);
-      const barBackground = buildShape()
-        .shapeType('RECTANGLE').width(100).height(8)
-        .fillColor('#242424').fillOpacity(0.95)
-        .strokeColor('#111111').strokeOpacity(0).strokeWidth(0)
+
+      // Las etiquetas LABEL se dibujan en espacio de pantalla: su tamaño no cambia al acercar o alejar el zoom.
+      const barText = '━━━━━━━━━━━━━━━━━━━━';
+      const barBackground = buildLabel()
+        .plainText(barText)
+        .fontSize(8)
+        .fontWeight(900)
+        .fillColor('#343b40')
+        .backgroundColor('#343b40')
+        .backgroundOpacity(1)
+        .cornerRadius(4)
+        .padding(1)
         .position({ x: token.position.x, y: token.position.y - 38 })
-        .layer('TEXT').attachedTo(token.id).disableHit(true)
-        .disableAttachmentBehavior(['ROTATION']).build();
+        .layer('TEXT')
+        .attachedTo(token.id)
+        .disableHit(true)
+        .disableAttachmentBehavior(['ROTATION'])
+        .build();
       const hpRatio = maxHp > 0 ? Math.max(0, Math.min(1, currentHp / maxHp)) : 0;
-      const fillWidth = Math.max(1, 100 * hpRatio);
-      const barFill = buildShape()
-        .shapeType('RECTANGLE').width(fillWidth).height(6)
+      const filledSegments = Math.round(20 * hpRatio);
+      const barFill = buildLabel()
+        .plainText(filledSegments > 0 ? '━━━━━━━━━━━━━━━━━━━━'.slice(0, filledSegments) : '')
+        .fontSize(8)
+        .fontWeight(900)
         .fillColor(hpRatio <= 0.25 ? '#e04444' : hpRatio <= 0.5 ? '#e3a43b' : '#42b86a')
-        .fillOpacity(1).strokeColor('#111111').strokeOpacity(0).strokeWidth(0)
-        .position({ x: token.position.x - 50 + fillWidth / 2, y: token.position.y - 38 })
-        .layer('TEXT').attachedTo(token.id).disableHit(true)
-        .disableAttachmentBehavior(['ROTATION']).build();
+        .backgroundColor('#000000')
+        .backgroundOpacity(0)
+        .cornerRadius(4)
+        .padding(1)
+        .position({ x: token.position.x - 0.01, y: token.position.y - 38 })
+        .layer('TEXT')
+        .attachedTo(token.id)
+        .disableHit(true)
+        .disableAttachmentBehavior(['ROTATION'])
+        .build();
       await OBR.scene.items.addItems([hpBubble, acBubble, barBackground, barFill]);
 
       tokenData.hitPoints = { current: currentHp, maximum: maxHp, temporary: tempHp };
