@@ -7554,8 +7554,11 @@ remove exit from sheet header              {#if demoPreview}
   .roster-panel{width:100%;min-width:0}
   .roster-panel .character-card{grid-template-columns:30px minmax(0,1fr);align-items:start}
   .roster-panel .card-identity{min-width:0}
-  .roster-panel .roster-character-card{grid-template-columns:30px minmax(150px,1fr);gap:.65rem}
-  .roster-stat-controls{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+  .roster-panel .roster-character-card{display:grid!important;grid-template-columns:30px minmax(0,1fr)!important;gap:.65rem;align-items:start}
+  .roster-panel .roster-character-card>.card-symbol{grid-column:1;grid-row:1}
+  .roster-panel .roster-character-card>.card-identity{grid-column:2;grid-row:1}
+  .roster-panel .roster-character-card>.roster-stat-controls{grid-column:2;grid-row:2;display:flex!important;visibility:visible!important;flex-wrap:wrap;gap:.5rem;align-items:center;width:100%;min-width:0}
+  .roster-panel .roster-character-card>.actions{grid-column:2;grid-row:3;display:flex!important;visibility:visible!important;flex-wrap:wrap;gap:.5rem}
   .roster-stat-control{display:flex;align-items:center;gap:.4rem;padding:.35rem .5rem;border:1px solid var(--line);border-radius:7px;background:var(--panel-soft,rgba(0,0,0,.12))}
   .roster-stat-control>span{font-size:.72rem;font-weight:700;color:var(--ink-soft);margin-right:.15rem}
   .roster-stat-control>strong{min-width:2.2rem;text-align:center;font-variant-numeric:tabular-nums}
