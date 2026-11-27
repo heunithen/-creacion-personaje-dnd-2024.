@@ -5296,9 +5296,9 @@ import ITEMS from './items.json';
   }
 
   function playerWeaponAttacks(target: RawSheet) {
-    const recordedNames = getCharacterStat(target,'ATAQUES','Armas incluidas en el equipo');
     const inventoryWeaponNames = getShopOwnedItems(target).filter((entry:any)=>entry.item.type==='Arma').map((entry:any)=>entry.name);
-    const names = [...new Set([...recordedNames.split(/[,;\n]+/).map(name=>name.trim()).filter(name=>Boolean(name) && normalizeLevelText(name)!==normalizeLevelText('No se identificaron armas individuales en el paquete seleccionado.')),...inventoryWeaponNames])].join(', ');
+    // Acciones refleja únicamente las armas que siguen en el inventario; evita conservar armas eliminadas en el registro histórico.
+    const names = [...new Set(inventoryWeaponNames)].join(', ');
     const proficiency = getCharacterNumber(target,'COMBATE','Bonificador por competencia',2);
     const strengthMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Fuerza',10)-10)/2);
     const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
@@ -6782,7 +6782,7 @@ import ITEMS from './items.json';
                 {:else if playerSheetTab === 'Tiendita'}
                   <section class="sheet-section player-shop-section">
                     <div class="shopkeeper-banner">
-                      <img src="/images/character-creation/portraits/vendedor.png" alt="Vendedor de la tienda" />
+                      <img src={`${import.meta.env.BASE_URL}images/character-creation/portraits/vendedor.png`} alt="Vendedor de la tienda" />
                       <div><h3>La Tiendita</h3><p>Compra equipo para tus aventuras o vende lo que ya no necesites. Los objetos mágicos siguen los valores de rareza de la Guía del Dungeon Master 2024.</p></div>
                     </div>
                     <div class="shop-balance">
