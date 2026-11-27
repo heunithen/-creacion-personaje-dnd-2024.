@@ -5304,7 +5304,7 @@ import ITEMS from './items.json';
   }
 
   function playerWeaponAttacks(target: RawSheet) {
-    const inventoryWeaponNames = getShopOwnedItems(target).filter((entry:any)=>entry.item.type==='Arma').map((entry:any)=>entry.name);
+    const inventoryWeaponNames = getShopOwnedItems(target).filter((entry:any)=>{ const type=normalizeLevelText(entry.item?.type || entry.item?.category || ''); return type==='arma' || type==='armas' || Boolean(WEAPON_PROFILES[entry.name] || WEAPON_PROFILES[shopWeaponBase(entry.name)]); }).map((entry:any)=>entry.name);
     // Acciones refleja únicamente las armas que siguen en el inventario; evita conservar armas eliminadas en el registro histórico.
     const names = [...new Set(inventoryWeaponNames)].join(', ');
     const proficiency = getCharacterNumber(target,'COMBATE','Bonificador por competencia',2);
@@ -6790,7 +6790,7 @@ import ITEMS from './items.json';
                 {:else if playerSheetTab === 'Tiendita'}
                   <section class="sheet-section player-shop-section">
                     <div class="shopkeeper-banner">
-                      <img src={new URL("images/character-creation/portraits/vendedor.png", document.baseURI).href} alt="Vendedor de la tienda" />
+                      <img src="https://heunithen.github.io/-creacion-personaje-dnd-2024./images/character-creation/portraits/vendedor.png" alt="Vendedor de la tienda" />
                       <div><h3>La Tiendita</h3><p>Compra equipo para tus aventuras o vende lo que ya no necesites. Los objetos mágicos siguen los valores de rareza de la Guía del Dungeon Master 2024.</p></div>
                     </div>
                     <div class="shop-balance">
