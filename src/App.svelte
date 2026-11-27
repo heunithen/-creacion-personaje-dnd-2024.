@@ -6221,231 +6221,224 @@ async function exportCharacterSummary(target: RawSheet | null, playerLabel = '')
     try {
       const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
       const pdf = await PDFDocument.create();
-      const pageWidth = 595.28;
-      const pageHeight = 841.89;
-      const ink = rgb(0.13, 0.16, 0.19);
-      const muted = rgb(0.38, 0.41, 0.43);
-      const line = rgb(0.63, 0.65, 0.65);
-      const pale = rgb(0.95, 0.94, 0.90);
-      const accent = rgb(0.48, 0.16, 0.14);
+      const W = 595.28, H = 841.89, M = 32;
+      const ink = rgb(0.10,0.10,0.10), muted = rgb(0.34,0.34,0.34);
+      const line = rgb(0.58,0.55,0.51), pale = rgb(0.985,0.978,0.96);
+      const accent = rgb(0.43,0.13,0.15), white = rgb(1,1,1);
       const regular = await pdf.embedFont(StandardFonts.Helvetica);
       const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
       const italic = await pdf.embedFont(StandardFonts.HelveticaOblique);
       const clean = (value: unknown) => {
-        const text = displayValue(value).replace(/[\u0000-\u001f]/g, ' ').trim();
-        return !text || text === '—' || text === '-' ? '' : text;
+        const v = displayValue(value).replace(/[\u0000-\u001f]/g,' ').trim();
+        return !v || v === '—' || v === '-' ? '' : v;
       };
-      const stat = (section: string, name: string) => clean(getCharacterStat(target, section, name));
+      const stat = (sectionName: string, name: string) => clean(getCharacterStat(target, sectionName, name));
       const first = (pairs: Array<[string,string]>) => {
-        for (const [section, name] of pairs) { const value = stat(section, name); if (value) return value; }
+        for (const [sec,name] of pairs) { const v = stat(sec,name); if (v) return v; }
         return '';
       };
-      const section = (names: string[]) => (target.sections || []).find(item => names.some(name => String(item.name || '').toLowerCase() === name.toLowerCase()));
+      const section = (names: string[]) => (target.sections || []).find(item => names.some(n => String(item.name || '').toLowerCase() === n.toLowerCase()));
       const sectionStats = (names: string[]) => section(names)?.stats || [];
-      const valueFromStats = (names: string[], aliases: string[]) => {
-        const rows = sectionStats(names);
-        const found = rows.find(row => aliases.some(alias => String(row.name || '').toLowerCase().includes(alias.toLowerCase())));
-        return clean(found?.value);
-      };
       const safeName = (target.name || 'personaje').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-+|-+$/g,'') || 'personaje';
-      const drawText = (page: any, text: unknown, x: number, y: number, size = 8, font: any = regular, color: any = ink, maxWidth = 0) => {
-        let content = clean(text);
-        if (!content) return;
-        if (maxWidth > 0) {
-          while (content.length > 1 && font.widthOfTextAtSize(content, size) > maxWidth) content = content.slice(0, -1);
-        }
-        page.drawText(content, { x, y, size, font, color, maxWidth: maxWidth || undefined });
+      const text = (p: any, value: unknown, x: number, y: number, size=8, font: any=regular, color: any=ink, max=0) => {
+        const v = clean(value); if (!v) return;
+        p.drawText(v,{x,y,size,font,color,maxWidth:max||undefined,wordBreaks:[' ']});
       };
-      const box = (page: any, x: number, y: number, w: number, h: number, title: string, fill = false) => {
-        page.drawRectangle({ x, y, width: w, height: h, borderColor: line, borderWidth: 0.7, color: fill ? pale : undefined });
-        page.drawText(title.toUpperCase(), { x: x + 6, y: y + h - 12, size: 7, font: bold, color: accent });
-        page.drawLine({ start: { x: x + 5, y: y + h - 16 }, end: { x: x + w - 5, y: y + h - 16 }, thickness: 0.5, color: line });
-      };
-      const wrapLines = (text: string, maxWidth: number, size: number, font: any) => {
-        const words = text.split(/\s+/);
-        const lines: string[] = [];
-        let current = '';
+      const wrapped = (p: any, value: unknown, x: number, y: number, width: number, size=7, maxLines=3) => {
+        const v=clean(value); if (!v) return y;
+        const words=v.split(/\s+/); let row='', cy=y, count=0;
         for (const word of words) {
-          const next = current ? current + ' ' + word : word;
-          if (current && font.widthOfTextAtSize(next, size) > maxWidth) { lines.push(current); current = word; }
-          else current = next;
+          const next=row ? row+' '+word : word;
+          if (row && regular.widthOfTextAtSize(next,size)>width) {
+            text(p,row,x,cy,size); cy-=size+2; count++; row=word;
+            if(count>=maxLines) return cy;
+          } else row=next;
         }
-        if (current) lines.push(current);
-        return lines;
+        if(row && count<maxLines) { text(p,row,x,cy,size); cy-=size+2; }
+        return cy;
       };
-      const paragraph = (page: any, text: string, x: number, y: number, width: number, size = 7, maxLines = 4) => {
-        if (!text) return y;
-        let cursor = y;
-        for (const raw of text.split(/\n+/)) {
-          for (const row of wrapLines(raw, width, size, regular).slice(0, maxLines)) {
-            drawText(page, row, x, cursor, size);
-            cursor -= size + 2;
-          }
-        }
-        return cursor;
+      const panel = (p: any,x:number,y:number,w:number,h:number,title:string) => {
+        p.drawRectangle({x,y,width:w,height:h,borderColor:line,borderWidth:0.65,color:white});
+        p.drawRectangle({x,y:y+h-17,width:w,height:17,color:pale});
+        text(p,title.toUpperCase(),x+7,y+h-12,7,bold,accent);
+        p.drawLine({start:{x:x+5,y:y+h-19},end:{x:x+w-5,y:y+h-19},thickness:0.45,color:line});
       };
-      const footer = (page: any, number: number) => {
-        page.drawLine({ start: { x: 28, y: 25 }, end: { x: pageWidth - 28, y: 25 }, thickness: 0.5, color: line });
-        drawText(page, 'D&D 2024 · Ficha de personaje', 30, 13, 6, italic, muted);
-        drawText(page, 'Página ' + number + ' de 2', pageWidth - 80, 13, 6, regular, muted);
+      const footer = (p:any,n:number) => {
+        p.drawLine({start:{x:M,y:25},end:{x:W-M,y:25},thickness:0.5,color:line});
+        text(p,'D&D 2024 · Ficha de personaje',M,13,6,italic,muted);
+        text(p,'Página '+n+' de 2',W-83,13,6,regular,muted);
       };
-      const heading = (page: any, title: string, subtitle: string) => {
-        page.drawText(title.toUpperCase(), { x: 30, y: pageHeight - 43, size: 16, font: bold, color: accent });
-        page.drawText(subtitle, { x: 30, y: pageHeight - 58, size: 7, font: italic, color: muted });
-        page.drawLine({ start: { x: 30, y: pageHeight - 67 }, end: { x: pageWidth - 30, y: pageHeight - 67 }, thickness: 1.5, color: accent });
+      const heading = (p:any,subtitle:string) => {
+        text(p,target.name || 'Personaje',M,H-39,18,bold,accent, W-2*M);
+        text(p,subtitle,M,H-55,7,italic,muted,W-2*M);
+        p.drawLine({start:{x:M,y:H-64},end:{x:W-M,y:H-64},thickness:1.2,color:accent});
+        p.drawLine({start:{x:M,y:H-67},end:{x:W-M,y:H-67},thickness:0.35,color:line});
       };
-      const characterName = target.name || first([['PERSONAJE','Nombre']]) || 'Personaje';
-      const className = first([['PERSONAJE','Clase']]) || '';
-      const level = sheetLevel(target);
-      const species = first([['PERSONAJE','Especie'],['PERSONAJE','Raza']]);
-      const background = first([['PERSONAJE','Trasfondo'],['PERSONAJE','Antecedente']]);
-      const alignment = first([['PERSONAJE','Alineamiento']]);
-      const xp = first([['PERSONAJE','Experiencia']]);
-      const player = first([['PERSONAJE','Jugador']]) || playerLabel;
-      const abilityNames = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
-      const skills = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
-      const attacks = (stat('ATAQUES','Perfiles de ataque') || '').split(/\r?\n/).map(row => row.trim()).filter(Boolean).slice(0,6).map(row => {
-        const match = row.match(/^([^:]+):\s*ataque\s*([+-]?\d+)\s*[·|]\s*([^·|]+)(?:[·|]\s*(.*))?$/i);
-        return match ? [match[1].trim(), match[2], match[3].trim(), (match[4] || '').trim()] : [row, '', '', ''];
+      const characterName=target.name || 'Personaje';
+      const className=first([['PERSONAJE','Clase']]);
+      const level=sheetLevel(target);
+      const species=first([['PERSONAJE','Especie'],['PERSONAJE','Raza']]);
+      const background=first([['PERSONAJE','Trasfondo'],['PERSONAJE','Antecedente']]);
+      const alignment=first([['PERSONAJE','Alineamiento']]);
+      const player=first([['PERSONAJE','Jugador']]) || playerLabel || '—';
+      const abilities=['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+      const skills=['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
+      const attacks=(stat('ATAQUES','Perfiles de ataque')||'').split(/\r?\n/).map(v=>v.trim()).filter(Boolean).slice(0,6).map(row=>{
+        const m=row.match(/^([^:]+):\s*ataque\s*([+-]?\d+)\s*[·|]\s*([^·|]+)(?:[·|]\s*(.*))?$/i);
+        return m?[m[1].trim(),m[2],m[3].trim(),(m[4]||'').trim()]:[row,'','',''];
       });
-      const featureGroups = playerFeatureGroups(target);
-      const traits = [...(featureGroups.traits || []), ...(featureGroups.feats || [])];
-      const inventory = sectionStats(['EQUIPO','INVENTARIO']).map(item => ({ name: String(item.name || ''), value: clean(item.value) })).filter(item => item.name || item.value);
-      const spellRows = sectionStats(['DETALLE DE CONJUROS','DETALLES DE CONJUROS','CONJUROS']).map(item => ({ name: String(item.name || ''), value: clean(item.value) })).filter(item => item.name || item.value);
-      const page1 = pdf.addPage([pageWidth, pageHeight]);
-      heading(page1, characterName, 'HOJA DE PERSONAJE · ' + [className, level ? 'Nivel ' + level : '', species, background].filter(Boolean).join(' · '));
-      box(page1, 30, 735, 535, 58, 'Datos del personaje', true);
-      drawText(page1, 'CLASE Y NIVEL', 40, 765, 6, bold, muted); drawText(page1, [className, level ? level : ''].filter(Boolean).join(' '), 40, 750, 9, bold);
-      drawText(page1, 'ESPECIE', 185, 765, 6, bold, muted); drawText(page1, species, 185, 750, 9, bold);
-      drawText(page1, 'TRASFONDO', 300, 765, 6, bold, muted); drawText(page1, background, 300, 750, 9, bold);
-      drawText(page1, 'JUGADOR', 425, 765, 6, bold, muted); drawText(page1, player, 425, 750, 8, bold, ink, 125);
-      drawText(page1, 'ALINEAMIENTO: ' + (alignment || '—') + '     EXPERIENCIA: ' + (xp || '—'), 40, 738, 7, regular, muted);
-      box(page1, 30, 552, 180, 170, 'Características');
-      abilityNames.forEach((name, index) => {
-        const raw = stat('ATRIBUTOS', name);
-        const score = abilityScoreNumber(raw);
-        const mod = abilityModifier(raw);
-        const y = 688 - index * 25;
-        drawText(page1, name.toUpperCase(), 42, y, 7, bold);
-        page1.drawRectangle({ x: 143, y: y - 5, width: 25, height: 20, borderColor: line, borderWidth: 0.6 });
-        drawText(page1, score === null ? '—' : String(score), 151, y + 1, 9, bold);
-        drawText(page1, mod === null ? '—' : signedBonus(mod), 177, y + 1, 8, bold, accent);
-      });
-      box(page1, 220, 552, 345, 170, 'Combate');
-      const combatItems = [
-        ['CLASE DE ARMADURA', first([['COMBATE','Armor Class'],['COMBATE','Clase de armadura'],['COMBATE','CA']])],
-        ['INICIATIVA', first([['COMBATE','Initiative'],['COMBATE','Iniciativa']])],
-        ['VELOCIDAD', first([['COMBATE','Speed'],['COMBATE','Velocidad']])],
-        ['BONO COMPETENCIA', first([['COMBATE','Bonificador por competencia'],['COMBATE','Bonificador de competencia']])],
-        ['PERCEPCIÓN PASIVA', first([['COMBATE','Percepción pasiva']])],
-        ['DADOS DE GOLPE', first([['COMBATE','Dados de golpe'],['COMBATE','Dado de golpe']])]
+      const featureGroups=playerFeatureGroups(target);
+      const traits=[...(featureGroups.traits||[]),...(featureGroups.feats||[])];
+      const inventory=sectionStats(['EQUIPO','INVENTARIO']).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value);
+      const proficiencies=sectionStats(['COMPETENCIAS']).map(item=>({name:String(item.name||''),value:clean(item.value)})).filter(item=>item.name||item.value);
+      const isBarbarian=/bárbaro|barbarian/i.test(className);
+      const furyFeature=traits.find(f=>/furia|rage/i.test(String(f.name||'')));
+      const furyText=String(furyFeature?.description||'');
+      const page1=pdf.addPage([W,H]);
+      heading(page1,[className,level?'Nivel '+level:'',species,background].filter(Boolean).join(' · '));
+      panel(page1,M,704,W-2*M,57,'IDENTIDAD');
+      text(page1,'CLASE Y NIVEL',M+9,731,6,bold,muted); text(page1,[className,level?'Nivel '+level:''].filter(Boolean).join(' · ')||'—',M+9,715,9,bold);
+      text(page1,'ESPECIE',M+160,731,6,bold,muted); text(page1,species||'—',M+160,715,9,bold);
+      text(page1,'TRASFONDO',M+270,731,6,bold,muted); text(page1,background||'—',M+270,715,9,bold);
+      text(page1,'JUGADOR',M+390,731,6,bold,muted); text(page1,player,M+390,715,8,bold,ink,105);
+      text(page1,'ALINEAMIENTO: '+(alignment||'—'),M+9,692,6,regular,muted);
+      // Combat values are deliberately the most prominent elements on the page.
+      const combat=[
+        ['CLASE DE ARMADURA',first([['COMBATE','Armor Class'],['COMBATE','Clase de armadura'],['COMBATE','CA']])],
+        ['INICIATIVA',first([['COMBATE','Initiative'],['COMBATE','Iniciativa']])],
+        ['VELOCIDAD',first([['COMBATE','Speed'],['COMBATE','Velocidad']])],
+        ['PUNTOS DE GOLPE',''+(first([['COMBATE','Puntos de golpe actuales'],['COMBATE','Hit Points: current']])||'—')+' / '+(first([['COMBATE','Puntos de golpe máximos'],['COMBATE','Hit Points: max']])||'—')]
       ];
-      combatItems.forEach((item, i) => {
-        const col = i % 3, row = Math.floor(i / 3);
-        const x = 232 + col * 108, y = 680 - row * 58;
-        drawText(page1, item[0], x, y, 6, bold, muted);
-        drawText(page1, item[1] || '—', x, y - 17, 12, bold);
+      combat.forEach((v,i)=>{
+        const x=M+i*133.8;
+        page1.drawRectangle({x,y:625,width:126,height:57,borderColor:accent,borderWidth:1,color:pale});
+        text(page1,v[0],x+7,666,6,bold,muted);
+        text(page1,v[1],x+7,641,17,bold,accent,112);
       });
-      drawText(page1, 'PUNTOS DE GOLPE', 235, 582, 6, bold, muted);
-      drawText(page1, 'Actuales: ' + (first([['COMBATE','Puntos de golpe actuales'],['COMBATE','Hit Points: current']]) || '—') + '     Máximos: ' + (first([['COMBATE','Puntos de golpe máximos'],['COMBATE','Hit Points: max']]) || '—') + '     Temporales: ' + (stat('COMBATE','Puntos de golpe temporales') || '—'), 235, 565, 8, bold);
-      box(page1, 30, 335, 260, 205, 'Salvaciones');
-      abilityNames.forEach((name, i) => {
-        const raw = stat('SALVACIONES', name);
-        const y = 506 - i * 27;
-        drawText(page1, name, 43, y, 8, regular);
-        drawText(page1, raw.replace(/\s*[·|].*$/,'' ) || '—', 235, y, 8, bold, accent);
-        if (/competente/i.test(raw)) drawText(page1, 'COMPETENTE', 160, y, 5.5, bold, muted);
+      // Ability scores in six clear cards.
+      panel(page1,M,500,W-2*M,108,'CARACTERÍSTICAS');
+      abilities.forEach((name,i)=>{
+        const x=M+8+i*88.5, raw=stat('ATRIBUTOS',name), score=abilityScoreNumber(raw), mod=abilityModifier(raw);
+        const cx=x+34, cy=550;
+        page1.drawRectangle({x,y:512,width:78,height:78,borderColor:line,borderWidth:0.65,color:white});
+        page1.drawCircle({x:cx,y:cy,size:17,borderColor:accent,borderWidth:1.1,color:pale});
+        text(page1,mod===null?'—':signedBonus(mod),cx-11,cy-4,10,bold,accent,22);
+        text(page1,name.toUpperCase(),x+3,526,6,bold,muted,72);
+        text(page1,'Punt. '+(score===null?'—':score),x+3,515,6,regular,ink,72);
       });
-      box(page1, 300, 335, 265, 205, 'Habilidades');
-      skills.forEach((name, i) => {
-        const col = i < 9 ? 0 : 1, row = i % 9;
-        const x = 312 + col * 126, y = 506 - row * 20;
-        const raw = stat('HABILIDADES', name);
-        drawText(page1, name, x, y, 6.5, regular, ink, 91);
-        drawText(page1, raw.replace(/\s*[·|].*$/,'') || '—', x + 98, y, 7, bold, /competente|pericia/i.test(raw) ? accent : ink);
+      // Saving throws and skills with an at-a-glance proficiency marker.
+      panel(page1,M,285,174,198,'SALVACIONES');
+      abilities.forEach((name,i)=>{
+        const raw=stat('SALVACIONES',name), proficient=/competente|proficient/i.test(raw);
+        const y=448-i*28;
+        page1.drawCircle({x:M+13,y:y+2,size:3.5,borderColor:proficient?accent:line,borderWidth:0.8,color:proficient?accent:white});
+        text(page1,name,M+24,y,7,proficient?bold:regular);
+        text(page1,(raw.replace(/\s*[·|].*$/,'')||'—'),M+119,y,7,bold,accent,45);
       });
-      box(page1, 30, 105, 535, 215, 'Ataques y competencias');
-      drawText(page1, 'ARMA', 42, 291, 6, bold, muted);
-      drawText(page1, 'BONO', 270, 291, 6, bold, muted);
-      drawText(page1, 'DAÑO / TIPO', 330, 291, 6, bold, muted);
-      attacks.forEach((row, i) => {
-        const y = 273 - i * 19;
-        drawText(page1, row[0], 42, y, 7.5, bold, ink, 215);
-        drawText(page1, row[1] ? signedBonus(Number(row[1])) : '—', 270, y, 7.5, bold, accent);
-        drawText(page1, [row[2],row[3]].filter(Boolean).join(' · ') || '—', 330, y, 7, regular, ink, 220);
+      panel(page1,215,285,348,198,'HABILIDADES');
+      skills.forEach((name,i)=>{
+        const col=i<9?0:1,row=i%9,x=224+col*168,y=448-row*20;
+        const raw=stat('HABILIDADES',name), proficient=/competente|pericia|proficient|expertise/i.test(raw);
+        page1.drawCircle({x:x+3,y:y+2,size:3,borderColor:proficient?accent:line,borderWidth:0.8,color:proficient?accent:white});
+        text(page1,name,x+11,y,6.3,proficient?bold:regular,ink,105);
+        text(page1,raw.replace(/\s*[·|].*$/,'')||'—',x+119,y,6.5,bold,proficient?accent:muted,38);
       });
-      const proficiencies = first([['COMPETENCIAS','Skills'],['COMPETENCIAS','Competencias'],['COMPETENCIAS','Armas y armaduras'],['COMPETENCIAS','Idiomas']]);
-      paragraph(page1, proficiencies, 42, 145, 510, 7, 5);
-      footer(page1, 1);
-
-      const page2 = pdf.addPage([pageWidth, pageHeight]);
-      heading(page2, characterName, 'RASGOS, EQUIPO, HISTORIA Y CONJUROS');
-      box(page2, 30, 665, 535, 128, 'Rasgos de personalidad e historia');
-      const story = [
-        ['PERSONALIDAD', first([['DETALLES DEL TRASFONDO','Rasgos de personalidad'],['HISTORIA','Rasgos de personalidad']])],
-        ['IDEALES', first([['DETALLES DEL TRASFONDO','Ideales'],['HISTORIA','Ideales']])],
-        ['VÍNCULOS', first([['DETALLES DEL TRASFONDO','Vínculos'],['HISTORIA','Vínculos']])],
-        ['DEFECTOS', first([['DETALLES DEL TRASFONDO','Defectos'],['HISTORIA','Defectos']])]
-      ];
-      story.forEach((item, i) => {
-        const col = i % 2, row = Math.floor(i / 2);
-        const x = 42 + col * 260, y = 754 - row * 48;
-        drawText(page2, item[0], x, y, 6, bold, muted);
-        paragraph(page2, item[1], x, y - 12, 245, 7, 2);
+      panel(page1,M,157,W-2*M,113,'ATAQUES');
+      text(page1,'ARMA',M+9,238,6,bold,muted);
+      text(page1,'BONO',M+258,238,6,bold,muted);
+      text(page1,'DAÑO Y PROPIEDADES',M+320,238,6,bold,muted);
+      attacks.forEach((row,i)=>{
+        const y=220-i*15;
+        text(page1,row[0],M+9,y,7.2,bold,ink,240);
+        text(page1,row[1]?signedBonus(Number(row[1])):'—',M+258,y,7.2,bold,accent,48);
+        text(page1,[row[2],row[3]].filter(Boolean).join(' · ')||'—',M+320,y,6.7,regular,ink,190);
       });
-      box(page2, 30, 420, 535, 230, 'Rasgos de clase, especie y dotes');
-      let featureY = 620;
-      for (const feature of traits.slice(0, 9)) {
-        const title = String(feature.name || '');
-        const description = String(feature.description || '');
-        drawText(page2, title + (feature.source ? ' · ' + feature.source : ''), 42, featureY, 7.5, bold, accent, 505);
-        featureY -= 12;
-        featureY = paragraph(page2, description, 48, featureY, 500, 6.5, 2) - 5;
-        if (featureY < 435) break;
+      // Proficiencies are kept in a dedicated readable line, not stranded under the attack table.
+      const profText=proficiencies.map(v=>[v.name,v.value].filter(Boolean).join(': ')).join(' · ') ||
+        first([['COMPETENCIAS','Skills'],['COMPETENCIAS','Competencias'],['COMPETENCIAS','Armas y armaduras'],['COMPETENCIAS','Idiomas']]);
+      wrapped(page1,'COMPETENCIAS: '+(profText||'—'),M+7,145,W-2*M-14,6.2,2);
+      if(isBarbarian){
+        panel(page1,M,49,W-2*M,76,'FURIA');
+        text(page1,'USOS',M+10,98,6,bold,muted);
+        const uses=level>=17?6:level>=12?5:level>=6?4:2;
+        for(let i=0;i<uses;i++) page1.drawCircle({x:M+18+i*13,y:80,size:4.5,borderColor:accent,borderWidth:0.8,color:white});
+        text(page1,'DAÑO',M+110,98,6,bold,muted);
+        text(page1,level>=16?'+4':level>=9?'+3':'+2',M+110,78,12,bold,accent);
+        text(page1,'RESISTENCIAS',M+164,98,6,bold,muted);
+        text(page1,'Contundente · Perforante · Cortante',M+164,82,7,bold,ink,180);
+        text(page1,'Activa como acción adicional; dura hasta 10 minutos, si no termina antes.',M+365,98,6,regular,muted,160);
+        text(page1,'Mientras dura: ventaja en pruebas y salvaciones de Fuerza; bonificación al daño cuerpo a cuerpo con Fuerza.',M+365,84,5.6,regular,ink,160);
+      } else if(furyFeature){
+        panel(page1,M,49,W-2*M,76,'RASGO DESTACADO');
+        wrapped(page1,furyFeature.name+': '+furyText,M+10,98,W-2*M-20,6.5,3);
       }
-      box(page2, 30, 235, 260, 170, 'Equipo e inventario');
-      inventory.slice(0, 12).forEach((item, i) => {
-        const y = 380 - i * 12;
-        drawText(page2, item.name, 42, y, 6.5, regular, ink, 165);
-        drawText(page2, item.value, 215, y, 6.5, bold, ink, 62);
+      footer(page1,1);
+
+      const page2=pdf.addPage([W,H]);
+      heading(page2,'HISTORIA, RASGOS Y EQUIPO');
+      panel(page2,M,665,W-2*M,96,'PERSONALIDAD E HISTORIA');
+      const story=[
+        ['PERSONALIDAD',first([['DETALLES DEL TRASFONDO','Rasgos de personalidad'],['HISTORIA','Rasgos de personalidad']])],
+        ['IDEALES',first([['DETALLES DEL TRASFONDO','Ideales'],['HISTORIA','Ideales']])],
+        ['VÍNCULOS',first([['DETALLES DEL TRASFONDO','Vínculos'],['HISTORIA','Vínculos']])],
+        ['DEFECTOS',first([['DETALLES DEL TRASFONDO','Defectos'],['HISTORIA','Defectos']])]
+      ];
+      story.forEach((item,i)=>{
+        const col=i%2,row=Math.floor(i/2),x=M+10+col*265,y=728-row*39;
+        text(page2,item[0],x,y,6,bold,muted);
+        wrapped(page2,item[1]||' ',x,y-12,248,7,2);
       });
-      const coins = first([['EQUIPO','Monedas'],['INVENTARIO','Monedas']]);
-      drawText(page2, 'MONEDAS', 42, 250, 6, bold, muted);
-      drawText(page2, coins || 'CP: —   PP: —   PE: —   PO: —   PPT: —', 42, 239, 6.5, bold);
-      box(page2, 300, 235, 265, 170, 'Notas, apariencia y trasfondo');
-      const notes = [stat('HISTORIA','Historia'),stat('DETALLES DEL TRASFONDO','Apariencia'),stat('DETALLES DEL TRASFONDO','Historia')].filter(Boolean).join('\n');
-      paragraph(page2, notes || stat('PERSONAJE','Descripción') || '', 312, 380, 240, 7, 10);
-      box(page2, 30, 55, 535, 165, 'Conjuros');
-      const spellAbility = first([['CONJUROS','Aptitud mágica'],['CONJUROS','Atributo de lanzamiento']]);
-      const spellDc = first([['CONJUROS','CD de salvación'],['CONJUROS','CD de conjuro']]);
-      const spellAttack = first([['CONJUROS','Bonificador de ataque'],['CONJUROS','Ataque de conjuro']]);
-      drawText(page2, 'ATRIBUTO: ' + (spellAbility || '—') + '     CD: ' + (spellDc || '—') + '     BONO ATAQUE: ' + (spellAttack || '—'), 42, 190, 7, bold);
-      drawText(page2, 'NIVEL', 42, 174, 6, bold, muted);
-      drawText(page2, 'CONJURO', 88, 174, 6, bold, muted);
-      drawText(page2, 'TIEMPO DE LANZAMIENTO', 335, 174, 6, bold, muted);
-      drawText(page2, 'ALCANCE', 470, 174, 6, bold, muted);
-      spellRows.slice(0, 8).forEach((item, i) => {
-        const y = 158 - i * 14;
-        const match = item.name.match(/^(\d+)\s*[-:]?\s*(.*)$/);
-        drawText(page2, match ? match[1] : '', 42, y, 6.5);
-        drawText(page2, match ? match[2] : item.name, 88, y, 6.5, regular, ink, 235);
-        drawText(page2, item.value, 335, y, 6.5, regular, ink, 125);
+      panel(page2,M,430,W-2*M,215,'RASGOS Y DOTES');
+      let fy=612;
+      for(const feature of traits){
+        const title=String(feature.name||'Rasgo');
+        const desc=String(feature.description||'');
+        if(/furia|rage/i.test(title) && isBarbarian) continue;
+        text(page2,title+(feature.source?' · '+feature.source:''),M+10,fy,7.5,bold,accent,W-2*M-20);
+        fy-=12;
+        fy=wrapped(page2,desc,M+16,fy,W-2*M-32,6.5,3)-5;
+        if(fy<445) break;
+      }
+      panel(page2,M,225,260,185,'EQUIPO E INVENTARIO');
+      inventory.slice(0,13).forEach((item,i)=>{
+        const y=378-i*12;
+        page2.drawRectangle({x:M+10,y:y-1,width:6,height:6,borderColor:line,borderWidth:0.65});
+        text(page2,item.name,M+22,y,6.5,regular,ink,145);
+        text(page2,item.value,M+174,y,6.5,bold,ink,70);
       });
-      footer(page2, 2);
-      const bytes = await pdf.save();
-      const blob = new Blob([bytes], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = safeName + '.pdf';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
-      notice = 'Ficha PDF generada: ' + safeName + '.pdf';
-    } catch (error) {
-      console.error('No se pudo generar la ficha PDF', error);
-      notice = 'No se pudo generar la ficha PDF: ' + (error instanceof Error ? error.message : String(error));
+      const coins=first([['EQUIPO','Monedas'],['INVENTARIO','Monedas']]);
+      text(page2,'MONEDAS',M+10,241,6,bold,muted);
+      text(page2,coins||'CP: —   PP: —   PE: —   PO: —   PPT: —',M+10,230,6.5,bold);
+      panel(page2,310,225,253,185,'NOTAS Y APARIENCIA');
+      const notes=[stat('HISTORIA','Historia'),stat('DETALLES DEL TRASFONDO','Apariencia'),stat('DETALLES DEL TRASFONDO','Historia'),stat('PERSONAJE','Descripción')].filter(Boolean).join('\n');
+      let ny=378;
+      for(const para of notes.split(/\n+/).filter(Boolean)){
+        ny=wrapped(page2,para,322,ny,229,7,5)-7;
+        if(ny<240) break;
+      }
+      if(!notes) text(page2,'',322,378,7);
+      if(inventory.length===0) text(page2,'Equipo no registrado',M+22,378,6.5,italic,muted);
+      // Spellcasting is intentionally omitted when the character has no spells.
+      if(spellRows.length){
+        panel(page2,M,65,W-2*M,135,'CONJUROS');
+        const ability=first([['CONJUROS','Aptitud mágica'],['CONJUROS','Atributo de lanzamiento']]);
+        const dc=first([['CONJUROS','CD de salvación'],['CONJUROS','CD de conjuro']]);
+        const attack=first([['CONJUROS','Bonificador de ataque'],['CONJUROS','Ataque de conjuro']]);
+        text(page2,'APTITUD: '+(ability||'—')+'   CD: '+(dc||'—')+'   ATAQUE: '+(attack||'—'),M+10,176,7,bold);
+        spellRows.slice(0,7).forEach((item,i)=>text(page2,item.name+' · '+item.value,M+10,158-i*13,6.5,regular,ink,W-2*M-20));
+      }
+      footer(page2,2);
+      const bytes=await pdf.save();
+      const blob=new Blob([bytes],{type:'application/pdf'});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url; link.download=safeName+'.pdf';
+      document.body.appendChild(link); link.click(); link.remove();
+      window.setTimeout(()=>URL.revokeObjectURL(url),30000);
+      notice='Ficha PDF generada: '+safeName+'.pdf';
+    } catch(error) {
+      console.error('No se pudo generar la ficha PDF',error);
+      notice='No se pudo generar la ficha PDF: '+(error instanceof Error?error.message:String(error));
     }
   }
   async function exportSheet() {
