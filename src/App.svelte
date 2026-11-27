@@ -6296,7 +6296,11 @@ import ITEMS from './items.json';
       const skills=['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
       const attackNames=splitChoiceList(stat('ATAQUES','Armas incluidas en el equipo'));
       const storedAttackProfiles=stat('ATAQUES','Perfiles de ataque');
-      const attackSource=storedAttackProfiles || (attackNames.length?weaponAttackDetails(target,attackNames.join(', ')):'');
+      // El inventario es la fuente vigente: los perfiles guardados pueden haber quedado desactualizados.
+      const inventoryWeaponNames=ownedInventory.map((item:any)=>String(item.name||'').trim())
+        .filter((name:string)=>Object.keys(WEAPON_PROFILES).some(weapon=>normalizeLevelText(weapon)===normalizeLevelText(name)));
+      const allAttackNames=[...new Map([...attackNames,...inventoryWeaponNames].map((name:string)=>[normalizeLevelText(name),name])).values()];
+      const attackSource=allAttackNames.length?weaponAttackDetails(target,allAttackNames.join(', ')):storedAttackProfiles;
       const attacks=attackSource.split(/\r?\n/).map(v=>v.trim()).filter(Boolean).map(row=>{
         const m=row.match(/^(.+?):\s*ataque\s*([+-]?\d+)\s*[·|]\s*([^·|]+)(?:\s*[·|]\s*(.*))?$/i);
         if(m) return [m[1].trim(),m[2],m[3].trim(),(m[4]||'').trim()];
