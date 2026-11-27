@@ -7482,8 +7482,6 @@ import ITEMS from './items.json';
   :global(.nautical-header){display:flex!important;align-items:center;gap:1rem;padding:1rem 1.2rem!important;margin:0!important;border:0!important;border-bottom:1px solid #3fb8b8!important;border-radius:0!important;background:linear-gradient(115deg,#13262e,#13262e 65%,#13262e)!important}
   :global(.portrait-frame){display:grid;place-items:center;flex:0 0 4.5rem;width:4.5rem;height:4.5rem;border:3px solid #3fb8b8;border-radius:50%;background:radial-gradient(circle,#13262e,#13262e 70%);color:#b5bec3;font-size:1.8rem;box-shadow:0 0 0 3px #3fb8b8}
   :global(.sheet-portrait-choose){display:grid;place-items:center;width:100%;height:100%;padding:0;border:0;background:transparent;color:inherit;font-size:2rem;cursor:pointer}
-  :global(.player-portrait-footer){display:flex;justify-content:center;margin-top:18px}
-  :global(.player-portrait-footer .builder-portrait-frame){margin:0 auto}
   :global(.nautical-header .sheet-banner-copy){flex:1;min-width:0}
   :global(.nautical-header .sheet-kicker){color:#b5bec3}
   :global(.nautical-header .character-name){color:#ffffff!important;margin:.2rem 0!important}
