@@ -5298,12 +5298,14 @@ import ITEMS from './items.json';
   }
 
   function playerWeaponAttacks(target: RawSheet) {
-    const names = getCharacterStat(target,'ATAQUES','Armas incluidas en el equipo');
+    const recordedNames = getCharacterStat(target,'ATAQUES','Armas incluidas en el equipo');
+    const inventoryWeaponNames = getShopOwnedItems(target).filter((entry:any)=>entry.item.type==='Arma').map((entry:any)=>entry.name);
+    const names = [...new Set([...recordedNames.split(/[,;\n]+/).map(name=>name.trim()).filter(Boolean),...inventoryWeaponNames])].join(', ');
     const proficiency = getCharacterNumber(target,'COMBATE','Bonificador por competencia',2);
     const strengthMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Fuerza',10)-10)/2);
     const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
     const profText = normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armas'));
-    return [...new Set(names.split(/[,;\n]+/).map(name=>name.trim()).filter(name=>Boolean(name && WEAPON_PROFILES[name])))].map(name=>{
+    return [...new Set(names.split(/[,;\n]+/).map(name=>name.trim()).filter(Boolean))].map(name=>{
       const profile = WEAPON_PROFILES[name] || WEAPON_PROFILES[name.replace(/\s*\+\d+$/,'')];
       if (!profile) return {name, attackBonus:null as number|null, damage:'—', damageType:'No disponible', range:'—'};
       const abilityMod = profile.ability==='finesse' ? Math.max(strengthMod,dexterityMod) : profile.ability==='dexterity' ? dexterityMod : strengthMod;
@@ -6578,7 +6580,7 @@ import ITEMS from './items.json';
                   <h4>{weapon.name}</h4>
                   <div class="weapon-attack-values">
                   <div><span>Bono para atacar</span>{#if weapon.attackBonus !== null}<button type="button" class="inline-roll" class:proficient={weapon.proficient} title="Tirar 1d20{signedBonus(weapon.attackBonus)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(Number(weapon.attackBonus)), 'Ataque con ' + weapon.name)}>{signedBonus(weapon.attackBonus)}</button>{:else}<strong>—</strong>{/if}</div>
-                  <div><span>Daño</span><button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button></div>
+                  <div><span>Daño</span>{#if /^\d*d(?:4|6|8|10|12|20|100)/i.test(weapon.damage)}<button type="button" class="inline-roll" title="Tirar daño de {weapon.name}" on:click={() => sendSheetRoll(weapon.damage, 'Daño de ' + weapon.name)}>{weapon.damage}</button>{:else}<strong>{weapon.damage}</strong>{/if}</div>
                   <div><span>Alcance</span><strong>{weapon.range}</strong></div>
                   <div><span>Tipo de daño</span><strong>{weapon.damageType}</strong></div>
                   </div>
