@@ -937,16 +937,12 @@
         sheetSync: true
       };
 
-      await OBR.scene.items.updateItems(selectedIds, (items) =>
-        items.map((item) => ({
-          ...item,
-          name: characterName,
-          metadata: {
-            ...item.metadata,
-            [TOKEN_METADATA_KEY]: tokenData
-          }
-        }))
-      );
+      await OBR.scene.items.updateItems(selectedIds, (items) => {
+        for (const item of items) {
+          item.name = characterName;
+          item.metadata[TOKEN_METADATA_KEY] = tokenData;
+        }
+      });
 
       notice = 'Token asignado a ' + characterName + '. La apariencia del token se ha conservado.';
     } catch (error) {
