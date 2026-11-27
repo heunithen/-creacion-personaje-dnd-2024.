@@ -11323,4 +11323,122 @@ import ITEMS from './items.json';
     }
   }
 
+
+  /* 4. Ficha del personaje: cinco áreas de información fáciles de localizar */
+  :global(.nautical-quick-stats){
+    display:grid!important;
+    gap:.65rem!important;
+    padding:1rem!important;
+    border-radius:0!important;
+  }
+  :global(.nautical-quick-stats .attribute-plaque-row),
+  :global(.nautical-quick-stats .quick-stats-row){
+    position:relative;
+    padding-top:1.35rem!important;
+  }
+  :global(.nautical-quick-stats .attribute-plaque-row)::before,
+  :global(.nautical-quick-stats .quick-stats-row)::before{
+    position:absolute;
+    top:0;
+    left:2px;
+    color:#9fc4c6;
+    font:800 .65rem/1.2 system-ui,sans-serif;
+    letter-spacing:.12em;
+  }
+  :global(.nautical-quick-stats .attribute-plaque-row)::before{
+    content:"CARACTERÍSTICAS Y MODIFICADORES";
+  }
+  :global(.nautical-quick-stats .quick-stats-row)::before{
+    content:"COMBATE Y DEFENSAS";
+  }
+  :global(.nautical-columns){
+    gap:1rem!important;
+    padding:1rem!important;
+    background:linear-gradient(180deg,#0b171d,#0d1e26)!important;
+  }
+  :global(.nautical-skills),
+  :global(.nautical-actions),
+  :global(.nautical-content){
+    min-width:0;
+  }
+  :global(.nautical-skills)::before,
+  :global(.nautical-actions)::before{
+    display:block;
+    padding:0 0 .55rem;
+    margin:0 0 .1rem;
+    border-bottom:1px solid rgba(99,216,208,.32);
+    color:#9fc4c6;
+    font:800 .65rem/1.3 system-ui,sans-serif;
+    letter-spacing:.12em;
+  }
+  :global(.nautical-skills)::before{
+    content:"COMPETENCIAS Y HABILIDADES";
+  }
+  :global(.nautical-actions)::before{
+    content:"RASGOS Y DOTES";
+  }
+  :global(.nautical-columns .sheet-section){
+    border-radius:8px!important;
+    box-shadow:none!important;
+  }
+  :global(.nautical-columns .sheet-section-title){
+    margin-bottom:.55rem!important;
+    padding-bottom:.55rem!important;
+  }
+  :global(.nautical-content){
+    padding-top:.25rem;
+    border-top:1px solid rgba(99,216,208,.22);
+  }
+  :global(.nautical-tabs){
+    padding:.55rem .1rem .65rem!important;
+    margin-bottom:.7rem!important;
+    border-bottom:1px solid rgba(99,216,208,.3)!important;
+  }
+  :global(.nautical-tabs button){
+    border-radius:7px!important;
+  }
+  :global(.player-inventory-panel),
+  :global(.player-spellcasting-summary),
+  :global(.player-spell-list-section),
+  :global(.weapon-attacks-section),
+  :global(.player-initiative-section){
+    padding:clamp(.8rem,1.5vw,1.15rem)!important;
+  }
+  :global(.player-inventory-panel .sheet-section-title),
+  :global(.player-spellcasting-summary .sheet-section-title),
+  :global(.player-spell-list-section .sheet-section-title),
+  :global(.weapon-attacks-section .sheet-section-title){
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+    flex-wrap:wrap;
+  }
+  :global(.player-inventory-panel .sheet-section-title h3)::before{
+    content:"EQUIPO · ";
+    color:#9fc4c6;
+    font-size:.68em;
+    letter-spacing:.08em;
+  }
+  :global(.player-spellcasting-summary .sheet-section-title h3)::before,
+  :global(.player-spell-list-section .sheet-section-title h3)::before{
+    content:"MAGIA · ";
+    color:#9fc4c6;
+    font-size:.68em;
+    letter-spacing:.08em;
+  }
+  :global(.weapon-attacks-section .sheet-section-title h3)::before,
+  :global(.player-initiative-section .sheet-section-title h3)::before{
+    content:"COMBATE · ";
+    color:#9fc4c6;
+    font-size:.68em;
+    letter-spacing:.08em;
+  }
+  @media(max-width:580px){
+    :global(.nautical-columns){gap:.8rem!important;padding:.7rem!important}
+    :global(.nautical-skills),
+    :global(.nautical-actions){gap:.55rem}
+    :global(.nautical-quick-stats){padding:.65rem!important}
+  }
+
 </style>
