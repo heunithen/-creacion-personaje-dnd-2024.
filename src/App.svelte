@@ -6224,87 +6224,197 @@ import ITEMS from './items.json';
   }
 
 
-  function exportCharacterSummary(target: RawSheet | null, playerLabel = '') {
+  async function exportCharacterSummary(target: RawSheet | null, playerLabel = '') {
     if (!target) return;
-    const cleanValue = (value: unknown) => {
-      const text = displayValue(value).trim();
-      if (!text || text === '—' || text === '-') return '';
-      if (/^[{[]/.test(text)) {
-        try { const parsed = JSON.parse(text); if (parsed && typeof parsed === 'object') return ''; } catch {}
-      }
-      return text;
-    };
-    const excludedSection = /^(combate|ataques?|armas?|valores|configuracion|configuraci[oó]n|metadata|datos internos)$/i;
-    const excludedField = /^(id|skills|formula de clase de armadura|ataque cd ?\\d+)$/i;
-    const sections = sectionPairs(target.sections || []).flatMap(pair => {
-      const title = String(pair.heading.name || '').trim();
-      if (!title || excludedSection.test(title)) return [];
-      const fields = (pair.heading.stats || []).flatMap((stat, index) => {
-        const label = String(stat.name || '').trim();
-        if (!label || excludedField.test(label) || /json|formula interna/i.test(label)) return [];
-        const value = cleanValue(pair.values?.stats?.[index]?.value ?? stat.value);
-        return value ? [{ label, value }] : [];
-      });
-      return fields.length ? [{ title, fields }] : [];
-    });
-    const identity = [
-      sheetClassName(target) ? sheetClassName(target) + ' · Nivel ' + sheetLevel(target) : 'Nivel ' + sheetLevel(target),
-      sheetValueByNames(target, ['Especie','Raza']),
-      sheetValueByNames(target, ['Trasfondo','Antecedente']),
-      sheetValueByNames(target, ['Nombre del jugador','Jugador']) || playerLabel
-    ].filter(Boolean);
-    const popup = window.open('', '_blank');
-    if (!popup) {
-      notice = 'El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para exportar el PDF.';
-      return;
-    }
-    const doc = popup.document;
-    doc.open();
-    doc.write('<!doctype html><html lang="es"><head><meta charset="utf-8"></head><body></body></html>');
-    doc.close();
-    doc.title = target.name || 'Personaje';
-    const style = doc.createElement('style');
-    style.textContent = '@page{size:A4;margin:18mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#20242a;font-size:10.5pt;line-height:1.48;margin:0}header{border-bottom:2px solid #343b46;padding-bottom:12px;margin-bottom:22px}h1{font-size:25pt;line-height:1.15;margin:0 0 8px;font-weight:700}.meta{font-size:10pt;color:#59616c;margin:0}h2{font-size:13pt;margin:20px 0 8px;padding-bottom:4px;border-bottom:1px solid #cbd0d6;color:#26313d}.summary-section{margin:0 0 15px;break-inside:auto}.summary-section p{margin:5px 0;overflow-wrap:anywhere;break-inside:avoid}strong{font-weight:700;color:#303944}';
-    doc.head.appendChild(style);
-    const header = doc.createElement('header');
-    const heading = doc.createElement('h1');
-    heading.textContent = target.name || 'Personaje';
-    header.appendChild(heading);
-    const meta = doc.createElement('p');
-    meta.className = 'meta';
-    meta.textContent = identity.join(' · ');
-    header.appendChild(meta);
-    doc.body.appendChild(header);
-    sections.forEach(section => {
-      const sectionElement = doc.createElement('section');
-      sectionElement.className = 'summary-section';
-      const title = doc.createElement('h2');
-      title.textContent = section.title;
-      sectionElement.appendChild(title);
-      section.fields.forEach(field => {
-        const paragraph = doc.createElement('p');
-        const label = doc.createElement('strong');
-        label.textContent = field.label + ': ';
-        paragraph.appendChild(label);
-        String(field.value).split(String.fromCharCode(10)).forEach((line, index) => {
-          if (index) paragraph.appendChild(doc.createElement('br'));
-          paragraph.appendChild(doc.createTextNode(line));
-        });
-        sectionElement.appendChild(paragraph);
-      });
-      doc.body.appendChild(sectionElement);
-    });
-    if (!sections.length) {
-      const empty = doc.createElement('p');
-      empty.textContent = 'Esta ficha todavía no contiene información para resumir.';
-      doc.body.appendChild(empty);
-    }
-    window.setTimeout(() => {
-      try { popup.focus(); popup.print(); } catch (error) { console.error('No se pudo abrir la impresión del resumen', error); }
-    }, 300);
-    notice = 'Resumen preparado. En el diálogo de impresión, selecciona «Guardar como PDF».';
-  }
+    notice = 'Preparando la ficha PDF…';
+    try {
+      const { PDFDocument } = await import('pdf-lib');
+      const templateUrl = 'https://raw.githubusercontent.com/heunithen/-creacion-personaje-dnd-2024./main/personajes/Character_Sheet_campos_identificados.pdf';
+      const response = await fetch(templateUrl, { cache: 'no-store' });
+      if (!response.ok) throw new Error('No se pudo descargar la plantilla oficial (' + response.status + ').');
+      const pdf = await PDFDocument.load(await response.arrayBuffer());
+      const form = pdf.getForm();
+      const fields = form.getFields();
+      const normalizeField = (value: unknown) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const fieldEntries = fields.map(field => ({ field, name: field.getName(), key: normalizeField(field.getName()) }));
+      const clean = (value: unknown) => {
+        const text = displayValue(value).trim();
+        if (!text || text === '—' || text === '-') return '';
+        if (/^[{[]/.test(text)) {
+          try { const parsed = JSON.parse(text); if (parsed && typeof parsed === 'object') return ''; } catch {}
+        }
+        return text;
+      };
+      const setField = (entry: typeof fieldEntries[number], value: unknown) => {
+        const text = clean(value);
+        if (!text) return;
+        const field: any = entry.field;
+        try {
+          if (typeof field.setText === 'function') field.setText(text);
+          else if (typeof field.check === 'function' && /^(true|1|sim|yes|x)$/i.test(text)) field.check();
+        } catch (error) { console.warn('No se pudo rellenar el campo PDF', entry.name, error); }
+      };
+      const setByAliases = (aliases: string[], value: unknown) => {
+        if (!clean(value)) return;
+        const terms = aliases.map(normalizeField);
+        const found = fieldEntries.filter(entry => terms.some(term => entry.key === term || entry.key.endsWith(' ' + term) || entry.key.startsWith(term + ' ')));
+        found.forEach(entry => setField(entry, value));
+      };
+      const value = (section: string, stat: string) => clean(getCharacterStat(target, section, stat));
+      const firstValue = (pairs: Array<[string,string]>) => {
+        for (const [section, stat] of pairs) { const found = value(section, stat); if (found) return found; }
+        return '';
+      };
+      const identity: Array<[string[], unknown]> = [
+        [['nome','nome do personagem','character name'], target.name || firstValue([['PERSONAJE','Nombre']])],
+        [['classe','class'], firstValue([['PERSONAJE','Clase']])],
+        [['subclasse','subclass'], firstValue([['PERSONAJE','Subclase']])],
+        [['nivel','level'], sheetLevel(target)],
+        [['raca','especie','race','species'], firstValue([['PERSONAJE','Especie']])],
+        [['antecedente','trasfondo','background'], firstValue([['PERSONAJE','Trasfondo']])],
+        [['tendencia','alinhamento','alignment'], firstValue([['PERSONAJE','Alineamiento']])],
+        [['experiencia','pontos de experiencia','xp'], firstValue([['PERSONAJE','Experiencia']])],
+        [['jogador','player'], firstValue([['PERSONAJE','Jugador']]) || playerLabel]
+      ];
+      identity.forEach(([aliases, item]) => setByAliases(aliases as string[], item));
 
+      const abilityNames = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+      const abilityPortuguese: Record<string,string[]> = {
+        Fuerza:['forca'], Destreza:['destreza'], Constitución:['constituicao'],
+        Inteligencia:['inteligencia'], Sabiduría:['sabedoria'], Carisma:['carisma']
+      };
+      for (const ability of abilityNames) {
+        const score = abilityScoreNumber(value('ATRIBUTOS', ability));
+        const modifier = abilityModifier(value('ATRIBUTOS', ability));
+        const aliases = abilityPortuguese[ability] || [normalizeField(ability)];
+        for (const entry of fieldEntries) {
+          if (!aliases.some(alias => entry.key.includes(alias))) continue;
+          if (/salv|resist|saving/.test(entry.key)) continue;
+          if (/mod|modifier|bonus|modificador/.test(entry.key)) {
+            if (modifier !== null) setField(entry, signedBonus(modifier));
+          } else if (/valor|score|pontuacao|atributo/.test(entry.key) || aliases.some(alias => entry.key === alias)) {
+            if (score !== null) setField(entry, String(score));
+          }
+        }
+      }
+
+      const prof = value('COMBATE','Bonificador por competencia');
+      setByAliases(['bonus de proficiencia','bonus de competencia','bonificador por competencia','proficiency bonus'], prof);
+      setByAliases(['inspiracao','inspiration'], firstValue([['PERSONAJE','Inspiración']]));
+      const combatAliases: Array<[string[],unknown]> = [
+        [['classe de armadura','armadura','armor class','ca'], value('COMBATE','Clase de armadura')],
+        [['iniciativa','initiative'], value('COMBATE','Iniciativa')],
+        [['velocidade','deslocamento','speed'], value('COMBATE','Velocidad')],
+        [['pontos de vida atuais','pv atuais','current hit points','hp current'], value('COMBATE','Puntos de golpe actuales')],
+        [['pontos de vida maximos','pv maximos','maximum hit points','hp maximum'], value('COMBATE','Puntos de golpe máximos')],
+        [['pontos de vida temporarios','pv temporarios','temporary hit points'], value('COMBATE','Puntos de golpe temporales')],
+        [['dados de vida','hit dice'], value('COMBATE','Dados de golpe')],
+        [['percepcao passiva','passive perception'], value('COMBATE','Percepción pasiva')]
+      ];
+      combatAliases.forEach(([aliases,item]) => setByAliases(aliases as string[],item));
+
+      for (const ability of abilityNames) {
+        const raw = value('SALVACIONES',ability);
+        for (const entry of fieldEntries) {
+          const abilityKey = (abilityPortuguese[ability] || [normalizeField(ability)])[0];
+          if (!entry.key.includes(abilityKey) || !/(salv|resist|saving)/.test(entry.key)) continue;
+          if (/prof|compet|proficiencia/.test(entry.key)) {
+            if (/competente/i.test(raw)) setField(entry,'true');
+          } else setField(entry,raw.replace(/\s*[·|].*$/,''));
+        }
+      }
+
+      const skillNames = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
+      const skillPortuguese: Record<string,string[]> = {
+        Acrobacias:['acrobacia','acrobacias'], Atletismo:['atletismo'], 'Conocimiento arcano':['arcanismo','conhecimento arcano'],
+        Engaño:['enganacao','engano'], Historia:['historia'], Interpretación:['atuacao','interpretacao'],
+        Intimidación:['intimidacao'], Investigación:['investigacao'], 'Juego de manos':['prestidigitacao','jogo de maos'],
+        Medicina:['medicina'], Naturaleza:['natureza'], Perspicacia:['intuicao','perspicacia'],
+        Persuasión:['persuasao'], Percepción:['percepcao'], Religión:['religiao'], Sigilo:['furtividade','sigilo'],
+        Supervivencia:['sobrevivencia'], 'Trato con animales':['adestrar animais','trato com animais']
+      };
+      for (const skill of skillNames) {
+        const raw = value('HABILIDADES',skill);
+        const proficiencies = value('COMPETENCIAS','Skills');
+        const trained = proficiencies.toLocaleLowerCase().includes(skill.toLocaleLowerCase());
+        for (const entry of fieldEntries) {
+          const matches = (skillPortuguese[skill] || [normalizeField(skill)]).some(alias => entry.key.includes(alias));
+          if (!matches || /percepcao passiva/.test(entry.key)) continue;
+          if (/prof|compet|proficiencia/.test(entry.key)) {
+            if (trained || /competente/i.test(raw)) setField(entry,'true');
+          } else setField(entry,raw.replace(/\s*[·|].*$/,''));
+        }
+      }
+
+      const weaponLines = value('ATAQUES','Perfiles de ataque').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+      const weaponRows = weaponLines.slice(0,6).map(line => {
+        const match = line.match(/^([^:]+):\s*ataque\s*([+-]?\d+)\s*[·|]\s*([^·|]+)/i);
+        return match ? { name:match[1].trim(), bonus:match[2], damage:match[3].trim() } : { name:line.split(':')[0], bonus:'', damage:'' };
+      });
+      for (const entry of fieldEntries) {
+        const slotMatch = entry.key.match(/(?:arma|ataque|weapon|attack)\s*(\d+)/);
+        if (!slotMatch) continue;
+        const row = weaponRows[Number(slotMatch[1])-1];
+        if (!row) continue;
+        if (/dano|damage/.test(entry.key)) setField(entry,row.damage);
+        else if (/bonus|ataque|attack/.test(entry.key) && !/nome|name/.test(entry.key)) setField(entry,row.bonus);
+        else setField(entry,row.name);
+      }
+
+      setByAliases(['aptidao magica','habilidade magica','spellcasting ability'],value('CONJUROS','Aptitud mágica'));
+      setByAliases(['cd de salvacao','dificuldade de salvacao','spell save dc'],value('CONJUROS','CD de salvación'));
+      setByAliases(['ataque de conjuro','bonus de ataque magico','spell attack bonus'],value('CONJUROS','Ataque de conjuro'));
+      const spellSlotText = value('CONJUROS','Espacios por nivel') || value('CONJUROS','Espacios de conjuro');
+      if (spellSlotText) {
+        const slots = spellSlotText.match(/\d+/g) || [];
+        for (let level=1; level<=9; level++) setByAliases(['espacos nivel '+level,'espacos de nivel '+level,'spell slots level '+level],slots[level-1] || '');
+      }
+      const spellSourceNames = ['Trucos','Conjuros de nivel 1','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Conjuros de trasfondo','Conjuros de dote','Trucos de subclase','Conjuros preparados de subclase','Conjuros de escuela','Conjuros característicos'];
+      const spellNames = [...new Set(spellSourceNames.flatMap(name => value('CONJUROS',name).split(/[;,\n]+/).map(item=>item.trim()).filter(item=>item && !/no tiene|no obtiene|no disponible|^—$|^-/i.test(item))))].slice(0,30);
+      const spellRecords = spellNames.map(name => {
+        const record = getSpellRecord(name);
+        return { name, level:record?.level === 0 ? 'Truco' : record?.level ? String(record.level) : '', castingTime:record?.castingTime || '', range:record?.range || '' };
+      });
+      for (const entry of fieldEntries) {
+        const spellIndex = entry.key.match(/(?:conjuro|feitico|spell|magia)\s*(\d+)/);
+        if (!spellIndex) continue;
+        const row = spellRecords[Number(spellIndex[1])-1];
+        if (!row) continue;
+        if (/nivel|level/.test(entry.key)) setField(entry,row.level);
+        else if (/duracao|tempo|casting/.test(entry.key)) setField(entry,row.castingTime);
+        else if (/alcance|range/.test(entry.key)) setField(entry,row.range);
+        else if (/nome|name/.test(entry.key)) setField(entry,row.name);
+      }
+
+      const currencyText = value('EQUIPO','Monedas') || value('INVENTARIO','Monedas');
+      const currencyMatches = currencyText.match(/(\d+(?:[.,]\d+)?)\s*(cp|sp|ep|gp|pp|pc|pa|pe|po|pl)\b/gi) || [];
+      const currency: Record<string,string> = {};
+      currencyMatches.forEach(item => { const m=item.match(/(\d+(?:[.,]\d+)?)\s*(cp|sp|ep|gp|pp|pc|pa|pe|po|pl)\b/i); if(m) currency[m[2].toLowerCase()]=m[1]; });
+      setByAliases(['cp','cobre','cobre pieces'],currency.cp || currency.pc || '');
+      setByAliases(['sp','prata','silver pieces'],currency.sp || currency.pa || '');
+      setByAliases(['ep','electrum'],currency.ep || currency.pe || '');
+      setByAliases(['gp','ouro','oro','gold pieces'],currency.gp || currency.po || '');
+      setByAliases(['pp','platina','platino','platinum pieces'],currency.pp || currency.pl || '');
+
+      if (!fields.length) throw new Error('La plantilla no contiene campos rellenables.');
+      form.flatten();
+      const bytes = await pdf.save();
+      const blob = new Blob([bytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const safeName = (target.name || 'personaje').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-+|-+$/g,'') || 'personaje';
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = safeName + '.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+      notice = 'Ficha oficial exportada como ' + safeName + '.pdf';
+    } catch (error) {
+      console.error('No se pudo exportar la ficha oficial', error);
+      notice = 'No se pudo exportar la ficha oficial: ' + (error instanceof Error ? error.message : String(error));
+    }
+  }
   async function exportSheet() {
     if (!sheet) return;
     const json = JSON.stringify(sheet, null, 2);
