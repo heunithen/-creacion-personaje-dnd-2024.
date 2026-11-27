@@ -909,46 +909,20 @@
     return dpi * 5 / feetPerGridCell;
   }
 
-  async function createCircularPortraitDataUrl(sourceUrl: string): Promise<string> {
+  async function getPortraitImageInfo(sourceUrl: string): Promise<{ width: number; height: number; mime: string }> {
     const image = new Image();
-    image.crossOrigin = 'anonymous';
     image.src = sourceUrl;
     await new Promise<void>((resolve, reject) => {
       image.onload = () => resolve();
-      image.onerror = () => reject(new Error('No se pudo cargar el retrato del personaje.'));
+      image.onerror = () => reject(new Error('No se pudo cargar el retrato desde su dirección pública.'));
     });
-
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error('No se pudo preparar la imagen del token.');
-
-    const diameter = 488;
-    const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
-    const sourceX = (image.naturalWidth - sourceSize) / 2;
-    const sourceY = (image.naturalHeight - sourceSize) / 2;
-
-    context.clearRect(0, 0, 512, 512);
-    context.save();
-    context.beginPath();
-    context.arc(256, 256, diameter / 2 - 8, 0, Math.PI * 2);
-    context.clip();
-    context.drawImage(image, sourceX, sourceY, sourceSize, sourceSize, 12, 12, diameter, diameter);
-    context.restore();
-
-    context.beginPath();
-    context.arc(256, 256, 248, 0, Math.PI * 2);
-    context.strokeStyle = '#bd9138';
-    context.lineWidth = 16;
-    context.stroke();
-    context.beginPath();
-    context.arc(256, 256, 238, 0, Math.PI * 2);
-    context.strokeStyle = '#f4d88b';
-    context.lineWidth = 3;
-    context.stroke();
-
-    return canvas.toDataURL('image/png');
+    const pathname = new URL(sourceUrl, window.location.href).pathname.toLowerCase();
+    const mime = pathname.endsWith('.png') ? 'image/png'
+      : pathname.endsWith('.jpg') || pathname.endsWith('.jpeg') ? 'image/jpeg'
+      : pathname.endsWith('.gif') ? 'image/gif'
+      : pathname.endsWith('.avif') ? 'image/avif'
+      : 'image/webp';
+    return { width: image.naturalWidth, height: image.naturalHeight, mime };
   }
 
   async function createCharacterToken(entry: RoomEntry) {
@@ -984,20 +958,20 @@
       let token: any;
       if (portraitUrl) {
         try {
-          const circularImageUrl = await createCircularPortraitDataUrl(portraitUrl);
+          const portraitInfo = await getPortraitImageInfo(portraitUrl);
           token = buildImage(
-            { url: circularImageUrl, mime: 'image/png', width: 512, height: 512 },
-            { dpi: 512, offset: { x: 256, y: 256 } }
+            { url: portraitUrl, mime: portraitInfo.mime, width: portraitInfo.width, height: portraitInfo.height },
+            { dpi: Math.max(portraitInfo.width, portraitInfo.height), offset: { x: portraitInfo.width / 2, y: portraitInfo.height / 2 } }
           )
             .name(characterName)
-            .description('Token circular con el retrato de ' + characterName + ', vinculado a su ficha.')
-            .scale({ x: size / 512, y: size / 512 })
+            .description('Token con el retrato de ' + characterName + ', vinculado a su ficha.')
+            .scale({ x: size / portraitInfo.width, y: size / portraitInfo.height })
             .position(position)
             .layer('CHARACTER')
             .metadata(metadata)
             .build();
         } catch (portraitError) {
-          console.warn('No se pudo aplicar el retrato al token; se usará el círculo dorado.', portraitError);
+          console.warn('No se pudo cargar el retrato en Owlbear; se usará el círculo dorado.', portraitError);
         }
       }
 
