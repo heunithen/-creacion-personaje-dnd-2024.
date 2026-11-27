@@ -10882,8 +10882,8 @@ import ITEMS from './items.json';
   }
 
   /* Rediseño editorial de las fichas de clase, inspirado en la referencia del Manual del Jugador. */
-  .builder-class-flyer{box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:.8rem;width:100%;max-width:920px;min-height:650px;height:auto;margin:1rem auto 1.2rem;padding:2rem 2.15rem;border:2px solid #c69d43;border-radius:0;background:linear-gradient(145deg,rgba(73,75,68,.96),rgba(29,35,35,.98) 58%,#18252a);color:#f7f2e7;text-align:left;overflow:hidden;box-shadow:inset 0 0 0 4px rgba(198,157,67,.18),inset 0 0 0 7px rgba(198,157,67,.08)}
-  .builder-class-flyer:before{content:"";position:absolute;inset:8px;border:1px solid rgba(213,174,91,.75);pointer-events:none}
+  .builder-class-flyer{box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:.8rem;width:100%;max-width:920px;min-height:650px;height:auto;margin:1rem auto 1.2rem;padding:2rem 2.15rem;border:2px solid #4b9b63;border-radius:0;background:linear-gradient(145deg,rgba(73,75,68,.96),rgba(29,35,35,.98) 58%,#18252a);color:#f7f2e7;text-align:left;overflow:hidden;box-shadow:inset 0 0 0 4px rgba(75,155,99,.24),inset 0 0 0 7px rgba(75,155,99,.12)}
+  .builder-class-flyer:before{content:"";position:absolute;inset:8px;border:1px solid rgba(117,190,132,.82);pointer-events:none}
   .builder-class-topline{display:flex;justify-content:space-between;align-items:center;color:#d8b96d;font:700 .58rem/1.2 system-ui,sans-serif;letter-spacing:.13em}
   .builder-class-title-row{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:.5rem;width:100%;margin:.2rem 0 0}
   .builder-class-title-row h4{margin:0;color:#fff!important;font:700 clamp(2.3rem,5vw,3.5rem)/1.02 Georgia,serif;text-align:left;letter-spacing:-.035em}
