@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ENCOUNTER_BUDGETS, XP_BY_CR, crValue, numericCr, monsterXp, encounterBudget, canPurchase, chooseMonsterForPurchase, expandEncounterForCombat } from '../src/encounterRules.mjs';
+import { ENCOUNTER_BUDGETS, XP_BY_CR, crValue, numericCr, monsterXp, encounterBudget, canPurchase, withinBudget, chooseMonsterForPurchase, expandEncounterForCombat } from '../src/encounterRules.mjs';
 
 test('la tabla de presupuesto contiene los 20 niveles y tres dificultades', () => {
   assert.equal(Object.keys(ENCOUNTER_BUDGETS).length, 20);
@@ -28,7 +28,7 @@ test('XP por VD cubre valores fraccionarios y enteros', () => {
   assert.equal(XP_BY_CR['1/2'],100);
   assert.equal(XP_BY_CR['1'],200);
   assert.equal(XP_BY_CR['30'],155000);
-  assert.equal(Object.keys(XP_BY_CR).length,31);
+  assert.equal(Object.keys(XP_BY_CR).length,34);
 });
 
 test('el XP explícito del bloque de monstruo prevalece sobre el XP derivado del VD', () => {
@@ -52,6 +52,8 @@ test('la compra admite el límite exacto y rechaza excederlo', () => {
   assert.equal(canPurchase(0,10,0),false);
   assert.equal(canPurchase(0,0,100),false);
   assert.equal(canPurchase(-1,10,100),false);
+  assert.equal(withinBudget(100,100),true);
+  assert.equal(withinBudget(101,100),false);
 });
 
 test('el selector aleatorio nunca ofrece monstruos más caros que el saldo', () => {
