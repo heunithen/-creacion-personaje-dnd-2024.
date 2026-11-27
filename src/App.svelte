@@ -6226,269 +6226,224 @@ import ITEMS from './items.json';
 
   async function exportCharacterSummary(target: RawSheet | null, playerLabel = '') {
     if (!target) return;
-    notice = 'Preparando la ficha PDF…';
+    notice = 'Generando ficha PDF…';
     try {
-      const { PDFDocument } = await import('pdf-lib');
-      const templateUrl = 'https://raw.githubusercontent.com/heunithen/-creacion-personaje-dnd-2024./main/personajes/Character_Sheet_campos_identificados.pdf';
-      const response = await fetch(templateUrl, { cache: 'no-store' });
-      if (!response.ok) throw new Error('No se pudo descargar la plantilla oficial (' + response.status + ').');
-      const pdf = await PDFDocument.load(await response.arrayBuffer());
-      const form = pdf.getForm();
-      const fields = form.getFields();
-      const normalizeField = (value: unknown) => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-      const fieldEntries = fields.map(field => ({ field, name: field.getName(), key: normalizeField(field.getName()) }));
+      const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
+      const pdf = await PDFDocument.create();
+      const pageWidth = 595.28;
+      const pageHeight = 841.89;
+      const ink = rgb(0.13, 0.16, 0.19);
+      const muted = rgb(0.38, 0.41, 0.43);
+      const line = rgb(0.63, 0.65, 0.65);
+      const pale = rgb(0.95, 0.94, 0.90);
+      const accent = rgb(0.48, 0.16, 0.14);
+      const regular = await pdf.embedFont(StandardFonts.Helvetica);
+      const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+      const italic = await pdf.embedFont(StandardFonts.HelveticaOblique);
       const clean = (value: unknown) => {
-        const text = displayValue(value).trim();
-        if (!text || text === '—' || text === '-') return '';
-        if (/^[{[]/.test(text)) {
-          try { const parsed = JSON.parse(text); if (parsed && typeof parsed === 'object') return ''; } catch {}
-        }
-        return text;
+        const text = displayValue(value).replace(/[\u0000-\u001f]/g, ' ').trim();
+        return !text || text === '—' || text === '-' ? '' : text;
       };
-      const setField = (entry: typeof fieldEntries[number], value: unknown) => {
-        const text = clean(value);
-        if (!text) return;
-        const field: any = entry.field;
-        try {
-          if (typeof field.setText === 'function') field.setText(text);
-          else if (typeof field.check === 'function' && /^(true|1|sim|yes|x)$/i.test(text)) field.check();
-        } catch (error) { console.warn('No se pudo rellenar el campo PDF', entry.name, error); }
-      };
-      const setByAliases = (aliases: string[], value: unknown) => {
-        if (!clean(value)) return;
-        const terms = aliases.map(normalizeField);
-        const found = fieldEntries.filter(entry => terms.some(term => entry.key === term || entry.key.endsWith(' ' + term)) && !((entry.key.includes('subclasse') || entry.key.includes('subclass')) && terms.some(term => term === 'classe' || term === 'class')));
-        found.forEach(entry => setField(entry, value));
-      };
-      const value = (section: string, stat: string) => clean(getCharacterStat(target, section, stat));
-      const firstValue = (pairs: Array<[string,string]>) => {
-        for (const [section, stat] of pairs) { const found = value(section, stat); if (found) return found; }
+      const stat = (section: string, name: string) => clean(getCharacterStat(target, section, name));
+      const first = (pairs: Array<[string,string]>) => {
+        for (const [section, name] of pairs) { const value = stat(section, name); if (value) return value; }
         return '';
       };
-      const identity: Array<[string[], unknown]> = [
-        [['nome','nome do personagem','character name'], target.name || firstValue([['PERSONAJE','Nombre']])],
-        [['classe','class'], firstValue([['PERSONAJE','Clase']])],
-        [['subclasse','subclass'], (() => { const v = firstValue([['PERSONAJE','Subclase']]); return /no disponible|se elige en nivel/i.test(v) ? '' : v; })()],
-        [['nivel','level'], sheetLevel(target)],
-        [['raca','especie','race','species'], firstValue([['PERSONAJE','Especie']])],
-        [['antecedente','trasfondo','background'], firstValue([['PERSONAJE','Trasfondo']])],
-        [['tendencia','alinhamento','alignment'], firstValue([['PERSONAJE','Alineamiento']])],
-        [['experiencia','pontos de experiencia','xp'], firstValue([['PERSONAJE','Experiencia']])],
-        [['jogador','player'], firstValue([['PERSONAJE','Jugador']]) || playerLabel]
-      ];
-      identity.forEach(([aliases, item]) => setByAliases(aliases as string[], item));
-
-      const abilityNames = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
-      const abilityPortuguese: Record<string,string[]> = {
-        Fuerza:['forca','strength'], Destreza:['destreza','dexterity'], Constitución:['constituicao','constitution'],
-        Inteligencia:['inteligencia','intelligence'], Sabiduría:['sabedoria','wisdom'], Carisma:['carisma','charisma']
+      const section = (names: string[]) => (target.sections || []).find(item => names.some(name => String(item.name || '').toLowerCase() === name.toLowerCase()));
+      const sectionStats = (names: string[]) => section(names)?.stats || [];
+      const valueFromStats = (names: string[], aliases: string[]) => {
+        const rows = sectionStats(names);
+        const found = rows.find(row => aliases.some(alias => String(row.name || '').toLowerCase().includes(alias.toLowerCase())));
+        return clean(found?.value);
       };
-      for (const ability of abilityNames) {
-        const score = abilityScoreNumber(value('ATRIBUTOS', ability));
-        const modifier = abilityModifier(value('ATRIBUTOS', ability));
-        const aliases = abilityPortuguese[ability] || [normalizeField(ability)];
-        for (const entry of fieldEntries) {
-          if (!aliases.some(alias => entry.key.includes(alias))) continue;
-          if (/salv|resist|saving/.test(entry.key)) continue;
-          if (/mod|modifier|bonus|modificador/.test(entry.key)) {
-            if (modifier !== null) setField(entry, signedBonus(modifier));
-          } else if (/valor|score|pontuacao|atributo/.test(entry.key) || aliases.some(alias => entry.key === alias)) {
-            if (score !== null) setField(entry, String(score));
+      const safeName = (target.name || 'personaje').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-+|-+$/g,'') || 'personaje';
+      const drawText = (page: any, text: unknown, x: number, y: number, size = 8, font: any = regular, color: any = ink, maxWidth = 0) => {
+        let content = clean(text);
+        if (!content) return;
+        if (maxWidth > 0) {
+          while (content.length > 1 && font.widthOfTextAtSize(content, size) > maxWidth) content = content.slice(0, -1);
+        }
+        page.drawText(content, { x, y, size, font, color, maxWidth: maxWidth || undefined });
+      };
+      const box = (page: any, x: number, y: number, w: number, h: number, title: string, fill = false) => {
+        page.drawRectangle({ x, y, width: w, height: h, borderColor: line, borderWidth: 0.7, color: fill ? pale : undefined });
+        page.drawText(title.toUpperCase(), { x: x + 6, y: y + h - 12, size: 7, font: bold, color: accent });
+        page.drawLine({ start: { x: x + 5, y: y + h - 16 }, end: { x: x + w - 5, y: y + h - 16 }, thickness: 0.5, color: line });
+      };
+      const wrapLines = (text: string, maxWidth: number, size: number, font: any) => {
+        const words = text.split(/\s+/);
+        const lines: string[] = [];
+        let current = '';
+        for (const word of words) {
+          const next = current ? current + ' ' + word : word;
+          if (current && font.widthOfTextAtSize(next, size) > maxWidth) { lines.push(current); current = word; }
+          else current = next;
+        }
+        if (current) lines.push(current);
+        return lines;
+      };
+      const paragraph = (page: any, text: string, x: number, y: number, width: number, size = 7, maxLines = 4) => {
+        if (!text) return y;
+        let cursor = y;
+        for (const raw of text.split(/\n+/)) {
+          for (const row of wrapLines(raw, width, size, regular).slice(0, maxLines)) {
+            drawText(page, row, x, cursor, size);
+            cursor -= size + 2;
           }
         }
-      }
-
-      const prof = value('COMBATE','Bonificador por competencia');
-      setByAliases(['bonus de proficiencia','bonus de competencia','bonificador por competencia','proficiency bonus'], prof);
-      setByAliases(['inspiracao','inspiration'], firstValue([['PERSONAJE','Inspiración']]));
-      const combatAliases: Array<[string[],unknown]> = [
-        [['classe de armadura','armadura','armor class','ca'], firstValue([['COMBATE','Armor Class'],['COMBATE','Clase de armadura']])],
-        [['iniciativa','initiative'], firstValue([['COMBATE','Initiative'],['COMBATE','Iniciativa']])],
-        [['velocidade','deslocamento','speed'], firstValue([['COMBATE','Speed'],['COMBATE','Velocidad']])],
-        [['pontos de vida atuais','pv atuais','current hit points','hp current'], firstValue([['COMBATE','Puntos de golpe actuales'],['COMBATE','Hit Points: current']])],
-        [['pontos de vida maximos','pv maximos','maximum hit points','hp maximum'], firstValue([['COMBATE','Puntos de golpe máximos'],['COMBATE','Hit Points: max']])],
-        [['pontos de vida temporarios','pv temporarios','temporary hit points'], value('COMBATE','Puntos de golpe temporales')],
-        
-        [['percepcao passiva','passive perception'], firstValue([['COMBATE','Percepción pasiva'],['COMBATE','Passive Perception']])]
-      ];
-      combatAliases.forEach(([aliases,item]) => setByAliases(aliases as string[],item));
-
-      for (const ability of abilityNames) {
-        const raw = value('SALVACIONES',ability);
-        for (const entry of fieldEntries) {
-          const abilityKey = (abilityPortuguese[ability] || [normalizeField(ability)])[0];
-          if (!entry.key.includes(abilityKey) || !/(salv|resist|saving)/.test(entry.key)) continue;
-          if (/prof|compet|proficiencia/.test(entry.key)) {
-            if (/competente/i.test(raw)) setField(entry,'true');
-          } else setField(entry,raw.replace(/\s*[·|].*$/,''));
-        }
-      }
-
-      const skillNames = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
-      const skillPortuguese: Record<string,string[]> = {
-        Acrobacias:['acrobacia','acrobacias','acrobatics'], Atletismo:['atletismo','athletics'], 'Conocimiento arcano':['arcanismo','conhecimento arcano','arcana'],
-        Engaño:['enganacao','engano','deception'], Historia:['historia','history'], Interpretación:['atuacao','interpretacao','performance'],
-        Intimidación:['intimidacao','intimidation'], Investigación:['investigacao','investigation'], 'Juego de manos':['prestidigitacao','jogo de maos','sleight of hand'],
-        Medicina:['medicina','medicine'], Naturaleza:['natureza','nature'], Perspicacia:['intuicao','perspicacia','insight'],
-        Persuasión:['persuasao','persuasion'], Percepción:['percepcao','perception'], Religión:['religiao','religion'], Sigilo:['furtividade','sigilo','stealth'],
-        Supervivencia:['sobrevivencia','survival'], 'Trato con animales':['adestrar animais','trato com animais','animal handling']
+        return cursor;
       };
-      for (const skill of skillNames) {
-        const raw = value('HABILIDADES',skill);
-        const proficiencies = value('COMPETENCIAS','Skills');
-        const trained = proficiencies.toLocaleLowerCase().includes(skill.toLocaleLowerCase());
-        for (const entry of fieldEntries) {
-          const matches = (skillPortuguese[skill] || [normalizeField(skill)]).some(alias => entry.key.includes(alias));
-          if (!matches || /percepcao passiva/.test(entry.key)) continue;
-          if (/prof|compet|proficiencia/.test(entry.key)) {
-            if (trained || /competente/i.test(raw)) setField(entry,'true');
-          } else setField(entry,raw.replace(/\s*[·|].*$/,''));
-        }
-      }
-
-      const weaponLines = value('ATAQUES','Perfiles de ataque').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
-      const weaponRows = weaponLines.slice(0,6).map(line => {
-        const match = line.match(/^([^:]+):\s*ataque\s*([+-]?\d+)\s*[·|]\s*([^·|]+)/i);
-        return match ? { name:match[1].trim(), bonus:match[2], damage:match[3].trim() } : { name:line.split(':')[0], bonus:'', damage:'' };
-      });
-      for (const entry of fieldEntries) {
-        const slotMatch = entry.key.match(/(?:arma|ataque|weapon|attack)\s*(\d+)/);
-        if (!slotMatch) continue;
-        const row = weaponRows[Number(slotMatch[1])-1];
-        if (!row) continue;
-        if (/dano|damage/.test(entry.key)) setField(entry,row.damage);
-        else if (/bonus|ataque|attack/.test(entry.key) && !/nome|name/.test(entry.key)) setField(entry,row.bonus);
-        else setField(entry,row.name);
-      }
-
-      const rawSpellAbility=value('CONJUROS','Aptitud mágica');
-      const spellAbility=/no tiene|no obtiene|no disponible|^—$|^-$|^$/i.test(rawSpellAbility.trim())?'':rawSpellAbility;
-      const spellAbilityScore=spellAbility?abilityScoreNumber(value('ATRIBUTOS',spellAbility)):null;
-      const spellAbilityModifier=spellAbilityScore===null?'':signedBonus(Math.floor((spellAbilityScore-10)/2));
-      setByAliases(['aptidao magica','habilidade magica','spellcasting ability'],spellAbility);
-      setByAliases(['cd de salvacao','dificuldade de salvacao','spell save dc'],value('CONJUROS','CD de salvación'));
-      setByAliases(['ataque de conjuro','bonus de ataque magico','spell attack bonus'],value('CONJUROS','Ataque de conjuro'));
-      const spellSlotText = value('CONJUROS','Espacios por nivel') || value('CONJUROS','Espacios de conjuro');
-      if (spellSlotText) {
-        const slots = spellSlotText.match(/\d+/g) || [];
-        for (let level=1; level<=9; level++) setByAliases(['espacos nivel '+level,'espacos de nivel '+level,'spell slots level '+level],slots[level-1] || '');
-      }
-      const spellSourceNames = ['Trucos','Conjuros de nivel 1','Trucos de clase','Conjuros preparados de clase','Libro de conjuros','Conjuros de especie','Conjuros de trasfondo','Conjuros de dote','Trucos de subclase','Conjuros preparados de subclase','Conjuros de escuela','Conjuros característicos'];
-      const spellNames = [...new Set(spellSourceNames.flatMap(name => value('CONJUROS',name).split(/[;,\n]+/).map(item=>item.trim()).filter(item=>item && !/no tiene|no obtiene|no disponible|^—$|^-/i.test(item))))].slice(0,30);
-      const spellRecords = spellNames.map(name => {
-        const record = getSpellRecord(name);
-        return { name, level:record?.level === 0 ? 'Truco' : record?.level ? String(record.level) : '', castingTime:record?.castingTime || '', range:record?.range || '' };
-      });
-      for (const entry of fieldEntries) {
-        const spellIndex = entry.key.match(/(?:conjuro|feitico|spell|magia)\s*(\d+)/);
-        if (!spellIndex) continue;
-        const row = spellRecords[Number(spellIndex[1])-1];
-        if (!row) continue;
-        if (/nivel|level/.test(entry.key)) setField(entry,row.level);
-        else if (/duracao|tempo|casting/.test(entry.key)) setField(entry,row.castingTime);
-        else if (/alcance|range/.test(entry.key)) setField(entry,row.range);
-        else if (/nome|name/.test(entry.key)) setField(entry,row.name);
-      }
-
-      const currencyText = value('EQUIPO','Monedas') || value('INVENTARIO','Monedas');
-      const currencyMatches = currencyText.match(/(\d+(?:[.,]\d+)?)\s*(cp|sp|ep|gp|pp|pc|pa|pe|po|pl)\b/gi) || [];
-      const currency: Record<string,string> = {};
-      currencyMatches.forEach(item => { const m=item.match(/(\d+(?:[.,]\d+)?)\s*(cp|sp|ep|gp|pp|pc|pa|pe|po|pl)\b/i); if(m) currency[m[2].toLowerCase()]=m[1]; });
-      setByAliases(['cp','cobre','cobre pieces'],currency.cp || currency.pc || '');
-      setByAliases(['sp','prata','silver pieces'],currency.sp || currency.pa || '');
-      setByAliases(['ep','electrum'],currency.ep || currency.pe || '');
-      setByAliases(['gp','ouro','oro','gold pieces'],currency.gp || currency.po || '');
-      setByAliases(['pp','platina','platino','platinum pieces'],currency.pp || currency.pl || '');
-
-      // Mapeo explícito de los campos numerados de la plantilla original.
-      // Los identificadores no siguen un orden consecutivo por categoría.
-      const numberedFields = fieldEntries.map(entry => {
-        const match = entry.name.match(/(?:^|\\D)(\\d{1,3})$/);
-        return match ? { entry, number:Number(match[1]) } : null;
-      }).filter((item): item is { entry: typeof fieldEntries[number]; number:number } => !!item);
-      const byNumber = new Map(numberedFields.map(item => [item.number,item.entry]));
-      const setNumbered = (number:number, item:unknown) => {
-        const entry = byNumber.get(number);
-        if (entry) setField(entry,item);
+      const footer = (page: any, number: number) => {
+        page.drawLine({ start: { x: 28, y: 25 }, end: { x: pageWidth - 28, y: 25 }, thickness: 0.5, color: line });
+        drawText(page, 'D&D 2024 · Ficha de personaje', 30, 13, 6, italic, muted);
+        drawText(page, 'Página ' + number + ' de 2', pageWidth - 80, 13, 6, regular, muted);
       };
-      // Encabezado de lanzamiento y espacios: el ataque está en el campo 61.
-      setNumbered(56,spellAbilityModifier);
-      setNumbered(57,value('CONJUROS','CD de salvación'));
-      setNumbered(61,value('CONJUROS','Ataque de conjuro'));
-      const slotFieldNumbers = [58,62,65,59,63,66,60,64,67];
-      const slotValues = spellSlotText.match(/\\d+/g) || [];
-      slotFieldNumbers.forEach((number,index)=>setNumbered(number,slotValues[index] || ''));
-
-      // Cada fila de conjuros usa tres campos, pero el orden de los números
-      // presenta saltos y excepciones que deben respetarse literalmente.
-      const spellRows = [
-        [68,69,70],[71,72,73],[74,75,76],[77,78,79],[82,80,81],
-        [83,84,85],[88,86,87],[89,90,91],[92,93,94],[95,96,97],
-        [98,99,100],[101,102,103],[104,105,106],[107,108,109],[110,111,112],
-        [113,114,115],[116,117,118],[119,120,121],[122,123,124],[125,126,127],
-        [130,128,129],[131,132,133],[134,135,136],[137,138,139],[140,141,142],
-        [143,144,145],[146,147,148],[156,149,150],[157,158,159],[160,161,162]
+      const heading = (page: any, title: string, subtitle: string) => {
+        page.drawText(title.toUpperCase(), { x: 30, y: pageHeight - 43, size: 16, font: bold, color: accent });
+        page.drawText(subtitle, { x: 30, y: pageHeight - 58, size: 7, font: italic, color: muted });
+        page.drawLine({ start: { x: 30, y: pageHeight - 67 }, end: { x: pageWidth - 30, y: pageHeight - 67 }, thickness: 1.5, color: accent });
+      };
+      const characterName = target.name || first([['PERSONAJE','Nombre']]) || 'Personaje';
+      const className = first([['PERSONAJE','Clase']]) || '';
+      const level = sheetLevel(target);
+      const species = first([['PERSONAJE','Especie'],['PERSONAJE','Raza']]);
+      const background = first([['PERSONAJE','Trasfondo'],['PERSONAJE','Antecedente']]);
+      const alignment = first([['PERSONAJE','Alineamiento']]);
+      const xp = first([['PERSONAJE','Experiencia']]);
+      const player = first([['PERSONAJE','Jugador']]) || playerLabel;
+      const abilityNames = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
+      const skills = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
+      const attacks = (stat('ATAQUES','Perfiles de ataque') || '').split(/\r?\n/).map(row => row.trim()).filter(Boolean).slice(0,6).map(row => {
+        const match = row.match(/^([^:]+):\s*ataque\s*([+-]?\d+)\s*[·|]\s*([^·|]+)(?:[·|]\s*(.*))?$/i);
+        return match ? [match[1].trim(), match[2], match[3].trim(), (match[4] || '').trim()] : [row, '', '', ''];
+      });
+      const featureGroups = playerFeatureGroups(target);
+      const traits = [...(featureGroups.traits || []), ...(featureGroups.feats || [])];
+      const inventory = sectionStats(['EQUIPO','INVENTARIO']).map(item => ({ name: String(item.name || ''), value: clean(item.value) })).filter(item => item.name || item.value);
+      const spellRows = sectionStats(['DETALLE DE CONJUROS','DETALLES DE CONJUROS','CONJUROS']).map(item => ({ name: String(item.name || ''), value: clean(item.value) })).filter(item => item.name || item.value);
+      const page1 = pdf.addPage([pageWidth, pageHeight]);
+      heading(page1, characterName, 'HOJA DE PERSONAJE · ' + [className, level ? 'Nivel ' + level : '', species, background].filter(Boolean).join(' · '));
+      box(page1, 30, 735, 535, 58, 'Datos del personaje', true);
+      drawText(page1, 'CLASE Y NIVEL', 40, 765, 6, bold, muted); drawText(page1, [className, level ? level : ''].filter(Boolean).join(' '), 40, 750, 9, bold);
+      drawText(page1, 'ESPECIE', 185, 765, 6, bold, muted); drawText(page1, species, 185, 750, 9, bold);
+      drawText(page1, 'TRASFONDO', 300, 765, 6, bold, muted); drawText(page1, background, 300, 750, 9, bold);
+      drawText(page1, 'JUGADOR', 425, 765, 6, bold, muted); drawText(page1, player, 425, 750, 8, bold, ink, 125);
+      drawText(page1, 'ALINEAMIENTO: ' + (alignment || '—') + '     EXPERIENCIA: ' + (xp || '—'), 40, 738, 7, regular, muted);
+      box(page1, 30, 552, 180, 170, 'Características');
+      abilityNames.forEach((name, index) => {
+        const raw = stat('ATRIBUTOS', name);
+        const score = abilityScoreNumber(raw);
+        const mod = abilityModifier(raw);
+        const y = 688 - index * 25;
+        drawText(page1, name.toUpperCase(), 42, y, 7, bold);
+        page1.drawRectangle({ x: 143, y: y - 5, width: 25, height: 20, borderColor: line, borderWidth: 0.6 });
+        drawText(page1, score === null ? '—' : String(score), 151, y + 1, 9, bold);
+        drawText(page1, mod === null ? '—' : signedBonus(mod), 177, y + 1, 8, bold, accent);
+      });
+      box(page1, 220, 552, 345, 170, 'Combate');
+      const combatItems = [
+        ['CLASE DE ARMADURA', first([['COMBATE','Armor Class'],['COMBATE','Clase de armadura'],['COMBATE','CA']])],
+        ['INICIATIVA', first([['COMBATE','Initiative'],['COMBATE','Iniciativa']])],
+        ['VELOCIDAD', first([['COMBATE','Speed'],['COMBATE','Velocidad']])],
+        ['BONO COMPETENCIA', first([['COMBATE','Bonificador por competencia'],['COMBATE','Bonificador de competencia']])],
+        ['PERCEPCIÓN PASIVA', first([['COMBATE','Percepción pasiva']])],
+        ['DADOS DE GOLPE', first([['COMBATE','Dados de golpe'],['COMBATE','Dado de golpe']])]
       ];
-      spellRows.forEach((numbers,index)=>{
-        const row=spellRecords[index];
-        if(!row) return;
-        setNumbered(numbers[0],row.level);
-        setNumbered(numbers[1],row.castingTime);
-        setNumbered(numbers[2],row.range);
+      combatItems.forEach((item, i) => {
+        const col = i % 3, row = Math.floor(i / 3);
+        const x = 232 + col * 108, y = 680 - row * 58;
+        drawText(page1, item[0], x, y, 6, bold, muted);
+        drawText(page1, item[1] || '—', x, y - 17, 12, bold);
       });
-      // Las monedas no están en secuencia: GP es el campo 29.
-      const currencyFields = [151,152,153,29,155];
-      const currencyValues = [currency.cp || currency.pc || '',currency.sp || currency.pa || '',currency.ep || currency.pe || '',currency.gp || currency.po || '',currency.pp || currency.pl || ''];
-      currencyFields.forEach((number,index)=>setNumbered(number,currencyValues[index]));
+      drawText(page1, 'PUNTOS DE GOLPE', 235, 582, 6, bold, muted);
+      drawText(page1, 'Actuales: ' + (first([['COMBATE','Puntos de golpe actuales'],['COMBATE','Hit Points: current']]) || '—') + '     Máximos: ' + (first([['COMBATE','Puntos de golpe máximos'],['COMBATE','Hit Points: max']]) || '—') + '     Temporales: ' + (stat('COMBATE','Puntos de golpe temporales') || '—'), 235, 565, 8, bold);
+      box(page1, 30, 335, 260, 205, 'Salvaciones');
+      abilityNames.forEach((name, i) => {
+        const raw = stat('SALVACIONES', name);
+        const y = 506 - i * 27;
+        drawText(page1, name, 43, y, 8, regular);
+        drawText(page1, raw.replace(/\s*[·|].*$/,'' ) || '—', 235, y, 8, bold, accent);
+        if (/competente/i.test(raw)) drawText(page1, 'COMPETENTE', 160, y, 5.5, bold, muted);
+      });
+      box(page1, 300, 335, 265, 205, 'Habilidades');
+      skills.forEach((name, i) => {
+        const col = i < 9 ? 0 : 1, row = i % 9;
+        const x = 312 + col * 126, y = 506 - row * 20;
+        const raw = stat('HABILIDADES', name);
+        drawText(page1, name, x, y, 6.5, regular, ink, 91);
+        drawText(page1, raw.replace(/\s*[·|].*$/,'') || '—', x + 98, y, 7, bold, /competente|pericia/i.test(raw) ? accent : ink);
+      });
+      box(page1, 30, 105, 535, 215, 'Ataques y competencias');
+      drawText(page1, 'ARMA', 42, 291, 6, bold, muted);
+      drawText(page1, 'BONO', 270, 291, 6, bold, muted);
+      drawText(page1, 'DAÑO / TIPO', 330, 291, 6, bold, muted);
+      attacks.forEach((row, i) => {
+        const y = 273 - i * 19;
+        drawText(page1, row[0], 42, y, 7.5, bold, ink, 215);
+        drawText(page1, row[1] ? signedBonus(Number(row[1])) : '—', 270, y, 7.5, bold, accent);
+        drawText(page1, [row[2],row[3]].filter(Boolean).join(' · ') || '—', 330, y, 7, regular, ink, 220);
+      });
+      const proficiencies = first([['COMPETENCIAS','Skills'],['COMPETENCIAS','Competencias'],['COMPETENCIAS','Armas y armaduras'],['COMPETENCIAS','Idiomas']]);
+      paragraph(page1, proficiencies, 42, 145, 510, 7, 5);
+      footer(page1, 1);
 
-      // Datos adicionales de la ficha que no se rellenaban con los alias anteriores.
-      const classFeatures = value('RASGOS Y DOTES','Rasgos de clase');
-      const speciesTraits = value('RASGOS Y DOTES','Rasgos de especie');
-      const feats = value('RASGOS Y DOTES','Dote de origen');
-      const weaponTraining = value('COMPETENCIAS','Armas');
-      const toolTraining = value('COMPETENCIAS','Herramientas');
-      const armorTraining = value('COMPETENCIAS','Armaduras');
-      const languages = value('COMPETENCIAS','Languages');
-      const equipment = value('EQUIPO','Equipo inicial') || value('INVENTARIO','Equipo de clase');
-      const appearance = value('HISTORIA','Apariencia');
-      const backstory = value('HISTORIA','Historia');
-      const personality = ['Rasgos de personalidad','Ideal','Vínculo','Defecto'].map(name=>value('HISTORIA',name)).filter(Boolean).join(' · ');
-      setByAliases(['class features','caracteristicas de clase','rasgos de clase'],classFeatures);
-      setByAliases(['species traits','rasgos de especie'],speciesTraits);
-      setByAliases(['feats','dotes','talentos'],feats);
-      setByAliases(['weapons','armas'],weaponTraining);
-      setByAliases(['tools','ferramentas','herramientas'],toolTraining);
-      setByAliases(['armor training','treinamento de armadura','entrenamiento de armadura'],armorTraining);
-      setByAliases(['languages','linguagens','idiomas'],languages);
-      setByAliases(['equipment','inventario'],equipment);
-      setByAliases(['appearance','aparencia','apariencia'],appearance);
-      setByAliases(['backstory','historia'],backstory);
-      setByAliases(['personality','personalidade','personalidad'],personality);
-      setByAliases(['alignment','alinhamento'],firstValue([['PERSONAJE','Alineamiento']]));
-      setByAliases(['size','tamanho','tamano'],value('DETALLES DE ESPECIE','Tamaño'));
-      setByAliases(['hit dice max','maximum hit dice','dados de vida maximos'],String(sheetLevel(target)));
-      setByAliases(['hit dice spent','spent hit dice','dados de vida gastados'],'0');
-      // Los campos de ataque se rellenan desde los tres perfiles reales de Darian.
-      const attackRows = weaponLines.slice(0,6).map(line=>{
-        const match=line.match(/^([^:]+):\\s*ataque\\s*([+-]?\\d+)\\s*[·|]\\s*([^·|]+)(?:[·|]\\s*(.*))?$/i);
-        return match?{name:match[1].trim(),bonus:match[2],damage:match[3].trim(),notes:(match[4]||'').trim()}:{name:line.split(':')[0].trim(),bonus:'',damage:'',notes:''};
+      const page2 = pdf.addPage([pageWidth, pageHeight]);
+      heading(page2, characterName, 'RASGOS, EQUIPO, HISTORIA Y CONJUROS');
+      box(page2, 30, 665, 535, 128, 'Rasgos de personalidad e historia');
+      const story = [
+        ['PERSONALIDAD', first([['DETALLES DEL TRASFONDO','Rasgos de personalidad'],['HISTORIA','Rasgos de personalidad']])],
+        ['IDEALES', first([['DETALLES DEL TRASFONDO','Ideales'],['HISTORIA','Ideales']])],
+        ['VÍNCULOS', first([['DETALLES DEL TRASFONDO','Vínculos'],['HISTORIA','Vínculos']])],
+        ['DEFECTOS', first([['DETALLES DEL TRASFONDO','Defectos'],['HISTORIA','Defectos']])]
+      ];
+      story.forEach((item, i) => {
+        const col = i % 2, row = Math.floor(i / 2);
+        const x = 42 + col * 260, y = 754 - row * 48;
+        drawText(page2, item[0], x, y, 6, bold, muted);
+        paragraph(page2, item[1], x, y - 12, 245, 7, 2);
       });
-      for(const entry of fieldEntries){
-        const rowMatch=entry.key.match(/(?:weapon|arma|attack|ataque|item foda)\\s*(\\d+)/);
-        if(!rowMatch) continue;
-        const row=attackRows[Number(rowMatch[1])-1];
-        if(!row) continue;
-        if(/damage|dano/.test(entry.key)) setField(entry,row.damage);
-        else if(/note|nota/.test(entry.key)) setField(entry,row.notes);
-        else if(/bonus|atk|dc|ataque|attack/.test(entry.key) && !/name|nome/.test(entry.key)) setField(entry,row.bonus);
-        else setField(entry,row.name);
+      box(page2, 30, 420, 535, 230, 'Rasgos de clase, especie y dotes');
+      let featureY = 620;
+      for (const feature of traits.slice(0, 9)) {
+        const title = String(feature.name || '');
+        const description = String(feature.description || '');
+        drawText(page2, title + (feature.source ? ' · ' + feature.source : ''), 42, featureY, 7.5, bold, accent, 505);
+        featureY -= 12;
+        featureY = paragraph(page2, description, 48, featureY, 500, 6.5, 2) - 5;
+        if (featureY < 435) break;
       }
-      if (!fields.length) throw new Error('La plantilla no contiene campos rellenables.');
-      form.flatten();
+      box(page2, 30, 235, 260, 170, 'Equipo e inventario');
+      inventory.slice(0, 12).forEach((item, i) => {
+        const y = 380 - i * 12;
+        drawText(page2, item.name, 42, y, 6.5, regular, ink, 165);
+        drawText(page2, item.value, 215, y, 6.5, bold, ink, 62);
+      });
+      const coins = first([['EQUIPO','Monedas'],['INVENTARIO','Monedas']]);
+      drawText(page2, 'MONEDAS', 42, 250, 6, bold, muted);
+      drawText(page2, coins || 'CP: —   PP: —   PE: —   PO: —   PPT: —', 42, 239, 6.5, bold);
+      box(page2, 300, 235, 265, 170, 'Notas, apariencia y trasfondo');
+      const notes = [stat('HISTORIA','Historia'),stat('DETALLES DEL TRASFONDO','Apariencia'),stat('DETALLES DEL TRASFONDO','Historia')].filter(Boolean).join('\n');
+      paragraph(page2, notes || stat('PERSONAJE','Descripción') || '', 312, 380, 240, 7, 10);
+      box(page2, 30, 55, 535, 165, 'Conjuros');
+      const spellAbility = first([['CONJUROS','Aptitud mágica'],['CONJUROS','Atributo de lanzamiento']]);
+      const spellDc = first([['CONJUROS','CD de salvación'],['CONJUROS','CD de conjuro']]);
+      const spellAttack = first([['CONJUROS','Bonificador de ataque'],['CONJUROS','Ataque de conjuro']]);
+      drawText(page2, 'ATRIBUTO: ' + (spellAbility || '—') + '     CD: ' + (spellDc || '—') + '     BONO ATAQUE: ' + (spellAttack || '—'), 42, 190, 7, bold);
+      drawText(page2, 'NIVEL', 42, 174, 6, bold, muted);
+      drawText(page2, 'CONJURO', 88, 174, 6, bold, muted);
+      drawText(page2, 'TIEMPO DE LANZAMIENTO', 335, 174, 6, bold, muted);
+      drawText(page2, 'ALCANCE', 470, 174, 6, bold, muted);
+      spellRows.slice(0, 8).forEach((item, i) => {
+        const y = 158 - i * 14;
+        const match = item.name.match(/^(\d+)\s*[-:]?\s*(.*)$/);
+        drawText(page2, match ? match[1] : '', 42, y, 6.5);
+        drawText(page2, match ? match[2] : item.name, 88, y, 6.5, regular, ink, 235);
+        drawText(page2, item.value, 335, y, 6.5, regular, ink, 125);
+      });
+      footer(page2, 2);
       const bytes = await pdf.save();
       const blob = new Blob([bytes], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
-      const safeName = (target.name || 'personaje').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-').replace(/^-+|-+$/g,'') || 'personaje';
       const link = document.createElement('a');
       link.href = url;
       link.download = safeName + '.pdf';
@@ -6496,10 +6451,10 @@ import ITEMS from './items.json';
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 30000);
-      notice = 'Ficha oficial exportada como ' + safeName + '.pdf';
+      notice = 'Ficha PDF generada: ' + safeName + '.pdf';
     } catch (error) {
-      console.error('No se pudo exportar la ficha oficial', error);
-      notice = 'No se pudo exportar la ficha oficial: ' + (error instanceof Error ? error.message : String(error));
+      console.error('No se pudo generar la ficha PDF', error);
+      notice = 'No se pudo generar la ficha PDF: ' + (error instanceof Error ? error.message : String(error));
     }
   }
   async function exportSheet() {
