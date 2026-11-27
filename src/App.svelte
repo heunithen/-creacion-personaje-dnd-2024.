@@ -996,7 +996,16 @@
       await OBR.scene.items.addItems([token]);
       notice = (portraitUrl && token.type === 'IMAGE' ? 'Token con retrato de ' : 'Token dorado de ') + characterName + ' creado en la escena (5 pies × 5 pies).';
     } catch (error) {
-      notice = error instanceof Error ? error.message : 'No se pudo crear el token.';
+      console.error('Error al crear token de personaje:', error);
+      let detail = '';
+      if (error instanceof Error) {
+        detail = error.message;
+      } else if (typeof error === 'string') {
+        detail = error;
+      } else {
+        try { detail = JSON.stringify(error); } catch { detail = String(error); }
+      }
+      notice = 'No se pudo crear el token' + (detail ? ': ' + detail : '. Revisa la consola de Owlbear para ver el error completo.');
     }
   }
 
