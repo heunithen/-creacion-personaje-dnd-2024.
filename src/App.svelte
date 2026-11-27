@@ -7199,7 +7199,7 @@ import ITEMS from './items.json';
                     {#if BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Orco'}
                       <img
                         class="builder-species-art"
-                        src={import.meta.env.BASE_URL + 'images/character-creation/portraits/po_orcwar_h.webp'}
+                        src={'/-creacion-personaje-dnd-2024./images/character-creation/portraits/po_orcwar_h.webp'}
                         alt="Ilustración de un orco"
                         loading="eager"
                       />
