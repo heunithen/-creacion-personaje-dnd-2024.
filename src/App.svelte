@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { expandEncounterForCombat } from './encounterRules';
+import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
   
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
@@ -3040,9 +3041,7 @@ import ITEMS from './items.json';
     notice=monster.name+' añadido y marcado como participante.';
   }
   function addEncounterToCombat(selection:any[]) {
-    for (const item of selection) {
-      for (let index=0; index<item.quantity; index++) addCombatant(item.monster);
-    }
+    for (const monster of expandEncounterForCombat(selection)) addCombatant(monster);
     masterTab='Combate';
     showAllCombatants=false;
     notice='Encuentro añadido al combate: '+selection.reduce((sum,item)=>sum+item.quantity,0)+' monstruos.';
