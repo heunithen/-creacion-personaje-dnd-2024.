@@ -335,11 +335,11 @@ try {
     app.includes('No se puede generar la ficha. Revisa estos campos:') &&
     app.includes('Falta completar lo siguiente para avanzar:') &&
     app.includes('Etapa ' ) && app.includes('de 12') &&
-    app.includes("localStorage.setItem('forja-raw-character', JSON.stringify(characterToSave))") &&
+    app.includes('await saveCharacterToSupabase(characterToSave)') &&
     app.includes('sheet = characterToSave') &&
     app.includes('playerCreating = false') &&
     app.includes('Guardar cambios y abrir ficha'),
-    'La creación valida las doce etapas y, desde el resumen, guarda localmente y abre directamente la ficha final.');
+    'La creación valida las doce etapas y guarda el personaje en Supabase antes de abrir la ficha final.');
 
   report('builder-equipment-options-explicit',
     app.includes('<b>A — Equipo inicial:</b>') &&
