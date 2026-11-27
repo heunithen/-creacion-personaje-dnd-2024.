@@ -4,10 +4,10 @@ import { ENCOUNTER_BUDGETS, XP_BY_CR, crValue, numericCr, monsterXp, encounterBu
 
 test('la tabla de presupuesto contiene los 20 niveles y tres dificultades', () => {
   assert.equal(Object.keys(ENCOUNTER_BUDGETS).length, 20);
-  for (let level=1; level<=20; level++) {
-    assert.ok(ENCOUNTER_BUDGETS[level].easy > 0);
-    assert.ok(ENCOUNTER_BUDGETS[level].normal >= ENCOUNTER_BUDGETS[level].easy);
-    assert.ok(ENCOUNTER_BUDGETS[level].hard >= ENCOUNTER_BUDGETS[level].normal);
+  for (const row of Object.values(ENCOUNTER_BUDGETS)) {
+    assert.ok(row.easy > 0);
+    assert.ok(row.normal >= row.easy);
+    assert.ok(row.hard >= row.normal);
   }
   assert.deepEqual(ENCOUNTER_BUDGETS[1], {easy:50,normal:75,hard:100});
   assert.deepEqual(ENCOUNTER_BUDGETS[20], {easy:6400,normal:13200,hard:22000});
