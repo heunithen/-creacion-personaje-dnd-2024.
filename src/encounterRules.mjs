@@ -137,11 +137,20 @@ export function createEncounterFromTemplate(available, budget, template, random 
   const pickDistinct = (remaining, excluded = []) => randomItem(
     pool.filter(item => item.xp <= remaining && !excluded.includes(item.monster.name)), random
   );
+  const addBestFit = (candidates) => {
+    const affordable = candidates.filter(item => item.xp > 0 && item.xp <= budget - spent);
+    if (!affordable.length) return false;
+    const ranked = [...affordable].sort((a,b) => b.xp - a.xp);
+    // Randomiza entre las opciones de mayor coste para variar encuentros sin desperdiciar presupuesto.
+    const finalists = ranked.slice(0, Math.min(3, ranked.length));
+    return add(randomItem(finalists, random));
+  };
 
   if (template === 'solo') {
-    const bossPool = pool.filter(item => item.xp >= Math.min(200, budget * 0.25));
-    const boss = randomItem(bossPool.length ? bossPool : pool, random);
-    add(boss);
+    // Un jefe individual no admite refuerzos: escoge la criatura más cara que quepa.
+    const ranked = [...pool].sort((a,b) => b.xp - a.xp);
+    const highBudget = ranked.filter(item => item.xp >= budget * 0.8);
+    add(randomItem(highBudget.length ? highBudget : ranked.slice(0, Math.min(3, ranked.length)), random));
   } else if (template === 'duo' || template === 'trio') {
     const count = template === 'duo' ? 2 : 3;
     for (let i=0;i<count;i++) {
@@ -159,15 +168,30 @@ export function createEncounterFromTemplate(available, budget, template, random 
     if (creatures < 6) return {steps,encounter:null};
   } else if (template === 'boss_minions') {
     const bossPool = pool.filter(item => item.xp <= budget * 0.7 && item.xp >= Math.min(100, budget * 0.2));
-    const boss = randomItem(bossPool.length ? bossPool : pool.filter(item => item.xp <= budget * 0.6), random);
+    const fallbackBosses = pool.filter(item => item.xp <= budget * 0.6);
+    const boss = randomItem(bossPool.length ? bossPool : fallbackBosses, random);
     if (!boss || !add(boss)) return {steps,encounter:null};
-    const minionCount = 2 + Math.floor(random() * 3);
-    const minions = pool.filter(item => item.xp < boss.xp && item.xp <= budget - spent);
-    for (let i=0;i<minionCount;i++) {
-      const candidate = randomItem(minions.filter(item => item.xp <= budget - spent), random);
-      if (!candidate || !add(candidate)) break;
+    const minions = pool.filter(item => item.xp < boss.xp);
+    for (let i=0;i<2;i++) {
+      if (!addBestFit(minions)) return {steps,encounter:null};
     }
-    if (creatures < 3) return {steps,encounter:null};
   }
-  return makeEncounter(items, steps, template);
+
+  // Todas las plantillas salvo jefe individual pueden recibir refuerzos hasta alcanzar
+  // al menos el 80 % del presupuesto, sin superar nunca el 100 %.
+  if (template !== 'solo') {
+    let safety = 0;
+    while (spent < budget * 0.8 && safety < 100) {
+      safety += 1;
+      const candidates = template === 'boss_minions'
+        ? pool.filter(item => item.xp < (items.find(entry => entry.monster.name === items[0]?.monster.name)?.monster ? monsterXp(items[0].monster) : Infinity))
+        : pool;
+      if (!addBestFit(candidates)) break;
+    }
+  }
+
+  const result = makeEncounter(items, steps, template);
+  result.encounter.budgetUse = budget > 0 ? result.encounter.spent / budget : 0;
+  result.encounter.targetReached = result.encounter.budgetUse >= 0.8;
+  return result;
 }
