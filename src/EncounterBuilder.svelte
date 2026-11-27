@@ -1,6 +1,6 @@
 <script lang="ts">
   import MONSTERS from './monsters.json';
-  import { ENCOUNTER_BUDGETS as BUDGETS, crValue, numericCr, monsterXp, chooseMonsterForPurchase } from './encounterRules';
+  import { ENCOUNTER_BUDGETS as BUDGETS, crValue, numericCr, monsterXp, chooseMonsterForPurchase } from './encounterRules.mjs';
 
   type Monster = {
     name: string;
