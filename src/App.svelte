@@ -6268,7 +6268,7 @@ import ITEMS from './items.json';
       const identity: Array<[string[], unknown]> = [
         [['nome','nome do personagem','character name'], target.name || firstValue([['PERSONAJE','Nombre']])],
         [['classe','class'], firstValue([['PERSONAJE','Clase']])],
-        [['subclasse','subclass'], firstValue([['PERSONAJE','Subclase']])],
+        [['subclasse','subclass'], (() => { const v = firstValue([['PERSONAJE','Subclase']]); return /no disponible|se elige en nivel/i.test(v) ? '' : v; })()],
         [['nivel','level'], sheetLevel(target)],
         [['raca','especie','race','species'], firstValue([['PERSONAJE','Especie']])],
         [['antecedente','trasfondo','background'], firstValue([['PERSONAJE','Trasfondo']])],
@@ -6280,8 +6280,8 @@ import ITEMS from './items.json';
 
       const abilityNames = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
       const abilityPortuguese: Record<string,string[]> = {
-        Fuerza:['forca'], Destreza:['destreza'], Constitución:['constituicao'],
-        Inteligencia:['inteligencia'], Sabiduría:['sabedoria'], Carisma:['carisma']
+        Fuerza:['forca','strength'], Destreza:['destreza','dexterity'], Constitución:['constituicao','constitution'],
+        Inteligencia:['inteligencia','intelligence'], Sabiduría:['sabedoria','wisdom'], Carisma:['carisma','charisma']
       };
       for (const ability of abilityNames) {
         const score = abilityScoreNumber(value('ATRIBUTOS', ability));
@@ -6308,7 +6308,7 @@ import ITEMS from './items.json';
         [['pontos de vida atuais','pv atuais','current hit points','hp current'], value('COMBATE','Puntos de golpe actuales')],
         [['pontos de vida maximos','pv maximos','maximum hit points','hp maximum'], value('COMBATE','Puntos de golpe máximos')],
         [['pontos de vida temporarios','pv temporarios','temporary hit points'], value('COMBATE','Puntos de golpe temporales')],
-        [['dados de vida','hit dice'], value('COMBATE','Dados de golpe')],
+        
         [['percepcao passiva','passive perception'], value('COMBATE','Percepción pasiva')]
       ];
       combatAliases.forEach(([aliases,item]) => setByAliases(aliases as string[],item));
@@ -6326,12 +6326,12 @@ import ITEMS from './items.json';
 
       const skillNames = ['Acrobacias','Atletismo','Conocimiento arcano','Engaño','Historia','Interpretación','Intimidación','Investigación','Juego de manos','Medicina','Naturaleza','Perspicacia','Persuasión','Percepción','Religión','Sigilo','Supervivencia','Trato con animales'];
       const skillPortuguese: Record<string,string[]> = {
-        Acrobacias:['acrobacia','acrobacias'], Atletismo:['atletismo'], 'Conocimiento arcano':['arcanismo','conhecimento arcano'],
-        Engaño:['enganacao','engano'], Historia:['historia'], Interpretación:['atuacao','interpretacao'],
-        Intimidación:['intimidacao'], Investigación:['investigacao'], 'Juego de manos':['prestidigitacao','jogo de maos'],
-        Medicina:['medicina'], Naturaleza:['natureza'], Perspicacia:['intuicao','perspicacia'],
-        Persuasión:['persuasao'], Percepción:['percepcao'], Religión:['religiao'], Sigilo:['furtividade','sigilo'],
-        Supervivencia:['sobrevivencia'], 'Trato con animales':['adestrar animais','trato com animais']
+        Acrobacias:['acrobacia','acrobacias','acrobatics'], Atletismo:['atletismo','athletics'], 'Conocimiento arcano':['arcanismo','conhecimento arcano','arcana'],
+        Engaño:['enganacao','engano','deception'], Historia:['historia','history'], Interpretación:['atuacao','interpretacao','performance'],
+        Intimidación:['intimidacao','intimidation'], Investigación:['investigacao','investigation'], 'Juego de manos':['prestidigitacao','jogo de maos','sleight of hand'],
+        Medicina:['medicina','medicine'], Naturaleza:['natureza','nature'], Perspicacia:['intuicao','perspicacia','insight'],
+        Persuasión:['persuasao','persuasion'], Percepción:['percepcao','perception'], Religión:['religiao','religion'], Sigilo:['furtividade','sigilo','stealth'],
+        Supervivencia:['sobrevivencia','survival'], 'Trato con animales':['adestrar animais','trato com animais','animal handling']
       };
       for (const skill of skillNames) {
         const raw = value('HABILIDADES',skill);
@@ -6396,9 +6396,8 @@ import ITEMS from './items.json';
       setByAliases(['gp','ouro','oro','gold pieces'],currency.gp || currency.po || '');
       setByAliases(['pp','platina','platino','platinum pieces'],currency.pp || currency.pl || '');
 
-      // La plantilla fue identificada con numeración propia: 56–67 son los
-      // datos de lanzamiento, 68–150 y 156–162 las 30 filas de conjuros,
-      // y 151–155 las cinco monedas.
+      // Mapeo explícito de los campos numerados de la plantilla original.
+      // Los identificadores no siguen un orden consecutivo por categoría.
       const numberedFields = fieldEntries.map(entry => {
         const match = entry.name.match(/(?:^|\\D)(\\d{1,3})$/);
         return match ? { entry, number:Number(match[1]) } : null;
@@ -6408,25 +6407,78 @@ import ITEMS from './items.json';
         const entry = byNumber.get(number);
         if (entry) setField(entry,item);
       };
+      // Encabezado de lanzamiento y espacios: el ataque está en el campo 61.
       setNumbered(56,value('CONJUROS','Aptitud mágica'));
       setNumbered(57,value('CONJUROS','CD de salvación'));
-      setNumbered(58,value('CONJUROS','Ataque de conjuro'));
-      const slotValues = (spellSlotText.match(/\\d+/g) || []);
-      for (let level=1; level<=9; level++) setNumbered(58+level,slotValues[level-1] || '');
+      setNumbered(61,value('CONJUROS','Ataque de conjuro'));
+      const slotFieldNumbers = [58,62,65,59,63,66,60,64,67];
+      const slotValues = spellSlotText.match(/\\d+/g) || [];
+      slotFieldNumbers.forEach((number,index)=>setNumbered(number,slotValues[index] || ''));
 
-      const spellFieldNumbers = [
-        ...Array.from({length:83},(_,index)=>68+index),
-        ...Array.from({length:7},(_,index)=>156+index)
+      // Cada fila de conjuros usa tres campos, pero el orden de los números
+      // presenta saltos y excepciones que deben respetarse literalmente.
+      const spellRows = [
+        [68,69,70],[71,72,73],[74,75,76],[77,78,79],[82,80,81],
+        [83,84,85],[88,86,87],[89,90,91],[92,93,94],[95,96,97],
+        [98,99,100],[101,102,103],[104,105,106],[107,108,109],[110,111,112],
+        [113,114,115],[116,117,118],[119,120,121],[122,123,124],[125,126,127],
+        [130,128,129],[131,132,133],[134,135,136],[137,138,139],[140,141,142],
+        [143,144,145],[146,147,148],[156,149,150],[157,158,159],[160,161,162]
       ];
-      spellFieldNumbers.forEach((number,index) => {
-        const row = spellRecords[Math.floor(index/3)];
-        if (!row) return;
-        const column = index%3;
-        setNumbered(number,column===0?row.level:column===1?row.castingTime:row.range);
+      spellRows.forEach((numbers,index)=>{
+        const row=spellRecords[index];
+        if(!row) return;
+        setNumbered(numbers[0],row.level);
+        setNumbered(numbers[1],row.castingTime);
+        setNumbered(numbers[2],row.range);
       });
-      const currencyNumbers = [currency.cp || currency.pc || '',currency.sp || currency.pa || '',currency.ep || currency.pe || '',currency.gp || currency.po || '',currency.pp || currency.pl || ''];
-      currencyNumbers.forEach((amount,index)=>setNumbered(151+index,amount));
+      // Las monedas no están en secuencia: GP es el campo 29.
+      const currencyFields = [151,152,153,29,155];
+      const currencyValues = [currency.cp || currency.pc || '',currency.sp || currency.pa || '',currency.ep || currency.pe || '',currency.gp || currency.po || '',currency.pp || currency.pl || ''];
+      currencyFields.forEach((number,index)=>setNumbered(number,currencyValues[index]));
 
+      // Datos adicionales de la ficha que no se rellenaban con los alias anteriores.
+      const classFeatures = value('RASGOS Y DOTES','Rasgos de clase');
+      const speciesTraits = value('RASGOS Y DOTES','Rasgos de especie');
+      const feats = value('RASGOS Y DOTES','Dote de origen');
+      const weaponTraining = value('COMPETENCIAS','Armas');
+      const toolTraining = value('COMPETENCIAS','Herramientas');
+      const armorTraining = value('COMPETENCIAS','Armaduras');
+      const languages = value('COMPETENCIAS','Languages');
+      const equipment = value('EQUIPO','Equipo inicial') || value('INVENTARIO','Equipo de clase');
+      const appearance = value('HISTORIA','Apariencia');
+      const backstory = value('HISTORIA','Historia');
+      const personality = ['Rasgos de personalidad','Ideal','Vínculo','Defecto'].map(name=>value('HISTORIA',name)).filter(Boolean).join(' · ');
+      setByAliases(['class features','caracteristicas de clase','rasgos de clase'],classFeatures);
+      setByAliases(['species traits','rasgos de especie'],speciesTraits);
+      setByAliases(['feats','dotes','talentos'],feats);
+      setByAliases(['weapons','armas'],weaponTraining);
+      setByAliases(['tools','ferramentas','herramientas'],toolTraining);
+      setByAliases(['armor training','treinamento de armadura','entrenamiento de armadura'],armorTraining);
+      setByAliases(['languages','linguagens','idiomas'],languages);
+      setByAliases(['equipment','inventario'],equipment);
+      setByAliases(['appearance','aparencia','apariencia'],appearance);
+      setByAliases(['backstory','historia'],backstory);
+      setByAliases(['personality','personalidade','personalidad'],personality);
+      setByAliases(['alignment','alinhamento'],firstValue([['PERSONAJE','Alineamiento']]));
+      setByAliases(['size','tamanho','tamano'],value('DETALLES DE ESPECIE','Tamaño'));
+      setByAliases(['hit dice max','maximum hit dice','dados de vida maximos'],String(sheetLevel(target)));
+      setByAliases(['hit dice spent','spent hit dice','dados de vida gastados'],'0');
+      // Los campos de ataque se rellenan desde los tres perfiles reales de Darian.
+      const attackRows = weaponLines.slice(0,6).map(line=>{
+        const match=line.match(/^([^:]+):\\s*ataque\\s*([+-]?\\d+)\\s*[·|]\\s*([^·|]+)(?:[·|]\\s*(.*))?$/i);
+        return match?{name:match[1].trim(),bonus:match[2],damage:match[3].trim(),notes:(match[4]||'').trim()}:{name:line.split(':')[0].trim(),bonus:'',damage:'',notes:''};
+      });
+      for(const entry of fieldEntries){
+        const rowMatch=entry.key.match(/(?:weapon|arma|attack|ataque|item foda)\\s*(\\d+)/);
+        if(!rowMatch) continue;
+        const row=attackRows[Number(rowMatch[1])-1];
+        if(!row) continue;
+        if(/damage|dano/.test(entry.key)) setField(entry,row.damage);
+        else if(/note|nota/.test(entry.key)) setField(entry,row.notes);
+        else if(/bonus|atk|dc|ataque|attack/.test(entry.key) && !/name|nome/.test(entry.key)) setField(entry,row.bonus);
+        else setField(entry,row.name);
+      }
       if (!fields.length) throw new Error('La plantilla no contiene campos rellenables.');
       form.flatten();
       const bytes = await pdf.save();
