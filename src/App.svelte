@@ -890,7 +890,20 @@
     applyVisualStyle();
   }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Combate', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
+  const masterTabs = ['Personajes', 'Combate', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas', 'Layers'];
+  const OWLBEAR_LAYERS = [
+    { id: 'MAP', label: 'Mapas' }, { id: 'GRID', label: 'Cuadrícula' },
+    { id: 'DRAWING', label: 'Dibujos' }, { id: 'PROP', label: 'Objetos' },
+    { id: 'MOUNT', label: 'Monturas' }, { id: 'CHARACTER', label: 'Personajes' },
+    { id: 'ATTACHMENT', label: 'Adjuntos' }, { id: 'NOTE', label: 'Notas' },
+    { id: 'TEXT', label: 'Textos' }, { id: 'RULER', label: 'Reglas de medición' },
+    { id: 'FOG', label: 'Niebla' }, { id: 'POINTER', label: 'Punteros' },
+    { id: 'POST_PROCESS', label: 'Postprocesado' }, { id: 'CONTROL', label: 'Controles' },
+    { id: 'POPOVER', label: 'Ventanas emergentes' }
+  ];
+  let layerItems: any[] = [];
+  let layerFilter = 'ALL';
+  let layerLoading = false;
 
   const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
   const MONSTER_TOKEN_METADATA_KEY = 'com.heunithen.forja/monster-token';
@@ -1226,7 +1239,58 @@
     }
   }
 
+  async function refreshLayerItems() {
+    if (!OBR.isAvailable || !(await OBR.scene.isReady())) {
+      layerItems = [];
+      return;
+    }
+    layerLoading = true;
+    try {
+      layerItems = await OBR.scene.items.getItems() as any[];
+    } catch (error) {
+      console.error('No se pudieron cargar los elementos de la escena:', error);
+      notice = 'No se pudieron cargar los elementos de la escena.';
+    } finally {
+      layerLoading = false;
+    }
+  }
+
+  function getLayerItems(layerId: string) {
+    return layerItems.filter(item => item.layer === layerId);
+  }
+
+  function getLayerLabel(layerId: string) {
+    return OWLBEAR_LAYERS.find(layer => layer.id === layerId)?.label || layerId;
+  }
+
+  async function locateLayerItem(item: any) {
+    try {
+      const bounds = await OBR.scene.items.getItemBounds([item.id]);
+      await OBR.viewport.animateToBounds(bounds);
+    } catch (error) {
+      console.error('No se pudo localizar el elemento:', error);
+      notice = 'No se pudo localizar este elemento en la escena.';
+    }
+  }
+
+  async function deleteLayerItem(item: any) {
+    const itemName = String(item.name || item.type || 'este elemento');
+    if (!window.confirm('¿Eliminar "' + itemName + '" de la escena? Esta acción no se puede deshacer.')) return;
+    try {
+      await OBR.scene.items.deleteItems([item.id]);
+      await refreshLayerItems();
+      notice = 'Elemento eliminado de la escena.';
+    } catch (error) {
+      console.error('No se pudo eliminar el elemento:', error);
+      notice = 'No se pudo eliminar el elemento.';
+    }
+  }
+
   function openMasterTab(tab: string) {
+    if (tab === 'Layers') {
+      layerFilter = 'ALL';
+      void refreshLayerItems();
+    }
     // Cada entrada a un catálogo comienza sin búsquedas ni filtros anteriores.
     if (tab === 'Monstruos') {
       monsterSearch = '';
@@ -6007,6 +6071,8 @@ import ITEMS from './items.json';
           window.setInterval(() => { void loadSupabaseRoomCharacters().catch(error => console.error('Error actualizando personajes desde Supabase', error)); }, 3000);
         }
         OBR.party.onChange((players: any[]) => readPlayers(players));
+        OBR.scene.items.onChange((items: any[]) => { layerItems = Array.isArray(items) ? items : []; });
+        OBR.scene.onReadyChange((ready: boolean) => { if (ready) void refreshLayerItems(); else layerItems = []; });
         OBR.broadcast.onMessage(INITIATIVE_NOTICE_CHANNEL, (event: any) => {
           const message=String(event.data?.message||'').trim();
           if(message) void OBR.notification.show(message,'INFO').catch(()=>{});
@@ -6338,6 +6404,55 @@ import ITEMS from './items.json';
             {/each}
             {/if}
           </div>
+        </section>
+      {:else if masterTab === 'Layers'}
+        <section class="panel layers-panel">
+          <div class="section-heading"><h2>Layers · Elementos de la escena</h2><span class="count">{layerItems.length} elementos</span></div>
+          <p class="muted">Administra los elementos de la escena. Localizar centra la vista en el elemento; eliminar lo quita de la escena.</p>
+          <div class="layers-toolbar">
+            <label>Filtrar por capa
+              <select bind:value={layerFilter}>
+                <option value="ALL">Todas las capas</option>
+                {#each OWLBEAR_LAYERS as layer}
+                  <option value={layer.id}>{layer.label}</option>
+                {/each}
+              </select>
+            </label>
+            <button type="button" class="secondary" on:click={refreshLayerItems} disabled={layerLoading}>{layerLoading ? 'Actualizando…' : '↻ Actualizar'}</button>
+          </div>
+          {#if !OBR.isAvailable || !obrReady}
+            <p class="muted">Conecta la extensión con Owlbear Rodeo para consultar la escena.</p>
+          {:else if layerLoading && !layerItems.length}
+            <p class="muted">Cargando elementos de la escena…</p>
+          {:else}
+            <div class="layers-list">
+              {#each OWLBEAR_LAYERS.filter(layer => layerFilter === 'ALL' || layer.id === layerFilter) as layer}
+                {@const itemsInLayer = getLayerItems(layer.id)}
+                <section class="layer-group">
+                  <header class="layer-group-heading"><h3>{layer.label}</h3><span class="count">{itemsInLayer.length}</span></header>
+                  {#if !itemsInLayer.length}
+                    <p class="layer-empty">Esta capa no tiene objetos.</p>
+                  {:else}
+                    <div class="layer-items">
+                      {#each itemsInLayer as item (item.id)}
+                        <article class="layer-item">
+                          <div class="layer-item-info">
+                            <strong>{item.name || item.type || 'Elemento sin nombre'}</strong>
+                            <small>{item.type || 'Elemento'} · {item.visible === false ? 'Oculto' : 'A la vista'}</small>
+                          </div>
+                          <span class:layer-hidden={item.visible === false} class="layer-visibility">{item.visible === false ? 'Oculto' : 'Visible'}</span>
+                          <div class="layer-item-actions">
+                            <button type="button" class="secondary" on:click={() => locateLayerItem(item)} title="Centrar la vista en este elemento">Localizar</button>
+                            <button type="button" class="danger" on:click={() => deleteLayerItem(item)} title="Eliminar este elemento de la escena">Eliminar</button>
+                          </div>
+                        </article>
+                      {/each}
+                    </div>
+                  {/if}
+                </section>
+              {/each}
+            </div>
+          {/if}
         </section>
       {:else}
         <section class="panel monsters-panel">
