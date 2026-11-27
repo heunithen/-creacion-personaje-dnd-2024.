@@ -37,6 +37,7 @@
   let itemWeightMax = '';
   let spellSearch = '';
   let spellLearnSearch = '';
+  let spellLearnOptions: any[] = [];
   let spellLearnOpen = false;
   let inventoryAddOpen = false;
   let inventoryNewName = '';
@@ -3440,6 +3441,7 @@ import ITEMS from './items.json';
     return matchesQuery && (shopCategory === 'Todos' || item.type === shopCategory);
   });
   $: shopOwnedItems = sheet ? getShopOwnedItems(sheet) : [];
+  $: if (sheet) shopEnsureDefaultArmor(sheet);
   $: spellLearnOptions = SPELLS.filter((spell:any) => !spellIsKnown(sheet,spell) && normalizeLevelText(spell.name+' '+spell.school+' '+spell.level).includes(normalizeLevelText(spellLearnSearch))).slice(0,12);
 
   function setShopQuantity(name:string,event:Event,max=999) {
@@ -3557,6 +3559,20 @@ import ITEMS from './items.json';
     const shieldBonus=shieldName ? 2 : 0;
     setCharacterStat(target,'COMBATE','Fórmula de clase de armadura',`SHOP_ARMOR:${base}:${maxDex}:${shieldBonus}`);
     refreshDerivedCharacterSheet(target);
+  }
+  function shopEnsureDefaultArmor(target:RawSheet) {
+    if(getCharacterStat(target,'EQUIPO','Armadura equipada en tienda') || getCharacterStat(target,'EQUIPO','Estado CA previa a tienda')==='guardada') return;
+    const original=String(getCharacterStat(target,'INVENTARIO','Equipo de clase')||'').split(/\n/);
+    for(const line of original) {
+      const parsed=parseInventoryLine(line);
+      if(!parsed) continue;
+      const armor=(SHOP_CATALOG as any[]).find((entry:any)=>entry.type==='Armadura' && normalizeLevelText(entry.name)===normalizeLevelText(parsed.name) && typeof entry.armorBase==='number');
+      if(armor) {
+        setCharacterStat(target,'EQUIPO','Armadura equipada en tienda',armor.name);
+        shopApplyArmorClass(target);
+        return;
+      }
+    }
   }
   function shopToggleEquip(item:any) {
     if(!sheet || (item.type!=='Arma' && item.type!=='Escudo' && typeof item.armorBase!=='number')) return;
