@@ -4495,13 +4495,20 @@ import ITEMS from './items.json';
       ? 'Lista de conjuros preparados actualizada.'
       : 'Conjuro reemplazado. El cambio de tu lista de brujo quedó registrado.';
   }
+  const SPELL_SLOT_TRACKER_COUNTS: Record<string, number> = { '1': 4, '2': 2, '3': 3, '4': 3, '5': 3, '6': 2, '7': 2, '8': 1, '9': 1 };
   function changeSlotUsage(level: string, delta: number) {
     if (!sheet) return;
     const usage = slotUsage(sheet);
-    const maximums = spellSlotMaximums(sheet);
-    usage[level] = Math.max(0, Math.min(Number(maximums[level] || 0), Number(usage[level] || 0) + delta));
+    const maximum = SPELL_SLOT_TRACKER_COUNTS[level] || 0;
+    usage[level] = Math.max(0, Math.min(maximum, Number(usage[level] || 0) + delta));
     setCharacterStat(sheet, 'GESTIÓN DE FICHA', 'Espacios gastados', JSON.stringify(usage));
     saveSheetMutation();
+  }
+  function setSpellSlotCheckbox(level: string, index: number, checked: boolean) {
+    if (!sheet) return;
+    const current = Number(slotUsage(sheet)[level] || 0);
+    const desired = checked ? index + 1 : index;
+    if (desired !== current) changeSlotUsage(level, desired - current);
   }
   function resetSpellUseStates() {
     if (!sheet) return;
@@ -5807,6 +5814,47 @@ import ITEMS from './items.json';
     roomSheets = [...liveRoomSheets].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
   }
 
+  async function deleteRoomCharacter(entry: RoomEntry) {
+    if (obrRole !== 'GM' || !supabaseRoomId) return;
+    const characterName = String(entry.sheet?.name || 'Personaje sin nombre');
+    const confirmed = window.confirm('¿Eliminar definitivamente la ficha de «' + characterName + '»?\n\nDejará de aparecer para el narrador y para el jugador. Esta acción no se puede deshacer desde la aplicación.');
+    if (!confirmed) return;
+    try {
+      const query = '?room_id=eq.' + encodeURIComponent(supabaseRoomId) +
+        '&player_id=eq.' + encodeURIComponent(entry.playerId) + '&deleted_at=is.null';
+      const response = await fetch(SUPABASE_URL + '/rest/v1/characters' + query, {
+        method: 'PATCH',
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation'
+        },
+        body: JSON.stringify({ deleted_at: new Date().toISOString() })
+      });
+      if (!response.ok) throw new Error('Supabase (' + response.status + '): ' + await response.text());
+      const deletedRows = await response.json();
+      if (!Array.isArray(deletedRows) || !deletedRows.length) throw new Error('No se encontró una ficha activa para eliminar.');
+      liveRoomSheets = liveRoomSheets.filter(item => item.playerId !== entry.playerId);
+      roomStatPending.delete(entry.playerId);
+      roomStatSending.delete(entry.playerId);
+      refreshRoomSheetList();
+      if (masterViewingEntry?.playerId === entry.playerId) {
+        if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
+        masterViewingEntry = null;
+        sheet = null;
+        syncPending = false;
+        supabaseSaving = false;
+        playerCreating = false;
+        playerSheetTab = 'Acciones';
+      }
+      notice = 'La ficha de ' + characterName + ' fue eliminada de la sala.';
+    } catch (error) {
+      console.error('Error eliminando personaje de la sala:', error);
+      notice = 'No se pudo eliminar la ficha: ' + (error instanceof Error ? error.message : String(error));
+    }
+  }
+
   let roomStatPending = new Map<string, RawSheet>();
   let roomStatSending = new Set<string>();
 
@@ -6180,7 +6228,7 @@ import ITEMS from './items.json';
                     </button>
                   </div>
                 {/if}
-                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
+                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button><button class="danger roster-delete-button" type="button" on:click={() => deleteRoomCharacter(entry)}>Eliminar personaje</button></div>
               </article>
             {/each}
           {/if}
@@ -7173,13 +7221,20 @@ remove exit from sheet header              {#if demoPreview}
                       <div><span>CD de salvación</span><strong>{sheetValueByNames(sheet, ['CD de salvación']) || '—'}</strong></div>
                        <div><span>Ataque de conjuro</span>{#if skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro'])) !== null}<button type="button" class="inline-roll proficient" title="Tirar 1d20{signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro'])) ?? 0)} en Dice+" on:click={() => sendSheetRoll('1d20' + signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro'])) ?? 0), 'Ataque de conjuro')}>{signedBonus(skillBonusNumber(sheetValueByNames(sheet, ['Ataque de conjuro'])) ?? 0)}</button>{:else}<strong>—</strong>{/if}</div>
                       <div class="spell-slot-summary"><span>Espacios de conjuros</span>
-                        <strong>{#if Object.values(sheetSpellSlots).some(value => Number(value) > 0)}
-                          {#each Object.entries(sheetSpellSlots).filter(([level,value]) => Number(value) > 0) as [level,maximum]}
-                            <span class="spell-slot-value">Nivel {level}: {maximum}</span>
+                        <div class="spell-slot-tracker">
+                          {#each Object.entries(SPELL_SLOT_TRACKER_COUNTS) as [level,maximum]}
+                            <div class="spell-slot-level">
+                              <strong>Nivel {level}</strong>
+                              <div class="spell-slot-boxes">
+                                {#each Array.from({length: maximum}) as _,index}
+                                  <label title={'Espacio de nivel ' + level + ' · ' + (index + 1)}>
+                                    <input type="checkbox" checked={index < Number(sheetSpellUsage[level] || 0)} on:change={(event) => setSpellSlotCheckbox(level,index,(event.currentTarget as HTMLInputElement).checked)} aria-label={'Marcar espacio de conjuro nivel ' + level + ', casilla ' + (index + 1)} />
+                                  </label>
+                                {/each}
+                              </div>
+                            </div>
                           {/each}
-                        {:else}
-                          {sheetValueByNames(sheet, ['Espacios por nivel','Espacios de conjuro']) || '—'}
-                        {/if}</strong>
+                        </div>
                       </div>
                     </div>
                   </section>
@@ -10216,13 +10271,21 @@ remove exit from sheet header              {#if demoPreview}
   .layer-items{display:grid;gap:.4rem}
   .layer-item{display:flex;align-items:center;gap:.65rem;padding:.55rem;border:1px solid var(--rule);border-radius:5px;background:var(--card);min-width:0}
   .layer-item-info{display:grid;gap:.15rem;flex:1;min-width:0}
-  .layer-item-info strong{overflow-wrap:anywhere;font-size:.84rem}
-  .layer-item-info small{color:var(--ink-soft);font-size:.72rem}
+  .layer-item-info strong{overflow-wrap:anywhere;font-size:.84rem;color:#fff}
+  .layer-item-info small{color:#d5e0e5;font-size:.72rem}
   .layer-visibility{flex:0 0 auto;padding:.2rem .45rem;border-radius:4px;background:rgba(45,160,110,.14);color:#72d6a5;font-size:.7rem;font-weight:700}
   .layer-visibility.layer-hidden{background:rgba(210,155,65,.15);color:#e4b765}
   .layer-item-actions{display:flex;gap:.35rem;flex:0 0 auto}
   .layer-item-actions button{padding:.4rem .55rem;font-size:.72rem}
   .layer-item-actions .danger{border:1px solid #9a4848;border-radius:5px;background:#672f35;color:#fff;cursor:pointer}
-  @media(max-width:620px){.layer-item{flex-wrap:wrap}.layer-item-info{flex-basis:55%}.layer-item-actions{width:100%;justify-content:flex-end}.layers-toolbar{align-items:stretch}.layers-toolbar label{min-width:0;flex:1}}
+  .roster-delete-button{border:1px solid #a64d55!important;background:#642d35!important;color:#fff!important}
+  .spell-slot-tracker{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.45rem;margin-top:.35rem}
+  .spell-slot-level{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:.35rem .5rem;min-width:0;padding:.45rem .5rem;border:1px solid var(--gm-border,#34515b);border-radius:6px;background:rgba(0,0,0,.12)}
+  .spell-slot-level>strong{font-size:.75rem;white-space:nowrap}
+  .spell-slot-boxes{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap}
+  .spell-slot-boxes label{display:grid;place-items:center;width:17px;height:17px;margin:0;cursor:pointer}
+  .spell-slot-boxes input{width:14px;height:14px;margin:0;accent-color:#55d6c8;cursor:pointer}
+  @media(max-width:620px){.layer-item{flex-wrap:wrap}.layer-item-info{flex-basis:55%}.layer-item-actions{width:100%;justify-content:flex-end}.layers-toolbar{align-items:stretch}.layers-toolbar label{min-width:0;flex:1}.spell-slot-tracker{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:380px){.spell-slot-tracker{grid-template-columns:1fr}}
 
 </style>
