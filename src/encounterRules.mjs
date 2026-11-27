@@ -94,3 +94,80 @@ export function areDistinctEncounters(encounters) {
   const keys=encounters.map(encounter=>encounter.key || encounterSignature(encounter.items));
   return new Set(keys).size===keys.length;
 }
+
+export const ENCOUNTER_TEMPLATES = {
+  solo: { label:'Jefe individual', description:'Una criatura poderosa que concentra toda la amenaza.' },
+  boss_minions: { label:'Jefe con secuaces', description:'Un enemigo principal acompañado por criaturas menores.' },
+  duo: { label:'Dúo', description:'Dos enemigos con presencia individual y presión moderada.' },
+  trio: { label:'Trío', description:'Tres enemigos; permite combinar funciones y amenazas.' },
+  horde: { label:'Horda', description:'Seis a ocho criaturas; aumenta la presión y los turnos enemigos.' }
+};
+
+function randomItem(items, random) {
+  if (!items.length) return null;
+  return items[Math.min(items.length - 1, Math.max(0, Math.floor(random() * items.length)))];
+}
+
+function makeEncounter(items, steps, template) {
+  const normalized = items.map(item => ({...item})).sort((a,b) => a.monster.name.localeCompare(b.monster.name,'es'));
+  const spent = normalized.reduce((sum,item) => sum + monsterXp(item.monster) * item.quantity, 0);
+  const creatures = normalized.reduce((sum,item) => sum + item.quantity, 0);
+  const key = template + ':' + encounterSignature(normalized);
+  return { steps, encounter:{items:normalized,spent,creatures,key,template} };
+}
+
+export function createEncounterFromTemplate(available, budget, template, random = Math.random) {
+  if (!Number.isFinite(budget) || budget <= 0 || !ENCOUNTER_TEMPLATES[template]) return {steps:[],encounter:null};
+  const pool = available.filter(item => item.xp > 0 && item.xp <= budget);
+  if (!pool.length) return {steps:[],encounter:null};
+  const items = [];
+  const steps = [];
+  let spent = 0;
+  let creatures = 0;
+  const add = (candidate) => {
+    if (!candidate || spent + candidate.xp > budget) return false;
+    const existing = items.find(item => item.monster.name === candidate.monster.name);
+    if (existing) existing.quantity += 1;
+    else items.push({monster:candidate.monster,quantity:1});
+    spent += candidate.xp;
+    creatures += 1;
+    steps.push({items:items.map(item=>({...item})),spent,creatures,target:template});
+    return true;
+  };
+  const pickDistinct = (remaining, excluded = []) => randomItem(
+    pool.filter(item => item.xp <= remaining && !excluded.includes(item.monster.name)), random
+  );
+
+  if (template === 'solo') {
+    const bossPool = pool.filter(item => item.xp >= Math.min(200, budget * 0.25));
+    const boss = randomItem(bossPool.length ? bossPool : pool, random);
+    add(boss);
+  } else if (template === 'duo' || template === 'trio') {
+    const count = template === 'duo' ? 2 : 3;
+    for (let i=0;i<count;i++) {
+      const candidate = pickDistinct(budget - spent);
+      if (!candidate || !add(candidate)) break;
+    }
+    if (creatures !== count) return {steps,encounter:null};
+  } else if (template === 'horde') {
+    const target = 6 + Math.floor(random() * 3);
+    for (let i=0;i<target;i++) {
+      const affordable = pool.filter(item => item.xp <= budget - spent);
+      const candidate = randomItem(affordable, random);
+      if (!candidate || !add(candidate)) break;
+    }
+    if (creatures < 6) return {steps,encounter:null};
+  } else if (template === 'boss_minions') {
+    const bossPool = pool.filter(item => item.xp <= budget * 0.7 && item.xp >= Math.min(100, budget * 0.2));
+    const boss = randomItem(bossPool.length ? bossPool : pool.filter(item => item.xp <= budget * 0.6), random);
+    if (!boss || !add(boss)) return {steps,encounter:null};
+    const minionCount = 2 + Math.floor(random() * 3);
+    const minions = pool.filter(item => item.xp < boss.xp && item.xp <= budget - spent);
+    for (let i=0;i<minionCount;i++) {
+      const candidate = randomItem(minions.filter(item => item.xp <= budget - spent), random);
+      if (!candidate || !add(candidate)) break;
+    }
+    if (creatures < 3) return {steps,encounter:null};
+  }
+  return makeEncounter(items, steps, template);
+}
