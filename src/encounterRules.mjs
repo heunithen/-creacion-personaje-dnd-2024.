@@ -124,6 +124,7 @@ export function createEncounterFromTemplate(available, budget, template, random 
   const steps = [];
   let spent = 0;
   let creatures = 0;
+  let bossXp = Infinity;
   const add = (candidate) => {
     if (!candidate || spent + candidate.xp > budget) return false;
     const existing = items.find(item => item.monster.name === candidate.monster.name);
@@ -150,7 +151,9 @@ export function createEncounterFromTemplate(available, budget, template, random 
     // Un jefe individual no admite refuerzos: escoge la criatura más cara que quepa.
     const ranked = [...pool].sort((a,b) => b.xp - a.xp);
     const highBudget = ranked.filter(item => item.xp >= budget * 0.8);
-    add(randomItem(highBudget.length ? highBudget : ranked.slice(0, Math.min(3, ranked.length)), random));
+    const finalists = highBudget.length ? highBudget : ranked;
+    const highestXp = finalists[0]?.xp;
+    add(randomItem(finalists.filter(item => item.xp === highestXp), random));
   } else if (template === 'duo' || template === 'trio') {
     const count = template === 'duo' ? 2 : 3;
     for (let i=0;i<count;i++) {
@@ -171,7 +174,7 @@ export function createEncounterFromTemplate(available, budget, template, random 
     const fallbackBosses = pool.filter(item => item.xp <= budget * 0.6);
     const boss = randomItem(bossPool.length ? bossPool : fallbackBosses, random);
     if (!boss || !add(boss)) return {steps,encounter:null};
-    const bossXp = boss.xp;
+    bossXp = boss.xp;
     const minions = pool.filter(item => item.xp < bossXp);
     for (let i=0;i<2;i++) {
       if (!addBestFit(minions)) return {steps,encounter:null};
