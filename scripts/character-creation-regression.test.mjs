@@ -173,8 +173,20 @@ test('la ficha del jugador incorpora Tiendita y retrato al inicio y al final', (
   assert.doesNotMatch(app, /player-portrait-footer/);
   assert.match(app, /sheetPortraitPickerOpen=true/);
   assert.match(app, /applySheetPortrait\(path:string\)/);
-  assert.match(app, /localStorage\.setItem\('forja-raw-character', JSON\.stringify\(sheet\)\)/);
+  assert.match(app, /saveCharacterToSupabase\(sheet\)/);
   assert.match(app, /class="sheet-portrait-choose"/);
+});
+
+
+test('Supabase es la fuente única del personaje compartido entre jugador y Máster', () => {
+  assert.doesNotMatch(app, /forja-raw-character|forja-master-saved-characters|savedMasterSheets|loadMasterCopies|saveMasterCopy\\(|deleteMasterCopy\\(/);
+  assert.match(app, /async function finishBuilder\\(\\)[\\s\\S]*?await saveCharacterToSupabase\\(characterToSave\\)[\\s\\S]*?sheet = characterToSave/);
+  assert.match(app, /async function restoreOwnSheet\\(\\)[\\s\\S]*?sheet = await loadOwnCharacterFromSupabase\\(\\)/);
+  assert.doesNotMatch(app.slice(app.indexOf('  async function restoreOwnSheet()'), app.indexOf('  async function exportSheet()')), /localStorage/);
+  assert.match(app, /async function loadSupabaseRoomCharacters\\(\\)/);
+  assert.match(app, /window\\.setInterval\\(\\(\\) => \\{ void loadSupabaseRoomCharacters\\(\\)/);
+  assert.match(app, /d\\?\\.type === 'character-updated' && obrRole === 'PLAYER'[\\s\\S]*?loadOwnCharacterFromSupabase\\(\\)/);
+  assert.match(app, /saveCharacterToSupabase\\(updated, playerId, levelUpEntry\\.playerName\\)/);
 });
 
 test('la Tiendita usa precios fijos del manual, marca sin precio como agotado y vuelve al saldo', () => {
