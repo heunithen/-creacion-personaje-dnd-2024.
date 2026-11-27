@@ -12,7 +12,7 @@
   type RawStat = { id?: number; name?: string; value?: unknown; [key: string]: unknown };
   type RawSection = { id?: number; name?: string; stats?: RawStat[]; [key: string]: unknown };
   type RawSheet = { id?: number; name?: string; notes?: string; sections?: RawSection[]; [key: string]: unknown };
-  type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet; saved?: boolean; live?: boolean };
+  type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet; source?: 'web' | 'owlbear'; saved?: boolean; live?: boolean };
 
   let sheet: RawSheet | null = null;
   let roomSheets: RoomEntry[] = [];
@@ -70,6 +70,7 @@
   let supabaseSaveTimer: ReturnType<typeof setTimeout> | undefined;
   let supabaseSaving = false;
   let webReadOnly = false;
+  let webCreateMode = false;
   let fileInput: HTMLInputElement;
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
@@ -2866,7 +2867,8 @@
       }
       // La ficha se abre solo después de confirmar su guardado en el registro compartido.
       const characterToSave = JSON.parse(JSON.stringify(generated)) as RawSheet;
-      await saveCharacterToSupabase(characterToSave);
+      if (webCreateMode) characterToSave._creationSource = 'web';
+      await saveCharacterToSupabase(characterToSave, supabasePlayerId, builderData.player || supabasePlayerName || 'Jugador');
       builderPreview = null;
       sheet = characterToSave;
       playerCreating = false;
@@ -2874,6 +2876,15 @@
       activeTab = 'Datos';
       builderStep = 0;
       notice = 'Personaje creado y guardado en la base de datos.';
+      if (webCreateMode) {
+        const url = new URL(window.location.href);
+        url.search = '';
+        url.searchParams.set('web', '1');
+        url.searchParams.set('room', supabaseRoomId);
+        url.searchParams.set('player', supabasePlayerId);
+        window.history.replaceState({}, '', url.toString());
+        webReadOnly = false;
+      }
       keepBuilderAtTop();
     } catch (error) {
       console.error('Error al generar la ficha:', error);
@@ -3771,8 +3782,8 @@ import ITEMS from './items.json';
   }
   async function saveCharacterToSupabase(snapshot: RawSheet, playerId = masterViewingEntry?.playerId || supabasePlayerId, playerNameValue = masterViewingEntry?.playerName || supabasePlayerName) {
     if (demoPreview) return;
-    if (webReadOnly) throw new Error('Esta ficha está abierta en modo de solo lectura.');
     if (!supabaseRoomId || !playerId) throw new Error('La ficha solo puede guardarse cuando el jugador está conectado a una sala de Owlbear con identidad disponible.');
+    snapshot._creationSource = snapshot._creationSource === 'web' || webCreateMode ? 'web' : 'owlbear';
     const response = await fetch(SUPABASE_URL + '/rest/v1/characters?on_conflict=room_id,player_id', {
       method: 'POST',
       headers: {
@@ -3792,8 +3803,8 @@ import ITEMS from './items.json';
     });
     if (!response.ok) throw new Error('Supabase (' + response.status + '): ' + await response.text());
     syncStatus = 'Ficha guardada en Supabase.';
-    void syncCharacterBubbles(snapshot, playerId).catch(error => console.error('No se pudieron actualizar las burbujas del token', error));
-    try {
+    if (OBR.isAvailable) void syncCharacterBubbles(snapshot, playerId).catch(error => console.error('No se pudieron actualizar las burbujas del token', error));
+    if (OBR.isAvailable) try {
       await OBR.broadcast.sendMessage(CHANNEL, {
         type: 'character-updated',
         playerId,
@@ -3801,6 +3812,21 @@ import ITEMS from './items.json';
         character: snapshot
       }, { destination: 'ALL' });
     } catch {}
+  }
+
+  async function shareWebCreationLink() {
+    if (!supabaseRoomId) return;
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.hash = '';
+    url.searchParams.set('webCreate', '1');
+    url.searchParams.set('room', supabaseRoomId);
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      notice = 'Enlace de creación copiado. Cualquier persona con el enlace podrá crear un personaje para esta sala.';
+    } catch {
+      window.prompt('Copia este enlace para compartirlo:', url.toString());
+    }
   }
 
   function openWebCharacter(entry: RoomEntry) {
@@ -3815,13 +3841,32 @@ import ITEMS from './items.json';
 
   async function restoreSharedWebCharacter() {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('web') !== '1') return;
+    const createMode = params.get('webCreate') === '1';
+    if (!createMode && params.get('web') !== '1') return;
     const roomId = (params.get('room') || '').trim();
     const playerId = (params.get('player') || '').trim();
-    webReadOnly = true;
+    webCreateMode = true;
+    webReadOnly = false;
     characterStorageReady = false;
-    if (!roomId || !playerId) {
-      syncStatus = 'El enlace de la ficha está incompleto. Solicita al director un nuevo enlace.';
+    if (!roomId) {
+      syncStatus = 'El enlace de creación está incompleto. Solicita al narrador un nuevo enlace.';
+      characterStorageReady = true;
+      return;
+    }
+    supabaseRoomId = roomId;
+    if (createMode) {
+      supabasePlayerId = crypto.randomUUID ? crypto.randomUUID() : 'web-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+      supabasePlayerName = '';
+      playerName = '';
+      resetBuilder();
+      playerCreating = true;
+      sheet = null;
+      syncStatus = 'Creación desde navegador · Completa el asistente para guardar tu personaje.';
+      characterStorageReady = true;
+      return;
+    }
+    if (!playerId) {
+      syncStatus = 'El enlace de la ficha está incompleto.';
       characterStorageReady = true;
       return;
     }
@@ -3840,16 +3885,15 @@ import ITEMS from './items.json';
       } else {
         sheet = repairGenericStatLabels(row.sheet as RawSheet) as RawSheet;
         playerName = String(row.player_name || 'Jugador');
-        supabaseRoomId = roomId;
         supabasePlayerId = playerId;
         supabasePlayerName = playerName;
         playerCreating = false;
         demoPreview = false;
-        syncStatus = 'Ficha compartida · Solo lectura.';
+        syncStatus = 'Ficha creada desde navegador · Los cambios se guardan automáticamente.';
       }
     } catch (error) {
       sheet = null;
-      syncStatus = 'No se pudo abrir la ficha compartida: ' + (error instanceof Error ? error.message : String(error));
+      syncStatus = 'No se pudo abrir la ficha: ' + (error instanceof Error ? error.message : String(error));
     } finally {
       characterStorageReady = true;
     }
@@ -3882,7 +3926,7 @@ import ITEMS from './items.json';
       const pendingSheet = roomStatPending.get(playerId);
       return {
         playerId, playerName: row.player_name || 'Jugador',
-        sheet: pendingSheet || savedSheet, live: false
+        sheet: pendingSheet || savedSheet, source: savedSheet._creationSource === 'web' ? 'web' : 'owlbear', live: false
       };
     });
     refreshRoomSheetList();
@@ -6371,7 +6415,7 @@ import ITEMS from './items.json';
 <div class="app-shell" class:web-readonly={webReadOnly}>
   <header class="topbar">
     <a class="brand" href="#inicio"><img class="brand-icon" src="/-creacion-personaje-dnd-2024./icono.webp" alt="" /><span><strong>FORJA DE AVENTUREROS</strong><small>D&D · 2024</small></span></a>
-    {#if obrRole === 'GM' && masterViewingEntry}<nav><span>{masterViewingEntry.playerName || 'Jugador'}</span><button type="button" class="primary" on:click={closeMasterCharacter}>Salir de hoja del jugador</button></nav>{:else if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{webReadOnly ? 'Vista web · Solo lectura' : playerName || 'Jugador'}</span></nav>{/if}
+    {#if obrRole === 'GM' && masterViewingEntry}<nav><span>{masterViewingEntry.playerName || 'Jugador'}</span><button type="button" class="primary" on:click={closeMasterCharacter}>Salir de hoja del jugador</button></nav>{:else if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{webCreateMode ? 'Creación web · Editable' : webReadOnly ? 'Vista web · Solo lectura' : playerName || 'Jugador'}</span></nav>{/if}
   </header>
 
   <main class="main" class:gm-layout={obrRole === 'GM' && !masterViewingEntry}>
@@ -6384,13 +6428,13 @@ import ITEMS from './items.json';
       {#if masterTab === 'Personajes'}
         <section class="panel roster-panel">
           <div class="section-heading"><h2>Personajes de la sala</h2><span class="count">{roomSheets.length}</span></div>
-          <div class="actions"><button class="secondary" on:click={refreshPlayers}>Actualizar desde Supabase</button></div>
+          <div class="actions"><button class="primary" type="button" on:click={shareWebCreationLink}>Copiar enlace para crear personaje</button><button class="secondary" on:click={refreshPlayers}>Actualizar desde Supabase</button></div>
           {#if !roomSheets.length}<p class="muted">No hay personajes registrados en la base de datos para esta sala.</p>
           {:else}
             {#each roomSheets as entry}
               <article class="character-card roster-character-card">
                 <div class="card-symbol">✧</div>
-                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · Registro oficial en Supabase</p></div>
+                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · <span class:origin-web={entry.source === 'web'} class:origin-owlbear={entry.source !== 'web'}>{entry.source === 'web' ? 'Creado en navegador' : 'Creado en Owlbear Rodeo'}</span></p></div>
                 <div class="roster-stat-controls">
                   <div class="roster-stat-control">
                     <span>CA</span>
@@ -10477,7 +10521,10 @@ remove exit from sheet header              {#if demoPreview}
   .layer-item-actions{display:flex;gap:.35rem;flex:0 0 auto}
   .layer-item-actions button{padding:.4rem .55rem;font-size:.72rem}
   .layer-item-actions .danger{border:1px solid #9a4848;border-radius:5px;background:#672f35;color:#fff;cursor:pointer}
-  .roster-delete-button{border:1px solid #a64d55!important;background:#642d35!important;color:#fff!important}
+   .roster-delete-button{border:1px solid #a64d55!important;background:#642d35!important;color:#fff!important}
+  .origin-web,.origin-owlbear{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:800;letter-spacing:.02em}
+  .origin-web{background:#244b3b;color:#9de6bd;border:1px solid #3e8967}
+  .origin-owlbear{background:#263d52;color:#a9d5ff;border:1px solid #4779a7}
   .spell-slot-tracker{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.45rem;margin-top:.35rem}
   .spell-slot-level{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:.35rem .5rem;min-width:0;padding:.45rem .5rem;border:1px solid var(--gm-border,#34515b);border-radius:6px;background:rgba(0,0,0,.12)}
   .spell-slot-level>strong{font-size:.75rem;white-space:nowrap}
