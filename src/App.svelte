@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
-  import { buildLabel } from '@owlbear-rodeo/sdk';
+  import { buildLabel, buildShape } from '@owlbear-rodeo/sdk';
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
   import { ELF_BONUS_SKILLS, getAllowedWeaponMasteries, getStandardArrayAssignments, isOriginFeatDistinct, isSpeciesSkillAllowed, isValidAbilityIncreases, isValidUniqueSelection } from './builderRules.mjs';
 
@@ -891,6 +891,74 @@
   }
   let masterTab = 'Personajes';
   const masterTabs = ['Personajes', 'Combate', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
+
+  const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
+
+  function tokenSizeInPixels(dpi: number, parsedScale: any): number {
+    const multiplier = Number(parsedScale?.multiplier) || 5;
+    const unit = String(parsedScale?.unit || 'ft').toLowerCase();
+    const feetPerUnit: Record<string, number> = {
+      ft: 1, feet: 1, foot: 1,
+      in: 1 / 12, inch: 1 / 12, inches: 1 / 12,
+      yd: 3, yard: 3, yards: 3,
+      m: 3.280839895, meter: 3.280839895, meters: 3.280839895,
+      cm: 0.032808399, mm: 0.00328084,
+      km: 3280.839895, mi: 5280
+    };
+    const feetPerGridCell = multiplier * (feetPerUnit[unit] || 1);
+    return dpi * 5 / feetPerGridCell;
+  }
+
+  async function createCharacterToken(entry: RoomEntry) {
+    try {
+      if (obrRole !== 'GM') throw new Error('Solo el director puede crear tokens desde esta pantalla.');
+      if (!(await OBR.scene.isReady())) throw new Error('Abre una escena de Owlbear Rodeo antes de crear el token.');
+
+      const [dpi, gridScale, position] = await Promise.all([
+        OBR.scene.grid.getDpi(),
+        OBR.scene.grid.getScale(),
+        OBR.viewport.getPosition()
+      ]);
+      const size = tokenSizeInPixels(dpi, gridScale?.parsed);
+      const characterName = String(entry.sheet?.name || entry.playerName || 'Personaje');
+      const currentHp = getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe actuales', 0);
+      const maxHp = getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe máximos', currentHp);
+      const armorClass = getCharacterNumber(entry.sheet, 'COMBATE', 'Armor Class', 10);
+
+      const token = buildShape()
+        .name(characterName)
+        .description('Token de personaje vinculado a la ficha de ' + characterName + '.')
+        .shapeType('CIRCLE')
+        .width(size)
+        .height(size)
+        .fillColor('#bd9138')
+        .fillOpacity(1)
+        .strokeColor('#f4d88b')
+        .strokeOpacity(1)
+        .strokeWidth(5)
+        .position(position)
+        .layer('CHARACTER')
+        .metadata({
+          [TOKEN_METADATA_KEY]: {
+            version: 1,
+            characterId: entry.playerId,
+            playerName: entry.playerName,
+            characterName,
+            appearance: { type: 'circle', imageUrl: null },
+            sizeFeet: 5,
+            hitPoints: { current: currentHp, maximum: maxHp },
+            armorClass,
+            sheetSync: true
+          }
+        })
+        .build();
+
+      await OBR.scene.items.addItems([token]);
+      notice = 'Token dorado de ' + characterName + ' creado en la escena (5 pies × 5 pies).';
+    } catch (error) {
+      notice = error instanceof Error ? error.message : 'No se pudo crear el token.';
+    }
+  }
 
   function openMasterTab(tab: string) {
     // Cada entrada a un catálogo comienza sin búsquedas ni filtros anteriores.
@@ -5699,7 +5767,7 @@ import ITEMS from './items.json';
               <article class="character-card">
                 <div class="card-symbol">✧</div>
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · Registro oficial en Supabase</p></div>
-                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
+                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => createCharacterToken(entry)}>Crear token</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
               </article>
             {/each}
           {/if}
