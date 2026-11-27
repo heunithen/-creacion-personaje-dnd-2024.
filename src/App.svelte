@@ -1110,6 +1110,60 @@
     }
   }
 
+  async function syncAllMonsterTokens() {
+    try {
+      if (obrRole !== 'GM') throw new Error('Solo el director puede enviar los datos de los monstruos.');
+      if (!(await OBR.scene.isReady())) throw new Error('Abre una escena de Owlbear Rodeo antes de sincronizar los tokens.');
+
+      const sceneItems = await OBR.scene.items.getItems();
+      const linkedTokens = (sceneItems || []).filter((item: any) =>
+        item.layer === 'CHARACTER' &&
+        (item.metadata as any)?.[MONSTER_TOKEN_METADATA_KEY]?.monsterId
+      );
+      if (!linkedTokens.length) {
+        notice = 'No hay tokens de monstruos asignados en esta escena.';
+        return;
+      }
+
+      const combatantsById = new Map(combatants.map(c => [c.id, c]));
+      const tokensToUpdate = linkedTokens.filter((item: any) =>
+        combatantsById.has(String((item.metadata as any)[MONSTER_TOKEN_METADATA_KEY].monsterId))
+      );
+      if (!tokensToUpdate.length) {
+        notice = 'No se encontraron monstruos asignados que estén en el combate actual.';
+        return;
+      }
+
+      const ids = tokensToUpdate.map((item: any) => item.id);
+      await OBR.scene.items.updateItems(ids, (items: any[]) => {
+        for (const item of items) {
+          const link = item.metadata?.[MONSTER_TOKEN_METADATA_KEY];
+          const monster = link?.monsterId ? combatantsById.get(String(link.monsterId)) : undefined;
+          if (!monster) continue;
+          item.name = monster.name;
+          item.metadata = item.metadata || {};
+          item.metadata[MONSTER_TOKEN_METADATA_KEY] = { ...link, monsterName: monster.name };
+          item.metadata[STAT_BUBBLES_METADATA_KEY] = {
+            ...(item.metadata[STAT_BUBBLES_METADATA_KEY] || {}),
+            health: Math.max(0, Number(monster.hp) || 0),
+            'max health': Math.max(1, Number(monster.maxHp) || 1),
+            'temporary health': Math.max(0, Number(monster.tempHp) || 0),
+            'armor class': Math.max(0, Number(monster.ac + monster.acMod) || 0)
+          };
+        }
+      });
+
+      const monsterCount = new Set(tokensToUpdate.map((item: any) =>
+        String((item.metadata as any)[MONSTER_TOKEN_METADATA_KEY].monsterId)
+      )).size;
+      notice = 'Datos enviados a ' + tokensToUpdate.length + ' token(s) de ' + monsterCount + ' monstruo(s) asignado(s).';
+    } catch (error) {
+      console.error('Error al sincronizar tokens de monstruos:', error);
+      const detail = error instanceof Error ? error.message : String(error);
+      notice = 'No se pudieron enviar los datos de los monstruos: ' + detail;
+    }
+  }
+
   async function assignSelectedToken(entry: RoomEntry) {
     try {
       if (obrRole !== 'GM') throw new Error('Solo el director puede asignar tokens.');
@@ -6074,6 +6128,7 @@ import ITEMS from './items.json';
             </label>
             <button class="secondary" type="button" on:click={()=>combatants=combatants.map(c=>({...c,participating:false}))}>Retirar todos del combate</button>
             <button class="secondary" type="button" on:click={()=>showAllCombatants=!showAllCombatants}>{showAllCombatants?'◉ Mostrar solo participantes':'◉ Ver todos los monstruos'}</button>
+            <button class="secondary" type="button" on:click={syncAllMonsterTokens} title="Envía los valores actuales de CA y PG de todos los monstruos a sus tokens asignados">↥ Enviar datos a tokens</button>
           </div>
           {#if combatants.length}
             <div class="combat-grid">
