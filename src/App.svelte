@@ -7196,14 +7196,23 @@ import ITEMS from './items.json';
                       <span>RASGOS Y CAPACIDADES</span><h5>¿Qué te distingue?</h5>
                       <strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? 'Incluye una elección propia de especie' : 'Capacidades propias de la especie'}</strong>
                     </section>
-                    {#if BUILDER_SPECIES[builderSpeciesSlideIndex] === 'Orco'}
-                      <img
-                        class="builder-species-art"
-                        src={'/-creacion-personaje-dnd-2024./images/character-creation/orcos.webp'}
-                        alt="Ilustración de un orco"
-                        loading="eager"
-                      />
-                    {/if}
+                    <img
+                      class="builder-species-art"
+                      src={'/-creacion-personaje-dnd-2024./images/character-creation/' + ({
+                        'Aasimar': 'aasimar.webp',
+                        'Dracónido': 'dragones.webp',
+                        'Enano': 'enanos.webp',
+                        'Elfo': 'elfos.webp',
+                        'Gnomo': 'gnomo.webp',
+                        'Goliat': 'golat.webp',
+                        'Mediano': 'medianos.webp',
+                        'Humano': 'humanos.webp',
+                        'Orco': 'orcos.webp',
+                        'Tiefling': 'tieflings.webp'
+                      }[BUILDER_SPECIES[builderSpeciesSlideIndex]])}
+                      alt={'Ilustración de ' + BUILDER_SPECIES[builderSpeciesSlideIndex]}
+                      loading="eager"
+                    />
                   </div>
                 </div>
                 <span class="builder-background-counter">{builderSpeciesSlideIndex+1} de {BUILDER_SPECIES.length}</span>
