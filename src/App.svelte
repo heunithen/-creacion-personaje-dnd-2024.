@@ -894,139 +894,65 @@
 
   const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
 
-  function tokenSizeInPixels(dpi: number, parsedScale: any): number {
-    const multiplier = Number(parsedScale?.multiplier) || 5;
-    const unit = String(parsedScale?.unit || 'ft').toLowerCase();
-    const feetPerUnit: Record<string, number> = {
-      ft: 1, feet: 1, foot: 1,
-      in: 1 / 12, inch: 1 / 12, inches: 1 / 12,
-      yd: 3, yard: 3, yards: 3,
-      m: 3.280839895, meter: 3.280839895, meters: 3.280839895,
-      cm: 0.032808399, mm: 0.00328084,
-      km: 3280.839895, mi: 5280
-    };
-    const feetPerGridCell = multiplier * (feetPerUnit[unit] || 1);
-    return dpi * 5 / feetPerGridCell;
-  }
+  const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
 
-  async function getPortraitImageInfo(sourceUrl: string): Promise<{ width: number; height: number; mime: string }> {
-    const image = new Image();
-    image.src = sourceUrl;
-    await new Promise<void>((resolve, reject) => {
-      image.onload = () => resolve();
-      image.onerror = () => reject(new Error('No se pudo cargar el retrato desde su dirección pública.'));
-    });
-    const pathname = new URL(sourceUrl, window.location.href).pathname.toLowerCase();
-    const mime = pathname.endsWith('.png') ? 'image/png'
-      : pathname.endsWith('.jpg') || pathname.endsWith('.jpeg') ? 'image/jpeg'
-      : pathname.endsWith('.gif') ? 'image/gif'
-      : pathname.endsWith('.avif') ? 'image/avif'
-      : 'image/webp';
-    return { width: image.naturalWidth, height: image.naturalHeight, mime };
-  }
-
-  async function createCharacterToken(entry: RoomEntry) {
+  async function assignSelectedToken(entry: RoomEntry) {
     try {
-      if (obrRole !== 'GM') throw new Error('Solo el director puede crear tokens desde esta pantalla.');
-      if (!(await OBR.scene.isReady())) throw new Error('Abre una escena de Owlbear Rodeo antes de crear el token.');
+      if (obrRole !== 'GM') throw new Error('Solo el director puede asignar tokens.');
+      if (!(await OBR.scene.isReady())) throw new Error('Abre una escena de Owlbear Rodeo antes de asignar un token.');
 
-      const [dpi, gridScale, position] = await Promise.all([
-        OBR.scene.grid.getDpi(),
-        OBR.scene.grid.getScale(),
-        OBR.viewport.getPosition()
-      ]);
-      const size = tokenSizeInPixels(dpi, gridScale?.parsed);
+      const selectedIds = await OBR.player.getSelection();
+      if (!selectedIds || selectedIds.length === 0) {
+        throw new Error('Selecciona primero un único token en el tablero de Owlbear.');
+      }
+      if (selectedIds.length !== 1) {
+        throw new Error('Selecciona solamente un token. Hay ' + selectedIds.length + ' elementos seleccionados.');
+      }
+
+      const selectedItems = await OBR.scene.items.getItems(selectedIds);
+      const token = selectedItems[0];
+      if (!token) throw new Error('No se pudo encontrar el elemento seleccionado en la escena.');
+      if (token.layer !== 'CHARACTER') {
+        throw new Error('El elemento seleccionado no está en la capa Personajes. Mueve el token a esa capa e inténtalo nuevamente.');
+      }
+
       const characterName = String(entry.sheet?.name || entry.playerName || 'Personaje');
-      const portraitUrl = String(entry.sheet?.portrait || '').trim();
       const currentHp = getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe actuales', 0);
       const maxHp = getCharacterNumber(entry.sheet, 'COMBATE', 'Puntos de golpe máximos', currentHp);
       const armorClass = getCharacterNumber(entry.sheet, 'COMBATE', 'Armor Class', 10);
-      const metadata = {
-        [TOKEN_METADATA_KEY]: {
-          version: 1,
-          characterId: entry.playerId,
-          playerName: entry.playerName,
-          characterName,
-          appearance: { type: portraitUrl ? 'portrait-circle' : 'circle', imageUrl: portraitUrl || null },
-          sizeFeet: 5,
-          hitPoints: { current: currentHp, maximum: maxHp },
-          armorClass,
-          sheetSync: true
-        }
+      const previousLink = (token.metadata as any)?.[TOKEN_METADATA_KEY];
+
+      if (previousLink?.characterId && previousLink.characterId !== entry.playerId) {
+        const previousName = previousLink.characterName || 'otro personaje';
+        if (!window.confirm('Este token ya está vinculado a ' + previousName + '. ¿Quieres reemplazar esa vinculación por ' + characterName + '?')) return;
+      }
+
+      const tokenData = {
+        version: 1,
+        characterId: entry.playerId,
+        playerName: entry.playerName,
+        characterName,
+        hitPoints: { current: currentHp, maximum: maxHp },
+        armorClass,
+        sheetSync: true
       };
 
-      let token: any;
-      let portraitFrame: any = null;
-      if (portraitUrl) {
-        try {
-          const portraitInfo = await getPortraitImageInfo(portraitUrl);
-          token = buildImage(
-            { url: portraitUrl, mime: portraitInfo.mime, width: portraitInfo.width, height: portraitInfo.height },
-            { dpi: Math.max(portraitInfo.width, portraitInfo.height), offset: { x: portraitInfo.width / 2, y: portraitInfo.height / 2 } }
-          )
-            .name(characterName)
-            .description('Retrato de ' + characterName + ', vinculado a su ficha.')
-            .scale({ x: size / portraitInfo.width, y: size / portraitInfo.height })
-            .position(position)
-            .layer('CHARACTER')
-            .metadata(metadata)
-            .build();
+      await OBR.scene.items.updateItems(selectedIds, (items) =>
+        items.map((item) => ({
+          ...item,
+          name: characterName,
+          metadata: {
+            ...item.metadata,
+            [TOKEN_METADATA_KEY]: tokenData
+          }
+        }))
+      );
 
-          // El marco se dibuja como un elemento independiente encima del retrato.
-          // Así evitamos convertir la imagen a data URL, que puede fallar en Owlbear.
-          portraitFrame = buildShape()
-            .name(characterName + ' - Marco dorado')
-            .description('Marco circular dorado del token de ' + characterName + '.')
-            .shapeType('CIRCLE')
-            .width(size)
-            .height(size)
-            .fillColor('#bd9138')
-            .fillOpacity(0)
-            .strokeColor('#f4d88b')
-            .strokeOpacity(1)
-            .strokeWidth(Math.max(5, size * 0.025))
-            .position(position)
-            .layer('CHARACTER')
-            .metadata(metadata)
-            .build();
-        } catch (portraitError) {
-          console.warn('No se pudo cargar el retrato en Owlbear; se usará el círculo dorado.', portraitError);
-          token = null;
-          portraitFrame = null;
-        }
-      }
-
-      if (!token) {
-        token = buildShape()
-          .name(characterName)
-          .description('Token circular dorado de ' + characterName + '.')
-          .shapeType('CIRCLE')
-          .width(size)
-          .height(size)
-          .fillColor('#bd9138')
-          .fillOpacity(1)
-          .strokeColor('#f4d88b')
-          .strokeOpacity(1)
-          .strokeWidth(5)
-          .position(position)
-          .layer('CHARACTER')
-          .metadata(metadata)
-          .build();
-      }
-
-      await OBR.scene.items.addItems(portraitFrame ? [token, portraitFrame] : [token]);
-      notice = (portraitUrl && portraitFrame ? 'Token con retrato y marco dorado de ' : 'Token dorado de ') + characterName + ' creado en la escena (5 pies × 5 pies).';
+      notice = 'Token asignado a ' + characterName + '. La apariencia del token se ha conservado.';
     } catch (error) {
-      console.error('Error al crear token de personaje:', error);
-      let detail = '';
-      if (error instanceof Error) {
-        detail = error.message;
-      } else if (typeof error === 'string') {
-        detail = error;
-      } else {
-        try { detail = JSON.stringify(error); } catch { detail = String(error); }
-      }
-      notice = 'No se pudo crear el token' + (detail ? ': ' + detail : '. Revisa la consola de Owlbear para ver el error completo.');
+      console.error('Error al asignar token de personaje:', error);
+      const detail = error instanceof Error ? error.message : String(error);
+      notice = 'No se pudo asignar el token: ' + detail;
     }
   }
 
@@ -5837,7 +5763,7 @@ import ITEMS from './items.json';
               <article class="character-card">
                 <div class="card-symbol">✧</div>
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · Registro oficial en Supabase</p></div>
-                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => createCharacterToken(entry)}>Crear token</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
+                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
               </article>
             {/each}
           {/if}
