@@ -895,22 +895,59 @@
   const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
 
 
-  function buildCharacterBubble(token: any, text: string, color: string, offsetX: number, offsetY: number) {
-    return buildLabel()
-      .plainText(text)
-      .fontSize(14)
-      .fontWeight(700)
-      .fillColor('#ffffff')
-      .backgroundColor(color)
-      .backgroundOpacity(0.96)
-      .cornerRadius(14)
-      .padding(7)
-      .position({ x: token.position.x + offsetX, y: token.position.y + offsetY })
-      .layer('TEXT')
+  function buildCharacterBubble(token: any, text: string, color: string, position: { x: number; y: number }, ids: { background: string; text: string }) {
+    const diameter = 30;
+    const behaviors = ['ROTATION', 'VISIBLE', 'COPY', 'SCALE'];
+    const background = buildShape()
+      .shapeType('CIRCLE')
+      .width(diameter)
+      .height(diameter)
+      .fillColor(color)
+      .fillOpacity(0.85)
+      .strokeColor(color)
+      .strokeOpacity(0.5)
+      .strokeWidth(0)
+      .position(position)
       .attachedTo(token.id)
+      .layer('ATTACHMENT')
+      .locked(true)
+      .id(ids.background)
+      .visible(token.visible)
+      .disableAttachmentBehavior(behaviors as any)
       .disableHit(true)
-      .disableAttachmentBehavior(['ROTATION'])
       .build();
+    const label = buildText()
+      .position({ x: position.x - diameter / 2, y: position.y - diameter / 2 + 0.8 })
+      .plainText(text)
+      .textAlign('CENTER')
+      .textAlignVertical('MIDDLE')
+      .fontSize(text.length > 2 ? 15 : 22)
+      .fontFamily('Roboto, sans-serif')
+      .textType('PLAIN')
+      .height(diameter)
+      .width(diameter)
+      .fontWeight(400)
+      .attachedTo(token.id)
+      .layer('TEXT')
+      .locked(true)
+      .id(ids.text)
+      .visible(token.visible)
+      .disableAttachmentBehavior(behaviors as any)
+      .disableHit(true)
+      .build();
+    return [background, label];
+  }
+
+  function createRoundedBarPoints(width: number, height: number, radius: number, fill = 1) {
+    const w = Math.max(0, Math.min(width, width * fill));
+    const r = Math.min(radius, height / 2, w / 2);
+    if (w <= 0) return [];
+    return [
+      { x: r, y: 0 }, { x: Math.max(r, w - r), y: 0 },
+      { x: w, y: r }, { x: w, y: height - r },
+      { x: Math.max(r, w - r), y: height }, { x: r, y: height },
+      { x: 0, y: height - r }, { x: 0, y: r }
+    ];
   }
 
   async function syncCharacterBubbles(targetSheet: RawSheet, characterId: string) {
@@ -927,60 +964,111 @@
 
     for (const token of linkedTokens as any[]) {
       const tokenData = { ...(token.metadata as any)[TOKEN_METADATA_KEY] };
-      const oldBubbleIds = [tokenData.hpBubbleId, tokenData.acBubbleId, tokenData.hpBarBackgroundId, tokenData.hpBarFillId].filter(Boolean);
-      if (oldBubbleIds.length) {
+      const oldIds = [
+        tokenData.hpBubbleId, tokenData.acBubbleId, tokenData.hpBarBackgroundId,
+        tokenData.hpBarFillId, tokenData.acShapeId, tokenData.acTextId, tokenData.hpTextId
+      ].filter(Boolean);
+      if (oldIds.length) {
         const existingIds = new Set(sceneItems.map((item: any) => item.id));
-        const deletableIds = oldBubbleIds.filter((id: string) => existingIds.has(id));
+        const deletableIds = oldIds.filter((id: string) => existingIds.has(id));
         if (deletableIds.length) await OBR.scene.items.deleteItems(deletableIds);
       }
 
-      const hpText = '♥ ' + currentHp + ' / ' + maxHp + (tempHp > 0 ? '  +' + tempHp : '');
-      const hpColor = maxHp > 0 && currentHp / maxHp <= 0.25 ? '#9f2525' : '#263b32';
-      const hpBubble = buildCharacterBubble(token, hpText, hpColor, -22, -58);
-      const acBubble = buildCharacterBubble(token, 'CA ' + armorClass, '#26384f', 48, -58);
-
-      // Las etiquetas LABEL se dibujan en espacio de pantalla: su tamaño no cambia al acercar o alejar el zoom.
-      const barText = '━━━━━━━━━━━━━━━━━━━━';
-      const barBackground = buildLabel()
-        .plainText(barText)
-        .fontSize(8)
-        .fontWeight(900)
-        .fillColor('#343b40')
-        .backgroundColor('#343b40')
-        .backgroundOpacity(1)
-        .cornerRadius(4)
-        .padding(1)
-        .position({ x: token.position.x, y: token.position.y - 38 })
-        .layer('TEXT')
-        .attachedTo(token.id)
-        .disableHit(true)
-        .disableAttachmentBehavior(['ROTATION'])
-        .build();
+      // Mismo sistema de la extensión Stat Bubbles: dimensiones en unidades de escena,
+      // calculadas según el tamaño real del token y vinculadas sin heredar su escalado.
+      const dpi = await OBR.scene.grid.getDpi();
+      const image = token.image || { width: 1, height: 1 };
+      const gridDpi = token.grid?.dpi || dpi;
+      const boundsWidth = Math.abs(image.width * (dpi / gridDpi) * (token.scale?.x || 1));
+      const boundsHeight = Math.abs(image.height * (dpi / gridDpi) * (token.scale?.y || 1));
+      const center = { x: token.position.x, y: token.position.y };
+      const barHeight = 20;
+      const barPadding = 2;
+      const barWidth = Math.max(20, boundsWidth - barPadding * 2);
+      const barPosition = {
+        x: center.x - boundsWidth / 2 + barPadding,
+        y: center.y + boundsHeight / 2 - barHeight - 2
+      };
       const hpRatio = maxHp > 0 ? Math.max(0, Math.min(1, currentHp / maxHp)) : 0;
-      const filledSegments = Math.round(20 * hpRatio);
-      const barFill = buildLabel()
-        .plainText(filledSegments > 0 ? '━━━━━━━━━━━━━━━━━━━━'.slice(0, filledSegments) : '')
-        .fontSize(8)
-        .fontWeight(900)
-        .fillColor(hpRatio <= 0.25 ? '#e04444' : hpRatio <= 0.5 ? '#e3a43b' : '#42b86a')
-        .backgroundColor('#000000')
-        .backgroundOpacity(0)
-        .cornerRadius(4)
-        .padding(1)
-        .position({ x: token.position.x - 0.01, y: token.position.y - 38 })
-        .layer('TEXT')
+      const behaviors = ['ROTATION', 'VISIBLE', 'COPY', 'SCALE'];
+
+      const barBackground = buildShape()
+        .shapeType('RECTANGLE')
+        .width(barWidth)
+        .height(barHeight)
+        .fillColor('#A4A4A4')
+        .fillOpacity(0.6)
+        .strokeWidth(0)
+        .position(barPosition)
+        .zIndex(10000)
         .attachedTo(token.id)
+        .layer('ATTACHMENT')
+        .locked(true)
+        .id(token.id + '-health-background')
+        .visible(token.visible)
+        .disableAttachmentBehavior(behaviors as any)
         .disableHit(true)
-        .disableAttachmentBehavior(['ROTATION'])
         .build();
-      await OBR.scene.items.addItems([hpBubble, acBubble, barBackground, barFill]);
+
+      const fillWidth = barWidth * hpRatio;
+      const barFill = fillWidth > 0 ? buildShape()
+        .shapeType('RECTANGLE')
+        .width(fillWidth)
+        .height(barHeight)
+        .fillColor(hpRatio <= 0.25 ? '#e04444' : hpRatio <= 0.5 ? '#e3a43b' : '#42b86a')
+        .fillOpacity(0.85)
+        .strokeWidth(0)
+        .position(barPosition)
+        .zIndex(20000)
+        .attachedTo(token.id)
+        .layer('ATTACHMENT')
+        .locked(true)
+        .id(token.id + '-health-fill')
+        .visible(token.visible)
+        .disableAttachmentBehavior(behaviors as any)
+        .disableHit(true)
+        .build() : null;
+
+      const hpText = buildText()
+        .position({ x: barPosition.x, y: barPosition.y - 0.3 })
+        .plainText(currentHp + '/' + maxHp + (tempHp > 0 ? ' +' + tempHp : ''))
+        .textAlign('CENTER')
+        .textAlignVertical('MIDDLE')
+        .fontSize(14)
+        .fontFamily('Roboto, sans-serif')
+        .textType('PLAIN')
+        .height(barHeight)
+        .width(barWidth)
+        .fontWeight(700)
+        .attachedTo(token.id)
+        .layer('TEXT')
+        .locked(true)
+        .id(token.id + '-health-text')
+        .visible(token.visible)
+        .disableAttachmentBehavior(behaviors as any)
+        .disableHit(true)
+        .build();
+
+      const acPosition = {
+        x: center.x + boundsWidth / 2 - 17,
+        y: barPosition.y - 19
+      };
+      const acItems = buildCharacterBubble(token, String(armorClass), '#6495ed', acPosition, {
+        background: token.id + '-ac-background',
+        text: token.id + '-ac-text'
+      });
+      const itemsToAdd = [barBackground, ...(barFill ? [barFill] : []), hpText, ...acItems];
+      await OBR.scene.items.addItems(itemsToAdd);
 
       tokenData.hitPoints = { current: currentHp, maximum: maxHp, temporary: tempHp };
       tokenData.armorClass = armorClass;
-      tokenData.hpBubbleId = hpBubble.id;
-      tokenData.acBubbleId = acBubble.id;
-      tokenData.hpBarBackgroundId = barBackground.id;
-      tokenData.hpBarFillId = barFill.id;
+      tokenData.hpBubbleId = token.id + '-health-text';
+      tokenData.acBubbleId = token.id + '-ac-text';
+      tokenData.hpBarBackgroundId = token.id + '-health-background';
+      tokenData.hpBarFillId = token.id + '-health-fill';
+      tokenData.hpTextId = token.id + '-health-text';
+      tokenData.acShapeId = token.id + '-ac-background';
+      tokenData.acTextId = token.id + '-ac-text';
       await OBR.scene.items.updateItems([token.id], (items) => {
         for (const item of items) item.metadata[TOKEN_METADATA_KEY] = tokenData;
       });
