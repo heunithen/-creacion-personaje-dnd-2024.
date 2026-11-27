@@ -12,11 +12,13 @@
   type RawStat = { id?: number; name?: string; value?: unknown; [key: string]: unknown };
   type RawSection = { id?: number; name?: string; stats?: RawStat[]; [key: string]: unknown };
   type RawSheet = { id?: number; name?: string; notes?: string; sections?: RawSection[]; [key: string]: unknown };
-  type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet; source?: 'web' | 'owlbear'; saved?: boolean; live?: boolean };
+  type RoomEntry = { playerId: string; playerName: string; sheet: RawSheet; source?: 'web' | 'owlbear'; roomId?: string; globalPool?: boolean; saved?: boolean; live?: boolean };
 
   let sheet: RawSheet | null = null;
   let roomSheets: RoomEntry[] = [];
   let liveRoomSheets: RoomEntry[] = [];
+  let publicWebSheets: RoomEntry[] = [];
+  const PUBLIC_WEB_ROOM_ID = '__PUBLIC_WEB_CREATION__';
   let characterStorageReady = false;
   let importOpen = false;
   let notice = '';
@@ -3816,17 +3818,15 @@ import ITEMS from './items.json';
   }
 
   async function shareWebCreationLink() {
-    if (!supabaseRoomId) return;
-    const url = new URL(window.location.href);
+    const url = new URL(window.location.origin + '/-creacion-personaje-dnd-2024./');
     url.search = '';
     url.hash = '';
     url.searchParams.set('webCreate', '1');
-    url.searchParams.set('room', supabaseRoomId);
     try {
       await navigator.clipboard.writeText(url.toString());
-      notice = 'Enlace de creación copiado. Cualquier persona con el enlace podrá crear un personaje para esta sala.';
+      notice = 'Enlace general copiado. Cualquier persona podrá crear un personaje sin pertenecer a una sala de Owlbear.';
     } catch {
-      window.prompt('Copia este enlace para compartirlo:', url.toString());
+      window.prompt('Copia este enlace general para compartirlo:', url.toString());
     }
   }
 
@@ -3835,7 +3835,7 @@ import ITEMS from './items.json';
     url.search = '';
     url.hash = '';
     url.searchParams.set('web', '1');
-    url.searchParams.set('room', supabaseRoomId);
+    url.searchParams.set('room', entry.roomId || supabaseRoomId);
     url.searchParams.set('player', entry.playerId);
     window.open(url.toString(), '_blank', 'noopener');
   }
@@ -3844,13 +3844,13 @@ import ITEMS from './items.json';
     const params = new URLSearchParams(window.location.search);
     const createMode = params.get('webCreate') === '1';
     if (!createMode && params.get('web') !== '1') return;
-    const roomId = (params.get('room') || '').trim();
+    const roomId = createMode ? PUBLIC_WEB_ROOM_ID : (params.get('room') || '').trim();
     const playerId = (params.get('player') || '').trim();
     webCreateMode = true;
     webReadOnly = false;
     characterStorageReady = false;
     if (!roomId) {
-      syncStatus = 'El enlace de creación está incompleto. Solicita al narrador un nuevo enlace.';
+      syncStatus = 'El enlace de creación está incompleto. Solicita un nuevo enlace general.';
       characterStorageReady = true;
       return;
     }
@@ -3915,11 +3915,15 @@ import ITEMS from './items.json';
 
   async function loadSupabaseRoomCharacters() {
     if (!supabaseRoomId) return;
-    const response = await fetch(SUPABASE_URL + '/rest/v1/characters?select=player_id,player_name,sheet,deleted_at&room_id=eq.' + encodeURIComponent(supabaseRoomId) + '&deleted_at=is.null&order=updated_at.desc', {
-      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }
-    });
+    const headers = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
+    const [response, publicResponse] = await Promise.all([
+      fetch(SUPABASE_URL + '/rest/v1/characters?select=player_id,player_name,sheet,deleted_at&room_id=eq.' + encodeURIComponent(supabaseRoomId) + '&deleted_at=is.null&order=updated_at.desc', { headers }),
+      fetch(SUPABASE_URL + '/rest/v1/characters?select=player_id,player_name,sheet,deleted_at&room_id=eq.' + encodeURIComponent(PUBLIC_WEB_ROOM_ID) + '&deleted_at=is.null&order=updated_at.desc', { headers })
+    ]);
     if (!response.ok) throw new Error('No se pudieron cargar las fichas de la sala desde Supabase.');
+    if (!publicResponse.ok) throw new Error('No se pudieron cargar los personajes creados desde el enlace general.');
     const rows = await response.json();
+    const publicRows = await publicResponse.json();
     liveRoomSheets = rows.filter((row:any)=>row.sheet && Array.isArray(row.sheet.sections)).map((row:any)=>{
       const playerId = row.player_id;
       const savedSheet = repairGenericStatLabels(row.sheet as RawSheet) as RawSheet;
@@ -3930,6 +3934,12 @@ import ITEMS from './items.json';
         sheet: pendingSheet || savedSheet, source: savedSheet._creationSource === 'web' ? 'web' : 'owlbear', live: false
       };
     });
+    publicWebSheets = publicRows.filter((row:any)=>row.sheet && Array.isArray(row.sheet.sections)).map((row:any)=>({
+      playerId: row.player_id,
+      playerName: row.player_name || 'Jugador',
+      sheet: repairGenericStatLabels(row.sheet as RawSheet) as RawSheet,
+      source: 'web', roomId: PUBLIC_WEB_ROOM_ID, globalPool: true, live: false
+    }));
     refreshRoomSheetList();
     if (masterViewingEntry) {
       const latest = liveRoomSheets.find(entry => entry.playerId === masterViewingEntry?.playerId);
@@ -5963,7 +5973,7 @@ import ITEMS from './items.json';
   }
 
   function refreshRoomSheetList() {
-    roomSheets = [...liveRoomSheets].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
+    roomSheets = [...liveRoomSheets, ...publicWebSheets].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
   }
 
   async function deleteRoomCharacter(entry: RoomEntry) {
@@ -5972,7 +5982,8 @@ import ITEMS from './items.json';
     const confirmed = window.confirm('¿Eliminar definitivamente la ficha de «' + characterName + '»?\n\nDejará de aparecer para el narrador y para el jugador. Esta acción no se puede deshacer desde la aplicación.');
     if (!confirmed) return;
     try {
-      const query = '?room_id=eq.' + encodeURIComponent(supabaseRoomId) +
+      const targetRoomId = entry.roomId || supabaseRoomId;
+      const query = '?room_id=eq.' + encodeURIComponent(targetRoomId) +
         '&player_id=eq.' + encodeURIComponent(entry.playerId) + '&deleted_at=is.null';
       const response = await fetch(SUPABASE_URL + '/rest/v1/characters' + query, {
         method: 'PATCH',
@@ -5987,7 +5998,8 @@ import ITEMS from './items.json';
       if (!response.ok) throw new Error('Supabase (' + response.status + '): ' + await response.text());
       const deletedRows = await response.json();
       if (!Array.isArray(deletedRows) || !deletedRows.length) throw new Error('No se encontró una ficha activa para eliminar.');
-      liveRoomSheets = liveRoomSheets.filter(item => item.playerId !== entry.playerId);
+      if (entry.globalPool) publicWebSheets = publicWebSheets.filter(item => item.playerId !== entry.playerId);
+      else liveRoomSheets = liveRoomSheets.filter(item => item.playerId !== entry.playerId);
       roomStatPending.delete(entry.playerId);
       roomStatSending.delete(entry.playerId);
       refreshRoomSheetList();
@@ -6004,6 +6016,31 @@ import ITEMS from './items.json';
     } catch (error) {
       console.error('Error eliminando personaje de la sala:', error);
       notice = 'No se pudo eliminar la ficha: ' + (error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  async function incorporatePublicCharacter(entry: RoomEntry) {
+    if (obrRole !== 'GM' || !supabaseRoomId || !entry.globalPool) return;
+    const characterName = String(entry.sheet?.name || 'Personaje sin nombre');
+    if (!window.confirm('¿Incorporar «' + characterName + '» a esta sala de Owlbear? La ficha dejará de estar en la lista general y pasará a pertenecer a esta sala.')) return;
+    try {
+      const query = '?room_id=eq.' + encodeURIComponent(PUBLIC_WEB_ROOM_ID) +
+        '&player_id=eq.' + encodeURIComponent(entry.playerId) + '&deleted_at=is.null';
+      const response = await fetch(SUPABASE_URL + '/rest/v1/characters' + query, {
+        method: 'PATCH',
+        headers: {
+          apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json', Prefer: 'return=representation'
+        },
+        body: JSON.stringify({ room_id: supabaseRoomId })
+      });
+      if (!response.ok) throw new Error('Supabase (' + response.status + '): ' + await response.text());
+      const moved = await response.json();
+      if (!Array.isArray(moved) || !moved.length) throw new Error('No se encontró el personaje en la lista general.');
+      await loadSupabaseRoomCharacters();
+      notice = '«' + characterName + '» ya pertenece a esta sala. Abre su ficha desde Owlbear para obtener el nuevo enlace de edición.';
+    } catch (error) {
+      notice = 'No se pudo incorporar el personaje: ' + (error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -6429,13 +6466,15 @@ import ITEMS from './items.json';
       {#if masterTab === 'Personajes'}
         <section class="panel roster-panel">
           <div class="section-heading"><h2>Personajes de la sala</h2><span class="count">{roomSheets.length}</span></div>
-          <div class="actions"><button class="primary" type="button" on:click={shareWebCreationLink}>Copiar enlace para crear personaje</button><button class="secondary" on:click={refreshPlayers}>Actualizar desde Supabase</button></div>
+          <div class="actions"><button class="primary" type="button" on:click={shareWebCreationLink}>Copiar enlace general de creación</button><button class="secondary" on:click={refreshPlayers}>Actualizar desde Supabase</button></div>
+          <p class="muted">Los personajes creados desde el enlace general aparecen aquí como pendientes. Incorpóralos a esta sala cuando quieras utilizarlos en Owlbear.</p>
           {#if !roomSheets.length}<p class="muted">No hay personajes registrados en la base de datos para esta sala.</p>
           {:else}
             {#each roomSheets as entry}
               <article class="character-card roster-character-card">
                 <div class="card-symbol">✧</div>
-                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · <span class:origin-web={entry.source === 'web'} class:origin-owlbear={entry.source !== 'web'}>{entry.source === 'web' ? 'Creado en navegador' : 'Creado en Owlbear Rodeo'}</span></p></div>
+                <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · <span class:origin-web={entry.source === 'web'} class:origin-owlbear={entry.source !== 'web'}>{entry.globalPool ? 'Pendiente · Enlace general' : entry.source === 'web' ? 'Creado en navegador' : 'Creado en Owlbear Rodeo'}</span></p></div>
+                {#if !entry.globalPool}
                 <div class="roster-stat-controls">
                   <div class="roster-stat-control">
                     <span>CA</span>
@@ -6465,6 +6504,9 @@ import ITEMS from './items.json';
                   </div>
                 {/if}
                 <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportCharacterSummary(entry.sheet, entry.playerName)}>Exportar PDF</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button><button class="secondary" on:click={() => openWebCharacter(entry)}>Abrir ficha en navegador</button><button class="danger roster-delete-button" type="button" on:click={() => deleteRoomCharacter(entry)}>Eliminar personaje</button></div>
+                {:else}
+                <div class="actions"><button class="primary" type="button" on:click={() => incorporatePublicCharacter(entry)}>Incorporar a esta sala</button><button class="secondary" type="button" on:click={() => openWebCharacter(entry)}>Abrir ficha en navegador</button><button class="danger roster-delete-button" type="button" on:click={() => deleteRoomCharacter(entry)}>Eliminar personaje</button></div>
+                {/if}
               </article>
             {/each}
           {/if}
