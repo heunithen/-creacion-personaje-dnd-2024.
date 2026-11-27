@@ -134,6 +134,9 @@
     if (spent > nextBudget) { budgetMessage = 'No se puede bajar la dificultad objetivo: el encuentro actual supera ese presupuesto.'; return; }
     difficulty = value; budgetMessage = '';
   }
+  function changeDifficultyFromInput(value: string) {
+    if (value === 'easy' || value === 'normal' || value === 'hard') changeDifficulty(value);
+  }
   function removeMonster(name: string) {
     selected = selected.filter(item => item.monster.name !== name);
   }
@@ -189,7 +192,7 @@
     </div>
     <div class="config-field">
       <label for="enc-difficulty">Dificultad objetivo</label>
-      <select id="enc-difficulty" value={difficulty} on:change={(event)=>changeDifficulty(event.currentTarget.value as 'easy'|'normal'|'hard')}>
+      <select id="enc-difficulty" value={difficulty} on:change={(event)=>changeDifficultyFromInput(event.currentTarget.value)}>
         <option value="easy">Fácil</option><option value="normal">Normal</option><option value="hard">Difícil</option>
       </select>
       <small>{difficulty==='easy'?'Hipótesis experimental: 85 %':difficulty==='normal'?'Hipótesis experimental: 70 %':'Hipótesis experimental: 50 %'} de probabilidad de victoria.</small>
