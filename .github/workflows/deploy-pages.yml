@@ -84,7 +84,10 @@ jobs:
       - name: Build
         run: npm run build
       - name: Install Chromium for browser tests
-        run: npx playwright install --with-deps chromium
+        run: |
+          # Evita que un repositorio Microsoft externo bloqueado impida instalar dependencias de Playwright.
+          for source in $(sudo grep -rl 'packages.microsoft.com' /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null || true); do sudo rm -f "$source"; done
+          npx playwright install --with-deps chromium
       - name: Test character creator in a real browser
         run: npm run test:e2e
       - name: Upload artifact
