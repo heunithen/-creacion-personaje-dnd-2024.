@@ -10906,4 +10906,76 @@ import ITEMS from './items.json';
   .builder-class-info-section strong{display:block;color:#f1eee5;font:500 .84rem/1.55 Georgia,serif;overflow-wrap:anywhere}
   @media(max-width:620px){.builder-class-flyer{min-height:0;padding:1.35rem 1rem}.builder-class-content{grid-template-columns:1fr;gap:1rem}.builder-class-learn{margin-top:0;padding:.9rem}.builder-class-title-row h4{font-size:2.1rem}.builder-class-select-row{align-items:flex-start;flex-direction:column}.builder-class-select{align-self:flex-end}.builder-class-info-section{margin-bottom:.45rem;padding-bottom:.55rem}.builder-class-info-section h5{font-size:1rem}.builder-class-info-section strong{font-size:.8rem}}
 
+
+  /* Sistema visual unificado: primera pasada, solo presentación */
+  :global(body){background:#09151b!important;color:#e8f0f1!important}
+  :global(.app-shell){background:linear-gradient(180deg,#0b1a21 0%,#09151b 100%)!important;color:#e8f0f1!important}
+  :global(.topbar){background:rgba(8,22,29,.97)!important;border-bottom:1px solid rgba(99,216,208,.48)!important;box-shadow:0 5px 20px rgba(0,0,0,.2)}
+  :global(.topbar .brand strong){letter-spacing:.09em}
+  :global(.topbar .brand small){color:#8faeb5!important;letter-spacing:.12em}
+  :global(.main){color:#e8f0f1!important}
+  :global(.panel),:global(.builder-panel),:global(.import-character-panel){
+    background:linear-gradient(145deg,#10242d 0%,#0d1e26 100%)!important;
+    border:1px solid rgba(111,180,183,.28)!important;border-radius:12px!important;
+    box-shadow:0 10px 28px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.025)!important;
+    color:#e8f0f1!important
+  }
+  :global(.panel){padding:clamp(.85rem,1.8vw,1.25rem)}
+  :global(.section-heading){display:flex;align-items:center;gap:.7rem;padding:0 0 .65rem;margin:0 0 .85rem;border-bottom:1px solid rgba(99,216,208,.35)!important}
+  :global(.section-heading h2),:global(.panel h2),:global(.builder-panel h3),:global(.builder-panel h4){
+    color:#f2f6f5!important;font-family:Georgia,'Times New Roman',serif!important;letter-spacing:.015em
+  }
+  :global(.panel p),:global(.panel li),:global(.builder-panel p){color:#c2d0d3}
+  :global(.muted),:global(.hint),:global(.builder-panel .muted),:global(.builder-panel .hint){color:#91a9af!important}
+  :global(.panel .count){display:inline-flex;align-items:center;justify-content:center;min-width:1.7rem;padding:.18rem .48rem;border:1px solid rgba(99,216,208,.35);border-radius:99px;background:#132d36;color:#8de5dd!important;font-size:.72rem;font-weight:800}
+  :global(input),:global(textarea),:global(select),:global(.builder-panel input),:global(.builder-panel textarea),:global(.builder-panel select){
+    background:#091920!important;color:#edf4f4!important;border:1px solid #34515a!important;border-radius:7px!important
+  }
+  :global(input::placeholder),:global(textarea::placeholder){color:#78939a!important}
+  :global(input:focus),:global(textarea:focus),:global(select:focus){
+    outline:2px solid rgba(99,216,208,.22)!important;border-color:#63d8d0!important;box-shadow:0 0 0 3px rgba(99,216,208,.08)!important
+  }
+  :global(.actions){display:flex;flex-wrap:wrap;align-items:center;gap:.55rem}
+  :global(.actions button),:global(.panel button.primary),:global(.panel button.secondary),:global(.builder-panel button){
+    min-height:36px;border-radius:7px!important;font-weight:700;transition:background .16s ease,border-color .16s ease,transform .16s ease
+  }
+  :global(.panel button.primary),:global(.builder-panel button.primary),:global(.primary){
+    background:linear-gradient(180deg,#1b4148,#15343c)!important;border:1px solid #4bb9b2!important;color:#f2ffff!important
+  }
+  :global(.panel button.primary:hover),:global(.builder-panel button.primary:hover),:global(.primary:hover){
+    background:#20515a!important;border-color:#78e4dc!important;transform:translateY(-1px)
+  }
+  :global(.panel button.secondary),:global(.builder-panel button.secondary),:global(.secondary){
+    background:#10242d!important;border:1px solid #3b5962!important;color:#c5d6d8!important
+  }
+  :global(.panel button.secondary:hover),:global(.builder-panel button.secondary:hover),:global(.secondary:hover){
+    background:#17333d!important;border-color:#63bdb7!important;color:#fff!important
+  }
+  :global(.master-tabs),:global(.sheet-tabs){gap:.4rem!important;border-bottom-color:rgba(99,216,208,.3)!important}
+  :global(.master-tabs button),:global(.sheet-tabs button){
+    border:1px solid rgba(111,180,183,.22)!important;border-radius:7px 7px 0 0!important;
+    background:#0d2028!important;color:#9fb6bb!important
+  }
+  :global(.master-tabs button.active),:global(.sheet-tabs button.active){
+    background:#17343d!important;border-color:#63d8d0!important;color:#f3ffff!important;
+    box-shadow:inset 0 -2px #63d8d0
+  }
+  :global(.builder-progress){height:6px!important;background:#203943!important;border-radius:99px!important}
+  :global(.builder-progress span){background:linear-gradient(90deg,#3ca9a4,#8ce8df)!important;border-radius:99px}
+  :global(.builder-info),:global(.builder-choice-wrapper),:global(.builder-choice-field),:global(.builder-name-block){
+    background:#102832!important;border:1px solid rgba(99,216,208,.24)!important;border-left:3px solid #55c9c1!important;border-radius:8px!important;color:#dce9e9!important
+  }
+  :global(.builder-checkbox),:global(.builder-option-card){
+    border-color:#34515a!important;background:#10242d!important;color:#e5eeee!important;border-radius:8px!important
+  }
+  :global(.builder-checkbox:has(input:checked)){border-color:#63d8d0!important;background:#15333b!important;box-shadow:0 0 0 1px rgba(99,216,208,.12)}
+  :global(.builder-checkbox:hover),:global(.builder-option-card:hover){border-color:#63bdb7!important}
+  :global(.panel hr),:global(.builder-panel hr){border:0;border-top:1px solid rgba(111,180,183,.22)}
+  :global(.panel a){color:#8de5dd}
+  @media(max-width:620px){
+    :global(.panel){padding:.8rem!important;border-radius:9px!important}
+    :global(.section-heading){align-items:flex-start}
+    :global(.actions){gap:.4rem}
+  }
+
 </style>
