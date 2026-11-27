@@ -2433,7 +2433,7 @@
     const backgroundItemsText=b.backgroundEquipment==='B'?'':backgroundData.equipmentA;
     const equipmentText=[classEquipment,backgroundItemsText,b.equipment].join(' ').toLocaleLowerCase('es');
     const weaponNames=BUILDER_WEAPON_MASTERY_OPTIONS.filter(weapon=>equipmentText.includes(weapon.toLocaleLowerCase('es')));
-    put(attacksIndex,0,weaponNames.join(', ')||'No se identificaron armas individuales en el paquete seleccionado.');
+    put(attacksIndex,0,weaponNames.join(', '));
     put(attacksIndex,1,b.weaponMasteries.join(', ')||'—');
     put(attacksIndex,2,'Bonificador por competencia: '+proficiency);
     put(attacksIndex,3,'');
@@ -5298,7 +5298,7 @@ import ITEMS from './items.json';
   function playerWeaponAttacks(target: RawSheet) {
     const recordedNames = getCharacterStat(target,'ATAQUES','Armas incluidas en el equipo');
     const inventoryWeaponNames = getShopOwnedItems(target).filter((entry:any)=>entry.item.type==='Arma').map((entry:any)=>entry.name);
-    const names = [...new Set([...recordedNames.split(/[,;\n]+/).map(name=>name.trim()).filter(Boolean),...inventoryWeaponNames])].join(', ');
+    const names = [...new Set([...recordedNames.split(/[,;\n]+/).map(name=>name.trim()).filter(name=>Boolean(name) && normalizeLevelText(name)!==normalizeLevelText('No se identificaron armas individuales en el paquete seleccionado.')),...inventoryWeaponNames])].join(', ');
     const proficiency = getCharacterNumber(target,'COMBATE','Bonificador por competencia',2);
     const strengthMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Fuerza',10)-10)/2);
     const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
