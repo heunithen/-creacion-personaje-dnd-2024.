@@ -5682,9 +5682,8 @@ import ITEMS from './items.json';
     {#if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{playerName || 'Jugador'}</span></nav>{/if}
   </header>
 
-  <main class="main" class:gm-layout={obrRole === 'GM'}>
-    {#if obrRole === 'GM'}
-      {#if !masterViewingEntry}
+  <main class="main" class:gm-layout={obrRole === 'GM' && !masterViewingEntry}>
+    {#if obrRole === 'GM' && !masterViewingEntry}
       <nav class="master-tabs" role="tablist" aria-label="Herramientas del director">
         {#each masterTabs as tab}
           <button class:active={masterTab === tab} role="tab" aria-selected={masterTab === tab} on:click={() => openMasterTab(tab)}>{tab}</button>
@@ -6392,7 +6391,6 @@ import ITEMS from './items.json';
           {/if}
         </section>
 
-      {/if}
       {/if}
       {#if sheet && !playerCreating && !masterViewingEntry}
         <section class="panel player-character-actions">
