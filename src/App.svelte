@@ -6785,7 +6785,7 @@ import ITEMS from './items.json';
                 {:else if playerSheetTab === 'Tiendita'}
                   <section class="sheet-section player-shop-section">
                     <div class="shopkeeper-banner">
-                      <img src={`${import.meta.env.BASE_URL}images/character-creation/portraits/vendedor.png`} alt="Vendedor de la tienda" />
+                      <img src={new URL("images/character-creation/portraits/vendedor.png", document.baseURI).href} alt="Vendedor de la tienda" />
                       <div><h3>La Tiendita</h3><p>Compra equipo para tus aventuras o vende lo que ya no necesites. Los objetos mágicos siguen los valores de rareza de la Guía del Dungeon Master 2024.</p></div>
                     </div>
                     <div class="shop-balance">
