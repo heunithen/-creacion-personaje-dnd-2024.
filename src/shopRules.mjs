@@ -7,7 +7,7 @@ export function currencyToCopper(coins = {}) {
 export function copperToCurrency(value) {
   let remaining = Math.max(0, Math.round(Number(value) || 0));
   const result = {};
-  for (const key of ['PPt', 'PO', 'PE', 'PP', 'PC']) {
+  for (const key of ['PO', 'PPt', 'PE', 'PP', 'PC']) {
     result[key] = Math.floor(remaining / COPPER_PER_COIN[key]);
     remaining %= COPPER_PER_COIN[key];
   }
