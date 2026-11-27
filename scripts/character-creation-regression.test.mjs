@@ -9,6 +9,7 @@ import {
 } from '../src/builderRules.mjs';
 
 const app = fs.readFileSync('src/App.svelte', 'utf8');
+const styles = fs.readFileSync('src/app.css', 'utf8');
 function extractConstant(name) {
   const startMatch = new RegExp('const\\s+' + name + '(?:\\s*:[^=]+)?\\s*=\\s*([\\[{])').exec(app);
   assert.ok(startMatch, 'No se encontró la constante ' + name);
@@ -239,6 +240,6 @@ test('inventario unificado y gestión manual de conjuros', () => {
 test('el retrato de la hoja se reserva para la cabecera y no aparece en el contenido inferior', () => {
   assert.match(app, /class="portrait-frame">\{#if sheet\.portrait\}/);
   assert.match(app, /nautical-header/);
-  assert.match(styles, /nautical-sheet \.sheet-portrait-footer/);
+  assert.match(styles, /nautical-sheet \.portrait-frame/);
   assert.match(styles, /nautical-sheet \.nautical-header \.portrait-frame/);
 });
