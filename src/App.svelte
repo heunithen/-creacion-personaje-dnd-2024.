@@ -66,6 +66,7 @@
   let supabaseRoomId = '';
   let supabasePlayerId = '';
   let supabasePlayerName = '';
+  let masterViewingEntry: RoomEntry | null = null;
   let supabaseSaveTimer: ReturnType<typeof setTimeout> | undefined;
   let supabaseSaving = false;
   let fileInput: HTMLInputElement;
@@ -3325,7 +3326,7 @@ import ITEMS from './items.json';
     try { const value = JSON.parse(getCharacterStat(target, section, field) || '{}'); return value && typeof value === 'object' ? value : {}; }
     catch { return {}; }
   }
-  async function saveCharacterToSupabase(snapshot: RawSheet, playerId = supabasePlayerId, playerNameValue = supabasePlayerName) {
+  async function saveCharacterToSupabase(snapshot: RawSheet, playerId = masterViewingEntry?.playerId || supabasePlayerId, playerNameValue = masterViewingEntry?.playerName || supabasePlayerName) {
     if (demoPreview) return;
     if (!supabaseRoomId || !playerId) throw new Error('La ficha solo puede guardarse cuando el jugador está conectado a una sala de Owlbear con identidad disponible.');
     const response = await fetch(SUPABASE_URL + '/rest/v1/characters?on_conflict=room_id,player_id', {
@@ -3382,6 +3383,13 @@ import ITEMS from './items.json';
       sheet: repairGenericStatLabels(row.sheet as RawSheet) as RawSheet, live: false
     }));
     refreshRoomSheetList();
+    if (masterViewingEntry) {
+      const latest = liveRoomSheets.find(entry => entry.playerId === masterViewingEntry?.playerId);
+      if (latest && !syncPending && !supabaseSaving) {
+        masterViewingEntry = latest;
+        sheet = JSON.parse(JSON.stringify(latest.sheet)) as RawSheet;
+      }
+    }
   }
 
   function saveSheetMutation() {
@@ -5393,6 +5401,27 @@ import ITEMS from './items.json';
     roomSheets = [...liveRoomSheets].sort((a,b) => (a.sheet?.name || '').localeCompare(b.sheet?.name || '', 'es'));
   }
 
+  function openMasterCharacter(entry: RoomEntry) {
+    if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
+    masterViewingEntry = { ...entry, sheet: JSON.parse(JSON.stringify(entry.sheet)) as RawSheet };
+    sheet = JSON.parse(JSON.stringify(entry.sheet)) as RawSheet;
+    playerCreating = false;
+    demoPreview = false;
+    syncPending = false;
+    playerSheetTab = 'Acciones';
+    notice = '';
+  }
+
+  async function closeMasterCharacter() {
+    if (syncPending) await flushAutoSync();
+    if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
+    masterViewingEntry = null;
+    sheet = null;
+    playerCreating = false;
+    syncPending = false;
+    playerSheetTab = 'Acciones';
+  }
+
   function exportMasterCopy(entry: RoomEntry) {
     const json = JSON.stringify(entry.sheet, null, 2);
     const safeName = (entry.sheet?.name || entry.playerName || 'personaje')
@@ -5653,6 +5682,7 @@ import ITEMS from './items.json';
 
   <main class="main" class:gm-layout={obrRole === 'GM'}>
     {#if obrRole === 'GM'}
+      {#if !masterViewingEntry}
       <nav class="master-tabs" role="tablist" aria-label="Herramientas del director">
         {#each masterTabs as tab}
           <button class:active={masterTab === tab} role="tab" aria-selected={masterTab === tab} on:click={() => openMasterTab(tab)}>{tab}</button>
@@ -5668,7 +5698,7 @@ import ITEMS from './items.json';
               <article class="character-card">
                 <div class="card-symbol">✧</div>
                 <div class="card-identity"><h3>{entry.sheet?.name || 'Personaje sin nombre'}</h3><p>{entry.playerName} · Registro oficial en Supabase</p></div>
-                <div class="actions"><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
+                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Visualizar hoja</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button></div>
                 <details class="gm-sheet-details">
                   <summary>Ver ficha</summary>
                   <div class="actions level-up-action"><button class="primary" on:click={() => openLevelUp(entry)} disabled={Number(getCharacterStat(entry.sheet,'PERSONAJE','Nivel'))>=20}>Subir nivel</button></div>
@@ -6361,7 +6391,8 @@ import ITEMS from './items.json';
         </section>
 
       {/if}
-      {#if sheet && !playerCreating}
+      {/if}
+      {#if sheet && !playerCreating && !masterViewingEntry}
         <section class="panel player-character-actions">
           {#if demoPreview}
             <p class="muted"><strong>Vista de ejemplo.</strong> Este personaje es ficticio y no se guarda ni modifica tu ficha.</p>
@@ -6391,6 +6422,7 @@ import ITEMS from './items.json';
               </div>
             </div>
             <div class="header-actions">
+              {#if obrRole === 'GM' && masterViewingEntry}<button type="button" class="primary" on:click={closeMasterCharacter}>Salir de hoja del jugador</button>{/if}
               {#if demoPreview}
                 <button type="button" on:click={closeDemoPreview}>Salir de vista previa</button>
               {:else}
