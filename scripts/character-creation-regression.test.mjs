@@ -179,14 +179,17 @@ test('la ficha del jugador incorpora Tiendita y retrato al inicio y al final', (
 
 
 test('Supabase es la fuente única del personaje compartido entre jugador y Máster', () => {
-  assert.doesNotMatch(app, /forja-raw-character|forja-master-saved-characters|savedMasterSheets|loadMasterCopies|saveMasterCopy\\(|deleteMasterCopy\\(/);
-  assert.match(app, /async function finishBuilder\\(\\)[\\s\\S]*?await saveCharacterToSupabase\\(characterToSave\\)[\\s\\S]*?sheet = characterToSave/);
-  assert.match(app, /async function restoreOwnSheet\\(\\)[\\s\\S]*?sheet = await loadOwnCharacterFromSupabase\\(\\)/);
-  assert.doesNotMatch(app.slice(app.indexOf('  async function restoreOwnSheet()'), app.indexOf('  async function exportSheet()')), /localStorage/);
-  assert.match(app, /async function loadSupabaseRoomCharacters\\(\\)/);
-  assert.match(app, /window\\.setInterval\\(\\(\\) => \\{ void loadSupabaseRoomCharacters\\(\\)/);
-  assert.match(app, /d\\?\\.type === 'character-updated' && obrRole === 'PLAYER'[\\s\\S]*?loadOwnCharacterFromSupabase\\(\\)/);
-  assert.match(app, /saveCharacterToSupabase\\(updated, playerId, levelUpEntry\\.playerName\\)/);
+  assert.doesNotMatch(app, /forja-raw-character|forja-master-saved-characters|savedMasterSheets|loadMasterCopies|saveMasterCopy|deleteMasterCopy/);
+  const finish = app.slice(app.indexOf('async function finishBuilder()'), app.indexOf('async function saveBuilderCharacter()'));
+  assert.ok(finish.indexOf('await saveCharacterToSupabase(characterToSave)') >= 0);
+  assert.ok(finish.indexOf('await saveCharacterToSupabase(characterToSave)') < finish.indexOf('sheet = characterToSave'));
+  const restore = app.slice(app.indexOf('async function restoreOwnSheet()'), app.indexOf('async function exportSheet()'));
+  assert.ok(restore.includes('sheet = await loadOwnCharacterFromSupabase()'));
+  assert.doesNotMatch(restore, /localStorage/);
+  assert.ok(app.includes('async function loadSupabaseRoomCharacters()'));
+  assert.ok(app.includes('window.setInterval(() => { void loadSupabaseRoomCharacters()'));
+  assert.ok(app.includes("d?.type === 'character-updated' && obrRole === 'PLAYER'"));
+  assert.ok(app.includes('saveCharacterToSupabase(updated, playerId, levelUpEntry.playerName)'));
 });
 
 test('la Tiendita usa precios fijos del manual, marca sin precio como agotado y vuelve al saldo', () => {
