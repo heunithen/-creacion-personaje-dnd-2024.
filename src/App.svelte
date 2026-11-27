@@ -69,6 +69,7 @@
   let masterViewingEntry: RoomEntry | null = null;
   let supabaseSaveTimer: ReturnType<typeof setTimeout> | undefined;
   let supabaseSaving = false;
+  let webReadOnly = false;
   let fileInput: HTMLInputElement;
   type RollPart = { id: string; name: string; die: number; bonus: number };
   type CustomRoll = { id: string; name: string; parts: RollPart[] };
@@ -3464,7 +3465,7 @@ import ITEMS from './items.json';
   }
 
   function scheduleAutoSync() {
-    if (!sheet) return;
+    if (!sheet || webReadOnly) return;
     syncPending = true;
     if (supabaseSaveTimer) clearTimeout(supabaseSaveTimer);
     supabaseSaveTimer = setTimeout(() => { void flushAutoSync(); }, 450);
@@ -3770,6 +3771,7 @@ import ITEMS from './items.json';
   }
   async function saveCharacterToSupabase(snapshot: RawSheet, playerId = masterViewingEntry?.playerId || supabasePlayerId, playerNameValue = masterViewingEntry?.playerName || supabasePlayerName) {
     if (demoPreview) return;
+    if (webReadOnly) throw new Error('Esta ficha está abierta en modo de solo lectura.');
     if (!supabaseRoomId || !playerId) throw new Error('La ficha solo puede guardarse cuando el jugador está conectado a una sala de Owlbear con identidad disponible.');
     const response = await fetch(SUPABASE_URL + '/rest/v1/characters?on_conflict=room_id,player_id', {
       method: 'POST',
@@ -3799,6 +3801,58 @@ import ITEMS from './items.json';
         character: snapshot
       }, { destination: 'ALL' });
     } catch {}
+  }
+
+  function openWebCharacter(entry: RoomEntry) {
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.hash = '';
+    url.searchParams.set('web', '1');
+    url.searchParams.set('room', supabaseRoomId);
+    url.searchParams.set('player', entry.playerId);
+    window.open(url.toString(), '_blank', 'noopener');
+  }
+
+  async function restoreSharedWebCharacter() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('web') !== '1') return;
+    const roomId = (params.get('room') || '').trim();
+    const playerId = (params.get('player') || '').trim();
+    webReadOnly = true;
+    characterStorageReady = false;
+    if (!roomId || !playerId) {
+      syncStatus = 'El enlace de la ficha está incompleto. Solicita al director un nuevo enlace.';
+      characterStorageReady = true;
+      return;
+    }
+    try {
+      const query = '?select=sheet,player_name&room_id=eq.' + encodeURIComponent(roomId) +
+        '&player_id=eq.' + encodeURIComponent(playerId) + '&deleted_at=is.null&limit=1';
+      const response = await fetch(SUPABASE_URL + '/rest/v1/characters' + query, {
+        headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }
+      });
+      if (!response.ok) throw new Error('Supabase (' + response.status + ').');
+      const rows = await response.json();
+      const row = rows?.[0];
+      if (!row?.sheet || !Array.isArray(row.sheet.sections)) {
+        sheet = null;
+        syncStatus = 'No se encontró la ficha. Puede haber sido eliminada o el enlace ya no ser válido.';
+      } else {
+        sheet = repairGenericStatLabels(row.sheet as RawSheet) as RawSheet;
+        playerName = String(row.player_name || 'Jugador');
+        supabaseRoomId = roomId;
+        supabasePlayerId = playerId;
+        supabasePlayerName = playerName;
+        playerCreating = false;
+        demoPreview = false;
+        syncStatus = 'Ficha compartida · Solo lectura.';
+      }
+    } catch (error) {
+      sheet = null;
+      syncStatus = 'No se pudo abrir la ficha compartida: ' + (error instanceof Error ? error.message : String(error));
+    } finally {
+      characterStorageReady = true;
+    }
   }
 
   async function loadOwnCharacterFromSupabase(): Promise<RawSheet | null> {
@@ -3843,7 +3897,7 @@ import ITEMS from './items.json';
   }
 
   function saveSheetMutation() {
-    if (!sheet) return;
+    if (!sheet || webReadOnly) return;
     void saveCharacterToSupabase(sheet).catch(error => {
       syncStatus = 'Error al guardar en Supabase: ' + (error instanceof Error ? error.message : String(error));
     });
@@ -6309,14 +6363,15 @@ import ITEMS from './items.json';
         syncStatus = 'Owlbear está abierto, pero no se pudo leer la sala.';
       }
     });
+    else void restoreSharedWebCharacter();
   });
 </script>
 
 <svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
-<div class="app-shell">
+<div class="app-shell" class:web-readonly={webReadOnly}>
   <header class="topbar">
     <a class="brand" href="#inicio"><img class="brand-icon" src="/-creacion-personaje-dnd-2024./icono.webp" alt="" /><span><strong>FORJA DE AVENTUREROS</strong><small>D&D · 2024</small></span></a>
-    {#if obrRole === 'GM' && masterViewingEntry}<nav><span>{masterViewingEntry.playerName || 'Jugador'}</span><button type="button" class="primary" on:click={closeMasterCharacter}>Salir de hoja del jugador</button></nav>{:else if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{playerName || 'Jugador'}</span></nav>{/if}
+    {#if obrRole === 'GM' && masterViewingEntry}<nav><span>{masterViewingEntry.playerName || 'Jugador'}</span><button type="button" class="primary" on:click={closeMasterCharacter}>Salir de hoja del jugador</button></nav>{:else if obrRole === 'GM'}<nav><span>Director de juego</span></nav>{:else}<nav><span>{webReadOnly ? 'Vista web · Solo lectura' : playerName || 'Jugador'}</span></nav>{/if}
   </header>
 
   <main class="main" class:gm-layout={obrRole === 'GM' && !masterViewingEntry}>
@@ -6364,7 +6419,7 @@ import ITEMS from './items.json';
                     </button>
                   </div>
                 {/if}
-                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportCharacterSummary(entry.sheet, entry.playerName)}>Exportar PDF</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button><button class="danger roster-delete-button" type="button" on:click={() => deleteRoomCharacter(entry)}>Eliminar personaje</button></div>
+                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportCharacterSummary(entry.sheet, entry.playerName)}>Exportar PDF</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button><button class="secondary" on:click={() => openWebCharacter(entry)}>Abrir ficha en navegador</button><button class="danger roster-delete-button" type="button" on:click={() => deleteRoomCharacter(entry)}>Eliminar personaje</button></div>
               </article>
             {/each}
           {/if}
@@ -7091,6 +7146,8 @@ import ITEMS from './items.json';
       {/if}
       {#if sheet && !playerCreating && !masterViewingEntry}
         <section class="panel player-character-actions">
+          {#if webReadOnly}<p class="muted">Ficha compartida para consulta. No se pueden modificar sus datos desde este enlace.</p><button class="primary" type="button" on:click={() => exportCharacterSummary(sheet, playerName)}>Exportar resumen PDF</button>
+          {:else if demoPreview}
           {#if demoPreview}
             <p class="muted"><strong>Vista de ejemplo.</strong> Este personaje es ficticio y no se guarda ni modifica tu ficha.</p>
             <button class="secondary" on:click={closeDemoPreview}>Volver al inicio</button>
@@ -7105,7 +7162,7 @@ import ITEMS from './items.json';
         </section>
       {/if}
       {#if sheet && !playerCreating}
-        <article class="character-sheet nautical-sheet">
+        <article class="character-sheet nautical-sheet" inert={webReadOnly}>
           <header class="sheet-banner ddb-character-header nautical-header">
             <div class="portrait-frame">{#if sheet.portrait}<img src={String(sheet.portrait)} alt="Retrato de {sheet.name || 'personaje'}" />{:else}<button type="button" class="sheet-portrait-choose" on:click={()=>{sheetPortraitPickerOpen=true;portraitPickerError='';}} aria-label="Elegir imagen del personaje" title="Elegir imagen del personaje">＋</button>{/if}</div>
             <div class="sheet-banner-copy">
