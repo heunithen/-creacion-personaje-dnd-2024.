@@ -11170,4 +11170,26 @@ import ITEMS from './items.json';
     :global(.builder-step-track){padding:.55rem!important}
   }
 
+
+
+  /* Restaurar la escala editorial de los nombres en las tarjetas de selección */
+  :global(.builder-class-title-row h4),
+  :global(.builder-background-title-row h4),
+  :global(.builder-species-title-row h4){
+    margin:0!important;
+    color:#fff!important;
+    font:700 clamp(2.3rem,5vw,3.5rem)/1.02 Georgia,'Times New Roman',serif!important;
+    letter-spacing:-.035em!important;
+    text-align:left!important;
+    text-wrap:balance;
+  }
+  @media(max-width:620px){
+    :global(.builder-class-title-row h4),
+    :global(.builder-background-title-row h4),
+    :global(.builder-species-title-row h4){
+      font-size:2.1rem!important;
+      line-height:1.08!important;
+    }
+  }
+
 </style>
