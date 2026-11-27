@@ -27,3 +27,7 @@ test('inventario reconoce y formatea cantidades', () => {
   assert.equal(formatInventoryLine('Daga', 1), 'Daga');
   assert.equal(formatInventoryLine('Daga', 4), 'Daga ×4');
 });
+
+test('el saldo de 95 po se representa como 95 monedas de oro', () => {
+  assert.deepEqual(copperToCurrency(9500), { PO: 95, PPt: 0, PE: 0, PP: 0, PC: 0 });
+});
