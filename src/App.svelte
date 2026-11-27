@@ -6088,6 +6088,67 @@ import ITEMS from './items.json';
   }
 
 
+  function exportCharacterSummary(target: RawSheet, playerLabel = '') {
+    const safeName = (target.name || 'personaje')
+      .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'personaje';
+    const escapeHtml = (value: unknown) => String(value ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const cleanValue = (value: unknown) => {
+      const text = displayValue(value).trim();
+      if (!text || text === '—' || text === '-') return '';
+      if (/^[{[]/.test(text)) {
+        try { const parsed = JSON.parse(text); if (parsed && typeof parsed === 'object') return ''; } catch {}
+      }
+      return text;
+    };
+    const excludedSection = /^(combate|ataques?|armas?|valores|configuracion|configuraci[oó]n|metadata|datos internos)$/i;
+    const excludedField = /^(id|skills|formula de clase de armadura|ataque cd ?\\d+)$/i;
+    const sections = sectionPairs(target.sections || []).flatMap(pair => {
+      const title = String(pair.heading.name || '').trim();
+      if (!title || excludedSection.test(title)) return [];
+      const fields = (pair.heading.stats || []).flatMap((stat, index) => {
+        const label = String(stat.name || '').trim();
+        if (!label || excludedField.test(label) || /json|formula interna/i.test(label)) return [];
+        const value = cleanValue(pair.values?.stats?.[index]?.value ?? stat.value);
+        return value ? [{ label, value }] : [];
+      });
+      return fields.length ? [{ title, fields }] : [];
+    });
+    const identity = [
+      sheetClassName(target) ? sheetClassName(target) + ' · Nivel ' + sheetLevel(target) : 'Nivel ' + sheetLevel(target),
+      sheetValueByNames(target, ['Especie','Raza']),
+      sheetValueByNames(target, ['Trasfondo','Antecedente']),
+      sheetValueByNames(target, ['Nombre del jugador','Jugador']) || playerLabel
+    ].filter(Boolean);
+    const sectionsHtml = sections.map(section =>
+      '<section class="summary-section"><h2>' + escapeHtml(section.title) + '</h2>' +
+      section.fields.map(field => '<p><strong>' + escapeHtml(field.label) + ':</strong> ' +
+        escapeHtml(field.value).replace(/\\n/g, '<br>') + '</p>').join('') + '</section>'
+    ).join('');
+    const popup = window.open('', '_blank');
+    if (!popup) {
+      notice = 'El navegador bloqueó la ventana de impresión. Permite las ventanas emergentes para exportar el PDF.';
+      return;
+    }
+    popup.document.open();
+    popup.document.write('<!doctype html><html lang="es"><head><meta charset="utf-8"><title>' +
+      escapeHtml(target.name || 'Personaje') + '</title><style>' +
+      '@page{size:A4;margin:18mm}*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#20242a;font-size:10.5pt;line-height:1.48;margin:0}' +
+      'header{border-bottom:2px solid #343b46;padding-bottom:12px;margin-bottom:22px}h1{font-size:25pt;line-height:1.15;margin:0 0 8px;font-weight:700}' +
+      '.meta{font-size:10pt;color:#59616c;margin:0}h2{font-size:13pt;margin:20px 0 8px;padding-bottom:4px;border-bottom:1px solid #cbd0d6;color:#26313d}' +
+      '.summary-section{margin:0 0 15px;break-inside:auto}.summary-section p{margin:5px 0;white-space:normal;overflow-wrap:anywhere;break-inside:avoid}' +
+      'strong{font-weight:700;color:#303944}@media print{a{color:inherit;text-decoration:none}}' +
+      '</style></head><body><header><h1>' + escapeHtml(target.name || 'Personaje') +
+      '</h1><p class="meta">' + escapeHtml(identity.join(' · ')) + '</p></header>' +
+      (sectionsHtml || '<p>Esta ficha todavía no contiene información para resumir.</p>') +
+      '<script>window.addEventListener("load",function(){setTimeout(function(){window.focus();window.print();},250);});</script>' +
+      '</body></html>');
+    popup.document.close();
+    notice = 'Resumen preparado. En el diálogo de impresión, selecciona «Guardar como PDF».';
+  }
+
   async function exportSheet() {
     if (!sheet) return;
     const json = JSON.stringify(sheet, null, 2);
@@ -6283,7 +6344,7 @@ import ITEMS from './items.json';
                     </button>
                   </div>
                 {/if}
-                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button><button class="danger roster-delete-button" type="button" on:click={() => deleteRoomCharacter(entry)}>Eliminar personaje</button></div>
+                <div class="actions"><button class="primary" on:click={() => openMasterCharacter(entry)}>Ver ficha</button><button class="secondary" on:click={() => assignSelectedToken(entry)}>Asignar token</button><button class="secondary" on:click={() => exportCharacterSummary(entry.sheet, entry.playerName)}>Exportar PDF</button><button class="secondary" on:click={() => exportMasterCopy(entry)}>Exportar JSON</button><button class="danger roster-delete-button" type="button" on:click={() => deleteRoomCharacter(entry)}>Eliminar personaje</button></div>
               </article>
             {/each}
           {/if}
@@ -7001,7 +7062,7 @@ import ITEMS from './items.json';
             <div class="builder-actions">
               <button class="secondary" on:click={() => { builderPreview = null; builderStep = 5; }}>Volver a editar</button>
               <button type="button" class="primary" disabled={builderSaving} on:click={saveBuilderCharacter}>{builderSaving ? 'Guardando…' : 'Guardar personaje en mi ficha'}</button>
-              <button class="secondary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
+              <button class="secondary" on:click={() => exportCharacterSummary(builderPreview!, playerName)}>Exportar PDF</button><button class="secondary" on:click={downloadBuilderSheet}>Exportar ficha JSON</button>
               <button class="secondary" on:click={startBuilder}>Crear otro personaje</button>
             </div>
           {/if}
@@ -7041,7 +7102,7 @@ import ITEMS from './items.json';
 remove exit from sheet header              {#if demoPreview}
                 <button type="button" on:click={closeDemoPreview}>Salir de vista previa</button>
               {:else}
-                <button type="button" on:click={exportSheet}>Exportar</button>
+                <button type="button" on:click={() => exportCharacterSummary(sheet!, playerName)}>Exportar PDF</button><button type="button" on:click={exportSheet}>Exportar JSON</button>
               {/if}
             </div>
           </header>
