@@ -13,7 +13,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@owlbear-rodeo/sdk": "3.1.0"
+    "@owlbear-rodeo/sdk": "3.1.0",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.3",
