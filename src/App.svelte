@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import OBR from '@owlbear-rodeo/sdk';
-  import { buildImage, buildLabel, buildShape, buildText } from '@owlbear-rodeo/sdk';
+  import { buildImage, buildLabel } from '@owlbear-rodeo/sdk';
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
   import { ELF_BONUS_SKILLS, getAllowedWeaponMasteries, getStandardArrayAssignments, isOriginFeatDistinct, isSpeciesSkillAllowed, isValidAbilityIncreases, isValidUniqueSelection } from './builderRules.mjs';
 
@@ -895,59 +895,35 @@
   const TOKEN_METADATA_KEY = 'com.heunithen.forja/character-token';
 
 
-  function buildCharacterBubble(token: any, text: string, color: string, position: { x: number; y: number }, ids: { background: string; text: string }) {
-    const diameter = 30;
-    const behaviors = ['ROTATION', 'VISIBLE', 'COPY', 'SCALE'];
-    const background = buildShape()
-      .shapeType('CIRCLE')
-      .width(diameter)
-      .height(diameter)
-      .fillColor(color)
-      .fillOpacity(0.85)
-      .strokeColor(color)
-      .strokeOpacity(0.5)
-      .strokeWidth(0)
+  const TOKEN_ADJUST_TOOL_ID = 'com.heunithen.forja/adjust-character-stats';
+  const TOKEN_ADJUST_MODE_ID = TOKEN_ADJUST_TOOL_ID + '/mode';
+  const tokenStatAdjustQueues = new Map<string, Promise<void>>();
+
+  function buildTokenControlLabel(token: any, characterId: string, id: string, text: string, position: {x:number;y:number}, width: number, background: string, action?: {stat:string;delta:number}) {
+    const controlMetadata = action ? { control: true, characterId, stat: action.stat, delta: action.delta } : { display: true, characterId };
+    return buildLabel()
+      .plainText(text)
       .position(position)
+      .width(width)
+      .height(25)
+      .fontSize(13)
+      .fontFamily('Roboto, sans-serif')
+      .fontWeight(700)
+      .textAlign('CENTER')
+      .textAlignVertical('MIDDLE')
+      .fillColor('#ffffff')
+      .backgroundColor(background)
+      .backgroundOpacity(0.94)
+      .cornerRadius(12)
       .attachedTo(token.id)
       .layer('ATTACHMENT')
       .locked(true)
-      .id(ids.background)
+      .id(id)
+      .metadata({ [TOKEN_METADATA_KEY]: controlMetadata })
       .visible(token.visible)
-      .disableAttachmentBehavior(behaviors as any)
-      .disableHit(true)
+      .disableAttachmentBehavior(['ROTATION','VISIBLE','COPY','SCALE'] as any)
+      .disableHit(!action)
       .build();
-    const label = buildText()
-      .position({ x: position.x - diameter / 2, y: position.y - diameter / 2 + 0.8 })
-      .plainText(text)
-      .textAlign('CENTER')
-      .textAlignVertical('MIDDLE')
-      .fontSize(text.length > 2 ? 15 : 22)
-      .fontFamily('Roboto, sans-serif')
-      .textType('PLAIN')
-      .height(diameter)
-      .width(diameter)
-      .fontWeight(400)
-      .attachedTo(token.id)
-      .layer('TEXT')
-      .locked(true)
-      .id(ids.text)
-      .visible(token.visible)
-      .disableAttachmentBehavior(behaviors as any)
-      .disableHit(true)
-      .build();
-    return [background, label];
-  }
-
-  function createRoundedBarPoints(width: number, height: number, radius: number, fill = 1) {
-    const w = Math.max(0, Math.min(width, width * fill));
-    const r = Math.min(radius, height / 2, w / 2);
-    if (w <= 0) return [];
-    return [
-      { x: r, y: 0 }, { x: Math.max(r, w - r), y: 0 },
-      { x: w, y: r }, { x: w, y: height - r },
-      { x: Math.max(r, w - r), y: height }, { x: r, y: height },
-      { x: 0, y: height - r }, { x: 0, y: r }
-    ];
   }
 
   async function syncCharacterBubbles(targetSheet: RawSheet, characterId: string) {
@@ -961,118 +937,120 @@
       item.layer === 'CHARACTER' &&
       (item.metadata as any)?.[TOKEN_METADATA_KEY]?.characterId === characterId
     );
+    const dpi = await OBR.scene.grid.getDpi();
+    const viewportScale = Math.max(0.05, Number(await OBR.viewport.getScale()) || 1);
 
     for (const token of linkedTokens as any[]) {
       const tokenData = { ...(token.metadata as any)[TOKEN_METADATA_KEY] };
       const oldIds = [
+        ...(Array.isArray(tokenData.statControlIds) ? tokenData.statControlIds : []),
         tokenData.hpBubbleId, tokenData.acBubbleId, tokenData.hpBarBackgroundId,
-        tokenData.hpBarFillId, tokenData.acShapeId, tokenData.acTextId, tokenData.hpTextId
+        tokenData.hpBarFillId, tokenData.acShapeId, tokenData.acTextId, tokenData.hpTextId,
+        token.id + '-health-background', token.id + '-health-fill', token.id + '-health-text',
+        token.id + '-ac-background', token.id + '-ac-text'
       ].filter(Boolean);
-      if (oldIds.length) {
-        const existingIds = new Set(sceneItems.map((item: any) => item.id));
-        const deletableIds = oldIds.filter((id: string) => existingIds.has(id));
-        if (deletableIds.length) await OBR.scene.items.deleteItems(deletableIds);
-      }
+      const existingIds = new Set(sceneItems.map((item: any) => item.id));
+      const deletableIds = [...new Set(oldIds)].filter((id: string) => existingIds.has(id));
+      if (deletableIds.length) await OBR.scene.items.deleteItems(deletableIds);
 
-      // Mismo sistema de la extensión Stat Bubbles: dimensiones en unidades de escena,
-      // calculadas según el tamaño real del token y vinculadas sin heredar su escalado.
-      const dpi = await OBR.scene.grid.getDpi();
       const image = token.image || { width: 1, height: 1 };
       const gridDpi = token.grid?.dpi || dpi;
       const boundsWidth = Math.abs(image.width * (dpi / gridDpi) * (token.scale?.x || 1));
       const boundsHeight = Math.abs(image.height * (dpi / gridDpi) * (token.scale?.y || 1));
       const center = { x: token.position.x, y: token.position.y };
-      const barHeight = 20;
-      const barPadding = 2;
-      const barWidth = Math.max(20, boundsWidth - barPadding * 2);
-      const barPosition = {
-        x: center.x - boundsWidth / 2 + barPadding,
-        y: center.y + boundsHeight / 2 - barHeight - 2
-      };
-      const hpRatio = maxHp > 0 ? Math.max(0, Math.min(1, currentHp / maxHp)) : 0;
-      const behaviors = ['ROTATION', 'VISIBLE', 'COPY', 'SCALE'];
-
-      const barBackground = buildShape()
-        .shapeType('RECTANGLE')
-        .width(barWidth)
-        .height(barHeight)
-        .fillColor('#A4A4A4')
-        .fillOpacity(0.6)
-        .strokeWidth(0)
-        .position(barPosition)
-        .zIndex(10000)
-        .attachedTo(token.id)
-        .layer('ATTACHMENT')
-        .locked(true)
-        .id(token.id + '-health-background')
-        .visible(token.visible)
-        .disableAttachmentBehavior(behaviors as any)
-        .disableHit(true)
-        .build();
-
-      const fillWidth = barWidth * hpRatio;
-      const barFill = fillWidth > 0 ? buildShape()
-        .shapeType('RECTANGLE')
-        .width(fillWidth)
-        .height(barHeight)
-        .fillColor(hpRatio <= 0.25 ? '#e04444' : hpRatio <= 0.5 ? '#e3a43b' : '#42b86a')
-        .fillOpacity(0.85)
-        .strokeWidth(0)
-        .position(barPosition)
-        .zIndex(20000)
-        .attachedTo(token.id)
-        .layer('ATTACHMENT')
-        .locked(true)
-        .id(token.id + '-health-fill')
-        .visible(token.visible)
-        .disableAttachmentBehavior(behaviors as any)
-        .disableHit(true)
-        .build() : null;
-
-      const hpText = buildText()
-        .position({ x: barPosition.x, y: barPosition.y - 0.3 })
-        .plainText(currentHp + '/' + maxHp + (tempHp > 0 ? ' +' + tempHp : ''))
-        .textAlign('CENTER')
-        .textAlignVertical('MIDDLE')
-        .fontSize(14)
-        .fontFamily('Roboto, sans-serif')
-        .textType('PLAIN')
-        .height(barHeight)
-        .width(barWidth)
-        .fontWeight(700)
-        .attachedTo(token.id)
-        .layer('TEXT')
-        .locked(true)
-        .id(token.id + '-health-text')
-        .visible(token.visible)
-        .disableAttachmentBehavior(behaviors as any)
-        .disableHit(true)
-        .build();
-
-      const acPosition = {
-        x: center.x + boundsWidth / 2 - 17,
-        y: barPosition.y - 19
-      };
-      const acItems = buildCharacterBubble(token, String(armorClass), '#6495ed', acPosition, {
-        background: token.id + '-ac-background',
-        text: token.id + '-ac-text'
-      });
-      const itemsToAdd = [barBackground, ...(barFill ? [barFill] : []), hpText, ...acItems];
-      await OBR.scene.items.addItems(itemsToAdd);
+      const rowY = (row:number) => center.y - boundsHeight / 2 - (16 + row * 30) / viewportScale;
+      const xOffset = (pixels:number) => pixels / viewportScale;
+      const labels = [
+        buildTokenControlLabel(token, characterId, token.id + '-hp-minus', '−', {x:center.x-xOffset(58),y:rowY(0)}, 28, '#303b45', {stat:'hp',delta:-1}),
+        buildTokenControlLabel(token, characterId, token.id + '-hp-value', currentHp + '/' + maxHp, {x:center.x,y:rowY(0)}, 64, '#17232d'),
+        buildTokenControlLabel(token, characterId, token.id + '-hp-plus', '+', {x:center.x+xOffset(58),y:rowY(0)}, 28, '#303b45', {stat:'hp',delta:1}),
+        buildTokenControlLabel(token, characterId, token.id + '-temp-minus', '−', {x:center.x-xOffset(35),y:rowY(1)}, 26, '#303b45', {stat:'temp',delta:-1}),
+        buildTokenControlLabel(token, characterId, token.id + '-temp-value', String(tempHp), {x:center.x,y:rowY(1)}, 30, '#218447'),
+        buildTokenControlLabel(token, characterId, token.id + '-temp-plus', '+', {x:center.x+xOffset(35),y:rowY(1)}, 26, '#303b45', {stat:'temp',delta:1}),
+        buildTokenControlLabel(token, characterId, token.id + '-ac-minus', '−', {x:center.x-xOffset(35),y:rowY(2)}, 26, '#303b45', {stat:'ac',delta:-1}),
+        buildTokenControlLabel(token, characterId, token.id + '-ac-value', String(armorClass), {x:center.x,y:rowY(2)}, 30, '#3569a8'),
+        buildTokenControlLabel(token, characterId, token.id + '-ac-plus', '+', {x:center.x+xOffset(35),y:rowY(2)}, 26, '#303b45', {stat:'ac',delta:1})
+      ];
+      await OBR.scene.items.addItems(labels);
 
       tokenData.hitPoints = { current: currentHp, maximum: maxHp, temporary: tempHp };
       tokenData.armorClass = armorClass;
-      tokenData.hpBubbleId = token.id + '-health-text';
-      tokenData.acBubbleId = token.id + '-ac-text';
-      tokenData.hpBarBackgroundId = token.id + '-health-background';
-      tokenData.hpBarFillId = token.id + '-health-fill';
-      tokenData.hpTextId = token.id + '-health-text';
-      tokenData.acShapeId = token.id + '-ac-background';
-      tokenData.acTextId = token.id + '-ac-text';
+      tokenData.statControlIds = labels.map((item:any) => item.id);
+      tokenData.hpBubbleId = token.id + '-hp-value';
+      tokenData.acBubbleId = token.id + '-ac-value';
+      delete tokenData.hpBarBackgroundId;
+      delete tokenData.hpBarFillId;
+      delete tokenData.acShapeId;
+      delete tokenData.acTextId;
+      delete tokenData.hpTextId;
       await OBR.scene.items.updateItems([token.id], (items) => {
         for (const item of items) item.metadata[TOKEN_METADATA_KEY] = tokenData;
       });
     }
+  }
+
+  async function applyTokenStatAdjustment(characterId: string, stat: string, delta: number) {
+    if (obrRole !== 'GM' && characterId !== supabasePlayerId) {
+      await OBR.notification.show('Solo puedes modificar las estadísticas de tu propio personaje.', 'WARNING');
+      return;
+    }
+    const query = '?select=sheet,player_name&room_id=eq.' + encodeURIComponent(supabaseRoomId) +
+      '&player_id=eq.' + encodeURIComponent(characterId) + '&deleted_at=is.null&limit=1';
+    const response = await fetch(SUPABASE_URL + '/rest/v1/characters' + query, {
+      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!response.ok) throw new Error('No se pudo leer la ficha del personaje desde Supabase.');
+    const rows = await response.json();
+    if (!rows?.[0]?.sheet) throw new Error('No se encontró la ficha vinculada a este token.');
+    const updated = repairGenericStatLabels(rows[0].sheet as RawSheet) as RawSheet;
+    const statName = stat === 'hp' ? 'Puntos de golpe actuales' : stat === 'temp' ? 'Puntos de golpe temporales' : 'Armor Class';
+    const fallback = stat === 'ac' ? 10 : 0;
+    const current = getCharacterNumber(updated, 'COMBATE', statName, fallback);
+    const maximum = getCharacterNumber(updated, 'COMBATE', 'Puntos de golpe máximos', current);
+    const next = stat === 'hp'
+      ? Math.max(0, Math.min(maximum, current + delta))
+      : Math.max(0, current + delta);
+    setCharacterStat(updated, 'COMBATE', statName, stat === 'hp' || stat === 'temp' ? next + ' PG' : next);
+    await saveCharacterToSupabase(updated, characterId, rows[0].player_name || 'Jugador');
+    if (characterId === supabasePlayerId) sheet = updated;
+    if (masterViewingEntry?.playerId === characterId) {
+      masterViewingEntry = {...masterViewingEntry, sheet:updated};
+      sheet = updated;
+    }
+  }
+
+  async function adjustTokenStat(characterId: string, stat: string, delta: number) {
+    const previous = tokenStatAdjustQueues.get(characterId) || Promise.resolve();
+    const next = previous.then(() => applyTokenStatAdjustment(characterId, stat, delta));
+    tokenStatAdjustQueues.set(characterId, next);
+    try {
+      await next;
+    } finally {
+      if (tokenStatAdjustQueues.get(characterId) === next) tokenStatAdjustQueues.delete(characterId);
+    }
+  }
+
+  async function registerTokenStatsTool() {
+    await OBR.tool.createMode({
+      id: TOKEN_ADJUST_MODE_ID,
+      icons: [{ icon: 'https://heunithen.github.io/-creacion-personaje-dnd-2024./icon.svg', label: 'Ajustar estadísticas' }],
+      cursors: [{ cursor: 'pointer' }],
+      onToolClick: (_context:any, event:any) => {
+        const data = event.target?.metadata?.[TOKEN_METADATA_KEY];
+        if (data?.control && data.characterId && ['hp','temp','ac'].includes(data.stat)) {
+          void adjustTokenStat(String(data.characterId), String(data.stat), Number(data.delta) || 0)
+            .catch(error => OBR.notification.show(error instanceof Error ? error.message : String(error), 'ERROR'));
+        }
+        return false;
+      }
+    });
+    await OBR.tool.create({
+      id: TOKEN_ADJUST_TOOL_ID,
+      icons: [{ icon: 'https://heunithen.github.io/-creacion-personaje-dnd-2024./icon.svg', label: 'Ajustar estadísticas' }],
+      defaultMode: TOKEN_ADJUST_MODE_ID,
+      onClick: () => true,
+      disabled: { roles: ['GM','PLAYER'] }
+    });
   }
 
   async function assignSelectedToken(entry: RoomEntry) {
@@ -5850,6 +5828,7 @@ import ITEMS from './items.json';
         supabasePlayerId = await OBR.player.getId();
         supabasePlayerName = playerName;
         supabaseRoomId = OBR.room.id;
+        await registerTokenStatsTool();
         builderData.player = playerName;
         if (obrRole === 'GM') { await loadGithubRoomConfig(); }
         syncStatus = 'Conectado a Owlbear Rodeo como ' + (obrRole === 'GM' ? 'Director de juego.' : 'Jugador.');
