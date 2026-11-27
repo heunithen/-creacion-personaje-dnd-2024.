@@ -65,6 +65,8 @@
   let search = '';
   let crFilter = '';
   let selected: Selection[] = [];
+  let warnings: string[] = [];
+  let budgetMessage = '';
 
   $: budgetPerCharacter = BUDGETS[groupLevel][difficulty];
   $: budget = budgetPerCharacter * partySize;
@@ -76,23 +78,61 @@
     (!search.trim() || item.monster.name.toLocaleLowerCase('es').includes(search.trim().toLocaleLowerCase('es'))) &&
     (!crFilter || item.cr === crFilter)
   );
-  $: budgetState = spent > budget ? 'above' : spent === budget ? 'exact' : 'below';
+  $: budgetState = spent === budget ? 'exact' : 'below';
   $: { selected; totalCreatures; warnings = buildWarnings(); }
 
   function addMonster(monster: Monster) {
-    if (!monsterXp(monster)) return;
+    const cost = monsterXp(monster);
+    if (!cost) return;
+    if (spent + cost > budget) {
+      budgetMessage = 'No se puede añadir '+monster.name+': supera el presupuesto. Quedan '+formatXp(Math.max(0, remaining))+'.';
+      return;
+    }
+    budgetMessage = '';
     const found = selected.find(item => item.monster.name === monster.name);
     selected = found
       ? selected.map(item => item.monster.name === monster.name ? {...item, quantity:item.quantity+1} : item)
       : [...selected, {monster, quantity:1}];
   }
   function changeQuantity(name: string, delta: number) {
-    selected = selected
-      .map(item => item.monster.name === name ? {...item, quantity:Math.max(1, item.quantity + delta)} : item);
+    const current = selected.find(item => item.monster.name === name);
+    if (!current) return;
+    const quantity = Math.max(1, current.quantity + delta);
+    const nextSpent = spent + (quantity - current.quantity) * monsterXp(current.monster);
+    if (nextSpent > budget) {
+      budgetMessage = 'No se puede aumentar la cantidad: supera el presupuesto. Quedan '+formatXp(Math.max(0, remaining))+'.';
+      return;
+    }
+    budgetMessage = '';
+    selected = selected.map(item => item.monster.name === name ? {...item, quantity} : item);
   }
   function setQuantity(name: string, value: string) {
+    const current = selected.find(item => item.monster.name === name);
+    if (!current) return;
     const quantity = Math.max(1, Math.floor(Number(value) || 1));
+    const nextSpent = spent + (quantity - current.quantity) * monsterXp(current.monster);
+    if (nextSpent > budget) {
+      budgetMessage = 'Esa cantidad supera el presupuesto. Se mantiene la cantidad anterior.';
+      return;
+    }
+    budgetMessage = '';
     selected = selected.map(item => item.monster.name === name ? {...item, quantity} : item);
+  }
+  function changeGroupLevel(value: number) {
+    const nextBudget = BUDGETS[value][difficulty] * partySize;
+    if (spent > nextBudget) { budgetMessage = 'No se puede reducir el nivel: el encuentro actual supera el nuevo presupuesto.'; return; }
+    groupLevel = value; budgetMessage = '';
+  }
+  function changePartySize(value: number) {
+    const nextSize = Math.max(1, Math.floor(Number(value) || 1));
+    const nextBudget = BUDGETS[groupLevel][difficulty] * nextSize;
+    if (spent > nextBudget) { budgetMessage = 'No se puede reducir el grupo: el encuentro actual supera el nuevo presupuesto.'; return; }
+    partySize = nextSize; budgetMessage = '';
+  }
+  function changeDifficulty(value: 'easy'|'normal'|'hard') {
+    const nextBudget = BUDGETS[groupLevel][value] * partySize;
+    if (spent > nextBudget) { budgetMessage = 'No se puede bajar la dificultad objetivo: el encuentro actual supera ese presupuesto.'; return; }
+    difficulty = value; budgetMessage = '';
   }
   function removeMonster(name: string) {
     selected = selected.filter(item => item.monster.name !== name);
@@ -131,7 +171,7 @@
     <div>
       <span class="eyebrow">HERRAMIENTA DEL MASTER</span>
       <h2>Generador de encuentros</h2>
-      <p>Construye encuentros comprando monstruos con el presupuesto de PX del DMG 2024. La composición es libre: el presupuesto orienta, no garantiza el equilibrio.</p>
+      <p>Construye encuentros comprando monstruos con el presupuesto de PX del DMG 2024. No es posible superar el límite establecido.</p>
     </div>
     <span class="source-tag">DMG 2024</span>
   </header>
@@ -139,17 +179,17 @@
   <section class="encounter-config">
     <div class="config-field">
       <label for="enc-level">Nivel del grupo</label>
-      <select id="enc-level" bind:value={groupLevel}>
+      <select id="enc-level" value={groupLevel} on:change={(event)=>changeGroupLevel(Number(event.currentTarget.value))}>
         {#each Array.from({length:20},(_,i)=>i+1) as level}<option value={level}>Nivel {level}</option>{/each}
       </select>
     </div>
     <div class="config-field">
       <label for="enc-party">Cantidad de personajes</label>
-      <input id="enc-party" type="number" min="1" step="1" bind:value={partySize} on:change={()=>partySize=Math.max(1,Math.floor(Number(partySize)||1))} />
+      <input id="enc-party" type="number" min="1" step="1" value={partySize} on:change={(event)=>changePartySize(Number(event.currentTarget.value))} />
     </div>
     <div class="config-field">
       <label for="enc-difficulty">Dificultad objetivo</label>
-      <select id="enc-difficulty" bind:value={difficulty}>
+      <select id="enc-difficulty" value={difficulty} on:change={(event)=>changeDifficulty(event.currentTarget.value as 'easy'|'normal'|'hard')}>
         <option value="easy">Fácil</option><option value="normal">Normal</option><option value="hard">Difícil</option>
       </select>
       <small>{difficulty==='easy'?'Hipótesis experimental: 85 %':difficulty==='normal'?'Hipótesis experimental: 70 %':'Hipótesis experimental: 50 %'} de probabilidad de victoria.</small>
@@ -170,13 +210,12 @@
       <div><small>Utilizado</small><strong>{usedPercent.toFixed(1)} %</strong></div>
       <div><small>Criaturas</small><strong>{totalCreatures}</strong></div>
     </div>
-    {#if remaining<0}
-      <p class="budget-note over-note">Excedes el presupuesto en {formatXp(Math.abs(remaining))}. Puedes mantener esta composición si esa es tu intención.</p>
-    {:else if remaining>0}
+    {#if remaining>0}
       <p class="budget-note">Quedan {formatXp(remaining)} disponibles. No es necesario gastar cada punto.</p>
     {:else}
-      <p class="budget-note">Has utilizado exactamente el presupuesto recomendado.</p>
+      <p class="budget-note">Has utilizado exactamente el presupuesto disponible.</p>
     {/if}
+    {#if budgetMessage}<p class="budget-note over-note" role="status">{budgetMessage}</p>{/if}
   </section>
 
   <div class="encounter-columns">
@@ -219,7 +258,7 @@
         <div class="selection-total"><span>Total del encuentro</span><strong>{formatXp(spent)}</strong></div>
         <button type="button" class="send-combat" on:click={sendToCombat}>Enviar composición a Combate</button>
       {:else}
-        <div class="empty-selection"><strong>El encuentro está vacío</strong><p>Agrega monstruos desde el catálogo. Puedes combinar cualquier cantidad y valor de desafío.</p></div>
+        <div class="empty-selection"><strong>El encuentro está vacío</strong><p>Agrega monstruos desde el catálogo sin superar el presupuesto disponible.</p></div>
       {/if}
     </section>
   </div>
@@ -228,7 +267,7 @@
     <section class="composition-warnings">
       <h3>Advertencias de composición</h3>
       {#each warnings as warning}<p>{warning}</p>{/each}
-      <small>Son observaciones orientativas. No bloquean ninguna composición ni modifican el presupuesto.</small>
+      <small>Son observaciones orientativas; no modifican el coste ni el límite de compra.</small>
     </section>
   {/if}
 
