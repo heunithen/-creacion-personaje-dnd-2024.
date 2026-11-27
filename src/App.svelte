@@ -3474,7 +3474,7 @@ import ITEMS from './items.json';
         const parsed = parseInventoryLine(line);
         if (!parsed) continue;
         const key = normalizeLevelText(parsed.name);
-        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || {name:parsed.name,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null};
+        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || (target as any).customInventoryItems?.[key] || {name:parsed.name,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null};
         const current = totals.get(key) || {name:parsed.name,item,quantity:0};
         current.quantity += parsed.quantity;
         totals.set(key,current);
@@ -3606,6 +3606,8 @@ import ITEMS from './items.json';
     const name=inventoryNewName.trim();
     if(!name) return;
     const item={name,type:inventoryNewType,rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null,description:inventoryNewDetails.trim(),custom:true};
+    const customItems={...((sheet as any).customInventoryItems||{}),[normalizeLevelText(name)]:item};
+    (sheet as any).customInventoryItems=customItems;
     shopAddInventoryItem(item,1);
     sheet={...sheet}; saveSheetMutation();
     inventoryNewName=''; inventoryNewDetails=''; inventoryNewType='Equipo'; inventoryAddOpen=false;
@@ -3616,8 +3618,17 @@ import ITEMS from './items.json';
     const before=captureProgressionSections();
     if(!shopRemoveInventoryItem(item.name,item.quantity)) return;
     if(shopItemIsEquipped(item)) {
-      setCharacterStat(sheet,'EQUIPO',item.type==='Escudo'?'Escudo equipado en tienda':'Armadura equipada en tienda','');
-      shopApplyArmorClass(sheet);
+      if(item.type==='Arma') {
+        setCharacterStat(sheet,'EQUIPO','Armas equipadas',splitChoiceList(getCharacterStat(sheet,'EQUIPO','Armas equipadas')).filter((name:string)=>normalizeLevelText(name)!==normalizeLevelText(item.name)).join(', '));
+      } else {
+        setCharacterStat(sheet,'EQUIPO',item.type==='Escudo'?'Escudo equipado en tienda':'Armadura equipada en tienda','');
+        shopApplyArmorClass(sheet);
+      }
+    }
+    if((sheet as any).customInventoryItems) {
+      const customItems={...(sheet as any).customInventoryItems};
+      delete customItems[normalizeLevelText(item.name)];
+      (sheet as any).customInventoryItems=customItems;
     }
     shopUpdateWeaponList(item,true); sheet={...sheet};
     recordProgressionChange('Eliminación: '+item.name,before);

@@ -224,7 +224,7 @@ test('la interfaz y la ficha final están conectadas a las reglas revisadas', ()
   assert.match(app,/put\(9,0,b\.appearance \|\| '—'\); put\(9,1,b\.personality \|\| '—'\); put\(9,2,b\.ideals \|\| '—'\); put\(9,3,b\.bonds \|\| '—'\); put\(9,4,b\.flaws \|\| '—'\)/);
 });
 
-\ntest('inventario unificado y gestión manual de conjuros', () => {
+test('inventario unificado y gestión manual de conjuros', () => {
   assert.match(app, /playerSheetTab === 'Inventario'/);
   assert.match(app, /Inventario unificado/);
   assert.match(app, /Agregar objeto/);
