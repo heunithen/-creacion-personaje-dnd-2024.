@@ -275,6 +275,6 @@ test('el Máster puede abrir y editar la misma ficha compartida del jugador', ()
   assert.match(app, /on:click=\{closeMasterCharacter\}>Salir de hoja del jugador/);
   assert.match(app, /playerId = masterViewingEntry\?\.playerId \|\| supabasePlayerId/);
   assert.match(app, /playerNameValue = masterViewingEntry\?\.playerName \|\| supabasePlayerName/);
-  assert.match(app, /if \(latest && !syncPending && !supabaseSaving\)/);
+  assert.match(app, /if \(latest && !syncPending && !supabaseSaving && !editingMasterSheet\)/);
   assert.match(app, /d\?\.type === 'character-updated' && obrRole === 'PLAYER' && d\.playerId === supabasePlayerId/);
 });
