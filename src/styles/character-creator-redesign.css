@@ -88,19 +88,7 @@
     background:#18343a!important;
     color:#5fe6e0!important;
   }
-  .builder-cursor-progress{
-    position:fixed;
-    z-index:99999;
-    pointer-events:none;
-    padding:4px 8px;
-    border:1px solid #55d68b;
-    border-radius:6px;
-    background:#102b20;
-    color:#d9ffe7;
-    font:700 12px/1.2 system-ui,sans-serif;
-    box-shadow:0 3px 12px #0008;
-    white-space:nowrap;
-  }
+  
   .builder-step-track>span.current{
     border-color:#5fe6e0!important;
     background:#18343a!important;
