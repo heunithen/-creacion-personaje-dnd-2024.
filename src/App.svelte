@@ -8540,20 +8540,6 @@ import ITEMS from './items.json';
   .monster-name{font:700 .95rem Georgia,serif}
   .monster-subtitle{grid-column:1;color:var(--ink-soft);font:.7rem system-ui,sans-serif}
   .monster-cr{grid-column:2;grid-row:1/3;align-self:center;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;color:#3fb8b8;font:700 .68rem system-ui,sans-serif}
-  .class-progression-panel{min-width:0}
-  .class-progression-caption{margin:4px 0 12px;font-size:12px}
-  .class-progression-scroll{width:100%;max-width:100%;overflow-x:auto;border:1px solid var(--gm-border);border-radius:8px;overscroll-behavior-x:contain}
-  .class-progression-table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;background:var(--gm-card);font-size:12px}
-  .class-progression-table th,.class-progression-table td{padding:9px 10px;border-right:1px solid var(--gm-border);border-bottom:1px solid var(--gm-border);text-align:center;vertical-align:middle;white-space:nowrap}
-  .class-progression-table thead th{position:sticky;top:0;z-index:2;background:#172b34;color:#d7e5e8;font-size:11px;font-weight:800;line-height:1.35}
-  .class-progression-table thead th:first-child,.class-progression-table tbody th{position:sticky;left:0;z-index:1;background:#172b34;color:#fff;font-weight:900}
-  .class-progression-table thead th:first-child{z-index:3}
-  .class-progression-table tbody tr:nth-child(even){background:rgba(255,255,255,.025)}
-  .class-progression-table .class-progression-features{text-align:left;white-space:normal;min-width:220px;line-height:1.4}
-  .class-progression-table tr.current-level td,.class-progression-table tr.current-level th{background:rgba(62,183,151,.2);box-shadow:inset 0 1px #4ec7a4,inset 0 -1px #4ec7a4}
-  .class-progression-table tr.next-level td,.class-progression-table tr.next-level th{background:rgba(242,198,109,.1)}
-  .class-progression-table tr:last-child td,.class-progression-table tr:last-child th{border-bottom:0}
-  .class-progression-table th:last-child,.class-progression-table td:last-child{border-right:0}
   .monster-statblock{padding:.8rem;border-top:1px solid var(--rule);font:.78rem/1.45 system-ui,sans-serif}
   .monster-heading{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.3rem;padding-bottom:.45rem;border-bottom:2px solid var(--red)}
   .monster-heading h3{margin:0;font:700 1.05rem Georgia,serif}
