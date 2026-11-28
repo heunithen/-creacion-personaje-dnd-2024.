@@ -6,7 +6,7 @@
   .portrait-frame{display:grid;place-items:center;flex:0 0 4.5rem;width:4.5rem;height:4.5rem;border:3px solid #3fb8b8;border-radius:50%;background:radial-gradient(circle,#13262e,#13262e 70%);color:#b5bec3;font-size:1.8rem;box-shadow:0 0 0 3px #3fb8b8}
   .sheet-portrait-choose{display:grid;place-items:center;width:100%;height:100%;padding:0;border:0;background:transparent;color:inherit;font-size:2rem;cursor:pointer}
   .nautical-header .sheet-banner-copy{flex:1;min-width:0}
-  .nautical-header .sheet-kicker{color:#b5bec3}
+  
   .nautical-header .character-name{color:#ffffff!important;margin:.2rem 0!important}
   .nautical-header .sheet-banner-meta{color:#b5bec3}
   .header-actions{display:flex;gap:.4rem;flex-wrap:wrap}
@@ -23,14 +23,13 @@
   .nautical-quick-stats .quick-stats-row>div>strong{font-size:.72rem}
   .nautical-quick-stats .attribute-plaque{min-width:0;min-height:4rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:18px 18px 8px 8px;border:1px solid #3fb8b8}
   .nautical-quick-stats .attribute-plaque strong{font-size:1.25rem}
-  .nautical-quick-stats .attribute-plaque .ability-score{font-size:1.25rem;line-height:1.1}
+  
   .nautical-quick-stats .attribute-plaque .ability-bonus-roll{align-self:center;margin:.08rem 0;padding:.08rem .35rem;font-size:.85rem;font-weight:800;line-height:1.2}
   .nautical-quick-stats .attribute-plaque .ability-bonus-empty{font-size:.8rem;color:#b5bec3}
   .nautical-quick-stats .attribute-plaque .saving-throw-line{display:flex;align-items:center;justify-content:center;gap:.25rem;margin-top:.1rem;padding-top:.25rem;border-top:1px solid #3fb8b8;font:600 .58rem/1.2 system-ui,sans-serif}
   .nautical-quick-stats .attribute-plaque .saving-throw-line span{color:#b5bec3}
   .nautical-quick-stats .attribute-plaque .saving-throw-line strong{font-size:.65rem;color:#b5bec3}
-  .nautical-quick-stats .attribute-plaque .saving-throw-line.proficient span,
-  .nautical-quick-stats .attribute-plaque .saving-throw-line.proficient strong{color:#b5bec3}
+  
   .nautical-skills .sheet-stat.proficient .stat-label,
   .nautical-skills .sheet-stat.proficient .stat-value{color:#b5bec3!important}
   .nautical-skills .sheet-stat .skill-number{font-size:1rem!important;font-weight:800!important;line-height:1.25!important;min-width:2.2rem;text-align:right}
@@ -44,7 +43,7 @@
   .nautical-columns .sheet-section-title{border-bottom:1px solid #3fb8b8!important;margin-bottom:.35rem;padding-bottom:.45rem}
   .nautical-columns .sheet-section-title h3{font:700 .78rem system-ui,sans-serif!important;letter-spacing:.07em;text-transform:uppercase;color:#b5bec3!important}
   .nautical-columns .sheet-stat{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.45rem;padding:.42rem .15rem;border-bottom:1px solid #3fb8b8!important}
-  .nautical-columns .stat-label{font-size:.72rem;color:#b5bec3!important}
+  
   .nautical-columns .stat-value{font:600 .75rem system-ui,sans-serif;color:#ffffff!important;text-align:right}
   .nautical-tabs{display:flex;gap:.2rem;overflow-x:auto;padding:.1rem .1rem .55rem;margin-bottom:.55rem;border-bottom:1px solid #3fb8b8;scrollbar-width:thin}
   .nautical-tabs button{flex:0 0 auto;padding:.55rem .65rem;border:1px solid transparent!important;border-radius:5px 5px 0 0;background:transparent!important;color:#b5bec3!important;font-size:.68rem;font-weight:700;white-space:nowrap}
@@ -61,7 +60,7 @@
   .nautical-tab-content{display:flex;flex-direction:column;gap:.6rem}
   .skill-column-labels{display:flex;justify-content:space-between;padding:.2rem .15rem;color:#5fe6e0;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em}
   .nautical-empty{padding:1rem;text-align:center;border:1px dashed #3fb8b8;border-radius:7px}
-  .nautical-sheet .inline-roll{color:#b5bec3}
+  
 
 /* Refinamiento tipográfico de la ficha: no altera columnas, orden ni pestañas. */
   .nautical-sheet{
@@ -169,10 +168,7 @@
     padding:14px!important;
     border-radius:10px!important;
   }
-  .nautical-columns .sheet-section-title{
-    margin-bottom:8px!important;
-    padding-bottom:8px!important;
-  }
+  
   .nautical-columns .sheet-section-title h3,
   .nautical-columns .section-name{
     font-size:14px!important;
@@ -202,11 +198,7 @@
     font-size:13px!important;
     line-height:1.5!important;
   }
-  .nautical-skills .sheet-stat .skill-number{
-    font-size:15px!important;
-    line-height:1.25!important;
-    font-weight:800!important;
-  }
+  
   .nautical-columns .player-feature-card,
   .nautical-columns .player-feat-card,
   .nautical-columns .player-spell-card{
@@ -276,7 +268,7 @@
   .nautical-actions{display:flex;flex-direction:column;gap:.8rem;min-width:0}
   .nautical-actions .sheet-section{height:auto;min-height:0}
   .nautical-actions button{max-width:100%;white-space:normal}
-  .nautical-content{min-width:0}
+  
   .nautical-tabs{gap:.35rem!important;margin-bottom:.75rem!important;padding:.15rem .1rem .65rem!important}
   .nautical-tabs button{min-height:36px;padding:.55rem .75rem!important}
   .nautical-tab-content{gap:.8rem!important;min-width:0}
