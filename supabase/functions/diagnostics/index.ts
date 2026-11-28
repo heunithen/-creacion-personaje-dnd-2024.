@@ -60,6 +60,47 @@ Deno.serve(async (request: Request) => {
       return json({ runs });
     }
 
+    if (action === "persist") {
+      if (request.method !== "POST") return json({ error: "Método no permitido." }, 405);
+      if (!supabaseUrl || !serviceKey) return json({ error: "Falta el acceso administrativo de Supabase." }, 503);
+      const report = await request.json().catch(() => ({}));
+      if (report.suite !== "characters" || !Array.isArray(report.results) || report.results.length > 1920) {
+        return json({ error: "Informe de matriz no válido." }, 400);
+      }
+      const runResponse = await fetch(`${supabaseUrl}/rest/v1/diagnostic_test_runs`, {
+        method: "POST",
+        headers: { "apikey": serviceKey, "Authorization": "Bearer " + serviceKey, "Content-Type": "application/json", "Prefer": "return=representation" },
+        body: JSON.stringify({
+          workflow_run_id: Number(report.workflow_run_id) || null,
+          suite: "characters-matrix",
+          status: Number(report.failed) > 0 ? "failure" : "success",
+          commit_sha: String(report.commit_sha || "").slice(0, 64),
+          summary: { total: Number(report.total) || 0, passed: Number(report.passed) || 0, warnings: Number(report.warnings) || 0, failed: Number(report.failed) || 0 }
+        })
+      });
+      if (!runResponse.ok) return json({ error: "No se pudo guardar la ejecución.", detail: await runResponse.text() }, 500);
+      const [run] = await runResponse.json();
+      for (let offset = 0; offset < report.results.length; offset += 200) {
+        const batch = report.results.slice(offset, offset + 200).map((item: any) => ({
+          run_id: run.id,
+          case_key: String(item.case_key || "").slice(0, 240),
+          class_name: String(item.class_name || "").slice(0, 80),
+          background_name: String(item.background_name || "").slice(0, 80),
+          species_name: String(item.species_name || "").slice(0, 80),
+          status: ["passed","failed","warning"].includes(item.status) ? item.status : "failed",
+          errors: Array.isArray(item.errors) ? item.errors.slice(0, 20) : [],
+          warnings: Array.isArray(item.warnings) ? item.warnings.slice(0, 20) : []
+        }));
+        const resultResponse = await fetch(`${supabaseUrl}/rest/v1/diagnostic_test_results`, {
+          method: "POST",
+          headers: { "apikey": serviceKey, "Authorization": "Bearer " + serviceKey, "Content-Type": "application/json", "Prefer": "return=minimal" },
+          body: JSON.stringify(batch)
+        });
+        if (!resultResponse.ok) return json({ error: "No se pudieron guardar los resultados de auditoría.", detail: await resultResponse.text() }, 500);
+      }
+      return json({ saved: report.results.length, run_id: run.id });
+    }
+
     if (action === "events" || action === "results") {
       if (!supabaseUrl || !serviceKey) return json({ error: "Falta configurar el acceso administrativo de Supabase." }, 503);
       const table = action === "events" ? "diagnostic_events" : "diagnostic_test_runs";
