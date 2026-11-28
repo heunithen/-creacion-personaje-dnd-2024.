@@ -39,14 +39,14 @@ const visitModule = async file => {
   visitedModules.add(file);
   const source = await fs.readFile(file, 'utf8');
   if (file.endsWith('.css')) {
-    for (const match of source.matchAll(/@import\\s+(?:url\\()?['"]([^'"]+)['"]/g)) {
+    for (const match of source.matchAll(/@import\s+(?:url\()?['"]([^'"]+)['"]/g)) {
       const imported = await resolveLocalImport(file, match[1]);
       if (imported?.endsWith('.css')) await visitModule(imported);
     }
     cssLoadOrder.push(file);
     return;
   }
-  for (const match of source.matchAll(/\\bimport\\s+(?:[^'";]*?\\s+from\\s+)?['"]([^'"]+)['"]/g)) {
+  for (const match of source.matchAll(/\bimport\s+(?:[^'";]*?\s+from\s+)?['"]([^'"]+)['"]/g)) {
     const imported = await resolveLocalImport(file, match[1]);
     if (imported) await visitModule(imported);
   }
