@@ -45,7 +45,7 @@ html,body,#app{background:#13262e!important;color:#ffffff!important}
   .sheet-readonly-value{
     background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
   }
-  input::placeholder,textarea::placeholder{color:#b5bec3!important}
+  
   input:focus,textarea:focus,select:focus,
   .editable:focus{border-color:#b5bec3!important;outline:1px solid #b5bec3!important;background:#13262e!important}
   .roll-entry,.trait-view,.traits-preview,
@@ -147,7 +147,7 @@ html,body,#app{background:#13262e!important;color:#ffffff!important}
   .nautical-header .sheet-kicker,.nautical-sheet .sheet-kicker{color:#b5bec3!important}
   .nautical-header .character-name,.nautical-header .sheet-banner-meta{color:#ffffff!important}
   .nautical-header .sheet-banner-meta span+span{border-color:#3fb8b8!important}
-  .portrait-frame{border-color:#5fe6e0!important;box-shadow:0 0 0 3px #3fb8b8!important}
+  
   .header-actions button{background:#13262e!important;border:1px solid #b5bec3!important;color:#ffffff!important}
   .nautical-quick-stats{background:#13262e!important;border-color:#5fe6e0!important}
   .nautical-quick-stats>div,.nautical-quick-stats .quick-stats-row>div{
@@ -188,7 +188,7 @@ html,body,#app{background:#13262e!important;color:#ffffff!important}
   .nautical-skills .sheet-stat.proficient .skill-number{color:#b5bec3!important}
   .nautical-skills .sheet-stat .skill-number{color:#ffffff!important}
   .nautical-import{background:#13262e!important;border-color:#5fe6e0!important;color:#ffffff!important}
-  .nautical-tabs{border-color:#5fe6e0!important}
+  
   .nautical-tabs button{background:transparent!important;color:#b5bec3!important;border-color:transparent!important}
   .nautical-tabs button.active{
     background:#13262e!important;color:#ffffff!important;border-color:transparent!important;
@@ -243,9 +243,9 @@ html,body,#app{background:#13262e!important;color:#ffffff!important}
   .monster-attribution,.spell-source,.monster-info-item small,
   .monster-combat-grid small{color:#b5bec3!important}
   .spell-details,.monster-statblock{background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
-  .monster-heading{border-bottom-color:#b5bec3!important}
+  
   .monster-heading h3,.monster-content-section h4{color:#b5bec3!important}
-  .monster-content-section{border-top-color:#5fe6e0!important}
+  
   .monster-cr,.spell-level{background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
   .github-status,.github-folder-chip,.builder-info,
   .builder-choice-wrapper,.builder-choice-field{
@@ -369,7 +369,7 @@ html,body,#app{background:#13262e!important;color:#ffffff!important}
 /* PALETA CANÓNICA ÚNICA — Forja de Aventureros */
 html,body{background:#0b171d!important;color:#ffffff!important}
 body{background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#0b171d 100%)!important}
-.app-shell,.main{color:#ffffff!important}
+
 .topbar{background:#0f1e26!important;border-color:#3a4a52!important}
 .brand,.brand strong,h1,h2,h3,h4{color:#ffffff!important}
 .brand small,.intro,.connection,.hint,.muted,.stat-label,.monster-source,.spell-source{color:#b5bec3!important}
@@ -411,7 +411,7 @@ button.active,.master-tabs button.active,.sheet-tabs button.active,
 .weapon-attack-values span,.chest-result-number,.chest-result>span:last-child{color:#b5bec3!important}
 .roll-result b,.trait-level,.card-symbol{color:#5fe6e0!important}
 
-footer{border-color:#3a4a52!important;color:#8e9aa1!important}
+
 
 
 
