@@ -33,9 +33,10 @@ export function magicItemPriceCopper(rarity, type = '') {
 export function parseInventoryLine(line) {
   const clean = String(line ?? '').trim().replace(/^[-•]+\s*/, '');
   if (!clean) return null;
-  const match = clean.match(/\s*[×x]\s*(\d+)$/i);
-  const quantity = match ? Math.max(1, Number(match[1]) || 1) : 1;
-  const name = (match ? clean.slice(0, match.index) : clean).trim();
+  const suffix = clean.match(/\s*[×x]\s*(\d+)$/i);
+  const prefix = clean.match(/^(\d+)\s+(.+)$/);
+  const quantity = suffix ? Math.max(1, Number(suffix[1]) || 1) : prefix ? Math.max(1, Number(prefix[1]) || 1) : 1;
+  const name = (suffix ? clean.slice(0, suffix.index) : prefix ? prefix[2] : clean).trim();
   return name ? { name, quantity } : null;
 }
 
