@@ -28,7 +28,21 @@ test('creador de personajes de nivel 1: smoke visual y responsive', async ({ pag
 
     await page.locator('.builder-actions button.primary').click();
     await expect(page.getByRole('heading', { name: '02. Elige tu clase' })).toBeVisible();
-    await expect(page.locator('.builder-class-flyer')).toBeVisible();
+    const classFlyer = page.locator('.builder-class-flyer');
+    await expect(classFlyer).toBeVisible();
+    await expect(page.locator('.builder-class-information')).toBeVisible();
+    const classCardLayout = await classFlyer.evaluate(el => {
+      const labels = Array.from(el.querySelectorAll('.builder-class-topline span'));
+      const first = labels[0]?.getBoundingClientRect();
+      const second = labels[1]?.getBoundingClientRect();
+      return {
+        clientHeight: el.clientHeight,
+        scrollHeight: el.scrollHeight,
+        headerGap: first && second ? second.left - first.right : -1,
+      };
+    });
+    expect(classCardLayout.scrollHeight, `class card content clipped at ${width}px`).toBeLessThanOrEqual(classCardLayout.clientHeight + 1);
+    expect(classCardLayout.headerGap, `class card header labels overlap at ${width}px`).toBeGreaterThan(4);
     await assertNoHorizontalOverflow(page, width, 'clase');
     if (width === 320 || width === 1440) {
       await page.screenshot({ path: testInfo.outputPath(`nivel-1-${width}-clase.png`), fullPage: true });
