@@ -2018,6 +2018,18 @@ import { onMount } from 'svelte';
     'Orco':'Los orcos son humanoides poderosos y resistentes, capaces de seguir en pie cuando otros caerían. Una vez por descanso largo, cuando sus puntos de golpe llegan a cero sin que eso los mate inmediatamente, pueden recuperar un punto de golpe y continuar luchando. También pueden realizar la acción de Correr como acción adicional; al hacerlo, obtienen puntos de golpe temporales. Pueden recurrir a esta descarga de adrenalina un número de veces igual a su bonificador por competencia y poseen visión en la oscuridad de hasta 36 metros.',
     'Tiefling':'Los tieflings son humanoides marcados por un legado infernal que les concede poderes sobrenaturales. Elige un legado abisal, ctónico o infernal: cada uno proporciona resistencia a un tipo de daño y un truco distinto. Al alcanzar los niveles 3 y 5 aprenden conjuros adicionales relacionados con ese legado, que siempre tienen preparados y pueden lanzar gratuitamente una vez por descanso largo. También conocen Taumaturgia y pueden lanzarla usando la misma aptitud mágica elegida para su legado. Poseen visión en la oscuridad.'
   };
+  const BUILDER_SPECIES_FEATURE_SUMMARY: Record<string,string> = {
+    'Aasimar':'Resistencia al daño necrótico y radiante, visión en la oscuridad, curación mediante el contacto y una transformación celestial que puede otorgar vuelo o liberar energía luminosa o necrótica.',
+    'Dracónido':'Tu ancestro dracónico determina tu resistencia elemental y tu arma de aliento. A partir del nivel 5 puedes manifestar alas espectrales para volar temporalmente.',
+    'Enano':'Tu resistencia aumenta tus puntos de golpe máximos con cada nivel. Además, resistes el veneno, tienes visión en la oscuridad y puedes percibir vibraciones a través de la piedra.',
+    'Elfo':'Tus sentidos agudos y tu herencia feérica te ayudan a percibir peligros y resistir el encantamiento. No necesitas dormir y tu linaje —alto elfo, drow o elfo del bosque— determina tus dones mágicos.',
+    'Gnomo':'Tu astucia te protege frente a efectos que ponen a prueba la mente y la voluntad. Tu linaje —gnomo de las rocas o de los bosques— define tus trucos, magia e ingenios especiales.',
+    'Goliat':'Tu herencia gigante te concede una capacidad sobrenatural vinculada a un linaje elemental, además de una constitución poderosa. Puedes crecer temporalmente y aprovechar la fuerza de los gigantes.',
+    'Mediano':'La fortuna te permite repetir los resultados de 1 en pruebas con d20. Tu agilidad te ayuda a moverte entre criaturas más grandes, esconderte tras ellas y resistir el miedo.',
+    'Humano':'Tu versatilidad se expresa en una competencia adicional a tu elección y una dote de origen extra. También recuperas Inspiración heroica al terminar un descanso largo.',
+    'Orco':'Tu resistencia te permite aferrarte a la vida cuando un golpe debería derribarte. También puedes acelerar el paso como acción adicional, ganar puntos de golpe temporales y ver en la oscuridad.',
+    'Tiefling':'Tu legado infernal determina una resistencia y parte de tu magia. Aprendes conjuros adicionales a medida que avanzas de nivel, además de conocer Taumaturgia y ver en la oscuridad.'
+  };
   const BUILDER_SPECIES_LORE: Record<string,string> = {
     'Aasimar':'La herencia de un aasimar puede remontarse a una bendición, un pacto o el contacto de un antepasado con una fuerza de los Planos Superiores. Esa señal puede aparecer como un brillo en los ojos, una voz inusual o una presencia que otros perciben antes de conocerlo. Algunos crecen bajo la tutela de templos que esperan de ellos grandes obras; otros son criados por familias comunes y descubren su origen tarde. No existe una obligación celestial: cada aasimar decide qué hacer con el legado que lleva.',
     'Dracónido':'Los dracónidos nacen con rasgos que recuerdan a los dragones: escamas, cuernos, garras y una presencia marcada por su linaje elemental. Sus comunidades pueden organizarse alrededor de familias, juramentos, tradiciones guerreras o vínculos comerciales, pero no existe una única cultura dracónida. La ascendencia suele despertar orgullo, rivalidad o expectativas ajenas; muchos emprenden viajes para demostrar que sus actos les pertenecen y no son una repetición de la historia de sus ancestros.',
@@ -7311,7 +7323,7 @@ import ITEMS from './items.json';
                     </section>
                     <section class="builder-species-info-section">
                       <span>RASGOS Y CAPACIDADES</span><h5>¿Qué te distingue?</h5>
-                      <strong>{BUILDER_SPECIES_CHOICES[BUILDER_SPECIES[builderSpeciesSlideIndex]].length ? 'Incluye una elección propia de especie' : 'Capacidades propias de la especie'}</strong>
+                      <strong>{BUILDER_SPECIES_FEATURE_SUMMARY[BUILDER_SPECIES[builderSpeciesSlideIndex]]}</strong>
                     </section>
                     <img
                       class="builder-species-art"
