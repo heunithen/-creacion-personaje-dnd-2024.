@@ -2870,7 +2870,7 @@ import { onMount } from 'svelte';
             8:'Magia y conjuros',9:'Idiomas',10:'Detalles del personaje'
           };
           const issues = builderStepMissingFields(firstInvalidStep);
-          builderStepError = 'No se puede guardar todavía. He vuelto al paso «' + (stepNames[firstInvalidStep] || 'Creación del personaje') + '» porque hay una elección incompleta o incompatible.\\n\\nRevisa exactamente lo siguiente:\\n• ' + issues.join('\\n• ') + '\\n\\nCorrige estos campos y continúa. Si hay otro problema en un paso posterior, el asistente volverá a señalarlo antes de guardar.';
+          builderStepError = 'No se puede guardar todavía. He vuelto al paso «' + (stepNames[firstInvalidStep] || 'Creación del personaje') + '» porque hay una elección incompleta o incompatible.\n\nRevisa exactamente lo siguiente:\n• ' + issues.join('\n• ') + '\n\nCorrige estos campos y continúa. Si hay otro problema en un paso posterior, el asistente volverá a señalarlo antes de guardar.';
         } else {
           builderStepError = 'No se puede guardar todavía. Hay elecciones incompatibles en la creación del personaje. Revisa los pasos anteriores.';
         }
@@ -4057,7 +4057,7 @@ import ITEMS from './items.json';
       const lower=word.toLocaleLowerCase('es');
       if(lower.endsWith('s')) return word;
       if(lower.endsWith('z')) return word.slice(0,-1)+'ces';
-      return word+'s';
+      return /[aeiouáéíóú]$/i.test(word) ? word+'s' : word+'es';
     });
   }
   function canonicalInventoryName(name:string,target:RawSheet): string {
@@ -4073,7 +4073,7 @@ import ITEMS from './items.json';
   function getShopOwnedItems(target:RawSheet) {
     const totals = new Map<string,any>();
     for (const field of shopInventoryFields()) {
-      const lines = String(getCharacterStat(target,'INVENTARIO',field) || '').split(/\\n/);
+      const lines = String(getCharacterStat(target,'INVENTARIO',field) || '').split(/\n/);
       for (const line of lines) {
         const parsed = parseInventoryLine(line);
         if (!parsed) continue;
