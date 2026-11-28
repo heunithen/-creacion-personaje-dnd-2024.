@@ -3143,6 +3143,9 @@ import { onMount } from 'svelte';
     builderSaving = true;
     try {
       const characterToSave = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
+      const audit = auditCharacterSheet(characterToSave);
+      recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,error_codes:audit.errors.map(item=>item.code),warning_codes:audit.warnings.map(item=>item.code)});
+      if (!audit.valid) throw new Error('La auditoría de la ficha encontró problemas estructurales: ' + audit.errors.map(item=>item.message).join(' '));
       await saveCharacterToSupabase(characterToSave);
       sheet = characterToSave;
       builderPreview = null;
