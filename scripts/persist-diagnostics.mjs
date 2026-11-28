@@ -1,53 +1,28 @@
-import fs from 'node:fs';
-
 const reportPath = process.env.DIAGNOSTICS_OUTPUT || 'test-results/character-matrix.json';
-if (!fs.existsSync(reportPath)) {
+if (!await (await import('node:fs')).existsSync(reportPath)) {
   console.log('No existe un informe de matriz; no hay resultados que persistir.');
   process.exit(0);
 }
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-if (!serviceKey) {
-  console.log('SUPABASE_SERVICE_ROLE_KEY no está configurada; el informe se conservará como artefacto de GitHub Actions.');
+const key = process.env.DIAGNOSTICS_API_KEY || '';
+if (!key) {
+  console.log('DIAGNOSTICS_API_KEY no está configurada en GitHub; el informe se conservará como artefacto.');
   process.exit(0);
 }
-
-const baseUrl = (process.env.SUPABASE_URL || 'https://akbvedwkpjokphzridla.supabase.co').replace(/\/$/, '');
+const fs = await import('node:fs');
 const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-const workflowRunId = Number(process.env.GITHUB_RUN_ID || 0) || null;
-const runPayload = {
-  workflow_run_id: workflowRunId,
-  suite: report.suite || 'characters',
-  status: report.failed ? 'failure' : 'success',
-  commit_sha: process.env.GITHUB_SHA || '',
-  summary: { total: report.total, passed: report.passed, warnings: report.warnings, failed: report.failed }
-};
-
-const headers = {
-  apikey: serviceKey,
-  Authorization: 'Bearer ' + serviceKey,
-  'Content-Type': 'application/json',
-  Prefer: 'return=representation'
-};
-async function post(table, rows) {
-  const response = await fetch(baseUrl + '/rest/v1/' + table, {
-    method: 'POST', headers, body: JSON.stringify(rows)
-  });
-  if (!response.ok) throw new Error('Supabase ' + table + ' (' + response.status + '): ' + (await response.text()).slice(0, 500));
-  return response.json();
-}
-
-const [run] = await post('diagnostic_test_runs', runPayload);
-for (let offset = 0; offset < report.results.length; offset += 200) {
-  const batch = report.results.slice(offset, offset + 200).map(result => ({
-    run_id: run.id,
-    case_key: result.case_key,
-    class_name: result.class_name,
-    background_name: result.background_name,
-    species_name: result.species_name,
-    status: result.status,
-    errors: result.errors,
-    warnings: result.warnings
-  }));
-  await post('diagnostic_test_results', batch);
-}
-console.log('Persistidos ' + report.results.length + ' resultados de auditoría en Supabase. Run: ' + run.id);
+const baseUrl = (process.env.SUPABASE_URL || 'https://akbvedwkpjokphzridla.supabase.co').replace(/\/$/, '');
+const response = await fetch(baseUrl + '/functions/v1/diagnostics?action=persist', {
+  method: 'POST',
+  headers: {
+    apikey: process.env.SUPABASE_PUBLISHABLE_KEY || 'sb_publishable_BOiPUrLlhogEadY_phsFMw_s6JrIzcP',
+    'x-diagnostics-key': key,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    ...report,
+    workflow_run_id: Number(process.env.GITHUB_RUN_ID || 0) || null,
+    commit_sha: process.env.GITHUB_SHA || ''
+  })
+});
+if (!response.ok) throw new Error('No se pudo persistir el informe (' + response.status + '): ' + (await response.text()).slice(0, 500));
+console.log('Resultados guardados en Supabase: ' + JSON.stringify(await response.json()));
