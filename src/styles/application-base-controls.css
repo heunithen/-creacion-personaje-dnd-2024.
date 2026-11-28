@@ -1,0 +1,74 @@
+/* Estilos base de controles y tema oscuro de la aplicación. */
+
+.builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#1b2a33;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s} .builder-portrait-picker{padding:.8rem;border:1px solid var(--rule);border-radius:5px;background:rgba(95,230,224,.18)}.builder-portrait-heading{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.7rem}.builder-portrait-heading button{border:1px solid var(--rule);border-radius:4px;padding:.35rem .6rem;background:transparent;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}.builder-portrait-heading button.active{border-color:var(--gold);color:var(--gold)}.builder-portrait-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:.55rem}.builder-portrait-option{position:relative;aspect-ratio:1;border:2px solid var(--rule);border-radius:5px;padding:0;overflow:hidden;background:#17232b;cursor:pointer}.builder-portrait-option.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(213,174,91,.25)}.builder-portrait-option img{display:block;width:100%;height:100%;object-fit:cover}.builder-portrait-check{position:absolute;right:.25rem;top:.25rem;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--gold);color:#17232b;font-weight:800;display:grid;place-items:center}.portrait-frame img{width:100%;height:100%;object-fit:cover;border-radius:inherit}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(95,230,224,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}/* La hoja de personaje conserva su propia cuadrícula; no hereda el diseño del formulario de creación. */
+  .master-tabs{display:flex;flex-wrap:wrap;gap:.4rem;overflow:visible;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
+  .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
+  .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  /* Tema oscuro carmesí de la extensión */
+  .app-shell,.main{color:#ffffff}
+  .topbar{border-bottom:1px solid #3fb8b8}
+  .brand,.brand strong{color:#ffffff}
+  .brand-mark{color:#3fb8b8}
+  .panel,.character-sheet,.sheet-section,.custom-rolls,
+  .custom-roll-card,.trait-editor,.import-box,.new-roll-part,
+  .spell-card,.monster-card,.chest-result,.roll-result{
+    background:#0b171d!important;color:#ffffff!important;border-color:#3fb8b8!important
+  }
+  .panel{box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .sheet-section{border:1px solid #3fb8b8!important;border-top:3px solid #3fb8b8!important}
+  .section-heading h2,.panel h2,.sheet-section-title h3,
+  .section-name,.monster-heading h3,.custom-rolls h3,
+  .trait-group h3,.character-name{color:#ffffff!important}
+  label,.stat-label,.stat-value,.sheet-stat strong,
+  .character-sheet,.spell-details,.monster-statblock,
+  .trait-view strong,.roll-part-heading strong{color:#b5bec3!important}
+  .muted,.hint,.spell-subtitle,.monster-subtitle,
+  .monster-source,.spell-source,.sheet-notes{color:#b5bec3!important}
+  input,textarea,select,.builder-panel input,
+  .builder-panel select,.builder-panel textarea{
+    background:#0b171d!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+  }
+  
+  input:focus,textarea:focus,select:focus,.editable:focus{
+    outline:1px solid #3fb8b8!important;border-color:#3fb8b8!important;background:#0b171d!important
+  }
+  .master-tabs,.sheet-tabs{border-bottom-color:#3fb8b8}
+  .master-tabs button,.sheet-tabs button,.player-tabs button,
+  .character-tabs button,.secondary,.roll-actions button,
+  .roll-creator button,.add-roll-part{
+    background:#0b171d!important;color:#b5bec3!important;border:1px solid #3fb8b8!important
+  }
+  .master-tabs button.active,.sheet-tabs button.active,
+  .player-tabs button.active,.character-tabs button.active{
+    background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important
+  }
+  .primary{background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important}
+  .primary:hover{background:#13262e!important}
+  
+  .spell-level,.monster-cr,.count,.free-tag{
+    background:#13262e!important;border-color:#3fb8b8!important;color:#b5bec3!important
+  }
+  .spell-meta,.monster-combat-grid div,.monster-attacks,
+  .monster-role,.builder-info,.builder-progress{
+    background:#0b171d!important;border-color:#3fb8b8!important;color:#b5bec3!important
+  }
+  .builder-progress span{background:#13262e!important}
+  .roll-notation{background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important}
+  .chest-table-wrap{border-color:#3fb8b8!important}
+  .chest-table{background:#0b171d!important;color:#b5bec3!important}
+  .chest-table th{background:#13262e!important;color:#ffffff!important}
+  .chest-table td{border-bottom-color:#3fb8b8!important;color:#b5bec3!important}
+  
+  .toast{background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important}
+  
+  .gm-sheet-details summary,.monster-source summary{color:#5fe6e0!important}
+  .character-sheet .features-section .sheet-stat strong{background:#0b171d!important}
+  /* Los nombres y descripciones conservan el color neutro de la ficha; el rojo se usa solo en acentos. */
+  .features-section .stat-label,.magic-section .stat-label,
+  .equipment-section .weapon-name,.attacks-section .stat-label{color:#b5bec3!important}
+  .features-section .sheet-stat strong,.magic-section .sheet-stat strong,
+  .attacks-section .sheet-stat strong{color:#b5bec3!important}
+  .inline-roll{display:inline;padding:0;border:0;background:transparent;color:#5fe6e0;font:inherit;font-weight:700;text-decoration:underline;text-decoration-color:rgba(95,230,224,.45);text-underline-offset:2px;cursor:pointer}
+  .inline-roll:hover{color:#b5bec3;text-decoration-color:currentColor}
+  .sheet-readonly-value{white-space:pre-wrap;overflow-wrap:anywhere}
+  .character-sheet .editable:hover{background:#13262e!important;border-color:#3fb8b8!important}
