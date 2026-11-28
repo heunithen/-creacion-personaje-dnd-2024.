@@ -1,0 +1,295 @@
+/* Ajustes visuales finales para director, ficha náutica y controles del creador. */
+
+  /* Corrección final de contraste en herramientas del director */
+  .gm-layout .master-tabs button{background:#13262e!important;color:#b5bec3!important;border:1px solid #3fb8b8!important}
+  .gm-layout .master-tabs button.active{background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  .gm-layout .level-up-panel,.gm-layout .subclass-level-preview,.gm-layout .github-config-panel,.gm-layout .github-character-row,.gm-layout .builder-panel,.gm-layout .custom-rolls,.gm-layout .custom-roll-card,.gm-layout .new-roll-part{background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  .gm-layout .level-up-panel label,.gm-layout .builder-panel label,.gm-layout .items-search,.gm-layout .items-filters label,.gm-layout .spell-search,.gm-layout .spell-filters label,.gm-layout .monster-filter,.gm-layout .roll-creator label{color:#b5bec3!important}
+  .gm-layout input,.gm-layout textarea,.gm-layout select{background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important}
+  .gm-layout input::placeholder,.gm-layout textarea::placeholder{color:#b5bec3!important}
+  .gm-layout input:focus,.gm-layout textarea:focus,.gm-layout select:focus{border-color:#b5bec3!important;outline:1px solid #b5bec3!important}
+  .gm-layout .builder-info,.gm-layout .builder-choice-wrapper,.gm-layout .builder-choice-field,.gm-layout .builder-choice-heading,.gm-layout .github-status,.gm-layout .github-folder-chip{background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  .gm-layout .builder-info,.gm-layout .github-status{border-left:3px solid #b5bec3!important}
+  .gm-layout .builder-info strong,.gm-layout .builder-choice-wrapper strong,.gm-layout .builder-choice-heading strong,.gm-layout .subclass-level-preview strong,.gm-layout .subclass-level-preview b{color:#ffffff!important}
+  .gm-layout .builder-info p,.gm-layout .builder-info small,.gm-layout .subclass-level-preview p{color:#b5bec3!important}
+  .gm-layout .builder-checkbox{background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  .gm-layout .builder-checkbox>span,.gm-layout .builder-checkbox>span b{color:#ffffff!important}
+  .gm-layout .builder-checkbox::after{background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  .gm-layout .builder-checkbox:has(input:checked){background:#13262e!important;border-color:#b5bec3!important}
+  .gm-layout .builder-checkbox:has(input:checked)::after{background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  .gm-layout .builder-progress{background:#13262e!important}
+  .gm-layout .builder-progress span{background:#1b2a33!important}
+  .gm-layout .gm-character-sheet .sheet-section,.gm-layout .gm-character-sheet .combat-section,.gm-layout .gm-character-sheet .attributes-section,.gm-layout .gm-character-sheet .skills-section,.gm-layout .gm-character-sheet .features-section,.gm-layout .gm-character-sheet .magic-section,.gm-layout .gm-character-sheet .equipment-section,.gm-layout .gm-character-sheet .story-section,.gm-layout .gm-character-sheet .general-section{background:#13262e!important;color:#ffffff!important;border:1px solid #5fe6e0!important;border-top:2px solid #b5bec3!important}
+  .gm-layout .gm-character-sheet .sheet-section-title h3,.gm-layout .gm-character-sheet .section-name{color:#b5bec3!important}
+  .gm-layout .gm-character-sheet .sheet-stat{background:transparent!important;border-color:#3fb8b8!important}
+  .gm-layout .gm-character-sheet .sheet-stat span,.gm-layout .gm-character-sheet .stat-label{color:#b5bec3!important}
+  .gm-layout .gm-character-sheet .sheet-stat strong,.gm-layout .gm-character-sheet .stat-value,.gm-layout .gm-character-sheet .features-section .sheet-stat strong{background:#13262e!important;color:#ffffff!important}
+  .gm-layout .items-filters fieldset,.gm-layout .items-filters legend{background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  .gm-layout .items-table,.gm-layout .chest-table{background:#13262e!important;color:#ffffff!important}
+  .gm-layout .items-table th,.gm-layout .chest-table th{background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  .gm-layout .items-table td,.gm-layout .chest-table td{background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  .gm-layout .items-table td:first-child,.gm-layout .chest-table td:first-child{color:#ffffff!important}
+  .gm-layout .chest-result,.gm-layout .monster-combat-grid div,.gm-layout .monster-info-item,.gm-layout .spell-meta,.gm-layout .monster-attacks,.gm-layout .monster-role,.gm-layout .monster-entry{background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  .gm-layout .monster-heading{border-bottom-color:#b5bec3!important}
+  .gm-layout .monster-heading h3,.gm-layout .monster-content-section h4{color:#b5bec3!important}
+  .gm-layout .monster-entry strong,.gm-layout .monster-original,.gm-layout .monster-name,.gm-layout .spell-name{color:#ffffff!important}
+  .gm-layout .monster-statblock,.gm-layout .spell-details{background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  .gm-layout .monster-cr,.gm-layout .spell-level{background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  .gm-layout .monster-source,.gm-layout .monster-attribution,.gm-layout .spell-source,.gm-layout .spell-subtitle,.gm-layout .monster-subtitle{color:#b5bec3!important}
+  .gm-layout .roll-notation,.gm-layout .roll-result{background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  .gm-layout .roll-result b{color:#b5bec3!important}
+  .gm-layout .roll-actions button,.gm-layout .roll-creator button,.gm-layout .add-roll-part,.gm-layout .github-character-actions button{background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important}
+  .gm-layout button.primary{background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  .gm-layout button.secondary{background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  .gm-layout .danger-text,.gm-layout .remove-roll{color:#5fe6e0!important}
+  .gm-layout .gm-sheet-details summary{color:#b5bec3!important}
+
+
+
+/* Componentes náuticos específicos: superficies y estados */
+.nautical-sheet{background:#0f1e26!important;border-color:#3a6870!important;color:#ffffff!important}
+.nautical-sheet .inline-roll.proficient{color:#ffd54a!important;border-color:#ffd54a!important}
+.nautical-sheet .inline-roll.expertise{color:#ff5252!important;border-color:#ff5252!important}
+.nautical-sheet .sheet-stat.expertise .stat-label{color:#ff5252!important}
+.nautical-sheet .sheet-stat.proficient:not(.expertise) .stat-label{color:#ffd54a!important}
+.nautical-sheet .saving-throw-line.proficient .inline-roll{color:#ffd54a!important;border-color:#ffd54a!important}
+.nautical-sheet .proficiency-bonus{color:#ffd54a!important}
+.nautical-header{background:linear-gradient(115deg,#13262e,#0f1e26 70%,#1b2a33)!important;border-color:#3a4a52!important}
+.portrait-frame{background:radial-gradient(circle,#1b2a33,#0b171d 70%)!important;border-color:#5fe6e0!important;box-shadow:0 0 0 3px #3a4a52!important;color:#5fe6e0!important}
+.header-actions button{background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
+.nautical-quick-stats{background:#13262e!important;border-color:#3a4a52!important}
+.nautical-quick-stats>div,.nautical-quick-stats>.quick-stats-row>div{background:#1b2a33!important;border-color:#3a4a52!important}
+.nautical-quick-stats .attribute-plaque{background:#1b2a33!important;border-color:#3fb8b8!important}
+.nautical-quick-stats .ability-bonus-empty,.nautical-quick-stats .saving-throw-line span{color:#b5bec3!important}
+.nautical-quick-stats .saving-throw-line{border-color:#3a4a52!important}
+.nautical-import{background:#13262e!important;border-color:#3a4a52!important}
+.nautical-columns{background:#0b171d!important}
+.nautical-side,.nautical-skills,.nautical-content{scrollbar-color:#3a4a52 #0b171d!important}
+.nautical-columns .sheet-section{background:#13262e!important;border-color:#3a6870!important}
+.nautical-columns .sheet-section-title{border-color:#3a4a52!important}
+.nautical-tabs{border-color:#3a4a52!important}
+.nautical-tabs button{background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important}
+.nautical-tabs button.active{background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+.weapon-attacks-section .weapon-mastery-summary,.spellcasting-summary-grid>div,
+.player-spell-card,.player-feature-card,.player-feat-section .player-feature-card{
+ background:#1b2a33!important;color:#ffffff!important;border-color:#3a4a52!important
+}
+.weapon-attack-card{background:#1b2a33!important;border-color:#3a4a52!important}
+.weapon-attack-values span,.nautical-quick-stats .ability-bonus-empty,
+.nautical-quick-stats .saving-throw-line span{color:#b5bec3!important}
+.builder-class-card{background:#13262e!important;border-color:#3a6870!important;color:#ffffff!important}
+.builder-class-card:hover{background:#1b2a33!important;border-color:#5fe6e0!important}
+.builder-class-card.selected{background:#1b2a33!important;border:2px solid #5fe6e0!important}
+.builder-class-card-heading,.builder-class-meta>strong{color:#ffffff!important}
+.builder-class-meta>span,.builder-option-description,.builder-skill-description{color:#b5bec3!important}
+.builder-class-meta{border-color:#3a4a52!important}
+.builder-checkbox{background:#13262e!important;color:#ffffff!important;border-color:#3a4a52!important}
+.builder-checkbox>span,.builder-checkbox>span b{color:#ffffff!important}
+.builder-checkbox:has(input:checked){background:#1b2a33!important;border-color:#5fe6e0!important}
+.eyebrow span,.monster-stats,.dice-status,.roll-result span{color:#b5bec3!important}
+.roll-entry p,.trait-view p,.monster-card p,.character-card p{color:#b5bec3!important}
+
+/* Contraste definitivo: superficies oscuras y acentos con texto legible */
+html,body,#app{background:#0b171d!important;color:#ffffff!important}
+.app-shell,.main,.gm-layout{background:transparent!important;color:#ffffff!important}
+.panel,.builder-panel,.level-up-panel,.progression-panel,
+.spellbook-panel,.rules-panel,.items-panel,.spells-panel,
+.monsters-panel,.roster-panel,.save-panel,.chest-panel,
+.github-config-panel,.github-character-row,.github-status,
+.builder-info,.builder-choice-wrapper,.builder-choice-field,
+.builder-option-card,.builder-skill-card,.builder-class-card,
+.character-sheet,.gm-character-sheet,.nautical-sheet,
+.sheet-section,.combat-section,.attributes-section,
+.skills-section,.features-section,.magic-section,
+.equipment-section,.story-section,.general-section,
+.spell-card,.spell-details,.monster-entry,
+.monster-statblock,.monster-info-item,.monster-attacks,
+.monster-role,.monster-combat-grid div,.spell-meta,
+.roll-notation,.roll-result,.chest-result,
+.character-card,.monster-card,.trait-editor,
+.import-box,.custom-rolls,.custom-roll-card,
+.weapon-attack-card,.weapon-mastery-summary,
+.player-spell-card,.player-feature-card,.player-feat-section,
+.subclass-level-preview,.new-roll-part,.nautical-quick-stats,
+.nautical-quick-stats>div,.sheet-quick-stats>div{
+ background:#13262e!important;color:#ffffff!important;border-color:#3a4a52!important
+}
+input,textarea,select,.editable,.sheet-readonly-value{
+ background:#0b171d!important;color:#ffffff!important;border-color:#3a4a52!important
+}
+input::placeholder,textarea::placeholder{color:#8e9aa1!important}
+button,.secondary,.master-tabs button,.sheet-tabs button,
+.player-tabs button,.character-tabs button,.ddb-section-nav button,
+.roll-actions button,.roll-creator button,.header-actions button,
+.github-character-actions button{
+ background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important
+}
+button.active,.master-tabs button.active,.sheet-tabs button.active,
+.player-tabs button.active,.character-tabs button.active,
+.ddb-section-nav button.active,.nautical-tabs button.active,
+button.primary,.primary{
+ background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important
+}
+.builder-class-card.selected,.builder-option-card.selected,
+.builder-checkbox:has(input:checked){
+ background:#1b2a33!important;color:#ffffff!important;border:2px solid #5fe6e0!important
+}
+.builder-progress{background:#1b2a33!important}
+.builder-progress span{background:#5fe6e0!important}
+.brand,h1,h2,h3,h4,
+.character-name,.sheet-stat strong,.stat-value{color:#ffffff!important}
+label,.hint,.muted,.stat-label,
+.sheet-stat span,.builder-option-description,
+.builder-skill-description,.monster-source,
+.spell-source,.monster-subtitle,.spell-subtitle,
+.roll-entry p,.trait-view p{color:#b5bec3!important}
+.brand-mark,.eyebrow,.section-name,
+.trait-level,.roll-result b,.card-symbol{color:#5fe6e0!important}
+.toast{background:#1b2a33!important;color:#ffffff!important;border-color:#3fb8b8!important}
+.chest-table th,.items-table th{background:#1b2a33!important;color:#ffffff!important}
+.chest-table td,.items-table td{background:#13262e!important;color:#b5bec3!important;border-color:#3a4a52!important}
+
+  /* Aplicación efectiva de las variables del configurador global */
+  html,body,#app{background:var(--gm-bg)!important}
+  .app-shell,.main{color:var(--gm-text)!important}
+  .topbar,.nautical-sheet,.nautical-columns{background:var(--gm-bg)!important}
+  .panel,.character-sheet,.sheet-section,.character-card,.monster-card,.spell-card,.weapon-attack-card,.player-feature-card,.player-spell-card,.builder-option-card,.builder-class-card,.trait-editor,.import-box,.custom-roll-card,.ddb-content-panel,.chest-result,.roll-result{background:var(--gm-panel)!important;color:var(--gm-text)!important;border-color:var(--gm-border)!important;border-radius:var(--gm-radius)!important}
+  input,textarea,select,.editable{background:var(--gm-bg)!important;color:var(--gm-text)!important;border-color:var(--gm-border)!important}
+  button,.secondary,.master-tabs button,.nautical-tabs button{background:var(--gm-card)!important;color:var(--gm-muted)!important;border-color:var(--gm-border)!important}
+  button.active,.master-tabs button.active,.nautical-tabs button.active,button.primary,.primary{background:var(--gm-accent)!important;color:var(--gm-bg)!important;border-color:var(--gm-accent)!important}
+  h1,h2,h3,h4,.character-name,.stat-value,.rule-name{color:var(--gm-text)!important}
+  .muted,.hint,label,.stat-label,.sheet-notes-content,.rule-description,.rule-source{color:var(--gm-muted)!important}
+  .brand-mark,.eyebrow,.section-name,.trait-level,.count,.card-symbol{color:var(--gm-accent)!important}
+  .panel,.sheet-section,.character-card,.monster-card{padding:var(--gm-panel-padding)!important}
+  .nautical-columns{gap:var(--gm-panel-gap)!important}
+  .nautical-columns .sheet-section-title,.sheet-stat,.sheet-section-title{border-color:var(--gm-border)!important}
+  .rules-panel .rule-description,.rules-panel .rule-details,.rules-panel .rule-source{color:#fff!important}
+  .style-preview-card{background:var(--gm-panel)!important;color:var(--gm-text)!important;border-color:var(--gm-border)!important}
+  .style-preview-card p{color:var(--gm-muted)!important}
+
+  /* Restaurar las tarjetas de selección del creador */
+  .builder-panel .builder-class-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:.75rem!important}
+  .builder-panel label.builder-class-card{position:relative!important;display:flex!important;min-width:0!important;flex-direction:column!important;gap:.55rem!important;padding:.85rem!important;border:1px solid #3a6870!important;border-top:3px solid #3a6870!important;border-radius:9px!important;background:#13262e!important;color:#ffffff!important;cursor:pointer!important;box-shadow:0 2px 8px #0003!important;transition:border-color .15s,background .15s,transform .15s!important}
+  .builder-panel label.builder-class-card:hover{background:#1b2a33!important;border-color:#5fe6e0!important;transform:translateY(-1px)}
+  .builder-panel label.builder-class-card.selected{border:2px solid #5fe6e0!important;border-top:4px solid #5fe6e0!important;background:#1b2a33!important;box-shadow:0 0 0 2px #5fe6e022!important}
+  .builder-panel label.builder-class-card input[type="radio"]{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important;pointer-events:none!important}
+  .builder-panel .builder-class-card-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:.5rem!important;color:#ffffff!important}
+  .builder-panel .builder-class-description{color:#b5bec3!important}
+  .builder-panel .builder-class-meta{border-top:1px solid #3a4a52!important}
+  .builder-panel .builder-class-meta>span{color:#5fe6e0!important}
+  .builder-panel .builder-class-meta>strong{color:#ffffff!important}
+  .builder-panel .builder-checkbox{position:relative!important;display:flex!important;align-items:flex-start!important;gap:.6rem!important;padding:.7rem!important;border:1px solid #3a4a52!important;border-radius:7px!important;background:#13262e!important;color:#ffffff!important;cursor:pointer!important}
+  .builder-panel .builder-checkbox:has(input:checked){border-color:#5fe6e0!important;background:#1b2a33!important}
+  @media(max-width:460px){.builder-panel .builder-class-grid{grid-template-columns:1fr!important}}
+
+  /* Corrección directa: las opciones de clase, especie y trasfondo son tarjetas radio, no campos */
+  .builder-class-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:stretch!important}
+  label.builder-class-card{
+    box-sizing:border-box!important;display:flex!important;position:relative!important;flex-direction:column!important;
+    gap:9px!important;min-width:0!important;min-height:150px!important;padding:14px!important;
+    border:1px solid #3a6870!important;border-top:3px solid #3a6870!important;border-radius:10px!important;
+    background:#13262e!important;color:#fff!important;cursor:pointer!important;
+    box-shadow:0 3px 10px #0004!important
+  }
+  label.builder-class-card:hover{background:#1b2a33!important;border-color:#5fe6e0!important}
+  label.builder-class-card.selected{background:#1b2a33!important;border:2px solid #5fe6e0!important;box-shadow:0 0 0 2px #5fe6e022!important}
+  label.builder-class-card > input[type="radio"]{
+    appearance:none!important;-webkit-appearance:none!important;
+    position:absolute!important;opacity:0!important;width:1px!important;height:1px!important;
+    margin:0!important;padding:0!important;pointer-events:none!important
+  }
+  label.builder-class-card .builder-class-card-heading{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:8px!important;color:#fff!important}
+  label.builder-class-card .builder-class-card-heading strong{font-size:1.08em!important;color:#fff!important}
+  label.builder-class-card .builder-class-card-heading span{color:#5fe6e0!important}
+  label.builder-class-card .builder-class-description{display:block!important;color:#b5bec3!important;line-height:1.45!important}
+  label.builder-class-card .builder-class-meta{display:flex!important;justify-content:space-between!important;gap:8px!important;padding-top:7px!important;border-top:1px solid #3a4a52!important}
+  label.builder-class-card .builder-class-meta span{color:#8e9aa1!important}
+  label.builder-class-card .builder-class-meta strong{color:#fff!important;text-align:right!important}
+  .builder-checkbox-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  @media(max-width:520px){.builder-class-grid,.builder-checkbox-grid{grid-template-columns:1fr!important}}
+
+
+
+  /* Ajuste de competencias y elecciones múltiples del creador.
+     La regla general .builder-panel input estaba convirtiendo cada checkbox
+     en un campo de texto de ancho completo. */
+  .builder-panel .builder-checkbox{
+    box-sizing:border-box!important;display:flex!important;flex-direction:row!important;
+    align-items:flex-start!important;gap:10px!important;width:100%!important;
+    min-width:0!important;min-height:0!important;margin:0!important;padding:10px 12px!important;
+    border:1px solid #3a4a52!important;border-left:3px solid #3a4a52!important;
+    border-radius:8px!important;background:#13262e!important;color:#ffffff!important;
+    line-height:1.4!important;cursor:pointer!important;
+  }
+  .builder-panel .builder-checkbox > input[type="checkbox"]{
+    display:block!important;appearance:auto!important;-webkit-appearance:checkbox!important;
+    flex:0 0 17px!important;width:17px!important;min-width:17px!important;max-width:17px!important;
+    height:17px!important;margin:2px 0 0!important;padding:0!important;border:0!important;
+    border-radius:3px!important;background:transparent!important;accent-color:#5fe6e0!important;
+    box-shadow:none!important;
+  }
+  .builder-panel .builder-checkbox > span{
+    display:block!important;flex:1 1 auto!important;min-width:0!important;
+    margin:0!important;padding:0!important;color:#ffffff!important;font-size:.82rem!important;line-height:1.4!important;
+  }
+  .builder-panel .builder-checkbox > small,
+  .builder-panel .builder-checkbox .builder-skill-description{
+    display:block!important;flex:1 1 100%!important;min-width:0!important;
+    margin:3px 0 0!important;padding:0!important;color:#b5bec3!important;
+    font-size:.72rem!important;line-height:1.45!important;
+  }
+  .builder-panel .builder-checkbox:has(input:checked){
+    border-color:#5fe6e0!important;border-left-color:#5fe6e0!important;background:#1b2a33!important;
+  }
+  .builder-panel .builder-checkbox:has(input:disabled){opacity:.55!important;cursor:not-allowed!important}
+  .builder-panel .builder-checkbox-grid{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-items:stretch!important;gap:8px!important;min-width:0!important;
+  }
+  @media(max-width:520px){.builder-panel .builder-checkbox-grid{grid-template-columns:1fr!important}}
+
+
+  /* Distribución de la ficha: habilidades a la izquierda y acciones a la derecha. */
+  .nautical-columns{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:.75rem!important;align-items:start!important}
+  .nautical-skills,.nautical-actions{grid-row:1;min-width:0;max-height:none!important;height:auto!important;overflow:visible!important}
+  .nautical-skills{grid-column:1}
+  .nautical-actions{grid-column:2;display:flex;flex-direction:column;gap:.65rem}
+  .nautical-actions .sheet-section{margin:0}
+  .nautical-content{grid-column:1/-1!important;grid-row:2;min-width:0;max-height:none!important;height:auto!important;overflow:visible!important}
+  @media(max-width:580px){
+    .nautical-columns{grid-template-columns:minmax(0,1fr)!important}
+    .nautical-skills,.nautical-actions,.nautical-content{grid-column:1!important;grid-row:auto!important}
+  }
+
+  /* Contraste del creador: texto blanco sobre superficies oscuras. */
+  .builder-panel,.builder-panel *:not(input):not(textarea):not(select):not(option){
+    color:#ffffff!important
+  }
+  .builder-panel>label,.builder-panel label,.builder-panel .muted,
+  .builder-panel .hint,.builder-panel small,.builder-panel .builder-class-description,
+  .builder-panel .builder-option-description,.builder-panel .builder-skill-description{
+    color:#b5bec3!important
+  }
+  .builder-panel input:not([type=checkbox]):not([type=radio]),
+  .builder-panel textarea,.builder-panel select,.builder-panel option{
+    background:#13262e!important;color:#ffffff!important;-webkit-text-fill-color:#ffffff!important
+  }
+  .builder-panel .builder-class-card,.builder-panel .builder-option-card,
+  .builder-panel .builder-checkbox,.builder-panel .builder-skill-card{
+    color:#ffffff!important
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
