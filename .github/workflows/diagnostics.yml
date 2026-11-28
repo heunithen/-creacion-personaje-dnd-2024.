@@ -1,6 +1,8 @@
 name: Diagnostics
 
 on:
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       suite:
@@ -41,11 +43,11 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Type check
-        if: inputs.suite == 'all' || inputs.suite == 'types'
+        if: github.event_name == 'pull_request' || inputs.suite == 'all' || inputs.suite == 'types'
         run: npm run check
 
       - name: Character creation matrix and regression
-        if: inputs.suite == 'all' || inputs.suite == 'characters'
+        if: github.event_name == 'pull_request' || inputs.suite == 'all' || inputs.suite == 'characters'
         env:
           DIAGNOSTICS_OUTPUT: test-results/character-matrix.json
         run: |
@@ -57,26 +59,27 @@ jobs:
         continue-on-error: true
         env:
           SUPABASE_URL: https://akbvedwkpjokphzridla.supabase.co
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DIAGNOSTICS_API_KEY: ${{ secrets.DIAGNOSTICS_API_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: sb_publishable_BOiPUrLlhogEadY_phsFMw_s6JrIzcP
           DIAGNOSTICS_OUTPUT: test-results/character-matrix.json
         run: node scripts/persist-diagnostics.mjs
 
       - name: Shop regression
-        if: inputs.suite == 'all' || inputs.suite == 'shop'
+        if: github.event_name == 'pull_request' || inputs.suite == 'all' || inputs.suite == 'shop'
         run: node --test scripts/shop-regression.test.mjs
 
       - name: Encounter regression
-        if: inputs.suite == 'all' || inputs.suite == 'encounters'
+        if: github.event_name == 'pull_request' || inputs.suite == 'all' || inputs.suite == 'encounters'
         run: node --test scripts/encounter-regression.test.mjs
 
       - name: Manual and CSS audits
-        if: inputs.suite == 'all' || inputs.suite == 'audit'
+        if: github.event_name == 'pull_request' || inputs.suite == 'all' || inputs.suite == 'audit'
         run: |
           npm run audit:manual
           npm run audit:css
 
       - name: Install Chromium
-        if: inputs.suite == 'all' || inputs.suite == 'browser'
+        if: github.event_name == 'pull_request' || inputs.suite == 'all' || inputs.suite == 'browser'
         run: npx playwright install --with-deps chromium
 
       - name: Browser regression
