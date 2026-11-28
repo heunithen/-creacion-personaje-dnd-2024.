@@ -1,0 +1,62 @@
+/* Tiendita del personaje */
+.player-shop-section{display:grid;gap:16px}
+.shopkeeper-banner{display:flex;align-items:center;gap:18px;padding:14px;border:1px solid rgba(211,174,103,.3);border-radius:12px;background:linear-gradient(120deg,rgba(33,38,48,.96),rgba(18,22,30,.94))}
+.shopkeeper-banner img{width:104px;height:124px;object-fit:cover;object-position:top center;border-radius:9px;border:1px solid rgba(211,174,103,.45);flex:0 0 auto}
+.shopkeeper-banner h3{margin:0 0 7px;color:#e4c27e;font-size:1.2rem}
+.shopkeeper-banner p,.shop-caption{margin:0;color:var(--muted,#a7a7a7);font-size:.88rem;line-height:1.5}
+.shop-balance{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px;border:1px solid rgba(211,174,103,.25);border-radius:10px;background:rgba(12,16,23,.72)}
+.shop-balance>div:first-child{display:grid;gap:3px;margin-right:auto}
+.shop-balance>div:first-child span,.shop-coin small{color:var(--muted,#aaa);font-size:.75rem}
+.shop-balance>div:first-child strong{color:#e8c981;font-size:1.15rem}
+.shop-coin{display:grid;gap:2px;min-width:52px;text-align:center;padding:5px 8px;border-left:1px solid rgba(255,255,255,.1)}
+.shop-coin b{color:#eee}
+.shop-toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.shop-toolbar input,.shop-toolbar select,.shop-item-actions input{min-width:0;padding:8px 10px;border:1px solid rgba(255,255,255,.16);border-radius:7px;background:#171c25;color:#f0eee9}
+.shop-toolbar>input{flex:1 1 180px}
+.shop-mode-switch{display:flex;gap:4px;padding:3px;border:1px solid rgba(211,174,103,.28);border-radius:8px;background:#111720}
+.shop-mode-switch button{padding:7px 14px;border:0;border-radius:6px;background:transparent;color:#c5c5c5;cursor:pointer}
+.shop-mode-switch button.active{background:#a98243;color:#17130d;font-weight:700}
+.shop-notice{margin:0;padding:9px 12px;border-radius:7px;background:rgba(168,130,67,.16);color:#e8ce99;font-size:.88rem}
+.shop-item-grid,.shop-owned-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.shop-item-card,.shop-owned-card{display:grid;gap:10px;align-content:start;padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(20,25,34,.84)}
+.shop-item-title{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.shop-item-title h4,.shop-owned-info h4{margin:0 0 4px;color:#eee;font-size:.95rem}
+.shop-item-title small,.shop-owned-info small,.shop-item-price small{color:var(--muted,#a5a5a5);font-size:.75rem}
+.shop-rarity{display:inline-block;flex:0 0 auto;padding:3px 6px;border-radius:5px;background:rgba(119,143,174,.18);color:#c6d5e8;font-size:.7rem}
+.shop-rarity.shop-artifact{background:rgba(183,135,61,.2);color:#e9c77d}
+.shop-item-price{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.shop-item-price strong,.shop-owned-info strong{color:#e4c27e;font-size:.9rem}
+.shop-item-actions{display:flex;align-items:end;gap:8px}
+.shop-item-actions label{display:grid;gap:4px;flex:1;color:var(--muted,#aaa);font-size:.75rem}
+.shop-item-actions input{width:100%;max-width:78px}
+.shop-item-actions button,.shop-equip-button{padding:8px 12px;border:1px solid rgba(211,174,103,.55);border-radius:7px;background:#8c6b37;color:#fff4dc;font-weight:700;cursor:pointer}
+.shop-item-actions button:disabled{opacity:.45;cursor:not-allowed}
+.shop-equip-button{justify-self:start;padding:6px 10px;background:transparent;color:#e5c780;font-size:.78rem}
+.shop-owned-info{display:grid;gap:3px}
+@media(max-width:560px){.shopkeeper-banner{align-items:flex-start;gap:11px}.shopkeeper-banner img{width:76px;height:96px}.shop-balance{gap:6px}.shop-coin{min-width:42px;padding:4px}.shop-item-grid,.shop-owned-list{grid-template-columns:1fr}.shop-toolbar{align-items:stretch}.shop-mode-switch{flex:1}.shop-mode-switch button{flex:1}}
+
+/* Inventario unificado en casillas */
+.inventory-toolbar{display:flex;justify-content:flex-end;margin:10px 0}
+.inventory-add-button,.inventory-add-form button,.spell-learn-button{border:1px solid rgba(211,174,103,.55);border-radius:7px;background:#8c6b37;color:#fff4dc;padding:9px 13px;font-weight:700;cursor:pointer}
+.inventory-add-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:13px;border:1px solid rgba(211,174,103,.3);border-radius:10px;background:rgba(12,16,23,.75);margin:10px 0 14px}
+.inventory-add-form label,.spell-learn-panel label{display:grid;gap:5px;color:#c7c7c7;font-size:.8rem}
+.inventory-add-form label:first-child,.inventory-add-form label:last-of-type{grid-column:1/-1}
+.inventory-add-form input,.inventory-add-form select,.spell-learn-panel input{width:100%;min-width:0;padding:9px 10px;border:1px solid rgba(255,255,255,.16);border-radius:7px;background:#171c25;color:#f0eee9}
+.inventory-add-form button{justify-self:start}
+.inventory-slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}
+.inventory-slot{position:relative;display:flex;min-width:0;min-height:190px;flex-direction:column;align-items:center;gap:6px;padding:14px 10px 11px;border:1px solid rgba(211,174,103,.3);border-radius:9px;background:linear-gradient(155deg,rgba(35,40,49,.96),rgba(15,19,27,.98));text-align:center;box-shadow:inset 0 0 0 2px rgba(255,255,255,.025)}
+.inventory-slot-icon{display:grid;place-items:center;width:48px;height:48px;border:1px solid rgba(211,174,103,.38);border-radius:8px;background:rgba(8,12,18,.65);color:#e4c27e;font-size:1.65rem}
+.inventory-slot h4{margin:2px 0 0;color:#f0e6d1;font-size:.88rem;overflow-wrap:anywhere}
+.inventory-slot-type,.inventory-slot-detail{color:#aeb6bf;font-size:.72rem}
+.inventory-slot-description{margin:2px 0;color:#c2c2c2;font-size:.72rem;line-height:1.35}
+.inventory-remove,.spell-remove-button{display:grid;place-items:center;width:24px;height:24px;padding:0;border:1px solid rgba(220,100,100,.5);border-radius:50%;background:rgba(95,28,28,.75);color:#ffdede;font-size:1.1rem;line-height:1;cursor:pointer}
+.inventory-remove{position:absolute;top:7px;right:7px}
+.inventory-equip-button{margin-top:auto;padding:5px 10px;border:1px solid rgba(211,174,103,.45);border-radius:6px;background:transparent;color:#d5d5d5;font-size:.72rem;cursor:pointer}
+.inventory-equip-button.equipped{background:rgba(168,130,67,.22);color:#f0d18b;border-color:#b58b4c}
+.player-spell-card-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px}
+.spell-learn-button{padding:6px 10px;font-size:.78rem}
+.spell-learn-panel{display:grid;gap:6px;margin:8px 0 14px;padding:12px;border:1px solid rgba(211,174,103,.28);border-radius:9px;background:rgba(12,16,23,.8)}
+.spell-learn-panel>button{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:6px;background:rgba(255,255,255,.035);color:#eee;text-align:left;cursor:pointer}
+.spell-learn-panel small{color:#b9a477}
+.spell-remove-button{flex:0 0 auto}
+@media(max-width:520px){.inventory-slot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.inventory-add-form{grid-template-columns:1fr}.inventory-add-form label{grid-column:1/-1}.spell-learn-panel>button{align-items:flex-start;flex-direction:column}}
