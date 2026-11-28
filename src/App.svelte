@@ -1,4 +1,5 @@
 <script lang="ts">
+  import './styles/director-combat-tracker.css';
   import './styles/monster-statblock.css';
   import './styles/rules-reference.css';
   import './styles/character-spell-slots.css';
@@ -10570,73 +10571,6 @@ import './styles/character-portrait-picker.css';
   .chest-opened-note{font-weight:700;color:var(--gm-accent);margin:16px 0 5px}
   .chest-empty{margin-top:16px}
 
-
-  .combat-toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:12px 0}
-  .combat-toolbar label,.combat-initiative label{display:flex;gap:8px;align-items:center;font-size:12px}
-  .combat-toolbar select,.combatant-card input{min-width:0;background:#0b171d;color:#fff;border:1px solid #3fb8b8;border-radius:5px;padding:6px}
-  .combat-sort input{width:auto}
-  .combat-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px;align-items:start;width:100%;min-width:0}
-  .combatant-card{position:relative;min-width:0;width:100%;box-sizing:border-box;padding:8px;border:1px solid #3fb8b8;border-radius:9px;background:#0b171d;color:#fff;overflow-wrap:anywhere}
-  .combatant-card.combatant-active{border:2px solid #e6b83f;box-shadow:0 0 0 2px rgba(230,184,63,.22),0 0 14px rgba(230,184,63,.32)}
-  .combatant-card .combatant-name{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
-  .combatant-card .combatant-vitals{gap:4px;font-size:11px}
-  .combatant-card .combat-ac input,.combatant-card .combat-hp input{width:38px;padding:4px 2px}
-  .combatant-card .combatant-tools button,.combatant-card .combat-hp button,.combatant-card .combat-temp button{padding:3px 5px;font-size:11px}
-  .combatant-card .combat-damage-tools{grid-template-columns:minmax(0,1fr) auto auto;gap:3px}
-  .combatant-card .combat-damage-tools button{padding:5px 5px;font-size:10px}
-  .combatant-card .combat-initiative{gap:4px;font-size:11px}
-  .combatant-card .combat-initiative input{width:58px;min-height:30px;font-size:13px;text-align:center}
-  .combatant-card .combat-action-row{font-size:11px;overflow-wrap:anywhere}
-  .combatant-card .combat-action-row button{padding:5px;font-size:10px}
-  .combatant-card.combat-dead{opacity:.58;filter:grayscale(.65)}
-  .combatant-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .combatant-name{flex:1;font-weight:800;font-size:15px}
-  .combatant-participating{display:flex;align-items:center;gap:6px;margin:7px 0;color:#9fe9e5;font:700 11px system-ui,sans-serif}
-  .combatant-participating input{width:auto;accent-color:#5fe6e0}
-  .combatant-tools{display:flex;gap:4px}.combatant-tools button,.combat-hp button,.combat-temp button{border:1px solid #3fb8b8;border-radius:4px;background:#13262e;color:#fff;padding:4px 8px}
-  .combatant-vitals{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:12px 0 6px;font-size:13px;font-weight:800}
-  .combat-ac,.combat-hp{display:flex;align-items:center;gap:5px}
-  .combat-ac input{width:48px;text-align:center;font-weight:800}
-  .combat-hp input{width:48px;text-align:center;font-weight:800}
-  .combat-hp-track{height:9px;background:#34434a;border-radius:9px;overflow:hidden;margin:5px 0 9px}
-  .combat-hp-track span{display:block;height:100%;background:#29b765;transition:width .2s}
-  .combat-hp-track span.hp-yellow{background:#e6b83f}.combat-hp-track span.hp-red{background:#d64b4b}
-  .combat-temp{display:flex;justify-content:center;align-items:center;gap:10px;color:#8abfff;font-size:12px;margin:6px 0 10px}
-  .combat-damage-tools{display:grid;grid-template-columns:minmax(48px,1fr) auto auto;gap:6px;padding:8px 0;border-top:1px solid #3fb8b8}
-  .combat-damage-tools input{width:100%;box-sizing:border-box}
-  .combat-damage-tools button,.combat-initiative button,.combat-expand,.combat-actions button{border:1px solid #3fb8b8;border-radius:5px;background:#13262e;color:#fff;padding:6px 9px;font-size:12px}
-  .combat-damage-tools .damage-button{border-color:#c95c5c}.combat-damage-tools .heal-button{border-color:#36b978}
-  .combat-initiative{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:4px 0 9px;font-size:12px}
-  .combat-initiative input{width:64px;min-height:32px;font-size:14px;text-align:center}
-  .combat-expand{width:100%;margin:4px 0}
-  .combat-actions{display:grid;gap:7px;margin-top:8px}
-  .combat-action-row{display:grid;gap:5px;padding:7px 0;border-top:1px solid #31525a;font-size:12px}
-  .combat-action-row>div{display:flex;gap:5px;flex-wrap:wrap}
-  .combat-action-row button{font-weight:800;color:#5fe6e0}
-  .combat-dc{padding:6px 9px;border:1px solid #7b83c5;border-radius:5px;color:#b7baff;font-weight:800}
-  .combat-fallen{text-align:center;font-weight:900;color:#e87979;margin-top:8px}
-  .add-to-combat{margin-bottom:12px}
-  .initiative-panel{display:grid;gap:12px}
-  .initiative-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .initiative-roll-button{min-height:42px;font-weight:900}
-  .initiative-list,.initiative-roster{display:grid;gap:6px;margin:0;padding:0;list-style:none}
-  .initiative-list li,.initiative-roster li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px;border:1px solid var(--gm-border);border-radius:7px;background:var(--gm-card);color:var(--gm-text)}
-  .initiative-position{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#263d46;color:#9fe9e5;font-weight:900}
-  .initiative-name{font-weight:800;overflow-wrap:anywhere}
-  .initiative-surprised{display:inline-flex;align-items:center;gap:5px;margin-left:10px;color:#e6b83f;font-size:11px;font-weight:700;white-space:nowrap;cursor:pointer}
-  .initiative-surprised input{width:14px;height:14px;margin:0;accent-color:#e6b83f;cursor:pointer}
-  .initiative-disadvantage-dice{color:#e87979!important;font-weight:800}
-  .initiative-roll{font-size:12px;color:var(--gm-muted);white-space:nowrap}.initiative-roll strong{color:var(--gm-text);font-size:15px}.initiative-roll small{color:#e6b83f}
-  .initiative-list li.initiative-active{border:2px solid #e6b83f;background:rgba(230,184,63,.13)}
-  .initiative-list li.initiative-active .initiative-position{background:#e6b83f;color:#17242a}
-  .player-current-turn{color:#e6b83f;font-size:11px;font-weight:800}
-  .initiative-roster li{grid-template-columns:minmax(0,1fr) auto}
-  .initiative-roster strong{font-size:12px;color:#9fe9e5}
-  .initiative-turn-controls{display:flex;align-items:center;gap:7px;min-width:0}
-  .initiative-turn-controls button{min-width:34px;min-height:34px;padding:5px 9px;font-size:16px;font-weight:900}
-  .initiative-turn-controls strong{max-width:180px;color:var(--gm-text);font-size:12px;text-align:center;overflow-wrap:anywhere}
-  @media(max-width:520px){.initiative-list li{grid-template-columns:26px minmax(0,1fr)}.initiative-roll{grid-column:2;white-space:normal}.initiative-turn-controls{flex-basis:100%;order:2}.initiative-turn-controls strong{flex:1}}
-  @media(max-width:480px){.combatant-vitals{align-items:flex-start;flex-direction:column}.combat-initiative{align-items:flex-start;flex-direction:column}}
 
   :global(html),:global(body),:global(#app){box-sizing:border-box;width:100%;min-width:0;max-width:100vw;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}
   /* Bonificadores de habilidades: competencia en amarillo y pericia en rojo. */
