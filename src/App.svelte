@@ -6802,6 +6802,7 @@ import ITEMS from './items.json';
   });
 
 import './styles/character-backgrounds.css';  import './styles/director-appearance-controls.css';
+  import './styles/character-creator-review.css';
 </script>
 <svelte:window on:pointermove={trackChoiceCursor} />
 {#if choiceCursorProgress && playerCreating}
@@ -10338,131 +10339,6 @@ import './styles/character-backgrounds.css';  import './styles/director-appearan
     :global(.builder-panel .builder-ability-card input[type=number]){min-height:50px!important;font-size:1.2rem!important}
   }
 
-  :global(.builder-panel .builder-review){
-    display:grid;
-    gap:14px;
-    margin:16px 0 8px;
-  }
-  :global(.builder-panel .builder-review-identity){
-    padding:20px 22px;
-    border:1px solid #3a6870;
-    border-left:4px solid #3fb8b8;
-    border-radius:12px;
-    background:linear-gradient(135deg,#13262e 0%,#0f1e26 100%);
-  }
-  :global(.builder-panel .builder-review-kicker){
-    color:#5fe6e0;
-    font-size:.66rem;
-    font-weight:800;
-    letter-spacing:.14em;
-  }
-  :global(.builder-panel .builder-review-identity h4){
-    margin:7px 0 5px;
-    color:#fff;
-    font-size:1.45rem;
-    line-height:1.2;
-  }
-  :global(.builder-panel .builder-review-identity p){
-    margin:0;
-    color:#b5bec3;
-    font-size:.86rem;
-  }
-  :global(.builder-panel .builder-review-identity p span){color:#3fb8b8;padding:0 3px}
-  :global(.builder-panel .builder-review-section){
-    padding:16px;
-    border:1px solid #22333d;
-    border-radius:11px;
-    background:#0f1e26;
-  }
-  :global(.builder-panel .builder-review-section h4){
-    margin:0 0 12px;
-    color:#5fe6e0;
-    font-size:.82rem;
-    font-weight:800;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-  }
-  :global(.builder-panel .builder-review-stats){
-    display:grid;
-    grid-template-columns:repeat(6,minmax(0,1fr));
-    gap:8px;
-  }
-  :global(.builder-panel .builder-review-stat){
-    display:flex;
-    min-width:0;
-    flex-direction:column;
-    align-items:center;
-    gap:4px;
-    padding:11px 5px;
-    border:1px solid #3a4a52;
-    border-radius:9px;
-    background:#13262e;
-    text-align:center;
-  }
-  :global(.builder-panel .builder-review-stat span){
-    color:#b5bec3;
-    font-size:.67rem;
-    font-weight:700;
-  }
-  :global(.builder-panel .builder-review-stat strong){
-    color:#fff;
-    font-size:1.45rem;
-    line-height:1.1;
-  }
-  :global(.builder-panel .builder-review-stat small){
-    color:#5fe6e0;
-    font-size:.85rem;
-    font-weight:800;
-  }
-  :global(.builder-panel .builder-review-derived){
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:8px;
-  }
-  :global(.builder-panel .builder-review-derived>div){
-    display:flex;
-    min-width:0;
-    flex-direction:column;
-    gap:7px;
-    padding:12px;
-    border-radius:8px;
-    background:#13262e;
-  }
-  :global(.builder-panel .builder-review-derived span),
-  :global(.builder-panel .builder-review-details span){
-    color:#b5bec3;
-    font-size:.72rem;
-  }
-  :global(.builder-panel .builder-review-derived strong){
-    color:#fff;
-    font-size:1.35rem;
-  }
-  :global(.builder-panel .builder-review-derived strong small){
-    color:#8e9aa1;
-    font-size:.7rem;
-  }
-  :global(.builder-panel .builder-review-details){
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:13px 18px;
-  }
-  :global(.builder-panel .builder-review-details h4){grid-column:1/-1;margin-bottom:0}
-  :global(.builder-panel .builder-review-details>div){min-width:0}
-  :global(.builder-panel .builder-review-details p){
-    margin:4px 0 0;
-    color:#fff;
-    font-size:.86rem;
-    overflow-wrap:anywhere;
-  }
-  @media(max-width:760px){
-    :global(.builder-panel .builder-review-stats){grid-template-columns:repeat(3,minmax(0,1fr))}
-    :global(.builder-panel .builder-review-derived){grid-template-columns:repeat(2,minmax(0,1fr))}
-  }
-  @media(max-width:420px){
-    :global(.builder-panel .builder-review-identity){padding:15px}
-    :global(.builder-panel .builder-review-details){grid-template-columns:1fr}
-    :global(.builder-panel .builder-review-details h4){grid-column:auto}
-  }
 
 
   /* Refinamiento tipográfico de la ficha: no altera columnas, orden ni pestañas. */
