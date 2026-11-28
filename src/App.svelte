@@ -1725,12 +1725,16 @@ import { onMount } from 'svelte';
       if(!job.filename||known.has(job.filename))continue;
       try {
         const blob=await imageToSquareWebp(job.source);
-        const uploaded=await fetch(SUPABASE_URL+'/storage/v1/object/character-portraits/square/'+job.filename,{
-          method:'POST',
-          headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'image/webp'},
-          body:blob
-        });
-        if(!uploaded.ok)throw new Error('Supabase rechazó '+job.filename+': '+await uploaded.text());
+        const target=SUPABASE_URL+'/storage/v1/object/public/character-portraits/square/'+job.filename;
+        const exists=await fetch(target,{method:'HEAD'});
+        if(!exists.ok) {
+          const uploaded=await fetch(SUPABASE_URL+'/storage/v1/object/character-portraits/square/'+job.filename,{
+            method:'POST',
+            headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'image/webp'},
+            body:blob
+          });
+          if(!uploaded.ok)throw new Error('Supabase rechazó '+job.filename+': '+await uploaded.text());
+        }
         records.push({object_path:job.filename,source_filename:job.sourceFilename});
         known.add(job.filename);
         migrated++;
