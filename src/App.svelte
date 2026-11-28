@@ -8636,4 +8636,4 @@ import './styles/character-portrait-picker.css';
   :global(.inline-roll:hover){color:#b5bec3;text-decoration-color:currentColor}
   :global(.sheet-readonly-value){white-space:pre-wrap;overflow-wrap:anywhere}
   :global(.character-sheet .editable:hover){background:#13262e!important;border-color:#3fb8b8!important}
-
+</style>
