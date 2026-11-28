@@ -279,3 +279,18 @@ test('el Máster abre Ver ficha en la interfaz completa del jugador y edita el r
   assert.match(app, /if \(latest && !syncPending && !supabaseSaving && !editingMasterSheet\)/);
   assert.match(app, /d\?\.type === 'character-updated' && obrRole === 'PLAYER' && d\.playerId === supabasePlayerId/);
 });
+
+
+test('la validación final regresa al primer paso con errores y explica los campos incompatibles', () => {
+  assert.match(app, /const firstInvalidStep = \[2,3,4,5,6,7,8,9,10\]\.find\(step => builderStepMissingFields\(step\)\.length > 0\)/);
+  assert.match(app, /builderStep = firstInvalidStep/);
+  assert.match(app, /Revisa exactamente lo siguiente/);
+  assert.match(app, /Corrige estos campos y continúa/);
+});
+
+test('la ficha reconoce armas escritas en plural y cantidades delante del nombre', () => {
+  assert.match(app, /function pluralInventoryName\(name:string\)/);
+  assert.match(app, /function canonicalInventoryName\(name:string,target:RawSheet\)/);
+  assert.match(app, /const canonicalName=canonicalInventoryName\(parsed\.name,target\)/);
+  assert.match(app, /const weaponType=\['arma','armas','weapon','weapons'\]\.includes\(type\)/);
+});
