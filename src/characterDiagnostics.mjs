@@ -39,7 +39,7 @@ export function auditCharacterSheet(sheet) {
       continue;
     }
     if (!sections.has(key)) sections.set(key, []);
-    sections.get(key).push(section);
+    sections.get(key)?.push(section);
     for (const [statIndex, stat] of section.stats.entries()) {
       if (!stat || typeof stat !== 'object' || Array.isArray(stat) || !clean(stat.name)) {
         addError('stat_invalid', 'Hay un dato sin estructura o nombre válido en ' + clean(section.name) + ' (' + (statIndex + 1) + ').');
@@ -54,13 +54,13 @@ export function auditCharacterSheet(sheet) {
   }
 
   const identity = (sections.get('PERSONAJE') || [])[0];
-  /** @param {any} section @param {string} name */
+  /** @param {{stats: any[]} | undefined} section @param {string} name */
   const readValue = (section, name) => clean(section?.stats?.find(stat => clean(stat?.name) === name)?.value);
   for (const field of REQUIRED_IDENTITY) {
     if (!readValue(identity, field)) addError('identity_field_missing', 'Falta el dato obligatorio «' + field + '».');
   }
 
-  const abilities = (sections.get('ATRIBUTOS') || [])[0];
+  const abilities = /** @type {{stats: any[]} | undefined} */ ((sections.get('ATRIBUTOS') || [])[0]);
   if (abilities) {
     const names = new Set(abilities.stats.map(stat => clean(stat?.name)));
     for (const ability of ABILITIES) {
@@ -75,7 +75,7 @@ export function auditCharacterSheet(sheet) {
     }
   }
 
-  const combat = (sections.get('COMBATE') || [])[0];
+  const combat = /** @type {{stats: any[]} | undefined} */ ((sections.get('COMBATE') || [])[0]);
   for (const field of ['Puntos de golpe máximos','Armor Class','Speed']) {
     if (combat && !combat.stats.some(stat => clean(stat?.name) === field)) {
       addWarning('combat_field_missing', 'Falta el dato de combate «' + field + '».');
