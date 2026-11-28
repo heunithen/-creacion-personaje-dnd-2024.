@@ -1,0 +1,40 @@
+/* Vista compacta de conjuros del personaje */
+  :global(.spellcasting-summary-grid){display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
+  :global(.spellcasting-summary-grid>div){display:flex;min-width:0;flex-direction:column;gap:.25rem;padding:.65rem .7rem;border:1px solid #3fb8b8;border-radius:6px;background:#0b171d}
+  :global(.spellcasting-summary-grid>div>span){color:#b5bec3;font:650 .65rem/1.25 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.035em}
+  :global(.spellcasting-summary-grid>div>strong){color:#ffffff;font:750 .95rem/1.3 system-ui,sans-serif;overflow-wrap:anywhere}
+  :global(.spellcasting-summary-grid .spell-slot-summary){grid-column:1/-1}
+  :global(.spell-slot-summary>strong){display:flex;flex-wrap:wrap;gap:.35rem .8rem}
+  :global(.spell-slot-value){font-size:.82rem}
+
+  :global(.spell-change-actions){display:flex;gap:.5rem;flex-wrap:wrap;margin:.65rem 0}
+  :global(.spell-change-actions button){padding:.55rem .8rem;border:1px solid #3fb8b8;border-radius:6px}
+  :global(.spell-change-panel p){line-height:1.5}
+  :global(.spell-change-search){box-sizing:border-box;width:100%;margin:.5rem 0;padding:.6rem;border:1px solid #3a6870;border-radius:6px}
+  :global(.spell-change-count){margin:.4rem 0;color:#5fe6e0;font-weight:800}
+  :global(.spell-change-options){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;max-height:340px;overflow:auto;padding:.25rem}
+  :global(.spell-change-options label){display:flex;align-items:center;gap:.4rem;min-width:0;padding:.45rem;border:1px solid #3a6870;border-radius:5px;background:#0b171d}
+  :global(.spell-change-options label.selected){border-color:#5fe6e0;background:#17343a}
+  :global(.spell-change-options label span){min-width:0;flex:1;overflow-wrap:anywhere}
+  :global(.spell-change-options label small){flex:0 0 auto;color:#b5bec3;font-size:.65rem}
+  :global(.spell-change-options input){width:1rem;height:1rem;flex:0 0 auto}
+  :global(.spell-change-actions button:disabled){opacity:.4}
+  @media(max-width:520px){:global(.spell-change-options){grid-template-columns:1fr}}
+  :global(.player-spell-list){display:flex;flex-direction:column;gap:.5rem}
+  :global(.player-spell-card){display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.65rem;align-items:center;padding:.55rem .65rem;border:1px solid #3fb8b8;border-left:3px solid #3fb8b8;border-radius:6px;background:#0b171d}
+  :global(.player-spell-card details){min-width:0}
+  :global(.player-spell-card summary){display:flex;align-items:center;justify-content:space-between;gap:.5rem;cursor:pointer;list-style:none}
+  :global(.player-spell-card summary::-webkit-details-marker){display:none}
+  :global(.player-spell-name){font:700 .9rem/1.25 Georgia,serif;color:#ffffff;overflow-wrap:anywhere}
+  :global(.player-spell-level){flex:0 0 auto;padding:.2rem .4rem;border:1px solid #3fb8b8;border-radius:4px;color:#b5bec3;font:650 .65rem system-ui,sans-serif}
+  :global(.player-spell-description){padding-top:.55rem}
+  :global(.player-spell-description .spell-meta){grid-template-columns:repeat(2,minmax(0,1fr));background:#0b171d;color:#b5bec3;border-color:#3fb8b8}
+  :global(.player-spell-checks){display:flex;flex-direction:column;gap:.35rem;min-width:6.3rem}
+  :global(.player-spell-checks label){display:flex;align-items:center;gap:.35rem;color:#b5bec3;font:600 .68rem system-ui,sans-serif;white-space:nowrap}
+  :global(.player-spell-checks input){width:1rem;height:1rem;margin:0;accent-color:#3fb8b8}
+  @media(max-width:520px){
+    :global(.spellcasting-summary-grid){grid-template-columns:repeat(2,minmax(0,1fr))}
+    :global(.spellcasting-summary-grid .spell-slot-summary){grid-column:1/-1}
+    :global(.player-spell-card){grid-template-columns:minmax(0,1fr);gap:.45rem}
+    :global(.player-spell-checks){flex-direction:row;flex-wrap:wrap;gap:.8rem}
+  }
