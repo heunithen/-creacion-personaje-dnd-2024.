@@ -10,6 +10,15 @@ async function assertNoHorizontalOverflow(page: Page, width: number, stage: stri
   expect(dimensions.body, `${stage}: body overflow at ${width}px`).toBeLessThanOrEqual(width);
 }
 
+async function assertCardContentIsNotClipped(page: Page, selector: string, width: number, stage: string) {
+  const dimensions = await page.locator(selector).evaluate(el => ({
+    clientHeight: el.clientHeight,
+    scrollHeight: el.scrollHeight,
+  }));
+  expect(dimensions.scrollHeight, `${stage}: card content clipped at ${width}px`)
+    .toBeLessThanOrEqual(dimensions.clientHeight + 1);
+}
+
 test('creador de personajes de nivel 1: smoke visual y responsive', async ({ page }, testInfo) => {
   test.setTimeout(120000);
   const pageErrors: string[] = [];
@@ -57,6 +66,7 @@ test('creador de personajes de nivel 1: smoke visual y responsive', async ({ pag
     await page.locator('.builder-actions button.primary').click();
     await expect(page.getByRole('heading', { name: '03. Elige tu trasfondo' })).toBeVisible();
     await expect(page.locator('.builder-background-flyer')).toBeVisible();
+    await assertCardContentIsNotClipped(page, '.builder-background-flyer', width, 'trasfondo');
     await assertNoHorizontalOverflow(page, width, 'trasfondo');
 
     await page.locator('.builder-actions button.primary').click();
@@ -66,6 +76,7 @@ test('creador de personajes de nivel 1: smoke visual y responsive', async ({ pag
     await page.locator('.builder-actions button.primary').click();
     await expect(page.getByRole('heading', { name: '04. Elige tu especie' })).toBeVisible();
     await expect(page.locator('.builder-species-flyer')).toBeVisible();
+    await assertCardContentIsNotClipped(page, '.builder-species-flyer', width, 'especie');
     await assertNoHorizontalOverflow(page, width, 'especie');
     if (width === 320 || width === 1440) {
       await page.screenshot({ path: testInfo.outputPath(`nivel-1-${width}-especie.png`), fullPage: true });
