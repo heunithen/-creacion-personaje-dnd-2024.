@@ -29,7 +29,7 @@ create policy "Anonymous clients may submit sanitized diagnostics"
 
 create table if not exists public.diagnostic_test_runs (
   id uuid primary key default gen_random_uuid(),
-  workflow_run_id bigint unique,
+  workflow_run_id bigint,
   suite text not null,
   status text not null check (status in ('queued','in_progress','success','failure','cancelled','skipped')),
   commit_sha text not null default '',
@@ -39,6 +39,7 @@ create table if not exists public.diagnostic_test_runs (
   created_at timestamptz not null default now()
 );
 create index if not exists diagnostic_test_runs_created_at_idx on public.diagnostic_test_runs (created_at desc);
+create index if not exists diagnostic_test_runs_workflow_idx on public.diagnostic_test_runs (workflow_run_id);
 alter table public.diagnostic_test_runs enable row level security;
 
 create table if not exists public.diagnostic_test_results (
