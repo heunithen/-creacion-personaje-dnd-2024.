@@ -118,7 +118,10 @@ function makeEncounter(items, steps, template) {
 
 export function createEncounterFromTemplate(available, budget, template, random = Math.random) {
   if (!Number.isFinite(budget) || budget <= 0 || !ENCOUNTER_TEMPLATES[template]) return {steps:[],encounter:null};
-  const pool = available.filter(item => item.xp > 0 && item.xp <= budget);
+  const tolerance = 0.03;
+  const maximumSpend = budget * (1 + tolerance);
+  const targetMinimum = budget * (1 - tolerance);
+  const pool = available.filter(item => item.xp > 0 && item.xp <= maximumSpend);
   if (!pool.length) return {steps:[],encounter:null};
   const items = [];
   const steps = [];
@@ -126,7 +129,7 @@ export function createEncounterFromTemplate(available, budget, template, random 
   let creatures = 0;
   let bossXp = Infinity;
   const add = (candidate) => {
-    if (!candidate || spent + candidate.xp > budget) return false;
+    if (!candidate || spent + candidate.xp > maximumSpend) return false;
     const existing = items.find(item => item.monster.name === candidate.monster.name);
     if (existing) existing.quantity += 1;
     else items.push({monster:candidate.monster,quantity:1});
@@ -139,21 +142,21 @@ export function createEncounterFromTemplate(available, budget, template, random 
     pool.filter(item => item.xp <= remaining && !excluded.includes(item.monster.name)), random
   );
   const addBestFit = (candidates) => {
-    const affordable = candidates.filter(item => item.xp > 0 && item.xp <= budget - spent);
+    const affordable = candidates.filter(item => item.xp > 0 && spent + item.xp <= maximumSpend);
     if (!affordable.length) return false;
-    const ranked = [...affordable].sort((a,b) => b.xp - a.xp);
-    // Randomiza entre las opciones de mayor coste para variar encuentros sin desperdiciar presupuesto.
-    const finalists = ranked.slice(0, Math.min(3, ranked.length));
+    const ranked = [...affordable].sort((a,b) => Math.abs(budget - (spent + a.xp)) - Math.abs(budget - (spent + b.xp)));
+    // Prioriza la compra que deje el total más cerca del 100 %, permitiendo una desviación máxima del 3 %.
+    const bestDistance = Math.abs(budget - (spent + ranked[0].xp));
+    const finalists = ranked.filter(item => Math.abs(budget - (spent + item.xp)) <= bestDistance + budget * 0.01).slice(0, 3);
     return add(randomItem(finalists, random));
   };
 
   if (template === 'solo') {
     // Un jefe individual no admite refuerzos: escoge la criatura más cara que quepa.
-    const ranked = [...pool].sort((a,b) => b.xp - a.xp);
-    const highBudget = ranked.filter(item => item.xp >= budget * 0.8);
-    const finalists = highBudget.length ? highBudget : ranked;
-    const highestXp = finalists[0]?.xp;
-    add(randomItem(finalists.filter(item => item.xp === highestXp), random));
+    const ranked = [...pool].sort((a,b) => Math.abs(budget - a.xp) - Math.abs(budget - b.xp));
+    const bestDistance = Math.abs(budget - ranked[0].xp);
+    const finalists = ranked.filter(item => Math.abs(budget - item.xp) <= bestDistance + budget * 0.01).slice(0, 3);
+    add(randomItem(finalists, random));
   } else if (template === 'duo' || template === 'trio') {
     const count = template === 'duo' ? 2 : 3;
     for (let i=0;i<count;i++) {
@@ -181,11 +184,11 @@ export function createEncounterFromTemplate(available, budget, template, random 
     }
   }
 
-  // Todas las plantillas salvo jefe individual pueden recibir refuerzos hasta alcanzar
-  // al menos el 80 % del presupuesto, sin superar nunca el 100 %.
+  // Todas las plantillas salvo jefe individual reciben refuerzos hasta quedar lo más cerca
+  // posible del 100 %, dentro de una tolerancia de ±3 puntos porcentuales.
   if (template !== 'solo') {
     let safety = 0;
-    while (spent < budget * 0.8 && safety < 100) {
+    while (spent < targetMinimum && safety < 100) {
       safety += 1;
       const candidates = template === 'boss_minions'
         ? pool.filter(item => item.xp < bossXp)
@@ -196,6 +199,7 @@ export function createEncounterFromTemplate(available, budget, template, random 
 
   const result = makeEncounter(items, steps, template);
   result.encounter.budgetUse = budget > 0 ? result.encounter.spent / budget : 0;
-  result.encounter.targetReached = result.encounter.budgetUse >= 0.8;
+  result.encounter.targetReached = result.encounter.budgetUse >= 0.97 && result.encounter.budgetUse <= 1.03;
+  result.encounter.budgetTolerance = 0.03;
   return result;
 }
