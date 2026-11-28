@@ -2587,7 +2587,8 @@ import { onMount } from 'svelte';
   function trackChoiceCursor(event:PointerEvent) {
     choiceCursorPosition = {x:event.clientX,y:event.clientY};
     const target = event.target as HTMLElement | null;
-    const checkbox = target?.closest('.builder-checkbox input[type="checkbox"]') as HTMLInputElement | null;
+    const option = target?.closest('.builder-checkbox');
+    const checkbox = option?.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
     if(!checkbox) { choiceCursorProgress = null; return; }
     const wrapper = checkbox.closest('.builder-choice-wrapper,.builder-choice-field');
     const counter = wrapper?.querySelector('.builder-choice-heading span')?.textContent || '';
@@ -10143,16 +10144,6 @@ import ITEMS from './items.json';
     background:#18343a!important;
     color:#5fe6e0!important;
   }
-  .builder-step-track>span.valid-complete{
-    border-color:#3f9b68!important;
-    background:#143326!important;
-  }
-  .builder-step-track>span.valid-complete b{
-    border-color:#55d68b!important;
-    background:#55d68b!important;
-    color:#092016!important;
-  }
-  .builder-step-track>span.valid-complete small{color:#b9f3ce!important}
   .builder-cursor-progress{
     position:fixed;
     z-index:99999;
@@ -10177,6 +10168,16 @@ import ITEMS from './items.json';
     color:#0f1e26!important;
   }
   .builder-step-track>span.current small{color:#fff!important}
+  .builder-step-track>span.valid-complete{
+    border-color:#3f9b68!important;
+    background:#143326!important;
+  }
+  .builder-step-track>span.valid-complete b{
+    border-color:#55d68b!important;
+    background:#55d68b!important;
+    color:#092016!important;
+  }
+  .builder-step-track>span.valid-complete small{color:#b9f3ce!important}
   .builder-panel>h3{
     margin:.45rem 0 0!important;
     color:#fff!important;
