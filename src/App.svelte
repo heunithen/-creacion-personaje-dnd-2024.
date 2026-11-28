@@ -1,5 +1,6 @@
 <script lang="ts">
   import './styles/director-combat-tracker.css';
+  import './styles/director-item-catalog.css';
   import './styles/monster-statblock.css';
   import './styles/rules-reference.css';
   import './styles/character-spell-slots.css';
@@ -10560,18 +10561,6 @@ import './styles/character-portrait-picker.css';
   .quick-fumble{color:#ff8585;font-style:normal;font-weight:900}
   .quick-mode-label{padding:2px 5px;border-radius:4px;background:#243b45;color:#9fe9e5;font-size:10px;font-weight:800}
   @media(max-width:420px){.quick-buttons-grid{grid-template-columns:1fr}}
-  .catalog-item-card{border:1px solid var(--gm-border);background:var(--gm-card);border-radius:10px;padding:12px;margin:8px 0}
-  .catalog-item-card header,.catalog-item-card footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-  .catalog-item-card h3{margin:0;font-size:15px;color:var(--gm-text)}
-  .catalog-item-type{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--gm-accent)}
-  .catalog-item-description{margin:10px 0;color:var(--gm-text);line-height:1.55}
-  .catalog-item-card footer{border-top:1px solid var(--gm-border);padding-top:8px;font-size:12px;color:var(--gm-muted)}
-  .catalog-item-card footer small{flex-basis:100%;color:var(--gm-muted)}
-
-  .chest-opened-note{font-weight:700;color:var(--gm-accent);margin:16px 0 5px}
-  .chest-empty{margin-top:16px}
-
-
   :global(html),:global(body),:global(#app){box-sizing:border-box;width:100%;min-width:0;max-width:100vw;height:auto;min-height:0;margin:0;padding:0;overflow:hidden}
   /* Bonificadores de habilidades: competencia en amarillo y pericia en rojo. */
   :global(.nautical-skills .sheet-stat.proficient .skill-number),
