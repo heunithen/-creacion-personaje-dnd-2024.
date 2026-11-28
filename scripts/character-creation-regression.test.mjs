@@ -121,6 +121,8 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
       assert.ok(backgroundFeatChoices, 'Dote del trasfondo no permite tres elecciones: ' + backgroundName);
 
       for (const [speciesName] of speciesList) {
+        const caseKey = [className, backgroundName, speciesName].join('|');
+        try {
         let speciesSkill = '';
         if (speciesName === 'Elfo' || speciesName === 'Humano') {
           const allowedSpeciesSkills = speciesName === 'Elfo' ? ELF_BONUS_SKILLS : skillOptions;
@@ -159,7 +161,6 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
         const masteries = selectDistinctChoices(allowedWeapons,[],weaponCount);
         assert.ok(masteries, 'No hay suficientes maestrías de armas: ' + className);
         assert.ok(isValidUniqueSelection(masteries,allowedWeapons,weaponCount));
-        const caseKey = [className, backgroundName, speciesName].join('|');
         const syntheticSheet = buildSyntheticAuditSheet({ className, backgroundName, speciesName, caseKey });
         const audit = auditCharacterSheet(syntheticSheet);
         assert.equal(audit.valid, true, caseKey + ': ' + JSON.stringify(audit.errors));
@@ -173,10 +174,20 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
           warnings: audit.warnings
         });
         tested++;
+        } catch (error) {
+          auditResults.push({
+            case_key: caseKey,
+            class_name: className,
+            background_name: backgroundName,
+            species_name: speciesName,
+            status: 'failed',
+            errors: [{ code: 'matrix_validation_failed', message: (error instanceof Error ? error.message : String(error)).slice(0,500) }],
+            warnings: []
+          });
+        }
       }
     }
   }
-  assert.equal(tested,1920);
   assert.equal(auditResults.length,1920);
   if (process.env.DIAGNOSTICS_OUTPUT) {
     fs.mkdirSync('test-results', { recursive: true });
@@ -189,6 +200,7 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
       results: auditResults
     }, null, 2));
   }
+  assert.equal(tested,1920, 'Combinaciones aprobadas: ' + tested + '/1920. Fallos: ' + auditResults.filter(result => result.status === 'failed').map(result => result.case_key + ': ' + result.errors[0]?.message).join(' | '));
 });
 
 test('la ficha del jugador incorpora Tiendita y retrato al inicio y al final', () => {
