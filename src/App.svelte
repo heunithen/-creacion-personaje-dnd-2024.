@@ -1,4 +1,5 @@
 <script lang="ts">
+  import './styles/character-sheet-stats.css';
   import './styles/character-editorial-cards.css';
   import './styles/director-layers.css';
   import './styles/character-spells.css';
@@ -8947,66 +8948,6 @@ import './styles/character-backgrounds.css';</script>
   }
 
 
-  /* Estadísticas superiores: tarjetas independientes y legibles */
-  :global(.nautical-quick-stats){
-    display:flex!important;
-    flex-direction:column!important;
-    gap:.45rem!important;
-    padding:.5rem!important;
-  }
-  :global(.nautical-quick-stats>.attribute-plaque-row),
-  :global(.nautical-quick-stats>.quick-stats-row){
-    width:100%!important;
-    min-width:0!important;
-    padding:0!important;
-    border:0!important;
-    background:transparent!important;
-  }
-  :global(.nautical-quick-stats>.quick-stats-row){
-    display:grid!important;
-    grid-template-columns:repeat(7,minmax(0,1fr))!important;
-    gap:.4rem!important;
-  }
-  :global(.nautical-quick-stats>.quick-stats-row>div){
-    display:flex!important;
-    min-width:0!important;
-    min-height:3.4rem;
-    flex-direction:column!important;
-    align-items:flex-start!important;
-    justify-content:center!important;
-    gap:.3rem!important;
-    padding:.5rem .55rem!important;
-    border:1px solid #3fb8b8!important;
-    border-radius:6px!important;
-    background:linear-gradient(145deg,#13262e,#13262e)!important;
-  }
-  :global(.nautical-quick-stats>.quick-stats-row>div>span){
-    display:block!important;
-    font-size:.62rem!important;
-    line-height:1.2!important;
-    white-space:normal!important;
-    overflow-wrap:anywhere!important;
-  }
-  :global(.nautical-quick-stats>.quick-stats-row>div>strong){
-    display:block!important;
-    font-size:.95rem!important;
-    line-height:1.2!important;
-    white-space:normal!important;
-    overflow-wrap:anywhere!important;
-  }
-  :global(.nautical-quick-stats>.quick-stats-row>.hp-plaque){
-    grid-column:auto!important;
-  }
-  @media(max-width:760px){
-    :global(.nautical-quick-stats>.quick-stats-row){
-      grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    }
-  }
-  @media(max-width:480px){
-    :global(.nautical-quick-stats>.quick-stats-row){
-      grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    }
-  }
 
 
   :global(.player-feature-list){display:flex;flex-direction:column;gap:.45rem}
@@ -9020,10 +8961,6 @@ import './styles/character-backgrounds.css';</script>
   :global(.player-feat-section .player-feature-card){border-color:#3fb8b8;border-left-color:#5fe6e0;background:#13262e}
   :global(.player-feat-section .player-feature-source){color:#b5bec3}
 
-  :global(.nautical-quick-stats>.quick-stats-row>div){align-items:center;text-align:center}
-  :global(.nautical-quick-stats>.quick-stats-row>div>span),
-  :global(.nautical-quick-stats>.quick-stats-row>div>strong){display:block;width:100%;text-align:center}
-  :global(.nautical-skills .sheet-stat .skill-number){font-size:1.25rem!important;font-weight:800!important;line-height:1.2!important;text-align:center!important;justify-self:center}
  
   /* Identidad visual unificada del creador */
   :global(body){background:#1b2a33!important;color:#0f1e26!important}
