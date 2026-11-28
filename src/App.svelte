@@ -3114,7 +3114,7 @@ import { onMount } from 'svelte';
       // La ficha se abre solo después de confirmar su guardado en el registro compartido.
       const characterToSave = JSON.parse(JSON.stringify(generated)) as RawSheet;
       const audit = auditCharacterSheet(characterToSave);
-      await recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,errors:audit.errors.slice(0,20),warnings:audit.warnings.slice(0,20)});
+      await recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,errors:audit.errors.slice(0,10),warnings:audit.warnings.slice(0,10)});
       if (!audit.valid) console.error('La auditoría detectó problemas estructurales; se registraron para revisión.', audit.errors);
       if (webCreateMode) characterToSave._creationSource = 'web';
       if (webCreateMode) supabasePlayerName = builderData.player || supabasePlayerName || 'Jugador';
