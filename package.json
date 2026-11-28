@@ -11,7 +11,8 @@
     "audit:manual": "node scripts/audit-manual.mjs",
     "test:builder": "node --test scripts/character-creation-regression.test.mjs scripts/shop-regression.test.mjs scripts/encounter-regression.test.mjs",
     "test:e2e": "playwright test",
-    "test:encounters": "node --test scripts/encounter-regression.test.mjs"
+    "test:encounters": "node --test scripts/encounter-regression.test.mjs",
+    "audit:css": "node scripts/audit-css.mjs"
   },
   "dependencies": {
     "@owlbear-rodeo/sdk": "3.1.0",
