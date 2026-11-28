@@ -24,6 +24,9 @@ test('valores de objetos mágicos siguen la tabla de rareza del DMG', () => {
 test('inventario reconoce y formatea cantidades', () => {
   assert.deepEqual(parseInventoryLine('Daga ×3'), { name: 'Daga', quantity: 3 });
   assert.deepEqual(parseInventoryLine('• Poción de curación x2'), { name: 'Poción de curación', quantity: 2 });
+  assert.deepEqual(parseInventoryLine('4 hachas de mano'), { name: 'hachas de mano', quantity: 4 });
+  assert.deepEqual(parseInventoryLine('2 dagas'), { name: 'dagas', quantity: 2 });
+  assert.deepEqual(parseInventoryLine('20 flechas'), { name: 'flechas', quantity: 20 });
   assert.equal(formatInventoryLine('Daga', 1), 'Daga');
   assert.equal(formatInventoryLine('Daga', 4), 'Daga ×4');
 });
