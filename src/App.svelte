@@ -6819,6 +6819,8 @@ import './styles/character-portrait-picker.css';
   import './styles/app-global-theme-overrides.css';
   import './styles/app-final-visual-overrides.css';
   import './styles/character-sheet-layout-overrides.css';
+  import './styles/compendium-panels.css';
+  import './styles/application-base-controls.css';
 </script>
 <svelte:window on:pointermove={trackChoiceCursor} />
 {#if choiceCursorProgress && playerCreating}
@@ -8510,130 +8512,4 @@ import './styles/character-portrait-picker.css';
   <footer><span>FORJA DE AVENTUREROS · v1.0.53</span></footer>
 </div>
 
-<style>
-.builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#1b2a33;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s} .builder-portrait-picker{padding:.8rem;border:1px solid var(--rule);border-radius:5px;background:rgba(95,230,224,.18)}.builder-portrait-heading{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.7rem}.builder-portrait-heading button{border:1px solid var(--rule);border-radius:4px;padding:.35rem .6rem;background:transparent;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}.builder-portrait-heading button.active{border-color:var(--gold);color:var(--gold)}.builder-portrait-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:.55rem}.builder-portrait-option{position:relative;aspect-ratio:1;border:2px solid var(--rule);border-radius:5px;padding:0;overflow:hidden;background:#17232b;cursor:pointer}.builder-portrait-option.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(213,174,91,.25)}.builder-portrait-option img{display:block;width:100%;height:100%;object-fit:cover}.builder-portrait-check{position:absolute;right:.25rem;top:.25rem;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--gold);color:#17232b;font-weight:800;display:grid;place-items:center}.portrait-frame img{width:100%;height:100%;object-fit:cover;border-radius:inherit}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(95,230,224,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}/* La hoja de personaje conserva su propia cuadrícula; no hereda el diseño del formulario de creación. */
-  .master-tabs{display:flex;flex-wrap:wrap;gap:.4rem;overflow:visible;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
-  .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
-  .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.items-panel{display:grid;gap:.75rem}.items-search,.items-filters label{display:grid;gap:.35rem;color:var(--ink-soft);font:600 .78rem system-ui,sans-serif}.items-search input,.items-filters input,.items-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.55rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:#ffffff;font:500 .85rem system-ui,sans-serif}.items-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}.items-filters fieldset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;min-width:0;margin:0;padding:.55rem;border:1px solid var(--rule);border-radius:5px}.items-filters legend{padding:0 .25rem;color:var(--ink-soft);font:700 .75rem system-ui,sans-serif}.items-table-wrap{overflow-x:auto}.items-table{width:100%;border-collapse:collapse;font:.8rem system-ui,sans-serif}.items-table th,.items-table td{padding:.55rem .45rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}.items-table th{position:sticky;top:0;background:var(--paper-deep);color:var(--ink)}.items-table td{color:var(--ink-soft)}.items-table td:first-child{color:var(--ink);font-weight:650}@media(max-width:650px){.items-filters{grid-template-columns:1fr}.items-table{min-width:560px}}
-.spells-panel{margin-top:.5rem}
-  .spell-search,.spell-filters label{display:grid;gap:.35rem;margin:.7rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
-  .spell-search input,.spell-filters select{box-sizing:border-box;width:100%;min-width:0;padding:.5rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:var(--ink);font:500 .82rem system-ui,sans-serif}
-  .spell-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
-  .spell-list{display:grid;gap:.55rem;margin-top:.7rem}
-  .spell-card{min-width:0;border:1px solid var(--rule);border-left:4px solid #3fb8b8;border-radius:5px;background:var(--paper);color:var(--ink);overflow:hidden}
-  .spell-card>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.2rem .7rem;align-items:center;padding:.7rem .8rem;cursor:pointer;list-style:none}
-  .spell-card>summary::-webkit-details-marker{display:none}
-  .spell-name{font:700 .95rem Georgia,serif;overflow-wrap:anywhere}
-  .spell-level{grid-column:2;grid-row:1/3;align-self:center;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;color:#3fb8b8;font:700 .68rem system-ui,sans-serif;white-space:nowrap}
-  .spell-subtitle{grid-column:1;color:var(--ink-soft);font:.7rem system-ui,sans-serif;overflow-wrap:anywhere}
-  .spell-details{padding:.75rem .85rem;border-top:1px solid var(--rule);font:.78rem/1.5 system-ui,sans-serif}
-  .spell-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.15rem .75rem;padding:.55rem .65rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33}
-  .spell-meta p{margin:.12rem 0;overflow-wrap:anywhere}
-  .spell-description{margin:.7rem 0 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}
-  .spell-source{display:block;margin-top:.6rem;color:var(--ink-soft);font-size:.65rem}
-  .monsters-panel{margin-top:.5rem}
-  .monster-filter{display:flex;align-items:center;gap:.65rem;margin:.8rem 0;padding:.65rem .75rem;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);font:700 .78rem system-ui,sans-serif}
-  .monster-filter select{min-width:130px;padding:.45rem .6rem;border:1px solid var(--gold);border-radius:4px;background:#1b2a33;color:var(--ink);font:600 .78rem system-ui,sans-serif}
-  .monster-list{display:grid;gap:.55rem}
-  .monster-card{border:1px solid var(--rule);border-left:4px solid var(--red);border-radius:5px;background:var(--paper);color:var(--ink);overflow:hidden}
-  .monster-card>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.18rem .7rem;align-items:center;padding:.7rem .8rem;cursor:pointer;list-style:none}
-  .monster-card>summary::-webkit-details-marker{display:none}
-  .monster-name{font:700 .95rem Georgia,serif}
-  .monster-subtitle{grid-column:1;color:var(--ink-soft);font:.7rem system-ui,sans-serif}
-  .monster-cr{grid-column:2;grid-row:1/3;align-self:center;padding:.25rem .45rem;border:1px solid var(--gold);border-radius:4px;color:#3fb8b8;font:700 .68rem system-ui,sans-serif}
-  .monster-statblock{padding:.8rem;border-top:1px solid var(--rule);font:.78rem/1.45 system-ui,sans-serif}
-  .monster-heading{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.3rem;padding-bottom:.45rem;border-bottom:2px solid var(--red)}
-  .monster-heading h3{margin:0;font:700 1.05rem Georgia,serif}
-  .monster-heading span{color:var(--ink-soft);font-size:.7rem}
-  .monster-combat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.35rem;margin:.65rem 0}
-  .monster-combat-grid div{display:grid;gap:.12rem;padding:.4rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33}
-  .monster-combat-grid small{color:var(--ink-soft);font-size:.62rem;text-transform:uppercase}
-  .monster-combat-grid strong{font-size:.78rem;overflow-wrap:anywhere}
-  .monster-statblock p{margin:.38rem 0}
-  .monster-original{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font: .76rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink);}
-  .monster-attacks{margin-top:.65rem;padding:.55rem;border:1px solid var(--rule);border-radius:4px;background:rgba(95,230,224,.4)}
-  .monster-role{padding:.5rem;border-left:3px solid var(--gold);background:rgba(95,230,224,.1)}
-  .monster-source{display:block;margin-top:.55rem;color:var(--ink-soft);font-size:.62rem}
 
-  .monster-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:.1rem 0 .75rem}
-  .monster-info-item{display:grid;align-content:start;gap:.12rem;padding:.45rem .5rem;border:1px solid var(--rule);border-radius:4px;background:#1b2a33;min-width:0}
-  .monster-info-item small{font-size:.62rem;font-weight:800;letter-spacing:.035em;text-transform:uppercase;color:var(--ink-soft)}
-  .monster-info-item strong{font-size:.76rem;font-weight:650;overflow-wrap:anywhere;white-space:pre-wrap}
-  .monster-content-section{margin:.75rem 0 0;padding-top:.45rem;border-top:2px solid var(--red)}
-  .monster-content-section h4{margin:0 0 .4rem;font:700 .86rem Georgia,serif;text-transform:uppercase;letter-spacing:.04em;color:var(--red)}
-  .monster-entry{margin:.35rem 0;padding:.45rem .55rem;border-left:3px solid var(--gold);background:rgba(95,230,224,.42);border-radius:0 4px 4px 0}
-  .monster-entry strong{font-size:.78rem;color:var(--ink)}
-  .monster-entry p{margin:.12rem 0 0;line-height:1.48;white-space:pre-wrap;overflow-wrap:anywhere}
-  @media(max-width:560px){.monster-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.monster-card>summary{padding:.6rem}.monster-statblock{padding:.6rem}}
-
-  .monster-attribution{margin-top:1rem;padding-top:.7rem;border-top:1px solid var(--rule);color:var(--ink-soft);font:.65rem/1.45 system-ui,sans-serif}
-  /* Tema oscuro carmesí de la extensión */
-  :global(.app-shell),:global(.main){color:#ffffff}
-  :global(.topbar){border-bottom:1px solid #3fb8b8}
-  :global(.brand),:global(.brand strong){color:#ffffff}
-  :global(.brand-mark){color:#3fb8b8}
-  :global(.panel),:global(.character-sheet),:global(.sheet-section),:global(.custom-rolls),
-  :global(.custom-roll-card),:global(.trait-editor),:global(.import-box),:global(.new-roll-part),
-  :global(.spell-card),:global(.monster-card),:global(.chest-result),:global(.roll-result){
-    background:#0b171d!important;color:#ffffff!important;border-color:#3fb8b8!important
-  }
-  :global(.panel){box-shadow:0 8px 24px rgba(0,0,0,.35)}
-  :global(.sheet-section){border:1px solid #3fb8b8!important;border-top:3px solid #3fb8b8!important}
-  :global(.section-heading h2),:global(.panel h2),:global(.sheet-section-title h3),
-  :global(.section-name),:global(.monster-heading h3),:global(.custom-rolls h3),
-  :global(.trait-group h3),:global(.character-name){color:#ffffff!important}
-  :global(label),:global(.stat-label),:global(.stat-value),:global(.sheet-stat strong),
-  :global(.character-sheet),:global(.spell-details),:global(.monster-statblock),
-  :global(.trait-view strong),:global(.roll-part-heading strong){color:#b5bec3!important}
-  :global(.muted),:global(.hint),:global(.spell-subtitle),:global(.monster-subtitle),
-  :global(.monster-source),:global(.spell-source),:global(.sheet-notes){color:#b5bec3!important}
-  :global(input),:global(textarea),:global(select),:global(.builder-panel input),
-  :global(.builder-panel select),:global(.builder-panel textarea){
-    background:#0b171d!important;color:#ffffff!important;border:1px solid #3fb8b8!important
-  }
-  
-  :global(input:focus),:global(textarea:focus),:global(select:focus),:global(.editable:focus){
-    outline:1px solid #3fb8b8!important;border-color:#3fb8b8!important;background:#0b171d!important
-  }
-  :global(.master-tabs),:global(.sheet-tabs){border-bottom-color:#3fb8b8}
-  :global(.master-tabs button),:global(.sheet-tabs button),:global(.player-tabs button),
-  :global(.character-tabs button),:global(.secondary),:global(.roll-actions button),
-  :global(.roll-creator button),:global(.add-roll-part){
-    background:#0b171d!important;color:#b5bec3!important;border:1px solid #3fb8b8!important
-  }
-  :global(.master-tabs button.active),:global(.sheet-tabs button.active),
-  :global(.player-tabs button.active),:global(.character-tabs button.active){
-    background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important
-  }
-  :global(.primary){background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important}
-  :global(.primary:hover){background:#13262e!important}
-  
-  :global(.spell-level),:global(.monster-cr),:global(.count),:global(.free-tag){
-    background:#13262e!important;border-color:#3fb8b8!important;color:#b5bec3!important
-  }
-  :global(.spell-meta),:global(.monster-combat-grid div),:global(.monster-attacks),
-  :global(.monster-role),:global(.builder-info),:global(.builder-progress){
-    background:#0b171d!important;border-color:#3fb8b8!important;color:#b5bec3!important
-  }
-  :global(.builder-progress span){background:#13262e!important}
-  :global(.roll-notation){background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important}
-  :global(.chest-table-wrap){border-color:#3fb8b8!important}
-  :global(.chest-table){background:#0b171d!important;color:#b5bec3!important}
-  :global(.chest-table th){background:#13262e!important;color:#ffffff!important}
-  :global(.chest-table td){border-bottom-color:#3fb8b8!important;color:#b5bec3!important}
-  
-  :global(.toast){background:#13262e!important;border-color:#3fb8b8!important;color:#ffffff!important}
-  
-  :global(.gm-sheet-details summary),:global(.monster-source summary){color:#5fe6e0!important}
-  :global(.character-sheet .features-section .sheet-stat strong){background:#0b171d!important}
-  /* Los nombres y descripciones conservan el color neutro de la ficha; el rojo se usa solo en acentos. */
-  :global(.features-section .stat-label),:global(.magic-section .stat-label),
-  :global(.equipment-section .weapon-name),:global(.attacks-section .stat-label){color:#b5bec3!important}
-  :global(.features-section .sheet-stat strong),:global(.magic-section .sheet-stat strong),
-  :global(.attacks-section .sheet-stat strong){color:#b5bec3!important}
-  :global(.inline-roll){display:inline;padding:0;border:0;background:transparent;color:#5fe6e0;font:inherit;font-weight:700;text-decoration:underline;text-decoration-color:rgba(95,230,224,.45);text-underline-offset:2px;cursor:pointer}
-  :global(.inline-roll:hover){color:#b5bec3;text-decoration-color:currentColor}
-  :global(.sheet-readonly-value){white-space:pre-wrap;overflow-wrap:anywhere}
-  :global(.character-sheet .editable:hover){background:#13262e!important;border-color:#3fb8b8!important}
-</style>
