@@ -41,6 +41,8 @@ test('creador de personajes de nivel 1: smoke visual y responsive', async ({ pag
 
     await page.locator('.builder-actions button.primary').click();
     await expect(page.getByRole('heading', { name: '03.1. Elecciones del trasfondo' })).toBeVisible();
+    const backgroundTool = page.getByLabel('Competencia con herramienta del trasfondo');
+    if (await backgroundTool.count()) await backgroundTool.selectOption({ index: 1 });
     await page.locator('.builder-actions button.primary').click();
     await expect(page.getByRole('heading', { name: '04. Elige tu especie' })).toBeVisible();
     await expect(page.locator('.builder-species-flyer')).toBeVisible();
