@@ -128,10 +128,14 @@ for (const file of cssFiles) {
     const propertyGroup = selectorPropertyValues.get(propertyGroupKey) ?? [];
     propertyGroup.push({
       location,
-      declarations: declarationNodes.map(decl => ({
+      declarations: declarationNodes.map((decl, declarationIndex) => ({
         property: decl.prop.toLowerCase(),
         value: normalize(decl.value),
         important: decl.important,
+        order: location.order,
+        line: location.line,
+        declarationIndex,
+        file: location.file,
       })),
     });
     selectorPropertyValues.set(propertyGroupKey, propertyGroup);
@@ -203,7 +207,14 @@ if (propertyConflicts.length) {
   console.log('SAME-SELECTOR PROPERTY CONFLICTS (same media/context; inspect the winning declaration):');
   for (const group of propertyConflicts.slice(0, 70)) {
     const [selector, context] = group.key.split('|||');
-    const details = group.conflicts.map(([property, values]) => `${property}={${[...values].join(' | ')}}`).join('; ');
+    const details = group.conflicts.map(([property, values]) => {
+      const candidates = group.rules.flatMap(rule => rule.declarations)
+        .filter(declaration => declaration.property === property)
+        .sort((a, b) => Number(a.important) - Number(b.important)
+          || a.order - b.order || a.line - b.line || a.declarationIndex - b.declarationIndex);
+      const winner = candidates[candidates.length - 1];
+      return `${property}={${[...values].join(' | ')}} => wins ${winner.value}${winner.important ? '!important' : ''} @ ${winner.file}:${winner.line}`;
+    }).join('; ');
     const locations = group.rules.map(rule => `${rule.location.file}:${rule.location.line}`).join(' | ');
     console.log(`- ${selector} [${context}] ${details} -> ${locations}`);
   }
