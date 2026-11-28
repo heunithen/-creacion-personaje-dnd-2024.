@@ -9,7 +9,7 @@
   .section-heading{border-bottom:2px solid #5fe6e0!important}
   .section-heading h2,.builder-panel h3,.builder-panel h4{color:#ffffff!important}
   .builder-panel{gap:1rem!important}
-  .builder-panel>label,.builder-panel label{color:#b5bec3!important}
+  
   .builder-panel input:not([type=checkbox]):not([type=radio]),.builder-panel select,.builder-panel textarea{background:#1b2a33!important;color:#0f1e26!important;border:1px solid #b5bec3!important;border-radius:6px!important}
   .builder-progress{height:7px!important;background:#1b2a33!important}
   .builder-progress span{background:#5fe6e0!important}
@@ -21,10 +21,10 @@
   .builder-class-card.selected{border:2px solid #5fe6e0!important;border-top:4px solid #5fe6e0!important;background:#1b2a33!important;box-shadow:0 0 0 2px #5fe6e020!important}
   .builder-class-card-heading{color:#ffffff!important}
   .builder-class-card-heading>span{background:#1b2a33!important;border:1px solid #b5bec3!important;color:#3fb8b8!important}
-  .builder-class-description{color:#b5bec3!important}
+  
   .builder-class-meta{border-top:1px solid #b5bec3!important}
-  .builder-class-meta>span{color:#3fb8b8!important}
-  .builder-class-meta>strong{color:#ffffff!important}
+  
+  
   .builder-option-card{min-height:100%;cursor:pointer}
   .builder-species-grid,.builder-background-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .builder-name-block{display:grid;gap:.7rem;padding:.85rem}
@@ -34,7 +34,7 @@
   .builder-checkbox{display:flex!important;align-items:flex-start!important;gap:.55rem!important;padding:.65rem .7rem!important;border:1px solid #b5bec3!important;border-left:3px solid #1b2a33!important;border-radius:6px!important;background:#1b2a33!important;color:#ffffff!important;cursor:pointer}
   .builder-checkbox:has(input:checked){border-color:#5fe6e0!important;border-left-color:#5fe6e0!important;background:#1b2a33!important}
   .builder-checkbox input{flex:0 0 auto;margin-top:.15rem;accent-color:#5fe6e0}
-  .builder-choice-heading{color:#ffffff!important}
+  
   .builder-actions{gap:.55rem!important}
   .builder-actions button,.builder-panel button{border-radius:6px!important}
   .builder-panel button.primary,.builder-actions .primary{background:#13262e!important;border:1px solid #13262e!important;color:#ffffff!important}
