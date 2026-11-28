@@ -916,6 +916,7 @@ import { onMount } from 'svelte';
   let diagnosticsLoading = false;
   let diagnosticsRuns: any[] = [];
   let diagnosticEvents: any[] = [];
+  let diagnosticTestRuns: any[] = [];
   const DIAGNOSTICS_ENDPOINT = 'https://akbvedwkpjokphzridla.supabase.co/functions/v1/diagnostics';
   const OWLBEAR_LAYERS = [
     { id: 'MAP', label: 'Mapas' }, { id: 'GRID', label: 'Cuadrícula' },
@@ -1352,7 +1353,7 @@ import { onMount } from 'svelte';
     };
     void fetch(SUPABASE_URL + '/rest/v1/diagnostic_events', {
       method: 'POST',
-      headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify(payload)
     }).catch(() => {});
   }
@@ -1370,7 +1371,6 @@ import { onMount } from 'svelte';
       method,
       headers: {
         apikey: SUPABASE_KEY,
-        Authorization: 'Bearer ' + SUPABASE_KEY,
         'x-diagnostics-key': diagnosticsApiKey,
         ...(body ? { 'Content-Type': 'application/json' } : {})
       },
@@ -1385,12 +1385,14 @@ import { onMount } from 'svelte';
     if (!diagnosticsApiKey || diagnosticsLoading) return;
     diagnosticsLoading = true;
     try {
-      const [status, events] = await Promise.all([
+      const [status, events, results] = await Promise.all([
         diagnosticsRequest('status'),
-        diagnosticsRequest('events')
+        diagnosticsRequest('events'),
+        diagnosticsRequest('results')
       ]);
       diagnosticsRuns = Array.isArray(status.runs) ? status.runs : [];
       diagnosticEvents = Array.isArray(events.events) ? events.events : [];
+      diagnosticTestRuns = Array.isArray(results.results) ? results.results : [];
       diagnosticsStatus = 'Información actualizada desde GitHub y Supabase.';
     } catch (error) {
       diagnosticsStatus = error instanceof Error ? error.message : 'No se pudo actualizar el diagnóstico.';
@@ -7235,6 +7237,19 @@ import './styles/character-portrait-picker.css';
                   <div><strong>#{run.run_number} · {run.suite}</strong><p class="muted">{run.commit_sha?.slice(0,7)} · {new Date(run.created_at).toLocaleString()}</p></div>
                   <span class="count">{run.conclusion || run.status}</span>
                   {#if run.url}<a href={run.url} target="_blank" rel="noreferrer">Ver ejecución</a>{/if}
+                </article>
+              {/each}
+            </div>
+          {/if}
+          <div class="section-heading"><h3>Auditorías de la matriz de personajes</h3><span class="count">{diagnosticTestRuns.length} ejecuciones</span></div>
+          {#if !diagnosticTestRuns.length}
+            <p class="muted">Todavía no hay resultados de la matriz guardados en Supabase.</p>
+          {:else}
+            <div class="diagnostics-list">
+              {#each diagnosticTestRuns as run (run.id)}
+                <article class="diagnostics-event">
+                  <div><strong>{run.suite} · {run.status}</strong><p class="muted">{run.commit_sha?.slice(0,7)} · {new Date(run.created_at).toLocaleString()}</p></div>
+                  <span class="count">{run.summary?.passed || 0}/{run.summary?.total || 0} aprobadas · {run.summary?.warnings || 0} advertencias · {run.summary?.failed || 0} fallos</span>
                 </article>
               {/each}
             </div>
