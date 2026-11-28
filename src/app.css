@@ -59,9 +59,9 @@ button.active,.player-tabs button.active,.primary{background:#5fe6e0!important;c
 
 
 /* El retrato del personaje se muestra únicamente en la cabecera de la hoja. */
-:global(.nautical-sheet .portrait-frame) {
+.nautical-sheet .portrait-frame {
   display:none!important;
 }
-:global(.nautical-sheet .nautical-header .portrait-frame) {
+.nautical-sheet .nautical-header .portrait-frame {
   display:grid!important;
 }
