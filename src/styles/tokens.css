@@ -1,0 +1,44 @@
+/* Tokens visuales compartidos de la aplicación.
+   Los valores reflejan la paleta efectiva que tenía la cascada antes de la extracción. */
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, sans-serif;
+  color: #ffffff;
+  background: #0b171d;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --paper: #13262e;
+  --paper-deep: #1b2a33;
+  --ink: #ffffff;
+  --ink-soft: #b5bec3;
+  --rule: #3a4a52;
+  --red: #3fb8b8;
+  --gold: #5fe6e0;
+  --gm-bg: #0b171d;
+  --gm-panel: #13262e;
+  --gm-card: #1b2a33;
+  --gm-border: #3a6870;
+  --gm-text: #fff;
+  --gm-muted: #b5bec3;
+  --gm-accent: #5fe6e0;
+  --gm-font-size: 14px;
+  --gm-heading-size: 18px;
+  --gm-panel-padding: 12px;
+  --gm-panel-gap: 10px;
+  --gm-radius: 8px;
+  color-scheme: dark;
+  --ocean: #3fb8b8;
+  --slate: #3fb8b8;
+  --aqua: #5fe6e0;
+  --aqua-mid: #3fb8b8;
+  --text-main: #ffffff;
+  --text-secondary: #b5bec3;
+  --text-muted: #8e9aa1;
+  --ocean-0: #0b171d;
+  --ocean-1: #0f1e26;
+  --ocean-2: #13262e;
+  --slate-1: #1b2a33;
+  --slate-2: #22333d;
+  --line: #3a4a52;
+  --line-soft: #3fb8b8;
+}
