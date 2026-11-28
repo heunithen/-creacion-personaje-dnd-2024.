@@ -82,6 +82,8 @@ jobs:
         run: npm install
       - name: Type check
         run: npm run check
+      - name: Audit CSS cascade and external selectors
+        run: npm run audit:css
       - name: Test character creation combinations
         run: npm run test:builder
       - name: Test encounter budget and generation rules
@@ -95,8 +97,15 @@ jobs:
           # Evita que un repositorio Microsoft externo bloqueado impida instalar dependencias de Playwright.
           for source in $(sudo grep -rl 'packages.microsoft.com' /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null || true); do sudo rm -f "$source"; done
           npx playwright install --with-deps chromium
-      - name: Test character creator in a real browser
-        run: npx playwright test tests/e2e/character-creator.spec.ts
+      - name: Test character creator and CSS responsiveness in Chromium
+        run: npx playwright test tests/e2e/character-creator.spec.ts tests/e2e/css-regression.spec.ts
+      - name: Upload browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-diagnostics
+          path: test-results/
+          if-no-files-found: ignore
       # La matriz exhaustiva de 1.920 combinaciones queda fuera del despliegue
       # hasta corregir sus selectores; se conserva para retomarla posteriormente.
       - name: Upload artifact
