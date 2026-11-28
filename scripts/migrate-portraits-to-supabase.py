@@ -43,7 +43,7 @@ def to_square_webp(raw: bytes) -> bytes:
 
 
 def main():
-    match = re.search(r"let BUILDER_PORTRAITS: string\\[\\] = (\\[[^\\n]+\\]);", APP_FILE.read_text())
+    match = re.search(r"let BUILDER_PORTRAITS: string\[\] = (\[[^\n]+\]);", APP_FILE.read_text())
     if not match:
         raise RuntimeError("Could not read the existing portrait source list from src/App.svelte")
     old_urls = json.loads(match.group(1))
