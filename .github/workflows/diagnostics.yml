@@ -1,0 +1,99 @@
+name: Diagnostics
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: Battery to execute
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - characters
+          - encounters
+          - shop
+          - audit
+          - types
+          - browser
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: diagnostics-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Type check
+        if: always() && (github.event_name == 'pull_request' || github.event.inputs.suite == 'all' || github.event.inputs.suite == 'types')
+        run: npm run check
+
+      - name: Character creation matrix and regression
+        if: always() && (github.event_name == 'pull_request' || github.event.inputs.suite == 'all' || github.event.inputs.suite == 'characters')
+        env:
+          DIAGNOSTICS_OUTPUT: test-results/character-matrix.json
+        run: |
+          mkdir -p test-results
+          node --test scripts/character-creation-regression.test.mjs
+
+      - name: Persist matrix audit results
+        if: always() && hashFiles('test-results/character-matrix.json') != ''
+        continue-on-error: true
+        env:
+          SUPABASE_URL: https://akbvedwkpjokphzridla.supabase.co
+          DIAGNOSTICS_API_KEY: ${{ secrets.DIAGNOSTICS_API_KEY }}
+          SUPABASE_PUBLISHABLE_KEY: sb_publishable_BOiPUrLlhogEadY_phsFMw_s6JrIzcP
+          DIAGNOSTICS_OUTPUT: test-results/character-matrix.json
+        run: node scripts/persist-diagnostics.mjs
+
+      - name: Shop regression
+        if: always() && (github.event_name == 'pull_request' || github.event.inputs.suite == 'all' || github.event.inputs.suite == 'shop')
+        run: node --test scripts/shop-regression.test.mjs
+
+      - name: Encounter regression
+        if: always() && (github.event_name == 'pull_request' || github.event.inputs.suite == 'all' || github.event.inputs.suite == 'encounters')
+        run: node --test scripts/encounter-regression.test.mjs
+
+      - name: Manual and CSS audits
+        if: always() && (github.event_name == 'pull_request' || github.event.inputs.suite == 'all' || github.event.inputs.suite == 'audit')
+        run: |
+          npm run audit:manual
+          npm run audit:css
+
+      - name: Install Chromium
+        if: always() && (github.event_name == 'pull_request' || github.event.inputs.suite == 'all' || github.event.inputs.suite == 'browser')
+        run: |
+          for source in $(sudo grep -rl 'packages.microsoft.com' /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null || true); do sudo rm -f "$source"; done
+          npx playwright install --with-deps chromium
+
+      - name: Browser regression
+        if: always() && (github.event_name == 'pull_request' || github.event.inputs.suite == 'all' || github.event.inputs.suite == 'browser')
+        run: npx playwright test tests/e2e/character-creator.spec.ts tests/e2e/css-regression.spec.ts
+
+      - name: Upload diagnostic reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostics-${{ github.run_number }}
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 30

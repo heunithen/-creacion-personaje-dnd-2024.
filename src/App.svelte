@@ -18,6 +18,7 @@ import { onMount } from 'svelte';
   
   import { GithubCharacterStorage, type GithubConfig, type GithubCharacterRecord } from './githubCharacterStorage';
   import { ELF_BONUS_SKILLS, getAllowedWeaponMasteries, getStandardArrayAssignments, isOriginFeatDistinct, isSpeciesSkillAllowed, isValidAbilityIncreases, isValidUniqueSelection } from './builderRules.mjs';
+  import { auditCharacterSheet } from './characterDiagnostics.mjs';
 
   const KEY = 'com.heunithen.dnd2024-character-builder/character';
   const CHANNEL = 'com.heunithen.dnd2024-character-builder/character-sync';
@@ -908,7 +909,15 @@ import { onMount } from 'svelte';
     applyVisualStyle();
   }
   let masterTab = 'Personajes';
-  const masterTabs = ['Personajes', 'Layers', 'Combate', 'Encuentros', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
+  const masterTabs = ['Personajes', 'Diagnóstico', 'Layers', 'Combate', 'Encuentros', 'Iniciativa', 'Cofres', 'Objetos', 'Monstruos', 'Conjuros', 'Reglas'];
+  let diagnosticsKeyDraft = '';
+  let diagnosticsApiKey = '';
+  let diagnosticsStatus = 'Configura la clave de diagnóstico para conectar GitHub Actions.';
+  let diagnosticsLoading = false;
+  let diagnosticsRuns: any[] = [];
+  let diagnosticEvents: any[] = [];
+  let diagnosticTestRuns: any[] = [];
+  const DIAGNOSTICS_ENDPOINT = 'https://akbvedwkpjokphzridla.supabase.co/functions/v1/diagnostics';
   const OWLBEAR_LAYERS = [
     { id: 'MAP', label: 'Mapas' }, { id: 'GRID', label: 'Cuadrícula' },
     { id: 'DRAWING', label: 'Dibujos' }, { id: 'PROP', label: 'Objetos' },
@@ -1305,6 +1314,7 @@ import { onMount } from 'svelte';
   }
 
   function openMasterTab(tab: string) {
+    if (tab === 'Diagnóstico' && diagnosticsApiKey) void refreshDiagnosticsPanel();
     if (tab === 'Layers') {
       layerFilter = 'ALL';
       void refreshLayerItems();
@@ -1333,6 +1343,77 @@ import { onMount } from 'svelte';
       rulesCategoryFilter = '';
     }
     masterTab = tab;
+  }
+
+  async function recordDiagnosticEvent(eventType: 'character_audit' | 'validation_blocked' | 'client_error', moduleName: string, errorCode: string, severity: 'info' | 'warning' | 'error' | 'critical', message: string, context: Record<string, unknown> = {}): Promise<void> {
+    const payload = {
+      event_type: eventType, module: moduleName, error_code: errorCode, severity,
+      message: String(message).slice(0, 500), context,
+      app_version: '1.0.53', commit_sha: '', test_case_id: ''
+    };
+    try {
+      const response = await fetch(SUPABASE_URL + '/rest/v1/diagnostic_events', {
+        method: 'POST',
+        headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) console.warn('No se pudo guardar un evento de diagnóstico:', response.status);
+    } catch (error) { console.warn('No se pudo enviar un evento de diagnóstico:', error); }
+  }
+
+  function saveDiagnosticsKey() {
+    diagnosticsApiKey = diagnosticsKeyDraft.trim();
+    try { sessionStorage.setItem('forja-diagnostics-api-key', diagnosticsApiKey); } catch {}
+    diagnosticsStatus = diagnosticsApiKey ? 'Clave guardada solo en esta sesión del navegador.' : 'Introduce la clave de diagnóstico.';
+    if (diagnosticsApiKey) void refreshDiagnosticsPanel();
+  }
+
+  async function diagnosticsRequest(action: string, method = 'GET', body?: Record<string, unknown>) {
+    if (!diagnosticsApiKey) throw new Error('Introduce primero la clave de diagnóstico.');
+    const response = await fetch(DIAGNOSTICS_ENDPOINT + '?action=' + encodeURIComponent(action), {
+      method,
+      headers: {
+        apikey: SUPABASE_KEY,
+        'x-diagnostics-key': diagnosticsApiKey,
+        ...(body ? { 'Content-Type': 'application/json' } : {})
+      },
+      ...(body ? { body: JSON.stringify(body) } : {})
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'No se pudo completar la solicitud de diagnóstico (' + response.status + ').');
+    return data;
+  }
+
+  async function refreshDiagnosticsPanel() {
+    if (!diagnosticsApiKey || diagnosticsLoading) return;
+    diagnosticsLoading = true;
+    try {
+      const [status, events, results] = await Promise.all([
+        diagnosticsRequest('status'),
+        diagnosticsRequest('events'),
+        diagnosticsRequest('results')
+      ]);
+      diagnosticsRuns = Array.isArray(status.runs) ? status.runs : [];
+      diagnosticEvents = Array.isArray(events.events) ? events.events : [];
+      diagnosticTestRuns = Array.isArray(results.results) ? results.results : [];
+      diagnosticsStatus = 'Información actualizada desde GitHub y Supabase.';
+    } catch (error) {
+      diagnosticsStatus = error instanceof Error ? error.message : 'No se pudo actualizar el diagnóstico.';
+    } finally { diagnosticsLoading = false; }
+  }
+
+  async function runDiagnosticsSuite(suite: string) {
+    if (obrRole !== 'GM' || diagnosticsLoading) return;
+    diagnosticsLoading = true;
+    diagnosticsStatus = 'Enviando batería a GitHub Actions…';
+    try {
+      const result = await diagnosticsRequest('dispatch', 'POST', { suite });
+      diagnosticsStatus = result.message || 'Batería enviada a GitHub Actions.';
+      const status = await diagnosticsRequest('status');
+      diagnosticsRuns = Array.isArray(status.runs) ? status.runs : diagnosticsRuns;
+    } catch (error) {
+      diagnosticsStatus = error instanceof Error ? error.message : 'No se pudo iniciar la batería.';
+    } finally { diagnosticsLoading = false; }
   }
   let githubConfig: GithubConfig | null = null;
   let githubStore: GithubCharacterStorage | null = null;
@@ -2674,6 +2755,7 @@ import { onMount } from 'svelte';
       }
       if(!builderStepCanAdvance()) {
         const stepFields=builderStepMissingFields(builderStep);
+        void recordDiagnosticEvent('validation_blocked','character_creator','creation_step_incomplete','info','El asistente impidió avanzar por elecciones incompletas.',{step:builderStep,missing_count:stepFields.length,missing_fields:stepFields.slice(0,20)});
         builderStepError=stepFields.length
           ? 'Falta completar lo siguiente para avanzar:\\n• '+stepFields.join('\\n• ')
           : 'Hay una elección obligatoria incompleta en este paso. Revisa los campos visibles y vuelve a intentarlo.';
@@ -3002,6 +3084,8 @@ import { onMount } from 'svelte';
       const missing = builderMissingFields();
       if (missing.length) {
         const firstInvalidStep = [2,3,4,5,6,7,8,9,10].find(step => builderStepMissingFields(step).length > 0);
+        const issueFields = firstInvalidStep !== undefined ? builderStepMissingFields(firstInvalidStep) : missing;
+        void recordDiagnosticEvent('validation_blocked','character_creator','creation_finish_incomplete','info','Se intentó finalizar una creación incompleta.',{step:firstInvalidStep ?? builderStep,missing_count:missing.length,missing_fields:issueFields.slice(0,20)});
         if (firstInvalidStep !== undefined) {
           builderStep = firstInvalidStep;
           if (firstInvalidStep === 2) builderBackgroundSetup = true;
@@ -3011,7 +3095,7 @@ import { onMount } from 'svelte';
             5:'Aumentos de características',6:'Competencias',7:'Equipo inicial',
             8:'Magia y conjuros',9:'Idiomas',10:'Detalles del personaje'
           };
-          const issues = builderStepMissingFields(firstInvalidStep);
+          const issues = issueFields;
           builderStepError = 'No se puede generar la ficha. Revisa estos campos:\nHe vuelto al paso «' + (stepNames[firstInvalidStep] || 'Creación del personaje') + '» porque hay una elección incompleta o incompatible.\n\nRevisa exactamente lo siguiente:\n• ' + issues.join('\n• ') + '\n\nCorrige estos campos y continúa. Si hay otro problema en un paso posterior, el asistente volverá a señalarlo antes de guardar.';
         } else {
           builderStepError = 'No se puede generar la ficha. Revisa estos campos: hay elecciones incompatibles en la creación del personaje. Revisa los pasos anteriores.';
@@ -3029,6 +3113,9 @@ import { onMount } from 'svelte';
       }
       // La ficha se abre solo después de confirmar su guardado en el registro compartido.
       const characterToSave = JSON.parse(JSON.stringify(generated)) as RawSheet;
+      const audit = auditCharacterSheet(characterToSave);
+      await recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,errors:audit.errors.slice(0,10),warnings:audit.warnings.slice(0,10)});
+      if (!audit.valid) console.error('La auditoría detectó problemas estructurales; se registraron para revisión.', audit.errors);
       if (webCreateMode) characterToSave._creationSource = 'web';
       if (webCreateMode) supabasePlayerName = builderData.player || supabasePlayerName || 'Jugador';
       await saveCharacterToSupabase(characterToSave);
@@ -3060,6 +3147,9 @@ import { onMount } from 'svelte';
     builderSaving = true;
     try {
       const characterToSave = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
+      const audit = auditCharacterSheet(characterToSave);
+      await recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,error_codes:audit.errors.map(item=>item.code),warning_codes:audit.warnings.map(item=>item.code)});
+      if (!audit.valid) console.error('La auditoría detectó problemas estructurales; se registraron para revisión.', audit.errors);
       await saveCharacterToSupabase(characterToSave);
       sheet = characterToSave;
       builderPreview = null;
@@ -6702,6 +6792,14 @@ import ITEMS from './items.json';
   }
 
   onMount(() => {
+    try { diagnosticsApiKey = sessionStorage.getItem('forja-diagnostics-api-key') || ''; diagnosticsKeyDraft = diagnosticsApiKey; } catch {}
+    window.addEventListener('error', (event) => {
+      const source = String(event.filename || '').split('/').pop()?.split('?')[0] || 'desconocido';
+      void recordDiagnosticEvent('client_error','runtime','window_error','error','Error de JavaScript no controlado.',{source,line:Number(event.lineno)||0});
+    });
+    window.addEventListener('unhandledrejection', () => {
+      void recordDiagnosticEvent('client_error','runtime','unhandled_rejection','error','Promesa rechazada sin gestionar.',{});
+    });
     void migrateBundledPortraitsToSupabase().catch(error=>console.error('No se pudo completar la migración de retratos cuadrados',error));
     void loadCommunityPortraits().catch(error => console.error('No se pudo cargar la biblioteca comunitaria', error));
     try {
@@ -7113,6 +7211,69 @@ import './styles/character-portrait-picker.css';
             {/each}
             {/if}
           </div>
+        </section>
+
+      {:else if masterTab === 'Diagnóstico'}
+        <section class="panel diagnostics-panel">
+          <div class="section-heading"><h2>Centro de diagnóstico</h2><span class="count">Calidad y auditoría</span></div>
+          <p class="muted">Ejecuta pruebas aisladas en GitHub Actions. Estas baterías no construyen ni despliegan la aplicación. Los eventos de uso se registran sin guardar nombres, identificadores de jugadores ni fichas completas.</p>
+          <div class="diagnostics-key-row">
+            <label>Clave privada de diagnóstico (solo esta sesión)
+              <input type="password" bind:value={diagnosticsKeyDraft} autocomplete="off" placeholder="Clave configurada en Supabase" />
+            </label>
+            <button class="secondary" type="button" on:click={saveDiagnosticsKey}>Conectar</button>
+          </div>
+          <p class="muted" role="status">{diagnosticsStatus}</p>
+          <div class="section-heading"><h3>Baterías de pruebas</h3><button class="secondary" type="button" on:click={refreshDiagnosticsPanel} disabled={diagnosticsLoading || !diagnosticsApiKey}>{diagnosticsLoading ? 'Consultando…' : 'Actualizar'}</button></div>
+          <div class="actions diagnostics-actions">
+            <button class="primary" type="button" on:click={() => runDiagnosticsSuite('all')} disabled={diagnosticsLoading || !diagnosticsApiKey}>Batería completa</button>
+            <button class="secondary" type="button" on:click={() => runDiagnosticsSuite('characters')} disabled={diagnosticsLoading || !diagnosticsApiKey}>Personajes · matriz 1.920</button>
+            <button class="secondary" type="button" on:click={() => runDiagnosticsSuite('encounters')} disabled={diagnosticsLoading || !diagnosticsApiKey}>Encuentros</button>
+            <button class="secondary" type="button" on:click={() => runDiagnosticsSuite('shop')} disabled={diagnosticsLoading || !diagnosticsApiKey}>Tiendita</button>
+            <button class="secondary" type="button" on:click={() => runDiagnosticsSuite('audit')} disabled={diagnosticsLoading || !diagnosticsApiKey}>Auditorías</button>
+            <button class="secondary" type="button" on:click={() => runDiagnosticsSuite('types')} disabled={diagnosticsLoading || !diagnosticsApiKey}>Type check</button>
+            <button class="secondary" type="button" on:click={() => runDiagnosticsSuite('browser')} disabled={diagnosticsLoading || !diagnosticsApiKey}>Navegador</button>
+          </div>
+          <div class="section-heading"><h3>Últimas ejecuciones</h3><span class="count">{diagnosticsRuns.length}</span></div>
+          {#if !diagnosticsRuns.length}
+            <p class="muted">No hay ejecuciones disponibles o todavía no se ha conectado GitHub.</p>
+          {:else}
+            <div class="diagnostics-list">
+              {#each diagnosticsRuns as run (run.id)}
+                <article class="diagnostics-event">
+                  <div><strong>#{run.run_number} · {run.suite}</strong><p class="muted">{run.commit_sha?.slice(0,7)} · {new Date(run.created_at).toLocaleString()}</p></div>
+                  <span class="count">{run.conclusion || run.status}</span>
+                  {#if run.url}<a href={run.url} target="_blank" rel="noreferrer">Ver ejecución</a>{/if}
+                </article>
+              {/each}
+            </div>
+          {/if}
+          <div class="section-heading"><h3>Auditorías de la matriz de personajes</h3><span class="count">{diagnosticTestRuns.length} ejecuciones</span></div>
+          {#if !diagnosticTestRuns.length}
+            <p class="muted">Todavía no hay resultados de la matriz guardados en Supabase.</p>
+          {:else}
+            <div class="diagnostics-list">
+              {#each diagnosticTestRuns as run (run.id)}
+                <article class="diagnostics-event">
+                  <div><strong>{run.suite} · {run.status}</strong><p class="muted">{run.commit_sha?.slice(0,7)} · {new Date(run.created_at).toLocaleString()}</p></div>
+                  <span class="count">{run.summary?.passed || 0}/{run.summary?.total || 0} aprobadas · {run.summary?.warnings || 0} advertencias · {run.summary?.failed || 0} fallos</span>
+                </article>
+              {/each}
+            </div>
+          {/if}
+          <div class="section-heading"><h3>Eventos y errores registrados</h3><span class="count">{diagnosticEvents.length}</span></div>
+          {#if !diagnosticEvents.length}
+            <p class="muted">Todavía no hay incidencias registradas.</p>
+          {:else}
+            <div class="diagnostics-list">
+              {#each diagnosticEvents as event (event.id)}
+                <article class="diagnostics-event">
+                  <div><strong>{event.error_code}</strong><p>{event.message}</p><small class="muted">{event.module} · {event.event_type} · {new Date(event.created_at).toLocaleString()}</small></div>
+                  <span class="count">{event.severity}</span>
+                </article>
+              {/each}
+            </div>
+          {/if}
         </section>
       {:else if masterTab === 'Layers'}
         <section class="panel layers-panel">
