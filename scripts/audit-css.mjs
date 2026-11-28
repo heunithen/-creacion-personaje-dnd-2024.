@@ -16,6 +16,43 @@ const walk = async directory => {
 const sourceFiles = (await walk(rootDir)).filter(file => /\.(?:svelte|ts|js|mjs|css)$/.test(file) && !file.includes('.backup-'));
 const cssFiles = sourceFiles.filter(file => file.endsWith('.css'));
 const importedCss = new Set();
+const cssLoadOrder = [];
+const visitedModules = new Set();
+
+const resolveLocalImport = async (importer, specifier) => {
+  if (!specifier.startsWith('.')) return null;
+  const base = path.resolve(path.dirname(importer), specifier);
+  const candidates = path.extname(base)
+    ? [base]
+    : [base, `${base}.svelte`, `${base}.ts`, `${base}.js`, `${base}.mjs`, `${base}.css`, path.join(base, 'index.ts')];
+  for (const candidate of candidates) {
+    try {
+      const stat = await fs.stat(candidate);
+      if (stat.isFile()) return candidate;
+    } catch {}
+  }
+  return null;
+};
+
+const visitModule = async file => {
+  if (visitedModules.has(file)) return;
+  visitedModules.add(file);
+  const source = await fs.readFile(file, 'utf8');
+  if (file.endsWith('.css')) {
+    for (const match of source.matchAll(/@import\\s+(?:url\\()?['"]([^'"]+)['"]/g)) {
+      const imported = await resolveLocalImport(file, match[1]);
+      if (imported?.endsWith('.css')) await visitModule(imported);
+    }
+    cssLoadOrder.push(file);
+    return;
+  }
+  for (const match of source.matchAll(/\\bimport\\s+(?:[^'";]*?\\s+from\\s+)?['"]([^'"]+)['"]/g)) {
+    const imported = await resolveLocalImport(file, match[1]);
+    if (imported) await visitModule(imported);
+  }
+};
+await visitModule(path.resolve('src/main.ts'));
+const cssOrderIndex = new Map(cssLoadOrder.map((file, index) => [file, index]));
 const missingImports = [];
 const selectorOccurrences = new Map();
 const exactRuleOccurrences = new Map();
@@ -76,7 +113,7 @@ for (const file of cssFiles) {
     }
     const selector = normalize(rule.selector);
     const context = atRuleContext(rule);
-    const location = { file: path.relative(process.cwd(), file), line: rule.source?.start?.line ?? 0, context };
+    const location = { file: path.relative(process.cwd(), file), line: rule.source?.start?.line ?? 0, context, order: cssOrderIndex.get(file) ?? -1 };
     const occurrences = selectorOccurrences.get(selector) ?? [];
     occurrences.push(location);
     selectorOccurrences.set(selector, occurrences);
@@ -146,6 +183,8 @@ console.log('CSS CASCADE AUDIT');
 console.log(`Files: ${cssFiles.length} | Rules: ${ruleCount} | Declarations: ${declarationCount} | Media queries: ${mediaCount}`);
 console.log(`!important: ${importantCount} | Repeated selector groups: ${repeatedSelectors.length} | Cross-file selector groups: ${crossFileSelectors.length} | Exact repeated rule groups: ${exactDuplicates.length} | Selector/property conflict groups: ${propertyConflicts.length} | Conflicting declarations inside a rule: ${duplicateDeclarations}`);
 console.log(`Stylesheet imports: ${importedCss.size} | Unreferenced CSS files: ${unreferencedCss.length} | Missing CSS imports: ${missingImports.length}`);
+console.log('CSS LOAD ORDER:');
+for (const [index, file] of cssLoadOrder.entries()) console.log(`  ${index + 1}. ${path.relative(process.cwd(), file)}`);
 
 if (exactDuplicates.length) {
   console.log('EXACT REPEATED RULES (diagnostic only; review source order before removal):');
