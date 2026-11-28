@@ -33,8 +33,14 @@ test('creador de personajes de nivel 1: smoke visual y responsive', async ({ pag
     await expect(page.locator('.builder-class-information')).toBeVisible();
     const classCardLayout = await classFlyer.evaluate(el => {
       const labels = Array.from(el.querySelectorAll('.builder-class-topline span'));
-      const first = labels[0]?.getBoundingClientRect();
-      const second = labels[1]?.getBoundingClientRect();
+      const textRect = (node: Element | undefined) => {
+        if (!node) return null;
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return range.getBoundingClientRect();
+      };
+      const first = textRect(labels[0]);
+      const second = textRect(labels[1]);
       return {
         clientHeight: el.clientHeight,
         scrollHeight: el.scrollHeight,
