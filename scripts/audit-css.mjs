@@ -167,6 +167,37 @@ const exactDuplicates = [...exactRuleOccurrences.entries()]
   .filter(([, occurrences]) => occurrences.length > 1)
   .sort((a, b) => b[1].length - a[1].length);
 const unreferencedCss = cssFiles.filter(file => !importedCss.has(file));
+const shorthandProperties = new Set([
+  'all', 'animation', 'background', 'border', 'border-block', 'border-inline',
+  'border-top', 'border-right', 'border-bottom', 'border-left', 'border-radius',
+  'column-rule', 'columns', 'flex', 'flex-flow', 'gap', 'grid', 'grid-area',
+  'grid-column', 'grid-row', 'grid-template', 'inset', 'list-style', 'margin',
+  'outline', 'overflow', 'padding', 'place-content', 'place-items', 'place-self',
+  'text-decoration', 'transition',
+]);
+const shadowedRules = [];
+for (const [key, rules] of selectorPropertyValues.entries()) {
+  for (const rule of rules) {
+    if (rule.location.order < 0 || !rule.declarations.length) continue;
+    const fullyOverridden = rule.declarations.every(declaration => {
+      if (shorthandProperties.has(declaration.property)) return false;
+      return rules.some(other => {
+        if (other === rule) return false;
+        return other.declarations.some(later => {
+          if (later.property !== declaration.property) return false;
+          const laterInCascade = later.order > declaration.order
+            || (later.order === declaration.order && (later.line > declaration.line
+              || (later.line === declaration.line && later.declarationIndex > declaration.declarationIndex)));
+          return laterInCascade && (Boolean(later.important) || !Boolean(declaration.important));
+        });
+      });
+    });
+    if (fullyOverridden) {
+      const [selector, context] = key.split('|||');
+      shadowedRules.push({ selector, context, location: rule.location, declarations: rule.declarations.length });
+    }
+  }
+}
 const propertyConflicts = [...selectorPropertyValues.entries()]
   .map(([key, rules]) => {
     const values = new Map();
@@ -187,9 +218,16 @@ console.log('CSS CASCADE AUDIT');
 console.log(`Files: ${cssFiles.length} | Rules: ${ruleCount} | Declarations: ${declarationCount} | Media queries: ${mediaCount}`);
 console.log(`!important: ${importantCount} | Repeated selector groups: ${repeatedSelectors.length} | Cross-file selector groups: ${crossFileSelectors.length} | Exact repeated rule groups: ${exactDuplicates.length} | Selector/property conflict groups: ${propertyConflicts.length} | Conflicting declarations inside a rule: ${duplicateDeclarations}`);
 console.log(`Stylesheet imports: ${importedCss.size} | Unreferenced CSS files: ${unreferencedCss.length} | Missing CSS imports: ${missingImports.length}`);
+console.log(`Fully shadowed rule candidates: ${shadowedRules.length} (manual review required)`);
 console.log('CSS LOAD ORDER:');
 for (const [index, file] of cssLoadOrder.entries()) console.log(`  ${index + 1}. ${path.relative(process.cwd(), file)}`);
 
+if (shadowedRules.length) {
+  console.log('FULLY SHADOWED RULE CANDIDATES (only identical selector/context; inspect before deletion):');
+  for (const rule of shadowedRules.slice(0, 80)) {
+    console.log(`- ${rule.selector} [${rule.context}] -> ${rule.location.file}:${rule.location.line} (${rule.declarations} declarations)`);
+  }
+}
 if (exactDuplicates.length) {
   console.log('EXACT REPEATED RULES (diagnostic only; review source order before removal):');
   for (const [key, occurrences] of exactDuplicates.slice(0, 100)) {
