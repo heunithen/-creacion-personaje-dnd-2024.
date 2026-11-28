@@ -13,7 +13,7 @@
   };
   type Selection = { monster: Monster; quantity: number };
   type TemplateId = 'solo'|'boss_minions'|'duo'|'trio'|'horde';
-  type GeneratedEncounter = { items: Selection[]; spent: number; creatures: number; key: string; template: TemplateId; budgetUse?: number; targetReached?: boolean };
+  type GeneratedEncounter = { items: Selection[]; spent: number; creatures: number; key: string; template: TemplateId; budgetUse?: number; targetReached?: boolean; budgetTolerance?: number };
 
   export let onAddToCombat: (selection: Selection[]) => void = () => {};
 
@@ -191,8 +191,8 @@
   }
   function useGeneratedEncounter(encounter: GeneratedEncounter) {
     const cost = encounter.items.reduce((sum, item) => sum + monsterXp(item.monster) * item.quantity, 0);
-    if (cost > budget) {
-      generationMessage = 'La alternativa ya no cabe en el presupuesto actual. Vuelve a generarla.';
+    if (cost > budget * 1.03) {
+      generationMessage = 'La alternativa supera la tolerancia del 3 % respecto al presupuesto actual. Vuelve a generarla.';
       return;
     }
     selected = encounter.items.map(item => ({...item}));
@@ -209,7 +209,7 @@
     <div>
       <span class="eyebrow">HERRAMIENTA DEL MASTER</span>
       <h2>Generador de encuentros</h2>
-      <p>Construye encuentros comprando monstruos con el presupuesto de PX del DMG 2024. No es posible superar el límite establecido.</p>
+      <p>Construye encuentros con el presupuesto de PX del DMG 2024. La generación automática busca quedar lo más cerca posible del 100 % (±3 %); la compra manual no permite exceder el límite.</p>
     </div>
     <span class="source-tag">DMG 2024</span>
   </header>
@@ -249,9 +249,9 @@
       <div><small>Criaturas</small><strong>{totalCreatures}</strong></div>
     </div>
     {#if remaining>0}
-      <p class="budget-note">Quedan {formatXp(remaining)} disponibles. La generación automática intenta gastar todo el presupuesto o alcanzar al menos el 80 %; la compra manual sigue siendo libre.</p>
+      <p class="budget-note">Quedan {formatXp(remaining)} disponibles. La generación automática busca aproximarse al 100 % del presupuesto, con una tolerancia de ±3 puntos porcentuales.</p>
     {:else}
-      <p class="budget-note">Has utilizado exactamente el presupuesto disponible.</p>
+      <p class="budget-note">El presupuesto está completo o superado.</p>
     {/if}
     {#if budgetMessage}<p class="budget-note over-note" role="status">{budgetMessage}</p>{/if}
   </section>
@@ -259,7 +259,7 @@
 <section class="random-generator">
     <div class="random-generator-copy">
       <div><span class="eyebrow">COMPRA AUTOMÁTICA</span><h3>Generación aleatoria</h3></div>
-      <p>Genera tres alternativas aleatorias siguiendo una plantilla de composición. Cada alternativa intenta utilizar entre el 80 % y el 100 % del presupuesto sin excederlo, respetando la estructura de la plantilla.</p>
+      <p>Genera tres alternativas aleatorias siguiendo una plantilla de composición. Cada alternativa intenta quedar entre el 97 % y el 103 % del presupuesto, priorizando el 100 % y respetando la estructura de la plantilla.</p>
     </div>
     <div class="template-controls">
       <label for="enc-template">Plantilla de composición</label>
@@ -288,10 +288,10 @@
               {/each}
             </div>
             <div class="generated-total"><span>{formatXp(encounter.spent)} / {formatXp(budget)}</span><strong>{(encounter.spent / budget * 100).toFixed(1)} %</strong></div>
-            {#if encounter.spent / budget < 0.8}
-              <p class="generated-template-description">No fue posible alcanzar el 80 % manteniendo esta plantilla y sin superar el presupuesto. Se muestra la mejor composición disponible.</p>
+            {#if encounter.spent / budget < 0.97 || encounter.spent / budget > 1.03}
+              <p class="generated-template-description">No fue posible acercarse más al 100 % manteniendo esta plantilla. Se muestra la composición más próxima encontrada.</p>
             {:else}
-              <p class="generated-template-description budget-target-met">Objetivo de gasto alcanzado.</p>
+              <p class="generated-template-description budget-target-met">Objetivo de gasto alcanzado: dentro de ±3 % del presupuesto.</p>
             {/if}
             <button type="button" class="use-generated" on:click={()=>useGeneratedEncounter(encounter)}>Usar este encuentro</button>
           </article>
