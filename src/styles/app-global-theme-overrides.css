@@ -1,0 +1,427 @@
+/* Auditoría global de paleta, contraste y superficies para los módulos de la aplicación. */
+
+  /* AUDITORÍA VISUAL GLOBAL — paleta náutica aplicada a toda la aplicación */
+html,body,#app{background:#13262e!important;color:#ffffff!important}
+  body{background:radial-gradient(ellipse at 50% 0%,#13262e 0,#13262e 42%,#13262e 100%)!important}
+  
+  .topbar,footer{border-color:#3fb8b8!important}
+  .brand,.brand strong,.section-heading h2,.panel h2,
+  .saved h2,.character-card h3,.monster-card h3{color:#ffffff!important}
+  .brand-mark,.eyebrow,.free-tag,.count,
+  .card-symbol,.card-actions button,.roll-result b,
+  .trait-group h3{color:#b5bec3!important}
+  .brand small,.intro,.connection,.hint,
+  .muted,footer{color:#b5bec3!important}
+  .panel,.character-card,.monster-card,
+  .trait-editor,.import-box,.rolls-panel,
+  .roll-history,.roster-panel,.chest-panel,
+  .save-panel,.items-panel,.spells-panel,
+  .monsters-panel,.custom-rolls,.custom-roll-card,
+  .new-roll-part,.roll-creator,.builder-panel,
+  .level-up-panel,.progression-panel,.spellbook-panel,
+  .rules-panel,.ddb-content-panel,.data-import-panel,
+  .import-character-panel,.github-config-panel,
+  .github-character-row,.subclass-level-preview{
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important;
+    box-shadow:0 8px 24px #0b171d44!important
+  }
+  .topbar nav button,.secondary,.player-tabs button,
+  .character-tabs button,.master-tabs button,
+  .header-actions button,.roll-actions button,
+  .roll-creator button,.add-roll-part,
+  .github-character-actions button{
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important
+  }
+  .topbar nav button.active,.player-tabs button.active,
+  .character-tabs button.active,.master-tabs button.active,
+  .primary,.builder-panel button.primary,
+  .builder-actions .primary{
+    background:#1b2a33!important;border:1px solid #b5bec3!important;color:#3fb8b8!important
+  }
+  .primary:hover{background:#1b2a33!important;color:#3fb8b8!important}
+  label,.builder-choice-heading,.stat-label,
+  .sheet-stat .stat-label{color:#b5bec3!important}
+  input,textarea,select,.editable,
+  .sheet-readonly-value{
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+  }
+  input::placeholder,textarea::placeholder{color:#b5bec3!important}
+  input:focus,textarea:focus,select:focus,
+  .editable:focus{border-color:#b5bec3!important;outline:1px solid #b5bec3!important;background:#13262e!important}
+  .roll-entry,.trait-view,.traits-preview,
+  .subheading,.sheet-section-title{border-color:#3fb8b8!important}
+  .roll-entry-top strong,.trait-view strong,
+  .trait-view p,.roll-entry p{color:#ffffff!important}
+  .toast{background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important}
+  .danger-text,.remove-roll{color:#5fe6e0!important}
+
+  /* Creador: todas las tarjetas seleccionables comparten el mismo tratamiento */
+  .builder-choice-wrapper,.builder-choice-field,
+  .builder-name-block,.builder-info,
+  .builder-option-card,.builder-option-description,
+  .builder-skill-card,.builder-option-badge,
+  .builder-choice-heading,.builder-checkbox{
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
+  }
+  .builder-choice-wrapper,.builder-choice-field,
+  .builder-name-block{border-left:3px solid #b5bec3!important}
+  .builder-info small,.builder-panel .muted,
+  .builder-panel .hint,.builder-option-description,
+  .builder-skill-description{color:#b5bec3!important}
+  .builder-class-card,.builder-class-card:hover,
+  .builder-species-grid .builder-option-card,
+  .builder-background-grid .builder-option-card{
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+  }
+  
+  .builder-class-card-heading>span,.builder-class-meta>span,
+  .builder-option-badge{color:#b5bec3!important;background:#13262e!important;border-color:#5fe6e0!important}
+  .builder-class-description,.builder-class-meta,
+  .builder-class-meta>span{color:#b5bec3!important;border-color:#3fb8b8!important}
+  .builder-class-card.selected,.builder-option-card.selected{
+    background:#13262e!important;border:2px solid #b5bec3!important;color:#ffffff!important;
+    box-shadow:0 0 0 1px #b5bec333!important
+  }
+  
+  .builder-checkbox input{accent-color:#b5bec3!important}
+  .builder-panel button.secondary,.builder-actions .secondary{
+    background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important
+  }
+  
+  .builder-progress span{background:#1b2a33!important}
+
+  /* Hoja del jugador y ficha del director: ningún bloque de pergamino o fondo claro */
+  .character-sheet,.gm-character-sheet,
+  .nautical-sheet,.ddb-content-panel{
+    background:#13262e!important;color:#ffffff!important;border:1px solid #5fe6e0!important
+  }
+  .character-sheet .sheet-banner,.gm-character-sheet .sheet-banner{
+    background:#0f1e26!important;color:#ffffff!important
+  }
+  .character-sheet .character-name,.gm-character-sheet .character-name,
+  .character-sheet .sheet-banner .character-name{color:#ffffff!important}
+  .character-sheet .sheet-tabs button,.sheet-tabs button{
+    background:#13262e!important;color:#b5bec3!important;border:1px solid #3fb8b8!important
+  }
+  .character-sheet .sheet-tabs button.active,.sheet-tabs button.active{
+    background:#13262e!important;color:#ffffff!important;border-color:#b5bec3!important;
+    border-bottom:3px solid #b5bec3!important
+  }
+  .character-sheet .sheet-section,.gm-character-sheet .sheet-section,
+  .character-sheet .combat-section,.character-sheet .attributes-section,
+  .character-sheet .skills-section,.character-sheet .features-section,
+  .character-sheet .magic-section,.character-sheet .equipment-section,
+  .character-sheet .story-section,.character-sheet .general-section,
+  .gm-character-sheet .combat-section,.gm-character-sheet .attributes-section,
+  .gm-character-sheet .skills-section,.gm-character-sheet .features-section,
+  .gm-character-sheet .magic-section,.gm-character-sheet .equipment-section,
+  .gm-character-sheet .story-section,.gm-character-sheet .general-section{
+    background:#13262e!important;color:#ffffff!important;border:1px solid #5fe6e0!important;
+    border-top:2px solid #b5bec3!important
+  }
+  .character-sheet .sheet-section-title,.gm-character-sheet .sheet-section-title{
+    background:transparent!important;border-bottom:1px solid #3fb8b8!important
+  }
+  .character-sheet .section-name,.gm-character-sheet .section-name,
+  .character-sheet .sheet-section-title h3,.gm-character-sheet .sheet-section-title h3{
+    color:#b5bec3!important
+  }
+  .character-sheet .sheet-stat,.gm-character-sheet .sheet-stat{
+    background:transparent!important;border-color:#3fb8b8!important
+  }
+  .character-sheet .stat-label,.gm-character-sheet .stat-label,
+  .character-sheet .sheet-stat span,.gm-character-sheet .sheet-stat span{
+    color:#b5bec3!important
+  }
+  .character-sheet .stat-value,.gm-character-sheet .stat-value,
+  .character-sheet .sheet-stat strong,.gm-character-sheet .sheet-stat strong{
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+  }
+  .character-sheet .editable,.gm-character-sheet .editable{
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
+  }
+
+  /* Hoja náutica principal: corrige subpaletas verdes, rojas y azules heredadas */
+  .nautical-sheet{background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  .nautical-header{background:#0f1e26!important;border-bottom:1px solid #3fb8b8!important}
+  .nautical-header .sheet-kicker,.nautical-sheet .sheet-kicker{color:#b5bec3!important}
+  .nautical-header .character-name,.nautical-header .sheet-banner-meta{color:#ffffff!important}
+  .nautical-header .sheet-banner-meta span+span{border-color:#3fb8b8!important}
+  .portrait-frame{border-color:#5fe6e0!important;box-shadow:0 0 0 3px #3fb8b8!important}
+  .header-actions button{background:#13262e!important;border:1px solid #b5bec3!important;color:#ffffff!important}
+  .nautical-quick-stats{background:#13262e!important;border-color:#5fe6e0!important}
+  .nautical-quick-stats>div,.nautical-quick-stats .quick-stats-row>div{
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+  }
+  .nautical-quick-stats>div>span{color:#b5bec3!important}
+  .nautical-quick-stats>div>strong{color:#ffffff!important}
+  .nautical-quick-stats .attribute-plaque{
+    background:#13262e!important;border:2px solid #b5bec3!important;color:#ffffff!important
+  }
+  .nautical-quick-stats .attribute-plaque strong,
+  .nautical-quick-stats .attribute-plaque .ability-score{color:#ffffff!important}
+  .nautical-quick-stats .attribute-plaque .ability-bonus-roll{
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+  }
+  .nautical-quick-stats .attribute-plaque .ability-bonus-empty,
+  .nautical-quick-stats .attribute-plaque .saving-throw-line span,
+  .nautical-quick-stats .attribute-plaque .saving-throw-line strong{color:#b5bec3!important}
+  .nautical-quick-stats .attribute-plaque .saving-throw-line{border-color:#3fb8b8!important}
+  .nautical-quick-stats .attribute-plaque .saving-throw-line.proficient span,
+  .nautical-quick-stats .attribute-plaque .saving-throw-line.proficient strong{color:#b5bec3!important}
+  .nautical-columns{background:#13262e!important}
+  .nautical-side,.nautical-skills,.nautical-content{color:#ffffff!important;scrollbar-color:#b5bec3 #3fb8b8!important}
+  .nautical-columns .sheet-section{
+    background:#13262e!important;color:#ffffff!important;border:1px solid #5fe6e0!important;
+    border-top:2px solid #b5bec3!important
+  }
+  .nautical-columns .sheet-section-title{background:transparent!important;border-color:#3fb8b8!important}
+  .nautical-columns .sheet-section-title h3,
+  .nautical-columns .section-name{color:#ffffff!important}
+  .nautical-columns .sheet-stat{background:transparent!important;border-color:#3fb8b8!important}
+  .nautical-columns .stat-label,.nautical-columns .sheet-stat span{color:#b5bec3!important}
+  .nautical-columns .stat-value,.nautical-columns .sheet-stat strong{
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+  }
+  .nautical-skills .sheet-stat.proficient .stat-label,
+  .nautical-skills .sheet-stat.proficient .stat-value,
+  .nautical-skills .sheet-stat.proficient .skill-number{color:#b5bec3!important}
+  .nautical-skills .sheet-stat .skill-number{color:#ffffff!important}
+  .nautical-import{background:#13262e!important;border-color:#5fe6e0!important;color:#ffffff!important}
+  .nautical-tabs{border-color:#5fe6e0!important}
+  .nautical-tabs button{background:transparent!important;color:#b5bec3!important;border-color:transparent!important}
+  .nautical-tabs button.active{
+    background:#13262e!important;color:#ffffff!important;border-color:transparent!important;
+    border-bottom:3px solid #b5bec3!important
+  }
+  .nautical-tab-content{background:transparent!important;color:#ffffff!important}
+  .weapon-mastery-summary,.weapon-attack-card,
+  .weapon-attack-values>div,.spellcasting-summary-grid>div,
+  .spell-slot-summary,.player-spell-card,
+  .player-feature-card,.player-feat-section{
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
+  }
+  .weapon-attack-card h4,.player-spell-name,
+  .player-feature-name{color:#ffffff!important}
+  .weapon-attack-values span,.player-feature-source,
+  .player-spell-level{color:#b5bec3!important}
+  .weapon-attack-values strong,.player-spell-description,
+  .player-spell-checks{color:#ffffff!important}
+  .weapon-attacks-section .weapon-mastery-summary{
+    background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important
+  }
+  .skill-column-labels{color:#b5bec3!important}
+  .nautical-empty{background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  .nautical-sheet .inline-roll{color:#b5bec3!important}
+
+  /* Cabecera y componentes del diseño D&D Beyond anterior */
+  .ddb-character-header{background:#0f1e26!important;color:#ffffff!important;border:1px solid #3fb8b8!important}
+  .ddb-character-header .sheet-kicker,
+  .sheet-quick-stats>div>span{color:#b5bec3!important}
+  .ddb-character-header .character-name,
+  .sheet-quick-stats>div>strong{color:#ffffff!important}
+  .sheet-quick-stats>div{background:#13262e!important;border:1px solid #5fe6e0!important}
+  .sheet-banner-emblem{background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  .ddb-section-nav button{background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  .ddb-section-nav button.active{background:#13262e!important;color:#ffffff!important;border-bottom:3px solid #b5bec3!important}
+  .sheet-quick-stats,.continuous-sheet-grid{background:transparent!important;color:#ffffff!important}
+
+  /* Manuales, inventario, conjuros, monstruos, tablas y gestión del GM */
+  .items-table,.chest-table{background:#13262e!important;color:#ffffff!important}
+  .items-table th,.chest-table th{background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  .items-table td,.chest-table td{background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  .items-table td:first-child,.chest-table td:first-child{color:#ffffff!important}
+  .items-filters fieldset,.items-filters legend{background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  .spell-card,.monster-entry,.monster-combat-grid div,
+  .monster-info-item,.spell-meta,.monster-attacks,
+  .monster-role,.chest-result,.roll-notation,.roll-result{
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
+  }
+  .spell-card>summary,.spell-name,.monster-name,
+  .monster-entry strong,.monster-original{color:#ffffff!important}
+  .spell-subtitle,.monster-subtitle,.monster-source,
+  .monster-attribution,.spell-source,.monster-info-item small,
+  .monster-combat-grid small{color:#b5bec3!important}
+  .spell-details,.monster-statblock{background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important}
+  .monster-heading{border-bottom-color:#b5bec3!important}
+  .monster-heading h3,.monster-content-section h4{color:#b5bec3!important}
+  .monster-content-section{border-top-color:#5fe6e0!important}
+  .monster-cr,.spell-level{background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  .github-status,.github-folder-chip,.builder-info,
+  .builder-choice-wrapper,.builder-choice-field{
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important
+  }
+  .github-character-row strong,.github-character-row{color:#ffffff!important}
+  
+  
+
+
+  /* Corrección específica de superficies beige que sobrevivían a la paleta global */
+  .builder-panel>label,.builder-panel label{color:#b5bec3!important}
+  .builder-panel input,.builder-panel select,.builder-panel textarea,
+  .github-folder-create input,.github-character-actions select{
+    background:#13262e!important;color:#ffffff!important;border:1px solid #3fb8b8!important
+  }
+  .builder-progress{background:#13262e!important}
+  .builder-info,.builder-name-block,.builder-choice-wrapper,
+  .builder-choice-field,.builder-option-card,.builder-option-description,
+  .builder-skill-card,.builder-checkbox{
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important
+  }
+  .builder-class-card,.builder-class-card:hover{
+    background:#13262e!important;border:1px solid #5fe6e0!important;color:#ffffff!important
+  }
+  .builder-panel .builder-class-card.selected,.builder-class-card.selected{
+    background:#13262e!important;border:2px solid #b5bec3!important;color:#ffffff!important
+  }
+  .builder-class-card-heading,.builder-class-card-heading strong,
+  .builder-class-meta strong,.builder-option-card strong{color:#ffffff!important}
+  .builder-class-description,.builder-class-meta,
+  .builder-option-description,.builder-skill-description{color:#b5bec3!important}
+  .builder-class-meta,.builder-class-meta>span{border-color:#3fb8b8!important;color:#b5bec3!important}
+  .builder-class-card-heading>span,.builder-option-badge{
+    background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important
+  }
+  .builder-checkbox:has(input:checked){
+    background:#13262e!important;border-color:#b5bec3!important;color:#ffffff!important
+  }
+  .builder-checkbox:has(input:disabled):not(:has(input:checked)){
+    background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important
+  }
+  .builder-checkbox:has(input:focus-visible){outline-color:#b5bec3!important}
+  .master-tabs button{background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  .master-tabs button.active{background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  .github-config-panel,.github-character-row,.github-folder-chip,
+  .github-status,.github-character-actions button{
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important
+  }
+  .github-character-row small{color:#b5bec3!important}
+  .attributes-section,.features-section .sheet-stat,
+  .features-section .sheet-stat strong,.features-section .stat-value{
+    background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important
+  }
+  .attributes-section .sheet-stat{background:#13262e!important;border-color:#3fb8b8!important}
+  
+  .sheet-tabs button{background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important}
+  .sheet-tabs button.active{background:#13262e!important;color:#ffffff!important;border-color:#b5bec3!important}
+
+
+  /* Auditoría integral final: eliminar superficies cálidas heredadas en todos los módulos */
+  .spell-meta,.monster-combat-grid div,.monster-attacks,
+  .monster-info-item,.monster-entry,.custom-rolls,
+  .custom-roll-card,.roll-notation,.roll-result,
+  .sheet-section,.combat-section,.attributes-section,
+  .attributes-section .sheet-stat,.stat-value,
+  .chest-result,.chest-table-wrap,.chest-table,
+  .github-config-panel,.github-character-row,.github-folder-chip,
+  .github-status,.ddb-content-panel,.weapon-mastery-summary,
+  .weapon-attack-card,.player-spell-card,
+  .player-feat-section .player-feature-card,.subclass-level-preview,
+  .trait-editor,.import-box,.character-card,.monster-card{
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
+  }
+  .combat-section,.attributes-section{border-top-color:#b5bec3!important}
+  .sheet-section{border:1px solid #3fb8b8!important;border-top:2px solid #5fe6e0!important}
+  .sheet-section-title,.roll-entry,.trait-view,
+  .traits-preview,.subheading,.monster-attacks,
+  .monster-source,.spell-source{border-color:#3fb8b8!important}
+  .editable,.editable:focus,.stat-value,
+  .roll-creator input,.roll-creator select,
+  .github-folder-create input,.github-character-actions select{
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
+  }
+  .editable:hover{background:#13262e!important;border-color:#b5bec3!important}
+  .roll-creator button,.roll-actions button,
+  .sheet-tabs button,.master-tabs button,
+  .player-tabs button,.ddb-section-nav button{
+    background:#13262e!important;color:#b5bec3!important;border-color:#3fb8b8!important
+  }
+  .sheet-tabs button.active,.master-tabs button.active,
+  .player-tabs button.active,.ddb-section-nav button.active{
+    background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important
+  }
+  .roll-notation,.roll-result{background:#13262e!important;color:#b5bec3!important;border-color:#5fe6e0!important}
+  .chest-result-number,.chest-result>span:last-child,
+  .spellcasting-summary-grid>div>span,.weapon-attack-values span,
+  .player-spell-checks label,.monster-combat-grid small,
+  .stat-label,.key,.hint,.muted{
+    color:#b5bec3!important
+  }
+  .chest-result strong,.roll-entry-top strong,
+  .trait-view strong,.monster-card h3,.character-card h3,
+  .weapon-attack-card h4,.player-feature-name{color:#ffffff!important}
+  .gm-sheet-details summary,.monster-source summary,
+  .trait-group h3,.roll-result b{color:#b5bec3!important}
+  .equipment-section,.general-section,.features-section,
+  .attacks-section,.skills-section,.spells-section{
+    background:#13262e!important;color:#ffffff!important;border-color:#3fb8b8!important
+  }
+  .player-spell-level,.player-feature-source,
+  .trait-level,.free-tag,.count{
+    color:#b5bec3!important;border-color:#5fe6e0!important
+  }
+  .toast{background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
+  .primary,button.primary{background:#1b2a33!important;color:#3fb8b8!important;border-color:#b5bec3!important}
+  .primary:hover,button.primary:hover{background:#1b2a33!important}
+
+
+
+/* PALETA CANÓNICA ÚNICA — Forja de Aventureros */
+html,body{background:#0b171d!important;color:#ffffff!important}
+body{background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#0b171d 100%)!important}
+.app-shell,.main{color:#ffffff!important}
+.topbar{background:#0f1e26!important;border-color:#3a4a52!important}
+.brand,.brand strong,h1,h2,h3,h4{color:#ffffff!important}
+.brand small,.intro,.connection,.hint,.muted,.stat-label,.monster-source,.spell-source{color:#b5bec3!important}
+.brand-mark,.eyebrow,.section-name,.trait-group h3{color:#5fe6e0!important}
+.panel,.character-card,.monster-card,.trait-editor,.import-box,
+.ability,.builder-panel,.level-up-panel,.items-panel,
+.character-sheet,.sheet-section,.custom-rolls,.custom-roll-card,
+.spell-card,.monster-statblock,.ddb-content-panel,.github-config-panel,
+.github-character-row,.github-folder-chip,.github-status,.builder-info,
+.builder-choice-wrapper,.builder-choice-field,.builder-option-card,
+.builder-skill-card,.builder-class-card,.weapon-attack-card,
+.weapon-mastery-summary,.player-spell-card,.player-feature-card,
+.player-feat-section,.new-roll-part{background:#13262e!important;color:#ffffff!important;border-color:#3a6870!important}
+.spell-meta,.monster-combat-grid div,.monster-info-item,
+.monster-attacks,.monster-role,.monster-entry,
+.roll-result,.roll-notation,.chest-result,
+.sheet-quick-stats>div,.builder-option-description,
+.subclass-level-preview,.traits-preview,.trait-view{background:#1b2a33!important;color:#ffffff!important;border-color:#3a4a52!important}
+input,textarea,select{background:#0b171d!important;color:#ffffff!important;border-color:#3a4a52!important}
+input:focus,textarea:focus,select:focus{border-color:#5fe6e0!important;outline-color:#5fe6e0!important}
+
+button,.secondary,.master-tabs button,.sheet-tabs button,
+.player-tabs button,.ddb-section-nav button,.roll-actions button{
+ background:#1b2a33!important;color:#b5bec3!important;border-color:#3a4a52!important
+}
+button.active,.master-tabs button.active,.sheet-tabs button.active,
+.player-tabs button.active,.ddb-section-nav button.active{
+ background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important
+}
+.primary,button.primary{background:#5fe6e0!important;color:#0f1e26!important;border-color:#5fe6e0!important}
+.primary:hover,button.primary:hover{background:#79f1eb!important}
+.sheet-section-title,.sheet-stat,.roll-entry,.trait-view,
+.traits-preview,.subheading,.monster-source,.spell-source{border-color:#3a4a52!important}
+.stat-value,.sheet-stat strong,.character-name,.spell-name,
+.monster-name,.monster-entry strong,.weapon-attack-card h4,
+.player-feature-name,.chest-result strong{color:#ffffff!important}
+.spell-subtitle,.monster-subtitle,.monster-info-item small,
+.monster-combat-grid small,.player-feature-source,.player-spell-level,
+.weapon-attack-values span,.chest-result-number,.chest-result>span:last-child{color:#b5bec3!important}
+.roll-result b,.trait-level,.card-symbol{color:#5fe6e0!important}
+
+footer{border-color:#3a4a52!important;color:#8e9aa1!important}
+
+
+
+
+.chest-table td:first-child,.items-table td:first-child{color:#ffffff!important}
+.editable,.stat-value{background:#0b171d!important;color:#ffffff!important}
+.editable:hover{background:#13262e!important;border-color:#5fe6e0!important}
+.monster-heading{border-bottom-color:#5fe6e0!important}
+.monster-content-section{border-top-color:#3fb8b8!important}
+.monster-content-section h4{color:#5fe6e0!important}
+.empty-state{color:#b5bec3!important}
+
+
