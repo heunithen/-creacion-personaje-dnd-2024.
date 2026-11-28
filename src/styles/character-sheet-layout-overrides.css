@@ -1,8 +1,8 @@
 /* Navegación, distribución continua y ajustes responsive de la ficha de personaje. */
 
   /* Presentación de ficha inspirada en la jerarquía de D&D Beyond */
-  .app-shell{max-width:1180px}
-  .main{max-width:1120px;width:100%}
+  
+  
   .character-sheet{width:100%;max-width:none;padding:1.1rem;border-radius:10px;background:#0b171d!important;border:1px solid #13262e!important;color:#ffffff!important}
   .ddb-character-header{display:flex!important;align-items:center;justify-content:space-between;gap:1rem;padding:1.15rem 1.25rem!important;margin:0 0 .85rem!important;border-radius:8px!important;background:#0f1e26!important;text-align:left!important}
   .ddb-character-header .sheet-banner-copy{min-width:0;text-align:left}
@@ -34,7 +34,7 @@
 
 
   /* Organización de ficha inspirada en la navegación por secciones de D&D Beyond */
-  .app-shell{max-width:1180px!important}
+  
   main{max-width:1120px!important}
   .character-sheet{display:grid;grid-template-columns:220px minmax(0,1fr);column-gap:1rem;align-items:start}
   .character-sheet>.sheet-banner,.character-sheet>.sheet-quick-stats{grid-column:1/-1}
@@ -238,7 +238,7 @@ body,.app-shell,.main{background:#13262e!important;color:#ffffff!important}
   .roll-notation,.roll-result{background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
   .chest-result{background:#13262e!important;color:#ffffff!important;border-color:#5fe6e0!important}
   .chest-result-number,.chest-result>span:last-child{color:#b5bec3!important}
-  .chest-table-wrap{border-color:#5fe6e0!important}
+  
   .chest-selected{background:#13262e!important;color:#ffffff!important}
   .github-status{background:#13262e!important;border-left:3px solid #b5bec3!important;color:#ffffff!important}
   .github-character-actions button{background:#13262e!important;border:1px solid #3fb8b8!important;color:#ffffff!important}
