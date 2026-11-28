@@ -27,7 +27,7 @@ select{display:block;width:100%;margin-top:8px;padding:12px 13px;background:#0b1
 --ocean-0:#0b171d;--ocean-1:#0f1e26;--ocean-2:#13262e;--slate-1:#1b2a33;--slate-2:#22333d;
 --aqua:#5fe6e0;--aqua-mid:#3fb8b8;--text-main:#fff;--text-secondary:#b5bec3;--text-muted:#8e9aa1;--line:#3a4a52}
 html,body{background:#0b171d!important;color:#fff!important}
-body{background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#0b171d 100%)!important}
+
 ::selection{background:#5fe6e0!important;color:#0f1e26!important}
 .topbar{background:#0f1e26!important;border-color:#3a4a52!important}
 .brand,.brand strong,h1,h2,h3,h4{color:#fff!important}
