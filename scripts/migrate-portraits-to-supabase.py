@@ -48,12 +48,12 @@ def main():
         raise RuntimeError("Could not read the existing portrait source list from src/App.svelte")
     old_urls = json.loads(match.group(1))
 
-    jobs: list[tuple[str, str, Path | None]] = []
+    jobs: list[tuple[str, str, str | None, Path | None]] = []
     for url in old_urls:
         filename = url.rsplit("/", 1)[-1]
-        jobs.append((filename, url, None))
+        jobs.append((filename, filename, url, None))
     for source in sorted(PORTRAIT_DIR.glob("*.jpeg")):
-        jobs.append((source.stem + ".webp", source.name, source))
+        jobs.append((source.stem + ".webp", source.name, None, source))
 
     catalog_url = f"{SUPABASE_URL}/rest/v1/character_portraits?select=object_path"
     status, body = request(catalog_url)
@@ -63,11 +63,7 @@ def main():
 
     records = []
     uploaded = 0
-    for output_name, source_name, local_path in jobs:
-        if local_path is None:
-            source_url = next(url for url in old_urls if url.endswith("/" + source_name))
-        else:
-            source_url = None
+    for output_name, source_name, source_url, local_path in jobs:
         target_url = f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET}/square/{output_name}"
         head_status, _ = request(target_url, method="HEAD")
         if head_status == 404:
