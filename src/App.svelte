@@ -1973,16 +1973,16 @@ import { onMount } from 'svelte';
     'Tiefling':'Los tieflings son humanoides marcados por un legado infernal que les concede poderes sobrenaturales. Elige un legado abisal, ctónico o infernal: cada uno proporciona resistencia a un tipo de daño y un truco distinto. Al alcanzar los niveles 3 y 5 aprenden conjuros adicionales relacionados con ese legado, que siempre tienen preparados y pueden lanzar gratuitamente una vez por descanso largo. También conocen Taumaturgia y pueden lanzarla usando la misma aptitud mágica elegida para su legado. Poseen visión en la oscuridad.'
   };
   const BUILDER_SPECIES_LORE: Record<string,string> = {
-    'Aasimar':'Su origen suele estar ligado a una intervención celestial: una deidad, un mensajero divino o una fuerza de los Planos Superiores dejó su huella en su linaje. Esa conexión no determina su personalidad ni su destino. Algunos conocen la naturaleza de su herencia desde pequeños; otros descubren sus señales mucho después, y pueden vivir entre comunidades que los reciben como presagios o los miran con temor.',
-    'Dracónido':'Su pueblo conserva una herencia relacionada con los grandes dragones, visible en sus escamas, rasgos y aliento elemental. Muchos dracónidos sienten orgullo por su ascendencia y buscan demostrar su valor mediante actos propios, sin quedar definidos por la reputación de los dragones de los que descienden. Sus comunidades y tradiciones varían ampliamente.',
-    'Enano':'Las tradiciones enanas suelen valorar la memoria, la artesanía, los juramentos y los vínculos entre generaciones. Sus ciudades se encuentran a menudo en fortalezas excavadas en montañas y bajo tierra, donde familias y clanes preservan oficios e historias antiguas. Aunque muchos mantienen esos lazos, los enanos también viajan y construyen nuevas comunidades lejos de sus hogares ancestrales.',
-    'Elfo':'Los elfos pertenecen a una antigua tradición feérica y suelen vivir vidas muy largas, lo que les permite contemplar los cambios del mundo desde una perspectiva distinta. Sus culturas mantienen vínculos diversos con la naturaleza, la magia y los lugares del mundo. Los altos elfos, los drow y los elfos de los bosques han desarrollado costumbres diferentes, pero comparten su herencia feérica.',
-    'Gnomo':'La curiosidad es una fuerza habitual entre los gnomos. Muchos disfrutan investigando misterios, creando objetos ingeniosos o explorando posibilidades mágicas, aunque no todos se dedican a la invención. Sus comunidades suelen ser animadas y variadas, y sus integrantes pueden encontrar fascinante tanto un mecanismo diminuto como una pregunta que nadie ha logrado responder.',
-    'Goliat':'Los goliats llevan en su sangre la influencia de los gigantes y suelen destacar por su altura y fortaleza. En muchas comunidades se valora la autosuficiencia, la resistencia y la capacidad de superar desafíos, aunque cada individuo interpreta esos ideales a su manera. La herencia de distintos linajes gigantes explica parte de la diversidad de sus dones.',
-    'Mediano':'Los medianos suelen apreciar la tranquilidad, la hospitalidad y los placeres sencillos, como una buena comida o la compañía de sus seres queridos. Muchos prefieren comunidades acogedoras y vidas apacibles, pero su tamaño nunca les ha impedido viajar, asumir riesgos o intervenir cuando algo amenaza aquello que consideran importante.',
-    'Humano':'Los humanos son conocidos por su adaptabilidad y por la enorme diversidad de sus culturas, costumbres y aspiraciones. Sus comunidades pueden surgir en casi cualquier entorno y cambiar con rapidez. Su vida relativamente breve impulsa a muchos a explorar, construir, aprender y dejar una huella propia en el mundo.',
-    'Orco':'Los orcos poseen una herencia marcada por la fortaleza física y una gran determinación. Sus pueblos y culturas son diversos: algunos mantienen tradiciones comunitarias y ancestrales, mientras otros se integran en sociedades muy distintas. La resistencia que caracteriza a su especie no define sus valores; cada orco decide qué merece su lealtad y qué clase de vida quiere construir.',
-    'Tiefling':'Los tieflings llevan señales visibles de una conexión con los Planos Inferiores, a menudo heredada de un antepasado que estableció un vínculo con una entidad infernal. Sus cuernos, colas y otros rasgos pueden despertar curiosidad, prejuicios o temor, pero no dictan su moralidad. Muchos deben decidir por sí mismos qué significado dar a ese legado.'
+    'Aasimar':'La herencia de un aasimar puede remontarse a una bendición, un pacto o el contacto de un antepasado con una fuerza de los Planos Superiores. Esa señal puede aparecer como un brillo en los ojos, una voz inusual o una presencia que otros perciben antes de conocerlo. Algunos crecen bajo la tutela de templos que esperan de ellos grandes obras; otros son criados por familias comunes y descubren su origen tarde. No existe una obligación celestial: cada aasimar decide qué hacer con el legado que lleva.',
+    'Dracónido':'Los dracónidos nacen con rasgos que recuerdan a los dragones: escamas, cuernos, garras y una presencia marcada por su linaje elemental. Sus comunidades pueden organizarse alrededor de familias, juramentos, tradiciones guerreras o vínculos comerciales, pero no existe una única cultura dracónida. La ascendencia suele despertar orgullo, rivalidad o expectativas ajenas; muchos emprenden viajes para demostrar que sus actos les pertenecen y no son una repetición de la historia de sus ancestros.',
+    'Enano':'La vida enana suele estar entretejida con la historia de un clan, el oficio aprendido y los compromisos que pasan de una generación a otra. Sus fortalezas pueden extenderse por túneles, salones tallados y ciudades construidas alrededor de minas, talleres o antiguas rutas subterráneas. La piedra conserva memoria: inscripciones, tumbas y obras artesanales cuentan quiénes estuvieron allí antes. No todos los enanos permanecen en sus hogares; algunos parten para comerciar, buscar nuevas vetas, saldar juramentos o crear un legado propio.',
+    'Elfo':'Los elfos viven mucho más que la mayoría de los pueblos y su memoria abarca cambios que otras generaciones solo conocen por relatos. Su herencia feérica se expresa de formas distintas: los altos elfos suelen cultivar el estudio y las artes arcanas; los drow han desarrollado sociedades y tradiciones propias, muy diversas entre sí; y los elfos de los bosques mantienen vínculos profundos con territorios salvajes y sus ciclos. Ninguna de estas costumbres determina el carácter de un individuo: un elfo puede conservar sus tradiciones, cuestionarlas o construir una vida lejos de ellas.',
+    'Gnomo':'Los gnomos suelen acercarse al mundo con curiosidad persistente. En sus hogares es común encontrar talleres, colecciones, jardines experimentales, mecanismos diminutos o conversaciones que saltan de una pregunta a otra. Los gnomos de las rocas tienden a disfrutar de la construcción y la experimentación práctica; los de los bosques mantienen una relación más íntima con los animales y los secretos del entorno natural. Aun así, la inventiva no es una obligación: hay gnomos contemplativos, comerciantes, viajeros y aventureros que prefieren descubrir antes que fabricar.',
+    'Goliat':'Los goliats llevan la influencia de los gigantes en su estatura y en los dones que heredan de sus linajes. Muchos crecen en comunidades donde se admira la resistencia, la destreza y la capacidad de afrontar desafíos, aunque las pruebas y sus significados cambian de un pueblo a otro. La competencia puede servir para fortalecer la comunidad, no necesariamente para humillar al derrotado. Un goliat que abandona su hogar puede buscar rivales, respuestas sobre sus antepasados o un lugar donde su fuerza tenga un propósito distinto.',
+    'Mediano':'En muchas comunidades medianas, la hospitalidad es una forma de cuidado: compartir comida, ofrecer refugio y recordar los pequeños detalles que hacen sentir a alguien en casa. Sus asentamientos suelen valorar la cooperación y la continuidad de la vida cotidiana, pero esa tranquilidad no equivale a cobardía ni falta de ambición. Algunos medianos viajan por curiosidad, otros para proteger a los suyos o porque el hogar que conocían ya no existe. Su tamaño rara vez limita la determinación con la que defienden aquello que consideran importante.',
+    'Humano':'Los humanos forman sociedades extraordinariamente variadas: ciudades comerciales, reinos antiguos, comunidades nómadas, pueblos fronterizos y culturas nacidas de la mezcla entre muchas tradiciones. Su vida más breve que la de otros pueblos puede impulsarles a cambiar de oficio, recorrer grandes distancias o perseguir metas que parecen imposibles. No tienen una cultura ni una apariencia comunes; sus costumbres dependen del lugar, la historia y las personas que los rodean. Esa diversidad permite que un humano encuentre su lugar en casi cualquier región del mundo.',
+    'Orco':'Los pueblos orcos no comparten una única forma de vida. Algunos conservan tradiciones ancestrales ligadas a la memoria de sus antepasados, la supervivencia y la fuerza de la comunidad; otros viven en ciudades, fortalezas, caravanas o asentamientos compartidos con pueblos distintos. La resistencia física que caracteriza a los orcos no determina su temperamento ni sus valores. Un orco puede ser estudioso, pacífico, devoto, ambicioso o temerario, y decidir por sí mismo qué significa honrar su herencia.',
+    'Tiefling':'Los tieflings manifiestan en su cuerpo una conexión con los Planos Inferiores: cuernos, cola, ojos inusuales o rasgos que varían de una persona a otra. Su legado puede proceder de un antepasado, una influencia planar o un vínculo cuya historia la familia ya no recuerda. En algunos lugares despiertan desconfianza; en otros son parte habitual de la comunidad. Las reacciones ajenas pueden marcar su infancia, pero no establecen su moralidad ni su destino: cada tiefling decide qué significado dar a esa herencia.'
   };
   function builderSpeciesChoiceDescription(species:string,choice:string,magicAbility=''): string {
     const dragonDamage:Record<string,string>={Azul:'relámpago',Blanco:'frío',Bronce:'relámpago',Cobre:'ácido',Negro:'ácido',Oro:'fuego',Oropel:'fuego',Plata:'frío',Rojo:'fuego',Verde:'veneno'};
@@ -2859,8 +2859,25 @@ import { onMount } from 'svelte';
     try {
       const missing = builderMissingFields();
       if (missing.length) {
-        builderStepError = 'No se puede generar la ficha. Revisa estos campos:\\n• ' + missing.join('\\n• ');
-        requestAnimationFrame(() => document.querySelector('.builder-step-error')?.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+        const firstInvalidStep = [2,3,4,5,6,7,8,9,10].find(step => builderStepMissingFields(step).length > 0);
+        if (firstInvalidStep !== undefined) {
+          builderStep = firstInvalidStep;
+          if (firstInvalidStep === 2) builderBackgroundSetup = true;
+          if (firstInvalidStep === 3) builderSpeciesSetup = true;
+          const stepNames:Record<number,string> = {
+            2:'Elecciones del trasfondo',3:'Elecciones de especie',4:'Distribución de características',
+            5:'Aumentos de características',6:'Competencias',7:'Equipo inicial',
+            8:'Magia y conjuros',9:'Idiomas',10:'Detalles del personaje'
+          };
+          const issues = builderStepMissingFields(firstInvalidStep);
+          builderStepError = 'No se puede guardar todavía. He vuelto al paso «' + (stepNames[firstInvalidStep] || 'Creación del personaje') + '» porque hay una elección incompleta o incompatible.\\n\\nRevisa exactamente lo siguiente:\\n• ' + issues.join('\\n• ') + '\\n\\nCorrige estos campos y continúa. Si hay otro problema en un paso posterior, el asistente volverá a señalarlo antes de guardar.';
+        } else {
+          builderStepError = 'No se puede guardar todavía. Hay elecciones incompatibles en la creación del personaje. Revisa los pasos anteriores.';
+        }
+        requestAnimationFrame(() => {
+          document.querySelector('.builder-step-error')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          document.querySelector('.builder-panel')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        });
         return;
       }
       builderData.player = playerName || builderData.player || '';
@@ -4035,16 +4052,35 @@ import ITEMS from './items.json';
     return shopItemPriceCopper(item) === null ? 'Agotado' : (item.priceLabel || shopFormatCopper(shopItemPriceCopper(item)!));
   }
   function shopInventoryFields() { return ['Equipo de clase','Equipo de trasfondo','Equipo adicional']; }
+  function pluralInventoryName(name:string): string {
+    return String(name || '').replace(/^([a-záéíóúñ]+)/i,(_match,word:string)=>{
+      const lower=word.toLocaleLowerCase('es');
+      if(lower.endsWith('s')) return word;
+      if(lower.endsWith('z')) return word.slice(0,-1)+'ces';
+      return word+'s';
+    });
+  }
+  function canonicalInventoryName(name:string,target:RawSheet): string {
+    const normalized=normalizeLevelText(name);
+    const catalogs=[...(SHOP_CATALOG as any[]),...(ITEMS as any[])];
+    const exact=catalogs.find((entry:any)=>normalizeLevelText(entry.name)===normalized);
+    if(exact) return exact.name;
+    const plural=catalogs.find((entry:any)=>normalizeLevelText(pluralInventoryName(entry.name))===normalized);
+    if(plural) return plural.name;
+    const custom=(target as any).customInventoryItems?.[normalized];
+    return String(custom?.name || name).trim();
+  }
   function getShopOwnedItems(target:RawSheet) {
     const totals = new Map<string,any>();
     for (const field of shopInventoryFields()) {
-      const lines = String(getCharacterStat(target,'INVENTARIO',field) || '').split(/\n/);
+      const lines = String(getCharacterStat(target,'INVENTARIO',field) || '').split(/\\n/);
       for (const line of lines) {
         const parsed = parseInventoryLine(line);
         if (!parsed) continue;
-        const key = normalizeLevelText(parsed.name);
-        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || (ITEMS as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || (target as any).customInventoryItems?.[key] || {name:parsed.name,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null};
-        const current = totals.get(key) || {name:parsed.name,item,quantity:0};
+        const canonicalName=canonicalInventoryName(parsed.name,target);
+        const key = normalizeLevelText(canonicalName);
+        const item = (SHOP_CATALOG as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || (ITEMS as any[]).find((entry:any)=>normalizeLevelText(entry.name)===key) || (target as any).customInventoryItems?.[key] || {name:canonicalName,type:'Equipo',rarity:null,priceCopper:null,priceLabel:'Agotado',armorBase:null,armorMaxDex:null};
+        const current = totals.get(key) || {name:canonicalName,item,quantity:0};
         current.quantity += parsed.quantity;
         totals.set(key,current);
       }
@@ -4058,7 +4094,7 @@ import ITEMS from './items.json';
     if (!sheet) return;
     const lines = String(getCharacterStat(sheet,'INVENTARIO','Equipo adicional') || '').split(/\n/).map(value=>value.trim()).filter(Boolean);
     const key = normalizeLevelText(item.name);
-    const index = lines.findIndex(line=>normalizeLevelText(parseInventoryLine(line)?.name)===key);
+    const index = lines.findIndex(line=>{const parsed=parseInventoryLine(line);return parsed&&normalizeLevelText(canonicalInventoryName(parsed.name,sheet))===normalizeLevelText(canonicalInventoryName(item.name,sheet));});
     if (index >= 0) {
       const parsed = parseInventoryLine(lines[index]);
       lines[index] = formatInventoryLine(item.name,(parsed?.quantity || 1)+quantity);
@@ -4073,7 +4109,7 @@ import ITEMS from './items.json';
       let changed = false;
       for (let i=lines.length-1;i>=0 && remaining>0;i--) {
         const parsed = parseInventoryLine(lines[i]);
-        if (!parsed || normalizeLevelText(parsed.name)!==normalizeLevelText(name)) continue;
+        if (!parsed || normalizeLevelText(canonicalInventoryName(parsed.name,sheet))!==normalizeLevelText(canonicalInventoryName(name,sheet))) continue;
         const take = Math.min(remaining,parsed.quantity);
         const left = parsed.quantity-take;
         if (left>0) lines[i]=formatInventoryLine(parsed.name,left);
@@ -5880,7 +5916,12 @@ import ITEMS from './items.json';
   }
 
   function playerWeaponAttacks(target: RawSheet) {
-    const inventoryWeaponNames = getShopOwnedItems(target).filter((entry:any)=>{ const type=normalizeLevelText(entry.item?.type || entry.item?.category || ''); return type==='arma' || type==='armas' || Boolean(WEAPON_PROFILES[entry.name] || WEAPON_PROFILES[shopWeaponBase(entry.name)]); }).map((entry:any)=>entry.name);
+    const inventoryWeaponNames = getShopOwnedItems(target).filter((entry:any)=>{
+      const type=normalizeLevelText(entry.item?.type || entry.item?.category || '');
+      const weaponType=['arma','armas','weapon','weapons'].includes(type);
+      const knownProfile=Boolean(WEAPON_PROFILES[entry.name] || WEAPON_PROFILES[shopWeaponBase(entry.name)]);
+      return weaponType || knownProfile;
+    }).map((entry:any)=>entry.name);
     // Acciones refleja únicamente las armas que siguen en el inventario; evita conservar armas eliminadas en el registro histórico.
     const names = [...new Set(inventoryWeaponNames)].join(', ');
     const proficiency = getCharacterNumber(target,'COMBATE','Bonificador por competencia',2);
@@ -5888,7 +5929,7 @@ import ITEMS from './items.json';
     const dexterityMod = Math.floor((getCharacterNumber(target,'ATRIBUTOS','Destreza',10)-10)/2);
     const profText = normalizeLevelText(getCharacterStat(target,'COMPETENCIAS','Armas'));
     return [...new Set(names.split(/[,;\n]+/).map(name=>name.trim()).filter(Boolean))].map(name=>{
-      const profile = WEAPON_PROFILES[name] || WEAPON_PROFILES[name.replace(/\s*\+\d+$/,'')];
+      const profile = WEAPON_PROFILES[name] || WEAPON_PROFILES[shopWeaponBase(name)];
       if (!profile) return {name, attackBonus:null as number|null, damage:'—', damageType:'No disponible', range:'—'};
       const abilityMod = profile.ability==='finesse' ? Math.max(strengthMod,dexterityMod) : profile.ability==='dexterity' ? dexterityMod : strengthMod;
       const normalizedName = normalizeLevelText(name);
