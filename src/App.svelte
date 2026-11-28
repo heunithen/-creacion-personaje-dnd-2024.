@@ -1,4 +1,5 @@
 <script lang="ts">
+  import './styles/character-spell-slots.css';
   import './styles/character-sheet-stats.css';
   import './styles/character-editorial-cards.css';
   import './styles/director-layers.css';
@@ -10692,12 +10693,6 @@ import './styles/character-portrait-picker.css';
   :global(.nautical-skills .sheet-stat.expertise .inline-roll){color:#b58cff!important}
 
 
-  .spell-slot-tracker{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.45rem;margin-top:.35rem}
-  .spell-slot-level{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:.35rem .5rem;min-width:0;padding:.45rem .5rem;border:1px solid var(--gm-border,#34515b);border-radius:6px;background:rgba(0,0,0,.12)}
-  .spell-slot-level>strong{font-size:.75rem;white-space:nowrap}
-  .spell-slot-boxes{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap}
-  .spell-slot-boxes label{display:grid;place-items:center;width:17px;height:17px;margin:0;cursor:pointer}
-  .spell-slot-boxes input{width:14px;height:14px;margin:0;accent-color:#55d6c8;cursor:pointer}
 
 
 
