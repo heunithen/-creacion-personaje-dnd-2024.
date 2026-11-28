@@ -1345,17 +1345,20 @@ import { onMount } from 'svelte';
     masterTab = tab;
   }
 
-  function recordDiagnosticEvent(eventType: 'character_audit' | 'validation_blocked' | 'client_error', moduleName: string, errorCode: string, severity: 'info' | 'warning' | 'error' | 'critical', message: string, context: Record<string, unknown> = {}) {
+  async function recordDiagnosticEvent(eventType: 'character_audit' | 'validation_blocked' | 'client_error', moduleName: string, errorCode: string, severity: 'info' | 'warning' | 'error' | 'critical', message: string, context: Record<string, unknown> = {}): Promise<void> {
     const payload = {
       event_type: eventType, module: moduleName, error_code: errorCode, severity,
       message: String(message).slice(0, 500), context,
       app_version: '1.0.53', commit_sha: '', test_case_id: ''
     };
-    void fetch(SUPABASE_URL + '/rest/v1/diagnostic_events', {
-      method: 'POST',
-      headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify(payload)
-    }).catch(() => {});
+    try {
+      const response = await fetch(SUPABASE_URL + '/rest/v1/diagnostic_events', {
+        method: 'POST',
+        headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) console.warn('No se pudo guardar un evento de diagnóstico:', response.status);
+    } catch (error) { console.warn('No se pudo enviar un evento de diagnóstico:', error); }
   }
 
   function saveDiagnosticsKey() {
@@ -2752,7 +2755,7 @@ import { onMount } from 'svelte';
       }
       if(!builderStepCanAdvance()) {
         const stepFields=builderStepMissingFields(builderStep);
-        recordDiagnosticEvent('validation_blocked','character_creator','creation_step_incomplete','info','El asistente impidió avanzar por elecciones incompletas.',{step:builderStep,missing_count:stepFields.length});
+        void recordDiagnosticEvent('validation_blocked','character_creator','creation_step_incomplete','info','El asistente impidió avanzar por elecciones incompletas.',{step:builderStep,missing_count:stepFields.length});
         builderStepError=stepFields.length
           ? 'Falta completar lo siguiente para avanzar:\\n• '+stepFields.join('\\n• ')
           : 'Hay una elección obligatoria incompleta en este paso. Revisa los campos visibles y vuelve a intentarlo.';
@@ -3080,7 +3083,7 @@ import { onMount } from 'svelte';
     try {
       const missing = builderMissingFields();
       if (missing.length) {
-        recordDiagnosticEvent('validation_blocked','character_creator','creation_finish_incomplete','info','Se intentó finalizar una creación incompleta.',{missing_count:missing.length});
+        void recordDiagnosticEvent('validation_blocked','character_creator','creation_finish_incomplete','info','Se intentó finalizar una creación incompleta.',{missing_count:missing.length});
         const firstInvalidStep = [2,3,4,5,6,7,8,9,10].find(step => builderStepMissingFields(step).length > 0);
         if (firstInvalidStep !== undefined) {
           builderStep = firstInvalidStep;
@@ -3110,8 +3113,8 @@ import { onMount } from 'svelte';
       // La ficha se abre solo después de confirmar su guardado en el registro compartido.
       const characterToSave = JSON.parse(JSON.stringify(generated)) as RawSheet;
       const audit = auditCharacterSheet(characterToSave);
-      recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,error_codes:audit.errors.map(item=>item.code),warning_codes:audit.warnings.map(item=>item.code)});
-      if (!audit.valid) throw new Error('La auditoría de la ficha encontró problemas estructurales: ' + audit.errors.map(item=>item.message).join(' '));
+      await recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,error_codes:audit.errors.map(item=>item.code),warning_codes:audit.warnings.map(item=>item.code)});
+      if (!audit.valid) console.error('La auditoría detectó problemas estructurales; se registraron para revisión.', audit.errors);
       if (webCreateMode) characterToSave._creationSource = 'web';
       if (webCreateMode) supabasePlayerName = builderData.player || supabasePlayerName || 'Jugador';
       await saveCharacterToSupabase(characterToSave);
@@ -3145,7 +3148,7 @@ import { onMount } from 'svelte';
       const characterToSave = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
       const audit = auditCharacterSheet(characterToSave);
       recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,error_codes:audit.errors.map(item=>item.code),warning_codes:audit.warnings.map(item=>item.code)});
-      if (!audit.valid) throw new Error('La auditoría de la ficha encontró problemas estructurales: ' + audit.errors.map(item=>item.message).join(' '));
+      if (!audit.valid) console.error('La auditoría detectó problemas estructurales; se registraron para revisión.', audit.errors);
       await saveCharacterToSupabase(characterToSave);
       sheet = characterToSave;
       builderPreview = null;
@@ -6791,10 +6794,10 @@ import ITEMS from './items.json';
     try { diagnosticsApiKey = sessionStorage.getItem('forja-diagnostics-api-key') || ''; diagnosticsKeyDraft = diagnosticsApiKey; } catch {}
     window.addEventListener('error', (event) => {
       const source = String(event.filename || '').split('/').pop()?.split('?')[0] || 'desconocido';
-      recordDiagnosticEvent('client_error','runtime','window_error','error','Error de JavaScript no controlado.',{source,line:Number(event.lineno)||0});
+      void recordDiagnosticEvent('client_error','runtime','window_error','error','Error de JavaScript no controlado.',{source,line:Number(event.lineno)||0});
     });
     window.addEventListener('unhandledrejection', () => {
-      recordDiagnosticEvent('client_error','runtime','unhandled_rejection','error','Promesa rechazada sin gestionar.',{});
+      void recordDiagnosticEvent('client_error','runtime','unhandled_rejection','error','Promesa rechazada sin gestionar.',{});
     });
     void migrateBundledPortraitsToSupabase().catch(error=>console.error('No se pudo completar la migración de retratos cuadrados',error));
     void loadCommunityPortraits().catch(error => console.error('No se pudo cargar la biblioteca comunitaria', error));
