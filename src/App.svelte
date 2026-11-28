@@ -8488,8 +8488,7 @@ import ITEMS from './items.json';
 </div>
 
 <style>
-  :global(:root){--paper:#13262e;--paper-deep:#1b2a33;--ink:#ffffff;--ink-soft:#b5bec3;--rule:#3a4a52;--red:#3fb8b8;--gold:#5fe6e0}
-  .builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#1b2a33;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s} .builder-portrait-picker{padding:.8rem;border:1px solid var(--rule);border-radius:5px;background:rgba(95,230,224,.18)}.builder-portrait-heading{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.7rem}.builder-portrait-heading button{border:1px solid var(--rule);border-radius:4px;padding:.35rem .6rem;background:transparent;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}.builder-portrait-heading button.active{border-color:var(--gold);color:var(--gold)}.builder-portrait-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:.55rem}.builder-portrait-option{position:relative;aspect-ratio:1;border:2px solid var(--rule);border-radius:5px;padding:0;overflow:hidden;background:#17232b;cursor:pointer}.builder-portrait-option.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(213,174,91,.25)}.builder-portrait-option img{display:block;width:100%;height:100%;object-fit:cover}.builder-portrait-check{position:absolute;right:.25rem;top:.25rem;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--gold);color:#17232b;font-weight:800;display:grid;place-items:center}.portrait-frame img{width:100%;height:100%;object-fit:cover;border-radius:inherit}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(95,230,224,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}/* La hoja de personaje conserva su propia cuadrícula; no hereda el diseño del formulario de creación. */
+.builder-panel{display:grid;gap:.8rem}.builder-panel>label{display:grid;gap:.3rem;color:var(--ink-soft);font:600 .76rem system-ui,sans-serif}.builder-panel input,.builder-panel select,.builder-panel textarea{box-sizing:border-box;width:100%;padding:.65rem;border:1px solid var(--rule);border-radius:5px;background:#1b2a33;color:var(--ink);font: .9rem system-ui,sans-serif}.builder-panel h3{margin:.2rem 0;color:var(--red);font:700 1rem Georgia,serif}.builder-progress{height:5px;border-radius:5px;background:#1b2a33;overflow:hidden}.builder-progress span{display:block;height:100%;background:var(--gold);transition:width .2s} .builder-portrait-picker{padding:.8rem;border:1px solid var(--rule);border-radius:5px;background:rgba(95,230,224,.18)}.builder-portrait-heading{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.7rem}.builder-portrait-heading button{border:1px solid var(--rule);border-radius:4px;padding:.35rem .6rem;background:transparent;color:var(--ink-soft);font:600 .72rem system-ui,sans-serif;cursor:pointer}.builder-portrait-heading button.active{border-color:var(--gold);color:var(--gold)}.builder-portrait-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:.55rem}.builder-portrait-option{position:relative;aspect-ratio:1;border:2px solid var(--rule);border-radius:5px;padding:0;overflow:hidden;background:#17232b;cursor:pointer}.builder-portrait-option.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(213,174,91,.25)}.builder-portrait-option img{display:block;width:100%;height:100%;object-fit:cover}.builder-portrait-check{position:absolute;right:.25rem;top:.25rem;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--gold);color:#17232b;font-weight:800;display:grid;place-items:center}.portrait-frame img{width:100%;height:100%;object-fit:cover;border-radius:inherit}.builder-info{padding:.7rem .8rem;border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:4px;background:rgba(95,230,224,.4);font:.82rem/1.5 system-ui,sans-serif}.builder-info p{margin:.3rem 0}.builder-info small{color:var(--ink-soft)}.builder-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:.7rem}.builder-actions button{min-height:38px}/* La hoja de personaje conserva su propia cuadrícula; no hereda el diseño del formulario de creación. */
   .master-tabs{display:flex;flex-wrap:wrap;gap:.4rem;overflow:visible;padding:.2rem 0 .7rem;margin:.8rem 0;border-bottom:1px solid var(--rule)}
   .master-tabs button{flex:0 0 auto;border:1px solid var(--rule);border-radius:5px;padding:.55rem .8rem;background:#1b2a33;color:var(--ink-soft);font:600 .75rem system-ui,sans-serif;cursor:pointer}
   .master-tabs button.active{background:var(--ink);border-color:var(--ink);color:var(--paper)}
@@ -8835,8 +8834,7 @@ import ITEMS from './items.json';
  
 
   /* Controles de apariencia centralizados en la pestaña Estilo */
-  :global(:root){--gm-bg:#0b171d;--gm-panel:#13262e;--gm-card:#1b2a33;--gm-border:#3a6870;--gm-text:#fff;--gm-muted:#b5bec3;--gm-accent:#5fe6e0;--gm-font-size:14px;--gm-heading-size:18px;--gm-panel-padding:12px;--gm-panel-gap:10px;--gm-radius:8px}
-  :global(.main){font-size:var(--gm-font-size)}
+:global(.main){font-size:var(--gm-font-size)}
   :global(.panel){background:var(--gm-panel)!important;color:var(--gm-text)!important;border-color:var(--gm-border)!important;border-radius:var(--gm-radius)!important;padding:var(--gm-panel-padding)!important}
   :global(.panel h2),:global(.panel h3){font-size:var(--gm-heading-size)}
   :global(.panel p),:global(.panel label),:global(.muted){color:var(--gm-muted)}
@@ -9258,14 +9256,7 @@ import ITEMS from './items.json';
 
 
   /* Tema náutico final: prevalece sobre estilos heredados y específicos antiguos */
-  :global(:root){
-    color-scheme:dark;
-    --paper:#3fb8b8;--paper-deep:#3fb8b8;--ink:#ffffff;--ink-soft:#b5bec3;
-    --rule:#3fb8b8;--red:#b5bec3;--gold:#b5bec3;
-    --ocean:#3fb8b8;--slate:#3fb8b8;--aqua:#b5bec3;--aqua-mid:#5fe6e0;
-    --text-main:#ffffff;--text-secondary:#b5bec3;--text-muted:#1b2a33;
-  }
-  :global(body),:global(.app-shell),:global(.main){background:#13262e!important;color:#ffffff!important}
+:global(body),:global(.app-shell),:global(.main){background:#13262e!important;color:#ffffff!important}
   :global(body){background:radial-gradient(ellipse at 50% 0%,#13262e 0,#13262e 45%,#13262e 100%)!important}
   :global(.topbar){background:#0f1e26!important;border-bottom:1px solid #3fb8b8!important;color:#ffffff!important}
   :global(.brand),:global(.brand strong),:global(.brand small){color:#ffffff!important}
@@ -9420,15 +9411,7 @@ import ITEMS from './items.json';
 
 
   /* AUDITORÍA VISUAL GLOBAL — paleta náutica aplicada a toda la aplicación */
-  :global(:root){
-    color-scheme:dark;
-    --ocean-0:#3fb8b8;--ocean-1:#3fb8b8;--ocean-2:#3fb8b8;
-    --slate-1:#3fb8b8;--slate-2:#3fb8b8;
-    --aqua:#b5bec3;--aqua-mid:#5fe6e0;
-    --text-main:#ffffff;--text-secondary:#b5bec3;--text-muted:#1b2a33;
-    --line:#3fb8b8;--line-soft:#3fb8b8;
-  }
-  :global(html),:global(body),:global(#app){background:#13262e!important;color:#ffffff!important}
+:global(html),:global(body),:global(#app){background:#13262e!important;color:#ffffff!important}
   :global(body){background:radial-gradient(ellipse at 50% 0%,#13262e 0,#13262e 42%,#13262e 100%)!important}
   
   :global(.topbar),:global(footer){border-color:#3fb8b8!important}
@@ -9794,13 +9777,6 @@ import ITEMS from './items.json';
 
 
 /* PALETA CANÓNICA ÚNICA — Forja de Aventureros */
-:global(:root){
- --paper:#13262e;--paper-deep:#1b2a33;--ink:#ffffff;--ink-soft:#b5bec3;
- --rule:#3a4a52;--red:#3fb8b8;--gold:#5fe6e0;
- --ocean-0:#0b171d;--ocean-1:#0f1e26;--ocean-2:#13262e;
- --slate-1:#1b2a33;--slate-2:#22333d;--aqua:#5fe6e0;--aqua-mid:#3fb8b8;
- --text-main:#ffffff;--text-secondary:#b5bec3;--text-muted:#8e9aa1;--line:#3a4a52
-}
 :global(html),:global(body){background:#0b171d!important;color:#ffffff!important}
 :global(body){background:radial-gradient(ellipse at 50% 0%,#18343a 0,#0f1e26 42%,#0b171d 100%)!important}
 :global(.app-shell),:global(.main){color:#ffffff!important}
