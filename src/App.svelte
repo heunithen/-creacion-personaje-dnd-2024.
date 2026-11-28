@@ -1648,7 +1648,8 @@ import { onMount } from 'svelte';
     builderData.player = playerName || '';
     builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderBackgroundSetup = false; builderSpeciesSlideIndex = 7; builderSpeciesSetup = false; builderRolledScores = []; builderRolledScoresByAbility = {}; builderRollingAbility = ''; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
   }
-  const BUILDER_PORTRAITS: string[] = ["https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Dusty_F_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Irieni_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_annis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dabuus_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_fell_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_glamis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_gn_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_grnhag_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_508_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_513_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_516_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_522_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_529_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_512_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_520_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_521_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_523_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_524_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_525_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_528_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_529_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_530_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_532_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_506_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_orcwar_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_sormen_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead504_h.webp"];
+  let BUILDER_PORTRAITS: string[] = ["https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Dusty_F_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Irieni_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_annis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dabuus_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_fell_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_glamis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_gn_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_grnhag_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_508_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_513_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_516_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_522_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_529_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_512_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_520_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_521_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_523_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_524_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_525_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_528_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_529_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_530_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_532_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_506_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_orcwar_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_sormen_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead504_h.webp"];
+  const BUILDER_PORTRAIT_FILES: string[] = ["639070266970320833.jpeg","639070267139930862.jpeg","639070267193750910.jpeg","639070269959165197.jpeg","639070270110695147.jpeg","639070270840984613.jpeg","639072090877075612.jpeg","639072098466851421.jpeg","639072100478929903.jpeg","639072103406347859.jpeg","639072107842480654.jpeg","639072108270370305.jpeg","639072109379739573.jpeg","639072112442597473.jpeg","639072112892317110.jpeg","639072113229156846.jpeg","639072115814308193.jpeg","639072117449627684.jpeg","639072117702987484.jpeg","639072117997127381.jpeg","639072118704577094.jpeg","639072119394411503.jpeg","639072119827491179.jpeg","639072120183101085.jpeg","639072120444780925.jpeg","639072123668479547.jpeg","639072123912304111.jpeg","639072124121244015.jpeg","639072124456863781.jpeg","639072124707933596.jpeg","639072124917793464.jpeg","639072125390683223.jpeg","639072125710212972.jpeg","639072126302182560.jpeg","639072126568672436.jpeg","639072126792582192.jpeg","639072127061342064.jpeg","639072127521141744.jpeg","639072127957881507.jpeg","639072128127071375.jpeg","639072128306821314.jpeg","639072128983500840.jpeg","639072129281180747.jpeg","639072130484049877.jpeg","639072130929899667.jpeg","639072131179469486.jpeg","639072131400059443.jpeg","639072131762569143.jpeg","639072132961127889.jpeg","639072133188576031.jpeg","639072133395984350.jpeg","639072137759779179.jpeg","639072138166468878.jpeg","639072138890758308.jpeg","639072139238188163.jpeg","639072139542013980.jpeg","639072139913103638.jpeg","639072140293553350.jpeg","639072140732292962.jpeg","639072141443162405.jpeg","639072141841732062.jpeg","639072142121061304.jpeg","639072142541201055.jpeg","639072142762970753.jpeg","639072143138090442.jpeg","639072143361330220.jpeg","639072144376649277.jpeg","639072149165265211.jpeg","639072149985094462.jpeg","639072150216814245.jpeg","639072150492474063.jpeg","639072150759823789.jpeg","639072153275287243.jpeg","639072153487877242.jpeg","639072153710447004.jpeg","639072153988526896.jpeg","639072154233916682.jpeg","639072154519466585.jpeg","639072159471433944.jpeg","639072159875795387.jpeg","639072161088751945.jpeg","639072161305491793.jpeg","639072161542101594.jpeg","639072162340470838.jpeg","639072162783130368.jpeg","639072163022260181.jpeg","639072163365149849.jpeg","639072163584549682.jpeg","639072163797049491.jpeg","639072164025119400.jpeg","639072164913448469.jpeg","639111910758639526.jpeg","639168965939690985.jpeg","639168966418240702.jpeg","639168966685640591.jpeg","639238001089571221.jpeg","639293156774210233.jpeg","639293157053596364.jpeg","639293165991373829.jpeg","639293166234683833.jpeg","639293166849899910.jpeg","639293167099525192.jpeg","639293167399807899.jpeg"];
   let portraitPickerOpen = false;
   let sheetPortraitPickerOpen = false;
   let portraitLoading = false;
@@ -1679,36 +1680,98 @@ import { onMount } from 'svelte';
     communityPortraits = rows.map((row:any) => SUPABASE_URL + '/storage/v1/object/public/community-portraits/' + row.object_path);
   }
 
+  async function imageToSquareWebp(sourceUrl:string):Promise<Blob> {
+    const response=await fetch(sourceUrl);
+    if(!response.ok)throw new Error('No se pudo leer la imagen ('+response.status+').');
+    const sourceBlob=await response.blob();
+    const bitmap=await createImageBitmap(sourceBlob);
+    const side=Math.min(bitmap.width,bitmap.height);
+    const canvas=document.createElement('canvas');
+    canvas.width=512; canvas.height=512;
+    const ctx=canvas.getContext('2d');
+    if(!ctx){bitmap.close();throw new Error('No se pudo procesar la imagen.');}
+    // Recorte anclado arriba: conserva la parte superior y elimina el excedente inferior.
+    ctx.drawImage(bitmap,0,0,side,side,0,0,512,512);
+    bitmap.close();
+    return await new Promise<Blob>((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('No se pudo generar WebP.')),'image/webp',0.9));
+  }
+
+  async function loadBundledPortraitCatalog() {
+    const response=await fetch(SUPABASE_URL+'/rest/v1/character_portraits?select=object_path&order=source_filename.asc',{
+      headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}
+    });
+    if(!response.ok)throw new Error('No se pudo cargar el catálogo de retratos ('+response.status+').');
+    const rows=await response.json();
+    BUILDER_PORTRAITS=rows.map((row:any)=>SUPABASE_URL+'/storage/v1/object/public/character-portraits/original/'+row.object_path);
+  }
+
   async function migrateBundledPortraitsToSupabase() {
-    if (localStorage.getItem('forja-portraits-migrated-v1') === 'yes') return;
-    let migrated = 0;
-    let failed = 0;
-    for (const publicUrl of BUILDER_PORTRAITS) {
-      const filename = publicUrl.split('/').pop();
-      if (!filename) continue;
-      const target = SUPABASE_URL + '/storage/v1/object/public/character-portraits/original/' + filename;
+    const marker='forja-portraits-square-webp-v2';
+    const catalogResponse=await fetch(SUPABASE_URL+'/rest/v1/character_portraits?select=object_path',{
+      headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}
+    });
+    if(!catalogResponse.ok)throw new Error('No se pudo consultar el catálogo de retratos ('+catalogResponse.status+').');
+    const catalogRows=await catalogResponse.json();
+    const known=new Set(catalogRows.map((row:any)=>row.object_path));
+    let migrated=0;
+    let failed=0;
+    const records:any[]=[];
+    const jobs=[
+      ...BUILDER_PORTRAITS.map(url=>({source:url,filename:url.split('/').pop()||'',sourceFilename:url.split('/').pop()||''})),
+      ...BUILDER_PORTRAIT_FILES.map(filename=>({source:'/-creacion-personaje-dnd-2024./images/character-creation/portraits/'+filename,filename:filename.replace(/\\.[^.]+$/,'')+'.webp',sourceFilename:filename}))
+    ];
+    for(const job of jobs) {
+      if(!job.filename||known.has(job.filename))continue;
       try {
-        const exists = await fetch(target, { method: 'HEAD' });
-        if (exists.ok) continue;
-        const sourcePath = '/-creacion-personaje-dnd-2024./images/character-creation/portraits/' + filename;
-        const source = await fetch(sourcePath);
-        if (!source.ok) throw new Error('No se pudo leer ' + filename);
-        const blob = await source.blob();
-        if (blob.type !== 'image/webp') throw new Error('El retrato no es WebP: ' + filename);
-        const uploaded = await fetch(SUPABASE_URL + '/storage/v1/object/character-portraits/original/' + filename, {
-          method: 'POST',
-          headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'image/webp', 'x-upsert': 'true' },
-          body: blob
+        const blob=await imageToSquareWebp(job.source);
+        const uploaded=await fetch(SUPABASE_URL+'/storage/v1/object/character-portraits/original/'+job.filename,{
+          method:'POST',
+          headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'image/webp','x-upsert':'true'},
+          body:blob
         });
-        if (!uploaded.ok) throw new Error('Supabase rechazó ' + filename + ': ' + await uploaded.text());
+        if(!uploaded.ok)throw new Error('Supabase rechazó '+job.filename+': '+await uploaded.text());
+        records.push({object_path:job.filename,source_filename:job.sourceFilename});
+        known.add(job.filename);
         migrated++;
-      } catch (error) {
+      } catch(error) {
         failed++;
-        console.error('No se pudo migrar el retrato ' + filename, error);
+        console.error('No se pudo convertir o migrar el retrato '+job.sourceFilename,error);
       }
     }
-    if (failed === 0) localStorage.setItem('forja-portraits-migrated-v1', 'yes');
-    console.info('Retratos originales migrados a Supabase:', migrated, 'fallidos:', failed);
+    if(records.length) {
+      const registered=await fetch(SUPABASE_URL+'/rest/v1/character_portraits',{
+        method:'POST',
+        headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},
+        body:JSON.stringify(records)
+      });
+      if(!registered.ok)throw new Error('No se pudieron registrar los retratos en la base de datos: '+await registered.text());
+    }
+
+    // Los retratos comunitarios existentes también se normalizan; las futuras cargas ya nacen cuadradas.
+    const communityResponse=await fetch(SUPABASE_URL+'/rest/v1/community_portraits?select=object_path',{
+      headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}
+    });
+    if(!communityResponse.ok)throw new Error('No se pudo consultar la biblioteca comunitaria.');
+    const communityRows=await communityResponse.json();
+    for(const row of communityRows) {
+      try {
+        const path=row.object_path;
+        const url=SUPABASE_URL+'/storage/v1/object/public/community-portraits/'+path;
+        const blob=await imageToSquareWebp(url);
+        const uploaded=await fetch(SUPABASE_URL+'/storage/v1/object/community-portraits/'+path,{
+          method:'POST',
+          headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'image/webp','x-upsert':'true'},
+          body:blob
+        });
+        if(!uploaded.ok)throw new Error(await uploaded.text());
+      } catch(error) {
+        failed++;
+        console.error('No se pudo cuadrar el retrato comunitario '+row.object_path,error);
+      }
+    }
+    await loadBundledPortraitCatalog();
+    if(failed===0)localStorage.setItem(marker,'yes');
+    console.info('Retratos cuadrados migrados a Supabase:',migrated,'fallidos:',failed,'catálogo:',BUILDER_PORTRAITS.length);
   }
   async function chooseUploadedPortrait(event:Event){
     const input=event.currentTarget as HTMLInputElement;
@@ -1721,10 +1784,10 @@ import { onMount } from 'svelte';
         const image=new Image(); image.onload=()=>resolve(image); image.onerror=()=>reject(new Error('No se pudo leer la imagen.'));
         image.src=URL.createObjectURL(file);
       });
-      const canvas=document.createElement('canvas'); canvas.width=256; canvas.height=512;
+      const canvas=document.createElement('canvas'); canvas.width=512; canvas.height=512;
       const ctx=canvas.getContext('2d'); if(!ctx)throw new Error('No se pudo procesar la imagen.');
-      const scale=Math.max(256/source.width,512/source.height),w=source.width*scale,h=source.height*scale;
-      ctx.drawImage(source,(256-w)/2,(512-h)/2,w,h);
+      const side=Math.min(source.width,source.height);
+      ctx.drawImage(source,0,0,side,side,0,0,512,512);
       URL.revokeObjectURL(source.src);
       const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('No se pudo generar WebP.')),'image/webp',0.88));
       if(blob.type!=='image/webp')throw new Error('La imagen resultante no es WebP.');
