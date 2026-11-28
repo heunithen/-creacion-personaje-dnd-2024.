@@ -1,4 +1,5 @@
 <script lang="ts">
+  import './styles/encounter-builder.css';
   import MONSTERS from './monsters.json';
   import { ENCOUNTER_BUDGETS, ENCOUNTER_TEMPLATES, crValue, numericCr, monsterXp, createEncounterFromTemplate, encounterSignature, canPurchase, withinBudget } from './encounterRules.mjs';
   const BUDGETS: Record<number, Record<'easy'|'normal'|'hard', number>> = ENCOUNTER_BUDGETS;
@@ -358,9 +359,5 @@
     <p>Los presupuestos Fácil, Normal y Difícil corresponden respectivamente a las categorías de dificultad baja, moderada y alta del DMG 2024. Las probabilidades mostradas son hipótesis de trabajo del proyecto; no son probabilidades oficiales ni una predicción matemática del resultado.</p>
   </footer>
 </section>
-
-<script>
-  import './styles/encounter-builder.css';
-</script>
 
 
