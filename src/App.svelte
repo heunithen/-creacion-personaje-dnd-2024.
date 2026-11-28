@@ -1707,6 +1707,7 @@ import { onMount } from 'svelte';
 
   async function migrateBundledPortraitsToSupabase() {
     const marker='forja-portraits-square-webp-v2';
+    if(localStorage.getItem(marker)==='yes') { await loadBundledPortraitCatalog(); return; }
     const catalogResponse=await fetch(SUPABASE_URL+'/rest/v1/character_portraits?select=object_path',{
       headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}
     });
@@ -6623,7 +6624,7 @@ import ITEMS from './items.json';
   }
 
   onMount(() => {
-    void migrateBundledPortraitsToSupabase();
+    void migrateBundledPortraitsToSupabase().catch(error=>console.error('No se pudo completar la migración de retratos cuadrados',error));
     void loadCommunityPortraits().catch(error => console.error('No se pudo cargar la biblioteca comunitaria', error));
     try {
       const savedCombatants = localStorage.getItem(COMBATANTS_STORAGE_KEY);
