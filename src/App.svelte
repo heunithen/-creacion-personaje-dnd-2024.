@@ -1719,7 +1719,7 @@ import { onMount } from 'svelte';
     const records:any[]=[];
     const jobs=[
       ...BUILDER_PORTRAITS.map(url=>({source:url,filename:url.split('/').pop()||'',sourceFilename:url.split('/').pop()||''})),
-      ...BUILDER_PORTRAIT_FILES.map(filename=>({source:'/-creacion-personaje-dnd-2024./images/character-creation/portraits/'+filename,filename:filename.replace(/\\.[^.]+$/,'')+'.webp',sourceFilename:filename}))
+      ...BUILDER_PORTRAIT_FILES.map(filename=>({source:'/-creacion-personaje-dnd-2024./images/character-creation/portraits/'+filename,filename:filename.replace(/\.[^.]+$/,'')+'.webp',sourceFilename:filename}))
     ];
     for(const job of jobs) {
       if(!job.filename||known.has(job.filename))continue;
@@ -1727,7 +1727,7 @@ import { onMount } from 'svelte';
         const blob=await imageToSquareWebp(job.source);
         const uploaded=await fetch(SUPABASE_URL+'/storage/v1/object/character-portraits/square/'+job.filename,{
           method:'POST',
-          headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'image/webp','x-upsert':'true'},
+          headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'image/webp'},
           body:blob
         });
         if(!uploaded.ok)throw new Error('Supabase rechazó '+job.filename+': '+await uploaded.text());
