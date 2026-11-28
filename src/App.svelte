@@ -4092,14 +4092,14 @@ import ITEMS from './items.json';
   }
   function shopAddInventoryItem(item:any,quantity:number) {
     if (!sheet) return;
-    const lines = String(getCharacterStat(sheet,'INVENTARIO','Equipo adicional') || '').split(/\n/).map(value=>value.trim()).filter(Boolean);
-    const key = normalizeLevelText(item.name);
-    const index = lines.findIndex(line=>{const parsed=parseInventoryLine(line);return parsed&&normalizeLevelText(canonicalInventoryName(parsed.name,sheet))===normalizeLevelText(canonicalInventoryName(item.name,sheet));});
+    const target=sheet;
+    const lines = String(getCharacterStat(target,'INVENTARIO','Equipo adicional') || '').split(/\n/).map(value=>value.trim()).filter(Boolean);
+    const index = lines.findIndex(line=>{const parsed=parseInventoryLine(line);return parsed&&normalizeLevelText(canonicalInventoryName(parsed.name,target))===normalizeLevelText(canonicalInventoryName(item.name,target));});
     if (index >= 0) {
       const parsed = parseInventoryLine(lines[index]);
       lines[index] = formatInventoryLine(item.name,(parsed?.quantity || 1)+quantity);
     } else lines.push(formatInventoryLine(item.name,quantity));
-    setCharacterStat(sheet,'INVENTARIO','Equipo adicional',lines.join('\n'));
+    setCharacterStat(target,'INVENTARIO','Equipo adicional',lines.join('\n'));
   }
   function shopRemoveInventoryItem(name:string,quantity:number): boolean {
     if (!sheet || quantity < 1) return false;
