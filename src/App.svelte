@@ -2022,6 +2022,32 @@ import { onMount } from 'svelte';
     'Enano':[], 'Elfo':['Alto elfo','Drow','Elfo de los bosques'], 'Gnomo':['Gnomo de las rocas','Gnomo de los bosques'],
     'Goliat':['Abrasión del fuego','Caída de las colinas','Excursión de las nubes','Frío de la escarcha','Resistencia de la piedra','Trueno de la tormenta'], 'Mediano':[], 'Humano':[], 'Orco':[],
     'Tiefling':['Abisal','Ctónico','Infernal']
+  }; 
+  const BUILDER_SPECIES_LINEAGE_DETAILS: Record<string,string> = {
+    'Azul':'Ancestro de dragón azul. Tu herencia está ligada al relámpago: obtienes resistencia al daño de relámpago y tu arma de aliento inflige ese mismo tipo de daño.',
+    'Blanco':'Ancestro de dragón blanco. Tu herencia está ligada al frío: obtienes resistencia al daño de frío y tu arma de aliento inflige daño de frío.',
+    'Bronce':'Ancestro de dragón de bronce. Tu herencia está ligada al relámpago: obtienes resistencia al daño de relámpago y tu arma de aliento inflige ese mismo tipo de daño.',
+    'Cobre':'Ancestro de dragón de cobre. Tu herencia está ligada al ácido: obtienes resistencia al daño de ácido y tu arma de aliento inflige ese mismo tipo de daño.',
+    'Negro':'Ancestro de dragón negro. Tu herencia está ligada al ácido: obtienes resistencia al daño de ácido y tu arma de aliento inflige ese mismo tipo de daño.',
+    'Oro':'Ancestro de dragón dorado. Tu herencia está ligada al fuego: obtienes resistencia al daño de fuego y tu arma de aliento inflige ese mismo tipo de daño.',
+    'Oropel':'Ancestro de dragón de oropel. Tu herencia está ligada al fuego: obtienes resistencia al daño de fuego y tu arma de aliento inflige ese mismo tipo de daño.',
+    'Plata':'Ancestro de dragón plateado. Tu herencia está ligada al frío: obtienes resistencia al daño de frío y tu arma de aliento inflige daño de frío.',
+    'Rojo':'Ancestro de dragón rojo. Tu herencia está ligada al fuego: obtienes resistencia al daño de fuego y tu arma de aliento inflige ese mismo tipo de daño.',
+    'Verde':'Ancestro de dragón verde. Tu herencia está ligada al veneno: obtienes resistencia al daño de veneno y tu arma de aliento inflige ese mismo tipo de daño.',
+    'Alto elfo':'Los altos elfos conservan una tradición de estudio y práctica arcana. Aprendes un truco adicional de la lista de mago y recibes magia élfica que amplía tus opciones: Detectar magia y Paso brumoso. La aptitud mágica elegida determina cómo utilizas esos conjuros.',
+    'Drow':'Los drow descienden de una tradición élfica adaptada a la penumbra del mundo subterráneo. Su linaje amplía tu visión en la oscuridad y te concede magia asociada a la luz feérica y las sombras: Luces danzantes, Fuego feérico y Oscuridad. La aptitud mágica elegida determina cómo utilizas esos conjuros.',
+    'Elfo de los bosques':'Los elfos de los bosques están vinculados a territorios salvajes y se desplazan con facilidad entre vegetación y sombras. Tu velocidad aumenta y recibes magia relacionada con la naturaleza y el movimiento: Saber druídico, Zancada prodigiosa y Pasar sin rastro. La aptitud mágica elegida determina cómo utilizas esos conjuros.',
+    'Gnomo de las rocas':'Los gnomos de las rocas combinan curiosidad, magia e inventiva. Aprendes Prestidigitación y Reparar, y puedes construir un pequeño mecanismo que reproduce un efecto de Prestidigitación. Es una expresión práctica de tu talento para crear artefactos diminutos.',
+    'Gnomo de los bosques':'Los gnomos de los bosques mantienen una relación estrecha con criaturas y sonidos del entorno natural. Aprendes Ilusión menor y puedes comunicarte mágicamente con animales pequeños mediante Hablar con los animales.',
+    'Abrasión del fuego':'Herencia de gigantes del fuego. Cuando impactas con un ataque, puedes añadir daño de fuego al objetivo; representa la fuerza abrasadora de una forja o una llamarada.',
+    'Caída de las colinas':'Herencia de gigantes de las colinas. Puedes derribar a una criatura grande o más pequeña después de golpearla, haciendo que pierda el equilibrio y caiga al suelo.',
+    'Excursión de las nubes':'Herencia de gigantes de las nubes. Puedes desplazarte mediante un breve paso mágico, desapareciendo de un lugar y reapareciendo en otro espacio que puedas ver.',
+    'Frío de la escarcha':'Herencia de gigantes de la escarcha. Tus golpes pueden envolver al objetivo en frío sobrenatural y reducir su velocidad, dificultando que se aleje o alcance a tus aliados.',
+    'Resistencia de la piedra':'Herencia de gigantes de la piedra. Puedes usar tu resistencia sobrenatural para reducir el daño de un ataque que te alcance, como si tu cuerpo se endureciera por un instante.',
+    'Trueno de la tormenta':'Herencia de gigantes de la tormenta. Cuando una criatura cercana te daña, puedes responder con energía atronadora y causarle daño de trueno.',
+    'Abisal':'El legado abisal está asociado a fuerzas caóticas de los planos inferiores. Te concede resistencia al daño de veneno y magia innata vinculada a ese legado, empezando por el truco Toque necrótico? No: el truco de este legado es el que figura en tu ficha según las reglas de especie.',
+    'Ctónico':'El legado ctónico está ligado a fuerzas sombrías y a la muerte. Te concede resistencia al daño necrótico y magia innata relacionada con ese poder, además de los conjuros que se desbloquean al alcanzar los niveles indicados.',
+    'Infernal':'El legado infernal procede de fuerzas diabólicas. Te concede resistencia al daño de fuego y magia innata asociada a ese legado, además de los conjuros que se desbloquean al alcanzar los niveles indicados.'
   };
   const BUILDER_SPECIES_TRAITS: Record<string,string> = {
     'Aasimar':'Los aasimar son humanoides vinculados a fuerzas celestiales. Su herencia se manifiesta en una resistencia natural al daño necrótico y radiante, visión en la oscuridad y la capacidad de sanar a otra criatura mediante el contacto. Conocen el truco Luz gracias a su naturaleza luminosa. Desde el nivel 3 pueden revelar su poder celestial de tres maneras: desplegar alas espectrales para volar, irradiar una luz abrasadora que daña a quienes están cerca o envolverse en una mortaja necrótica que intimida y perjudica a sus enemigos. Esta transformación también potencia el daño que infligen.',
@@ -2587,14 +2613,15 @@ import { onMount } from 'svelte';
   function trackChoiceCursor(event:PointerEvent) {
     choiceCursorPosition = {x:event.clientX,y:event.clientY};
     const target = event.target as HTMLElement | null;
-    const option = target?.closest('.builder-checkbox');
+    const option = target?.closest('label.builder-checkbox, label.builder-choice-option, .builder-choice-option');
     const checkbox = option?.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
-    if(!checkbox) { choiceCursorProgress = null; return; }
-    const wrapper = checkbox.closest('.builder-choice-wrapper,.builder-choice-field');
-    const counter = wrapper?.querySelector('.builder-choice-heading span')?.textContent || '';
-    const match = counter.match(/(\d+)\s*\/\s*(\d+)/);
-    if(match) choiceCursorProgress = {x:event.clientX,y:event.clientY,count:Number(match[1]),max:Number(match[2])};
-    else choiceCursorProgress = null;
+    if(!checkbox || checkbox.disabled) { choiceCursorProgress = null; return; }
+    const field = checkbox.closest('.builder-choice-field') || option?.closest('.builder-choice-field');
+    const heading = field?.querySelector('.builder-choice-heading span');
+    const match = (heading?.textContent || '').match(/(\d+)\s*\/\s*(\d+)/);
+    choiceCursorProgress = match
+      ? {x:event.clientX,y:event.clientY,count:Number(match[1]),max:Number(match[2])}
+      : null;
   }
   function builderToggleChoice(field:BuilderChoiceField, choice:string, max:number, event:Event) {
     const current=builderData[field] as string[];
@@ -6771,6 +6798,9 @@ import ITEMS from './items.json';
   });
 </script>
 <svelte:window on:pointermove={trackChoiceCursor} />
+{#if choiceCursorProgress && playerCreating}
+  <div class="builder-cursor-progress" style="left:{Math.min(choiceCursorProgress.x+16,window.innerWidth-64)}px;top:{Math.min(choiceCursorProgress.y+16,window.innerHeight-42)}px" aria-live="polite">{choiceCursorProgress.count}/{choiceCursorProgress.max}</div>
+{/if}
 
 
 <svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
@@ -7203,9 +7233,6 @@ import ITEMS from './items.json';
         </section>
       
         <section class="panel builder-panel">
-          {#if choiceCursorProgress && playerCreating}
-            <div class="builder-cursor-progress" style="left:{Math.min(choiceCursorProgress.x+14,window.innerWidth-65)}px;top:{Math.min(choiceCursorProgress.y+14,window.innerHeight-35)}px">{choiceCursorProgress.count}/{choiceCursorProgress.max}</div>
-          {/if}
           <div class="section-heading"><h2>Creación de personaje · Nivel 1</h2><span class="count">{builderPreview ? 'Completado' : 'Etapa '+(builderStep+1)+' de 12'}</span></div>
           {#if !builderPreview || builderStep < 12}
             <div class="builder-progress"><span style="width:{((builderStep+1)/12)*100}%"></span></div>
@@ -7406,7 +7433,20 @@ import ITEMS from './items.json';
                 <p class="hint">El nombre se define aquí y se conserva durante toda la creación.</p>
               </div>
               {#if BUILDER_SPECIES_CHOICES[builderData.species].length > 0}
-                <label>{builderData.species === 'Dracónido' ? 'Linaje dracónico' : builderData.species === 'Elfo' ? 'Linaje élfico' : builderData.species === 'Gnomo' ? 'Linaje gnomo' : builderData.species === 'Goliat' ? 'Linaje gigante' : 'Legado infernal'}<select bind:value={builderData.speciesChoice}><option value="">Elige una opción</option>{#each BUILDER_SPECIES_CHOICES[builderData.species] as choice}<option>{choice}</option>{/each}</select></label>
+                <div class="builder-lineage-picker">
+                  <label>{builderData.species === 'Dracónido' ? 'Linaje dracónico' : builderData.species === 'Elfo' ? 'Linaje élfico' : builderData.species === 'Gnomo' ? 'Linaje gnomo' : builderData.species === 'Goliat' ? 'Linaje gigante' : 'Legado infernal'}
+                    <select bind:value={builderData.speciesChoice}><option value="">Elige una opción</option>{#each BUILDER_SPECIES_CHOICES[builderData.species] as choice}<option>{choice}</option>{/each}</select>
+                  </label>
+                  {#if builderData.speciesChoice}
+                    <aside class="builder-lineage-explanation">
+                      <span>QUÉ SIGNIFICA ESTE LINAJE</span>
+                      <h4>{builderData.speciesChoice}</h4>
+                      <p>{BUILDER_SPECIES_LINEAGE_DETAILS[builderData.speciesChoice] || 'Esta variante define parte de tu herencia y las capacidades especiales descritas en los rasgos de tu especie.'}</p>
+                    </aside>
+                  {:else}
+                    <p class="builder-lineage-prompt">Selecciona un linaje para consultar su origen y los efectos que aporta a tu personaje.</p>
+                  {/if}
+                </div>
               {/if}
               {#if ['Aasimar','Humano','Tiefling'].includes(builderData.species)}
                 <label>Tamaño<select bind:value={builderData.speciesSize}><option value="">Elige el tamaño</option><option>Mediano</option><option>Pequeño</option></select></label>
@@ -11273,6 +11313,101 @@ import ITEMS from './items.json';
     .builder-checkbox:has(.builder-option-description),
     .builder-checkbox:has(.builder-skill-description){padding:.85rem!important}
     .builder-option-description:nth-of-type(2){font-size:.76rem!important}
+  }
+
+ 
+  /* Controles interactivos: respuesta visual breve y consistente */
+  button:not(:disabled), a[href], summary, label.builder-checkbox, label.builder-class-card,
+  label.builder-species-card, label.builder-background-card, .builder-choice-option {
+    transition:transform .14s ease,filter .14s ease,border-color .14s ease,background-color .14s ease,box-shadow .14s ease!important;
+  }
+  button:not(:disabled):hover, a[href]:hover, summary:hover {
+    filter:brightness(1.13)!important;
+    transform:translateY(-1px)!important;
+  }
+  label.builder-checkbox:hover, label.builder-class-card:hover,
+  label.builder-species-card:hover, label.builder-background-card:hover,
+  .builder-choice-option:hover {
+    filter:brightness(1.12)!important;
+    border-color:#5fe6e0!important;
+    transform:translateY(-1px)!important;
+  }
+  button:active:not(:disabled), a[href]:active {
+    transform:translateY(0) scale(.985)!important;
+  }
+  button:focus-visible, a[href]:focus-visible, label.builder-checkbox:focus-within {
+    outline:2px solid #5fe6e0!important;
+    outline-offset:2px!important;
+  }
+  .name-generator-button{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:.5rem!important;
+    min-height:44px!important;
+    padding:.72rem 1.05rem!important;
+    border:1px solid #69d6d0!important;
+    border-radius:8px!important;
+    background:linear-gradient(135deg,#24545a,#18383f)!important;
+    color:#f4ffff!important;
+    font:750 .88rem/1.25 system-ui,sans-serif!important;
+    letter-spacing:.015em!important;
+    text-align:center!important;
+    white-space:normal!important;
+    box-shadow:inset 0 1px 0 #ffffff18,0 3px 10px #0003!important;
+  }
+  .name-generator-button::before{content:"✦";color:#8ff5e9;font-size:1rem}
+  .name-generator-button:hover:not(:disabled){
+    background:linear-gradient(135deg,#2d6870,#1d454d)!important;
+    border-color:#9af5ed!important;
+    box-shadow:0 0 0 2px #5fe6e022,0 5px 14px #0005!important;
+  }
+  .builder-cursor-progress{
+    position:fixed!important;
+    z-index:2147483000!important;
+    display:grid!important;
+    place-items:center!important;
+    width:48px!important;
+    height:30px!important;
+    box-sizing:border-box!important;
+    pointer-events:none!important;
+    padding:0!important;
+    border:1px solid #8ff5e9!important;
+    border-radius:8px!important;
+    background:#102b20!important;
+    color:#e4fff0!important;
+    font:800 13px/1 system-ui,sans-serif!important;
+    box-shadow:0 4px 18px #000b,0 0 0 2px #5fe6e022!important;
+    white-space:nowrap!important;
+  }
+  .builder-lineage-picker{display:grid;gap:.55rem;margin:.8rem 0 1rem}
+  .builder-lineage-explanation{
+    padding:.9rem 1rem!important;
+    border:1px solid #4b8587!important;
+    border-left:4px solid #5fe6e0!important;
+    border-radius:9px!important;
+    background:linear-gradient(135deg,#19353d,#12272f)!important;
+    box-shadow:inset 0 1px 0 #ffffff0a!important;
+  }
+  .builder-lineage-explanation>span{
+    display:block!important;
+    margin-bottom:.35rem!important;
+    color:#8ce5df!important;
+    font:800 .65rem/1.3 system-ui,sans-serif!important;
+    letter-spacing:.1em!important;
+  }
+  .builder-lineage-explanation h4{margin:0 0 .35rem!important;color:#fff!important;font-size:1rem!important}
+  .builder-lineage-explanation p,.builder-lineage-prompt{
+    margin:0!important;color:#d7e3e7!important;font-size:.84rem!important;line-height:1.58!important
+  }
+  .builder-lineage-prompt{
+    padding:.65rem .8rem!important;
+    border:1px dashed #45646d!important;
+    border-radius:7px!important;
+    background:#10232b!important;
+  }
+  @media(prefers-reduced-motion:reduce){
+    button,a[href],summary,label.builder-checkbox,label.builder-class-card,label.builder-species-card,label.builder-background-card{transition:none!important}
   }
 
 </style>
