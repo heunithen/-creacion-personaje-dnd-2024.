@@ -13,4 +13,4 @@
   .style-preview{margin-top:1rem;padding:1rem;border:1px dashed var(--gm-border);border-radius:var(--gm-radius)}
   .style-preview-card{margin-top:.6rem;padding:var(--gm-panel-padding);background:var(--gm-panel);border:1px solid var(--gm-border);border-radius:var(--gm-radius);color:var(--gm-text)}
   .style-preview-card h3{font-size:var(--gm-heading-size);margin:.2rem 0}
-  .style-preview-card p{color:var(--gm-muted)}
+  
