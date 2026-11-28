@@ -2870,9 +2870,9 @@ import { onMount } from 'svelte';
             8:'Magia y conjuros',9:'Idiomas',10:'Detalles del personaje'
           };
           const issues = builderStepMissingFields(firstInvalidStep);
-          builderStepError = 'No se puede guardar todavía. He vuelto al paso «' + (stepNames[firstInvalidStep] || 'Creación del personaje') + '» porque hay una elección incompleta o incompatible.\n\nRevisa exactamente lo siguiente:\n• ' + issues.join('\n• ') + '\n\nCorrige estos campos y continúa. Si hay otro problema en un paso posterior, el asistente volverá a señalarlo antes de guardar.';
+          builderStepError = 'No se puede generar la ficha. Revisa estos campos:\nHe vuelto al paso «' + (stepNames[firstInvalidStep] || 'Creación del personaje') + '» porque hay una elección incompleta o incompatible.\n\nRevisa exactamente lo siguiente:\n• ' + issues.join('\n• ') + '\n\nCorrige estos campos y continúa. Si hay otro problema en un paso posterior, el asistente volverá a señalarlo antes de guardar.';
         } else {
-          builderStepError = 'No se puede guardar todavía. Hay elecciones incompatibles en la creación del personaje. Revisa los pasos anteriores.';
+          builderStepError = 'No se puede generar la ficha. Revisa estos campos: hay elecciones incompatibles en la creación del personaje. Revisa los pasos anteriores.';
         }
         requestAnimationFrame(() => {
           document.querySelector('.builder-step-error')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
