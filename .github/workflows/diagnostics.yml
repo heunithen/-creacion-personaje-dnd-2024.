@@ -84,7 +84,7 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Browser regression
-        if: github.event.inputs.suite == 'all' || github.event.inputs.suite == 'browser')
+        if: always() && (github.event_name == 'pull_request' || github.event.inputs.suite == 'all' || github.event.inputs.suite == 'browser')
         run: npx playwright test tests/e2e/character-creator.spec.ts tests/e2e/css-regression.spec.ts
 
       - name: Upload diagnostic reports
