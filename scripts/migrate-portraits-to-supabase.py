@@ -64,28 +64,24 @@ def main():
     records = []
     uploaded = 0
     for output_name, source_name, source_url, local_path in jobs:
-        target_url = f"{SUPABASE_URL}/storage/v1/object/public/{BUCKET}/square/{output_name}"
         if output_name not in known:
-            target_status, _ = request(target_url)
-            if target_status == 404:
-                if local_path is not None:
-                    raw = local_path.read_bytes()
-                else:
-                    source_status, raw = request(source_url)
-                    if source_status != 200:
-                        raise RuntimeError(f"Could not download {source_name} ({source_status})")
-                webp = to_square_webp(raw)
-                upload_status, upload_body = request(
-                    f"{SUPABASE_URL}/storage/v1/object/{BUCKET}/square/{output_name}",
-                    method="POST",
-                    data=webp,
-                    headers={"Content-Type": "image/webp"},
-                )
-                if upload_status not in (200, 201):
-                    raise RuntimeError(f"Storage upload failed for {output_name} ({upload_status}): {upload_body.decode(errors='replace')}")
+            if local_path is not None:
+                raw = local_path.read_bytes()
+            else:
+                source_status, raw = request(source_url)
+                if source_status != 200:
+                    raise RuntimeError(f"Could not download {source_name} ({source_status})")
+            webp = to_square_webp(raw)
+            upload_status, upload_body = request(
+                f"{SUPABASE_URL}/storage/v1/object/{BUCKET}/square/{output_name}",
+                method="POST",
+                data=webp,
+                headers={"Content-Type": "image/webp"},
+            )
+            if upload_status not in (200, 201, 409):
+                raise RuntimeError(f"Storage upload failed for {output_name} ({upload_status}): {upload_body.decode(errors='replace')}")
+            if upload_status in (200, 201):
                 uploaded += 1
-            elif target_status != 200:
-                raise RuntimeError(f"Storage lookup failed for {output_name} ({target_status})")
         records.append({"object_path": output_name, "source_filename": source_name})
 
     if records:
