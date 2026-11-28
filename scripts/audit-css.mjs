@@ -210,7 +210,7 @@ if (propertyConflicts.length) {
     const details = group.conflicts.map(([property, values]) => {
       const candidates = group.rules.flatMap(rule => rule.declarations)
         .filter(declaration => declaration.property === property)
-        .sort((a, b) => Number(a.important) - Number(b.important)
+        .sort((a, b) => Number(Boolean(a.important)) - Number(Boolean(b.important))
           || a.order - b.order || a.line - b.line || a.declarationIndex - b.declarationIndex);
       const winner = candidates[candidates.length - 1];
       return `${property}={${[...values].join(' | ')}} => wins ${winner.value}${winner.important ? '!important' : ''} @ ${winner.file}:${winner.line}`;
