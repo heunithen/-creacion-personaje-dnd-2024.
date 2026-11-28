@@ -2755,7 +2755,7 @@ import { onMount } from 'svelte';
       }
       if(!builderStepCanAdvance()) {
         const stepFields=builderStepMissingFields(builderStep);
-        void recordDiagnosticEvent('validation_blocked','character_creator','creation_step_incomplete','info','El asistente impidió avanzar por elecciones incompletas.',{step:builderStep,missing_count:stepFields.length});
+        void recordDiagnosticEvent('validation_blocked','character_creator','creation_step_incomplete','info','El asistente impidió avanzar por elecciones incompletas.',{step:builderStep,missing_count:stepFields.length,missing_fields:stepFields.slice(0,20)});
         builderStepError=stepFields.length
           ? 'Falta completar lo siguiente para avanzar:\\n• '+stepFields.join('\\n• ')
           : 'Hay una elección obligatoria incompleta en este paso. Revisa los campos visibles y vuelve a intentarlo.';
@@ -3083,8 +3083,9 @@ import { onMount } from 'svelte';
     try {
       const missing = builderMissingFields();
       if (missing.length) {
-        void recordDiagnosticEvent('validation_blocked','character_creator','creation_finish_incomplete','info','Se intentó finalizar una creación incompleta.',{missing_count:missing.length});
         const firstInvalidStep = [2,3,4,5,6,7,8,9,10].find(step => builderStepMissingFields(step).length > 0);
+        const issueFields = firstInvalidStep !== undefined ? builderStepMissingFields(firstInvalidStep) : missing;
+        void recordDiagnosticEvent('validation_blocked','character_creator','creation_finish_incomplete','info','Se intentó finalizar una creación incompleta.',{step:firstInvalidStep ?? builderStep,missing_count:missing.length,missing_fields:issueFields.slice(0,20)});
         if (firstInvalidStep !== undefined) {
           builderStep = firstInvalidStep;
           if (firstInvalidStep === 2) builderBackgroundSetup = true;
@@ -3094,7 +3095,7 @@ import { onMount } from 'svelte';
             5:'Aumentos de características',6:'Competencias',7:'Equipo inicial',
             8:'Magia y conjuros',9:'Idiomas',10:'Detalles del personaje'
           };
-          const issues = builderStepMissingFields(firstInvalidStep);
+          const issues = issueFields;
           builderStepError = 'No se puede generar la ficha. Revisa estos campos:\nHe vuelto al paso «' + (stepNames[firstInvalidStep] || 'Creación del personaje') + '» porque hay una elección incompleta o incompatible.\n\nRevisa exactamente lo siguiente:\n• ' + issues.join('\n• ') + '\n\nCorrige estos campos y continúa. Si hay otro problema en un paso posterior, el asistente volverá a señalarlo antes de guardar.';
         } else {
           builderStepError = 'No se puede generar la ficha. Revisa estos campos: hay elecciones incompatibles en la creación del personaje. Revisa los pasos anteriores.';
@@ -3113,7 +3114,7 @@ import { onMount } from 'svelte';
       // La ficha se abre solo después de confirmar su guardado en el registro compartido.
       const characterToSave = JSON.parse(JSON.stringify(generated)) as RawSheet;
       const audit = auditCharacterSheet(characterToSave);
-      await recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,error_codes:audit.errors.map(item=>item.code),warning_codes:audit.warnings.map(item=>item.code)});
+      await recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,errors:audit.errors.slice(0,20),warnings:audit.warnings.slice(0,20)});
       if (!audit.valid) console.error('La auditoría detectó problemas estructurales; se registraron para revisión.', audit.errors);
       if (webCreateMode) characterToSave._creationSource = 'web';
       if (webCreateMode) supabasePlayerName = builderData.player || supabasePlayerName || 'Jugador';
