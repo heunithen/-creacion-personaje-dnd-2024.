@@ -3147,7 +3147,7 @@ import { onMount } from 'svelte';
     try {
       const characterToSave = JSON.parse(JSON.stringify(builderPreview)) as RawSheet;
       const audit = auditCharacterSheet(characterToSave);
-      recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,error_codes:audit.errors.map(item=>item.code),warning_codes:audit.warnings.map(item=>item.code)});
+      await recordDiagnosticEvent('character_audit','character_creator',audit.valid?'pre_save_audit_passed':'pre_save_audit_failed',audit.errors.length?'error':audit.warnings.length?'warning':'info','Auditoría automática previa al guardado.',{error_count:audit.errors.length,warning_count:audit.warnings.length,error_codes:audit.errors.map(item=>item.code),warning_codes:audit.warnings.map(item=>item.code)});
       if (!audit.valid) console.error('La auditoría detectó problemas estructurales; se registraron para revisión.', audit.errors);
       await saveCharacterToSupabase(characterToSave);
       sheet = characterToSave;
