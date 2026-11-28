@@ -2,6 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { auditCharacterSheet, buildSyntheticAuditSheet } from '../src/characterDiagnostics.mjs';
 import {
   ELF_BONUS_SKILLS, getAllowedWeaponMasteries, getStandardArrayAssignments,
   isOriginFeatDistinct, isSpeciesSkillAllowed, isValidAbilityIncreases,
@@ -104,6 +105,7 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
   const speciesList = Object.entries(speciesChoices);
   assert.equal(classes.length * backgroundsList.length * speciesList.length, 1920);
   let tested = 0;
+  const auditResults = [];
 
   for (const className of classes) {
     const cls = classSkills[className];
@@ -157,11 +159,36 @@ test('matriz exhaustiva de 1.920 combinaciones clase × trasfondo × especie', (
         const masteries = selectDistinctChoices(allowedWeapons,[],weaponCount);
         assert.ok(masteries, 'No hay suficientes maestrías de armas: ' + className);
         assert.ok(isValidUniqueSelection(masteries,allowedWeapons,weaponCount));
+        const caseKey = [className, backgroundName, speciesName].join('|');
+        const syntheticSheet = buildSyntheticAuditSheet({ className, backgroundName, speciesName, caseKey });
+        const audit = auditCharacterSheet(syntheticSheet);
+        assert.equal(audit.valid, true, caseKey + ': ' + JSON.stringify(audit.errors));
+        auditResults.push({
+          case_key: caseKey,
+          class_name: className,
+          background_name: backgroundName,
+          species_name: speciesName,
+          status: audit.warnings.length ? 'warning' : 'passed',
+          errors: audit.errors,
+          warnings: audit.warnings
+        });
         tested++;
       }
     }
   }
   assert.equal(tested,1920);
+  assert.equal(auditResults.length,1920);
+  if (process.env.DIAGNOSTICS_OUTPUT) {
+    fs.mkdirSync('test-results', { recursive: true });
+    fs.writeFileSync(process.env.DIAGNOSTICS_OUTPUT, JSON.stringify({
+      suite: 'characters',
+      total: auditResults.length,
+      passed: auditResults.filter(result => result.status === 'passed').length,
+      warnings: auditResults.filter(result => result.status === 'warning').length,
+      failed: auditResults.filter(result => result.status === 'failed').length,
+      results: auditResults
+    }, null, 2));
+  }
 });
 
 test('la ficha del jugador incorpora Tiendita y retrato al inicio y al final', () => {
