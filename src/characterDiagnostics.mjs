@@ -2,13 +2,18 @@ const REQUIRED_SECTIONS = ['PERSONAJE','ATRIBUTOS','COMBATE','HABILIDADES','COMP
 const REQUIRED_IDENTITY = ['Nombre','Clase','Especie','Trasfondo'];
 const ABILITIES = ['Fuerza','Destreza','Constitución','Inteligencia','Sabiduría','Carisma'];
 
+/** @param {unknown} value */
 const clean = value => String(value ?? '').trim();
+/** @param {unknown} value */
 const sectionName = value => clean(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
 
+/** @param {any} sheet */
 export function auditCharacterSheet(sheet) {
-  const errors = [];
-  const warnings = [];
+  const errors = /** @type {{code: string, message: string}[]} */ ([]);
+  const warnings = /** @type {{code: string, message: string}[]} */ ([]);
+  /** @param {string} code @param {string} message */
   const addError = (code, message) => errors.push({ code, message });
+  /** @param {string} code @param {string} message */
   const addWarning = (code, message) => warnings.push({ code, message });
 
   if (!sheet || typeof sheet !== 'object' || Array.isArray(sheet)) {
@@ -18,7 +23,7 @@ export function auditCharacterSheet(sheet) {
     return { valid: false, errors: [{ code: 'sections_missing', message: 'La ficha no contiene secciones.' }], warnings: [] };
   }
 
-  const sections = new Map();
+  const sections = /** @type {Map<string, any[]>} */ (new Map());
   for (const [index, section] of sheet.sections.entries()) {
     if (!section || typeof section !== 'object' || Array.isArray(section)) {
       addError('section_invalid', 'La sección ' + (index + 1) + ' no tiene una estructura válida.');
@@ -49,6 +54,7 @@ export function auditCharacterSheet(sheet) {
   }
 
   const identity = (sections.get('PERSONAJE') || [])[0];
+  /** @param {any} section @param {string} name */
   const readValue = (section, name) => clean(section?.stats?.find(stat => clean(stat?.name) === name)?.value);
   for (const field of REQUIRED_IDENTITY) {
     if (!readValue(identity, field)) addError('identity_field_missing', 'Falta el dato obligatorio «' + field + '».');
@@ -84,7 +90,9 @@ export function auditCharacterSheet(sheet) {
   };
 }
 
+/** @param {{className: string, backgroundName: string, speciesName: string, caseKey: string}} options */
 export function buildSyntheticAuditSheet({ className, backgroundName, speciesName, caseKey }) {
+  /** @param {string} name @param {unknown} value */
   const stat = (name, value) => ({ name, value: String(value) });
   return {
     id: caseKey,
