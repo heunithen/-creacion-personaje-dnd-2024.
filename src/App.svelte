@@ -1610,13 +1610,30 @@ import { onMount } from 'svelte';
     ]
   }
 };
+  const CHARACTER_SURNAME_POOLS: Record<string, string[]> = {
+    'Aasimar':['Luzdel Alba','Valorian','Estrella Serena','Dorado','Celestia','Auroriel','Solmere','Brilloclaro'],
+    'Dracónido':['Kepeshkmollik','Verthisathurgiesh','Daardendrian','Clethtinthiallor','Norixius','Fenkenkabradon','Xorlarin','Thraek'],
+    'Enano':['Barbabronce','Yunqueferro','Cascopétreo','Martillorojo','Cervezaoscura','Forjafirme','Piedrahonda','Escudomontaña'],
+    'Elfo':['Lunargenta','Hojalba','Sombraclara','Vientoceleste','Ríoestelar','Susurrohoja','Danzaluna','Cantosilente'],
+    'Gnomo':['Cobrechispa','Engranaviva','Tornillín','Chisporroteo','Burbujeante','Piedrarrisa','Remache','Truenopequeño'],
+    'Goliat':['Hombrode Piedra','Cumbre Alta','Hielo Errante','Trueno Lejano','Roca Quebrada','Nube Roja','Pico Solitario','Paso del Gigante'],
+    'Mediano':['Buenbarril','Tejedor','Verdevalle','Mantequilla','Mimbre','Cosechador','Piesligeros','Bolsón'],
+    'Humano':['Valdemar','Montenegro','Del Robledal','Ríos','Vargas','De la Vega','Salvatierra','Albornoz'],
+    'Orco':['Puñohierro','Colmillo Roto','Sangre de Guerra','Hacha Negra','Tronamontes','Cicatriz Roja','Rompehuesos','Lobo Gris'],
+    'Tiefling':['Noctis','Azariel','Vesper','Mordaine','Sable','Duskryn','Malveaux','Ravencroft']
+  };
   let nameGender = 'Hombre';
   let lastGeneratedName = '';
+  let nameSuggestionGenerated = false;
   function generateCharacterName() {
     const options = CHARACTER_NAME_POOLS[builderData.species]?.[nameGender] || CHARACTER_NAME_POOLS['Humano'][nameGender];
-    const name = options[Math.floor(Math.random() * options.length)];
+    const surnames = CHARACTER_SURNAME_POOLS[builderData.species] || CHARACTER_SURNAME_POOLS['Humano'];
+    const firstName = options[Math.floor(Math.random() * options.length)];
+    const surname = surnames[Math.floor(Math.random() * surnames.length)];
+    const name = firstName + ' ' + surname;
     builderData.name = name;
     lastGeneratedName = name;
+    nameSuggestionGenerated = true;
   }
   let builderStep = 0;
   let builderClassSlideIndex = 0;
@@ -1646,7 +1663,7 @@ import { onMount } from 'svelte';
   function resetBuilder() {
     builderData = createInitialBuilderData();
     builderData.player = playerName || '';
-    builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderBackgroundSetup = false; builderSpeciesSlideIndex = 7; builderSpeciesSetup = false; builderRolledScores = []; builderRolledScoresByAbility = {}; builderRollingAbility = ''; builderPreview = null; builderStepError = ''; lastGeneratedName = '';
+    builderStep = 0; builderClassChosen = false; builderSpeciesChosen = false; builderBackgroundChosen = false; builderBackgroundSetup = false; builderSpeciesSlideIndex = 7; builderSpeciesSetup = false; builderRolledScores = []; builderRolledScoresByAbility = {}; builderRollingAbility = ''; builderPreview = null; builderStepError = ''; lastGeneratedName = ''; nameSuggestionGenerated = false;
   }
   let BUILDER_PORTRAITS: string[] = ["https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Dusty_F_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_Irieni_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_annis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dabuus_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_dw_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_f_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_el_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_fell_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_glamis_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_gn_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_grnhag_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_ha_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_508_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_513_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_516_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_522_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_f_529_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_501_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_505_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_506_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_507_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_509_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_510_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_511_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_512_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_515_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_517_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_518_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_519_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_520_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_521_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_523_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_524_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_525_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_526_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_528_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_529_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_530_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_hu_m_532_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_502_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_504_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_or_m_506_H.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_orcwar_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_sormen_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead503_h.webp","https://akbvedwkpjokphzridla.supabase.co/storage/v1/object/public/character-portraits/original/po_undead504_h.webp"];
   const BUILDER_PORTRAIT_FILES: string[] = ["639070266970320833.jpeg","639070267139930862.jpeg","639070267193750910.jpeg","639070269959165197.jpeg","639070270110695147.jpeg","639070270840984613.jpeg","639072090877075612.jpeg","639072098466851421.jpeg","639072100478929903.jpeg","639072103406347859.jpeg","639072107842480654.jpeg","639072108270370305.jpeg","639072109379739573.jpeg","639072112442597473.jpeg","639072112892317110.jpeg","639072113229156846.jpeg","639072115814308193.jpeg","639072117449627684.jpeg","639072117702987484.jpeg","639072117997127381.jpeg","639072118704577094.jpeg","639072119394411503.jpeg","639072119827491179.jpeg","639072120183101085.jpeg","639072120444780925.jpeg","639072123668479547.jpeg","639072123912304111.jpeg","639072124121244015.jpeg","639072124456863781.jpeg","639072124707933596.jpeg","639072124917793464.jpeg","639072125390683223.jpeg","639072125710212972.jpeg","639072126302182560.jpeg","639072126568672436.jpeg","639072126792582192.jpeg","639072127061342064.jpeg","639072127521141744.jpeg","639072127957881507.jpeg","639072128127071375.jpeg","639072128306821314.jpeg","639072128983500840.jpeg","639072129281180747.jpeg","639072130484049877.jpeg","639072130929899667.jpeg","639072131179469486.jpeg","639072131400059443.jpeg","639072131762569143.jpeg","639072132961127889.jpeg","639072133188576031.jpeg","639072133395984350.jpeg","639072137759779179.jpeg","639072138166468878.jpeg","639072138890758308.jpeg","639072139238188163.jpeg","639072139542013980.jpeg","639072139913103638.jpeg","639072140293553350.jpeg","639072140732292962.jpeg","639072141443162405.jpeg","639072141841732062.jpeg","639072142121061304.jpeg","639072142541201055.jpeg","639072142762970753.jpeg","639072143138090442.jpeg","639072143361330220.jpeg","639072144376649277.jpeg","639072149165265211.jpeg","639072149985094462.jpeg","639072150216814245.jpeg","639072150492474063.jpeg","639072150759823789.jpeg","639072153275287243.jpeg","639072153487877242.jpeg","639072153710447004.jpeg","639072153988526896.jpeg","639072154233916682.jpeg","639072154519466585.jpeg","639072159471433944.jpeg","639072159875795387.jpeg","639072161088751945.jpeg","639072161305491793.jpeg","639072161542101594.jpeg","639072162340470838.jpeg","639072162783130368.jpeg","639072163022260181.jpeg","639072163365149849.jpeg","639072163584549682.jpeg","639072163797049491.jpeg","639072164025119400.jpeg","639072164913448469.jpeg","639111910758639526.jpeg","639168965939690985.jpeg","639168966418240702.jpeg","639168966685640591.jpeg","639238001089571221.jpeg","639293156774210233.jpeg","639293157053596364.jpeg","639293165991373829.jpeg","639293166234683833.jpeg","639293166849899910.jpeg","639293167099525192.jpeg","639293167399807899.jpeg"];
@@ -2554,13 +2571,37 @@ import { onMount } from 'svelte';
   function builderCanFinish():boolean {
     return builderMissingFields().length===0;
   }
+  function builderStepIsComplete(index:number):boolean {
+    if(index===0) return builderStep>0;
+    if(index===1) return builderClassChosen && builderStep>1;
+    if(index===2) return builderBackgroundChosen && builderBackgroundSetup && builderStep>2 && builderStepMissingFields(2).length===0;
+    if(index===3) return builderSpeciesChosen && builderSpeciesSetup && builderStep>3 && builderStepMissingFields(3).length===0;
+    if(index>=4 && index<=10) return builderStep>index && builderStepMissingFields(index).length===0;
+    if(index===11) return builderStep===11 && builderCanFinish();
+    return false;
+  }
   type BuilderChoiceField = 'backgroundFeatChoices'|'backgroundMagicCantrips'|'speciesFeatChoices'|'speciesMagicCantrips'|'languages'|'classExpertise'|'weaponMasteries'|'classToolsChoices'|'classSkillChoices'|'warlockTomeCantrips'|'warlockTomeRituals'|'selectedCantrips'|'wizardSpellbook'|'selectedSpells';
   let builderStepError = '';
+  let choiceCursorProgress: {x:number;y:number;count:number;max:number} | null = null;
+  let choiceCursorPosition = {x:0,y:0};
+  function trackChoiceCursor(event:PointerEvent) {
+    choiceCursorPosition = {x:event.clientX,y:event.clientY};
+    const target = event.target as HTMLElement | null;
+    const checkbox = target?.closest('.builder-checkbox input[type="checkbox"]') as HTMLInputElement | null;
+    if(!checkbox) { choiceCursorProgress = null; return; }
+    const wrapper = checkbox.closest('.builder-choice-wrapper,.builder-choice-field');
+    const counter = wrapper?.querySelector('.builder-choice-heading span')?.textContent || '';
+    const match = counter.match(/(\d+)\s*\/\s*(\d+)/);
+    if(match) choiceCursorProgress = {x:event.clientX,y:event.clientY,count:Number(match[1]),max:Number(match[2])};
+    else choiceCursorProgress = null;
+  }
   function builderToggleChoice(field:BuilderChoiceField, choice:string, max:number, event:Event) {
     const current=builderData[field] as string[];
     const checked=(event.currentTarget as HTMLInputElement).checked;
     if(checked) { if(current.includes(choice)||current.length>=max) return; builderData={...builderData,[field]:[...current,choice]}; }
     else builderData={...builderData,[field]:current.filter(value=>value!==choice)};
+    const updated = builderData[field] as string[];
+    choiceCursorProgress = {...choiceCursorPosition,count:updated.length,max};
     builderStepError='';
   }
   function builderStepCanAdvance():boolean {
@@ -2586,7 +2627,9 @@ import { onMount } from 'svelte';
       }
       if(builderStep===3 && !builderSpeciesSetup) {
         if(!builderSpeciesChosen || builderData.species!==BUILDER_SPECIES[builderSpeciesSlideIndex]) builderChooseSpecies(BUILDER_SPECIES[builderSpeciesSlideIndex]);
-        builderSpeciesSetup=true; builderStepError=''; keepBuilderAtTop(); return;
+        builderSpeciesSetup=true;
+        if(!nameSuggestionGenerated && !builderData.name.trim()) generateCharacterName();
+        builderStepError=''; keepBuilderAtTop(); return;
       }
       if(!builderStepCanAdvance()) {
         const stepFields=builderStepMissingFields(builderStep);
@@ -6726,6 +6769,8 @@ import ITEMS from './items.json';
     else void restoreSharedWebCharacter();
   });
 </script>
+<svelte:window on:pointermove={trackChoiceCursor} />
+
 
 <svelte:head><title>Forja de Aventureros — D&D 2024</title></svelte:head>
 <div class="app-shell" class:web-readonly={webReadOnly}>
@@ -7157,12 +7202,15 @@ import ITEMS from './items.json';
         </section>
       
         <section class="panel builder-panel">
+          {#if choiceCursorProgress && playerCreating}
+            <div class="builder-cursor-progress" style="left:{Math.min(choiceCursorProgress.x+14,window.innerWidth-65)}px;top:{Math.min(choiceCursorProgress.y+14,window.innerHeight-35)}px">{choiceCursorProgress.count}/{choiceCursorProgress.max}</div>
+          {/if}
           <div class="section-heading"><h2>Creación de personaje · Nivel 1</h2><span class="count">{builderPreview ? 'Completado' : 'Etapa '+(builderStep+1)+' de 12'}</span></div>
           {#if !builderPreview || builderStep < 12}
             <div class="builder-progress"><span style="width:{((builderStep+1)/12)*100}%"></span></div>
             <nav class="builder-step-track" aria-label="Progreso de creación">
               {#each ['Concepto','Clase','Trasfondo','Especie','Características','Aumentos','Competencias','Gear','Magia','Languages','Detalles','Revisión'] as stage, index}
-                <span class:current={index === builderStep} class:complete={index < builderStep} aria-current={index === builderStep ? 'step' : undefined}>
+                <span class:current={index === builderStep} class:complete={index < builderStep} class:valid-complete={builderStepIsComplete(index)} aria-current={index === builderStep ? 'step' : undefined}>
                   <b>{index + 1}</b><small>{stage}</small>
                 </span>
               {/each}
@@ -10094,6 +10142,29 @@ import ITEMS from './items.json';
     border-color:#3fb8b8!important;
     background:#18343a!important;
     color:#5fe6e0!important;
+  }
+  .builder-step-track>span.valid-complete{
+    border-color:#3f9b68!important;
+    background:#143326!important;
+  }
+  .builder-step-track>span.valid-complete b{
+    border-color:#55d68b!important;
+    background:#55d68b!important;
+    color:#092016!important;
+  }
+  .builder-step-track>span.valid-complete small{color:#b9f3ce!important}
+  .builder-cursor-progress{
+    position:fixed;
+    z-index:99999;
+    pointer-events:none;
+    padding:4px 8px;
+    border:1px solid #55d68b;
+    border-radius:6px;
+    background:#102b20;
+    color:#d9ffe7;
+    font:700 12px/1.2 system-ui,sans-serif;
+    box-shadow:0 3px 12px #0008;
+    white-space:nowrap;
   }
   .builder-step-track>span.current{
     border-color:#5fe6e0!important;
