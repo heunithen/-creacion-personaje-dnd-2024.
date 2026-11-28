@@ -2045,7 +2045,7 @@ import { onMount } from 'svelte';
     'Frío de la escarcha':'Herencia de gigantes de la escarcha. Tus golpes pueden envolver al objetivo en frío sobrenatural y reducir su velocidad, dificultando que se aleje o alcance a tus aliados.',
     'Resistencia de la piedra':'Herencia de gigantes de la piedra. Puedes usar tu resistencia sobrenatural para reducir el daño de un ataque que te alcance, como si tu cuerpo se endureciera por un instante.',
     'Trueno de la tormenta':'Herencia de gigantes de la tormenta. Cuando una criatura cercana te daña, puedes responder con energía atronadora y causarle daño de trueno.',
-    'Abisal':'El legado abisal está asociado a fuerzas caóticas de los planos inferiores. Te concede resistencia al daño de veneno y magia innata vinculada a ese legado, empezando por el truco Toque necrótico? No: el truco de este legado es el que figura en tu ficha según las reglas de especie.',
+    'Abisal':'El legado abisal está asociado a las fuerzas demoníacas del Abismo. Te concede resistencia al daño de veneno y una tradición de magia innata propia de ese legado. Los conjuros que recibes al avanzar de nivel se añaden a tus opciones de especie; la aptitud mágica que elijas determina cómo los lanzas.',
     'Ctónico':'El legado ctónico está ligado a fuerzas sombrías y a la muerte. Te concede resistencia al daño necrótico y magia innata relacionada con ese poder, además de los conjuros que se desbloquean al alcanzar los niveles indicados.',
     'Infernal':'El legado infernal procede de fuerzas diabólicas. Te concede resistencia al daño de fuego y magia innata asociada a ese legado, además de los conjuros que se desbloquean al alcanzar los niveles indicados.'
   };
